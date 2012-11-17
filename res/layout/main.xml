@@ -7,5 +7,15 @@
          android:layout_height="wrap_content"
          android:layout_width="wrap_content"
          ></ListView>
+             <ImageButton 
+             android:id="@+id/empty"
+             android:layout_height="fill_parent"
+             android:layout_width="fill_parent"
+             android:contentDescription="@string/empty"
+             android:src="@drawable/empty"
+             android:onClick="onClickEmpty"    
+             android:scaleType="fitCenter"         
+             android:background="#e0000000" 
+             ></ImageButton>
     
 </LinearLayout>

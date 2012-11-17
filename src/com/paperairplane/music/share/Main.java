@@ -30,6 +30,7 @@ public class Main extends Activity {
 	private ListView listview;// 列表对象
 	private MediaPlayer mediaPlayer;
 	private RefreshMusicListReceiver receiver = null;
+	public 
 	String[] media_info = new String[] { MediaStore.Audio.Media.TITLE,
 			MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST,
 			MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.ALBUM_ID };
@@ -50,10 +51,16 @@ public class Main extends Activity {
         mediaPlayer.reset();
         setContentView(R.layout.main);       
 		listview = (ListView) findViewById(R.id.list);// 找ListView的ID
-		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象        
+		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象    
+        listview.setEmptyView(findViewById(R.id.empty));		
         showMusicList();
+        
 }
+
+       
+     
     @Override
+    
  //构建菜单
     public boolean onCreateOptionsMenu(Menu menu){
     	super.onCreateOptionsMenu(menu);
@@ -69,6 +76,8 @@ public class Main extends Activity {
     		finish();
     		System.exit(0);
     		break;
+    	case R.id.menu_about:
+//TODO:关于
     	case R.id.menu_refresh:
     		mediaPlayer.stop();
             mediaPlayer.reset();
@@ -142,6 +151,7 @@ public class MusicListOnClickListener implements OnItemClickListener {
 		//TODO:添加功能(如弹出菜单)
 	}
 }
+
 //音乐列表
 private void showMusicList() {
 	Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI , media_info, null, null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
@@ -195,5 +205,16 @@ private void showMusicList() {
 		registerReceiver(receiver,filter);
 		sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,Uri.parse("file://"+ Environment.getExternalStorageDirectory() .getAbsolutePath())));
 	}
-    
+ //EmptyView
+
+	public void onClickEmpty(View v) {
+           refreshMusicList();
+           }
+
 }
+/**     Paper Airplane Dev Team
+ *      主刀：@author @HarryChen-依旧初三15- http://weibo.com/yszzf
+ *      添乱：@author @姚沛然                http://weibo.com/xavieryao
+ *      美工：@author @七只小鸡1997          http://weibo.com/u/1579617160
+ *      2012.11.17
+ **/

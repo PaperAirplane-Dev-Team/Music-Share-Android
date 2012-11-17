@@ -17,5 +17,6 @@
     <string name="choose_an_operation">Choose An Operation</string>
     <string name="very_long">                                                                              </string>
     <string name="refresh_on_process">Refresh On Process</string>
+    <string name="menu_about">About</string>
     
 </resources>
