@@ -5,9 +5,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,7 +22,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class Main extends Activity {
@@ -27,6 +29,7 @@ public class Main extends Activity {
 	private MusicData[] musics;//保存音乐数据
 	private ListView listview;// 列表对象
 	private MediaPlayer mediaPlayer;
+	private RefreshMusicListReceiver receiver = null;
 	String[] media_info = new String[] { MediaStore.Audio.Media.TITLE,
 			MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST,
 			MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.ALBUM_ID };
@@ -69,10 +72,9 @@ public class Main extends Activity {
     	case R.id.menu_refresh:
     		mediaPlayer.stop();
             mediaPlayer.reset();
+            refreshMusicList();
     		showMusicList();
-    		Toast.makeText(this, getString(R.string.refresh_success), Toast.LENGTH_SHORT).show();
     		break;
-    		//TODO:有待完善
     	}
     	return true;
     }
@@ -184,4 +186,14 @@ private void showMusicList() {
 		removeDialog(position+65535);
 		showDialog(position+65535);
 	}
+//刷新音乐列表
+    private void refreshMusicList() {
+		IntentFilter filter = new IntentFilter(Intent.ACTION_MEDIA_SCANNER_STARTED);
+		filter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED );
+		filter.addDataScheme("file");
+		receiver = new RefreshMusicListReceiver();
+		registerReceiver(receiver,filter);
+		sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,Uri.parse("file://"+ Environment.getExternalStorageDirectory() .getAbsolutePath())));
+	}
+    
 }

@@ -1,4 +1,4 @@
-package com.paperairplane.musicshare;
+package com.paperairplane.music.share;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

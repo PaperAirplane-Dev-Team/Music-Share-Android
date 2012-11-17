@@ -16,5 +16,6 @@
     <string name="share">分享</string>
     <string name="choose_an_operation">选择一个操作</string>
     <string name="very_long">                                                                              </string>
+    <string name="refresh_on_process">刷新音乐列表中</string>
 
 </resources>
