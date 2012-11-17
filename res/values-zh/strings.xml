@@ -1,0 +1,20 @@
+<resources>
+
+    <string name="app_name">音乐分享</string>
+    <string name="title_activity_main">音乐分享</string>
+    <string name="empty">未发现音乐</string>
+    <string name="to_show_title">显示音乐名</string>
+    <string name="to_show_artist">显示歌手</string>
+    <string name="menu_exit">退出</string>
+    <string name="share_by">分享自</string>
+    <string name="how_to_share">选择分享方式</string>
+    <string name="music_title">歌曲名</string>
+    <string name="music_artist">演唱者</string>
+    <string name="menu_refresh">刷新音乐列表</string>
+    <string name="refresh_success">刷新音乐列表成功</string>
+    <string name="play">播放</string>
+    <string name="share">分享</string>
+    <string name="choose_an_operation">选择一个操作</string>
+    <string name="very_long">                                                                              </string>
+
+</resources>

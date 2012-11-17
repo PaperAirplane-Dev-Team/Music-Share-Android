@@ -1,0 +1,20 @@
+<resources>
+
+    <string name="app_name">Music Share</string>
+    <string name="title_activity_main">Music Share</string>
+    <string name="empty">No Music Found</string>
+    <string name="to_show_title">To Show Music Title Here</string>
+    <string name="to_show_artist">To Show Artist Here</string>
+    <string name="menu_exit">Exit</string>
+    <string name="share_by">Share By</string>
+    <string name="how_to_share">Choose an App to Share</string>
+    <string name="music_title">Title</string>
+    <string name="music_artist">Artist</string>
+    <string name="menu_refresh">Refresh Music List</string>
+    <string name="refresh_success">Successfully Refreshed Music List</string>
+    <string name="play">Play</string>
+    <string name="share">Share</string>
+    <string name="choose_an_operation">Choose An Operation</string>
+    <string name="very_long">                                                                              </string>
+    
+</resources>
