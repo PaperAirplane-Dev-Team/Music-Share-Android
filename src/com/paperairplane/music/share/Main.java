@@ -96,13 +96,23 @@ public class Main extends Activity {
 	//对话框处理
 	public Dialog onCreateDialog(final int _id){
 		if (_id==R.layout.about){	//这个是关于窗口
-			//FIXME 对话框尤其奇葩
+			//对话框尤其奇葩
+			//现在还凑合……RelativeLayout是个好东西
 			View about=LayoutInflater.from(this).inflate(R.layout.about, null);
 			Button button_about=(Button)about.findViewById(R.id.button_about);
 			button_about.setOnClickListener(new OnClickListener(){
 				public void onClick(View v){
 					removeDialog(R.layout.about);
 				}
+			});
+			Button button_contact=(Button)about.findViewById(R.id.button_contact);
+			button_contact.setOnClickListener(new OnClickListener(){
+				public void onClick(View v){
+					Uri uri = Uri.parse(getString(R.string.url));
+					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+					startActivity(intent);
+				}
+				
 			});
 			return new AlertDialog.Builder(this).setView(about).create();
 		}
@@ -168,9 +178,11 @@ public class Main extends Activity {
 			showDialog(position);
 		}
 	}
+	
 
 	//音乐列表
 	private void showMusicList() {
+
 		Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI , media_info, null, null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 		cursor.moveToFirst();
 		musics=new MusicData[cursor.getCount()];
@@ -183,8 +195,11 @@ public class Main extends Activity {
 			cursor.moveToNext();
 		}
 		listview.setAdapter(new MusicListAdapter(this, musics));
+
 	}
-	//转换该死的Duration //FIXME 话说你能不能优化一下这个,看着头晕啊
+	//转换该死的Duration 
+	//话说你能不能优化一下这个,看着头晕啊
+	//挺好的，简洁易懂……
     private String convertDuration(int _duration){
     	String duration="";
     	_duration/=1000;

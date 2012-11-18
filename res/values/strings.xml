@@ -18,6 +18,7 @@
     <string name="very_long">                                                                              </string>
     <string name="refresh_on_process">Refresh On Process</string>
     <string name="menu_about">About</string>
-    <string name="about_context">Paper Airplane Dev Team\n添乱1：@author @HarryChen-依旧初三15-\nhttp://weibo.com/yszzf\n添乱2：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2012.11.17</string>
-    
+    <string name="about_contact">Contact Us</string>
+    <string name="about_context">Paper Airplane Dev Team\n添乱1：@author @HarryChen-依旧初三15-\nhttp://weibo.com/yszzf\n添乱2：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2012.11.17\nVer1.0</string>
+    <string name="url">http://weibo.com/yszzf</string>
 </resources>
