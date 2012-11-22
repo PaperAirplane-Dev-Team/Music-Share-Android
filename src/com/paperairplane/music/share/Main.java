@@ -33,7 +33,7 @@ public class Main extends Activity {
 	private RefreshMusicListReceiver receiver;
 	private String[] media_info = new String[] { MediaStore.Audio.Media.TITLE,
 			MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST,
-			MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.ALBUM_ID };
+			MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.ALBUM };
 	//已精简
     @Override
     //主体
@@ -47,6 +47,7 @@ public class Main extends Activity {
     	//conf.locale=java.util.Locale.CHINESE;
     	//this.getResources().updateConfiguration(conf, null);
         super.onCreate(savedInstanceState);
+        try{        
         mediaPlayer=new MediaPlayer();
         mediaPlayer.reset();
         setContentView(R.layout.main);       
@@ -60,12 +61,25 @@ public class Main extends Activity {
         	}
         });
         showMusicList();
-        
-}
+    }catch(Exception e){
+    	noSDCardFound();
+    }
+    	
+    }
+  
+    private void noSDCardFound() {
+    	setContentView(R.layout.empty);
+        ImageButton img_empty=(ImageButton)findViewById(R.id.emptyxx);
+        img_empty.setOnClickListener(new OnClickListener(){
+        	public void onClick(View v){
+        		refreshMusicList();
+        	}
+        });
+		
+	}
 
-       
-    
-    @Override
+
+	@Override
     //构建菜单
     public boolean onCreateOptionsMenu(Menu menu){
     	super.onCreateOptionsMenu(menu);
@@ -183,7 +197,7 @@ public class Main extends Activity {
 	//音乐列表
 	private void showMusicList() {
 
-		Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI , media_info, null, null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+		Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI , media_info, MediaStore.Audio.Media.SIZE+">='" + 15000 + "'", null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 		cursor.moveToFirst();
 		musics=new MusicData[cursor.getCount()];
 		for (int i=0;i<cursor.getCount();i++) {
@@ -192,6 +206,7 @@ public class Main extends Activity {
 			musics[i].setDuration(convertDuration(cursor.getInt(1)));
 			musics[i].setArtist(cursor.getString(2));
 			musics[i].setPath(cursor.getString(3));
+			musics[i].setAlbum(cursor.getString(4));
 			cursor.moveToNext();
 		}
 		listview.setAdapter(new MusicListAdapter(this, musics));
@@ -219,10 +234,9 @@ public class Main extends Activity {
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
  			intent.putExtra(Intent.EXTRA_SUBJECT,getString(R.string.app_name));  
-			intent.putExtra(Intent.EXTRA_TEXT,getString(R.string.music_title)+"：【" + musics[position].getTitle() + "】"+getString(R.string.music_artist)+"：【" + musics[position].getArtist() + "】"+getString(R.string.share_by)+"："+getString(R.string.app_name));
+			intent.putExtra(Intent.EXTRA_TEXT,getString(R.string.music_title)+"：【" + musics[position].getTitle() + "】"+getString(R.string.music_artist)+"：【" + musics[position].getArtist() + "】"+getString(R.string.music_album) +":【" +musics[position].getAlbum() + "】"+getString(R.string.share_by)+"："+getString(R.string.app_name) + getString(R.string.url));
 			startActivity(Intent.createChooser(intent, getString(R.string.how_to_share)));
-		}
-		
+		}		
 	//播放音乐
 	private void playMusic(int position){
 		removeDialog(position+65535);
@@ -230,15 +244,17 @@ public class Main extends Activity {
 	}
 	//刷新音乐列表
     private void refreshMusicList() {
+    	try{
 		IntentFilter filter = new IntentFilter(Intent.ACTION_MEDIA_SCANNER_STARTED);
 		filter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED );
 		filter.addDataScheme("file");
 		receiver = new RefreshMusicListReceiver();
 		registerReceiver(receiver,filter);
 		sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,Uri.parse("file://"+ Environment.getExternalStorageDirectory() .getAbsolutePath())));
-	}
-    
-
+    }catch(Exception e){
+    	noSDCardFound();
+    }
+    }
 	private void showAbout(){	//显示关于窗口
 		showDialog(R.layout.about);//那么,这个没啥用,只是告诉系统一个标识,在onCreateDialog里面判断一下的
 	}

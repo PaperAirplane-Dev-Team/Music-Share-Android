@@ -3,6 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:id="@+id/viewempty" >
-
-
+             <ImageButton 
+             android:id="@+id/emptyxx"
+             android:layout_height="fill_parent"
+             android:layout_width="fill_parent"
+             android:contentDescription="@string/empty"
+             android:src="@drawable/empty"
+             android:scaleType="fitCenter"         
+             android:background="#e0000000" 
+             ></ImageButton>
 </LinearLayout>

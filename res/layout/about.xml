@@ -20,9 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView1"
         android:layout_marginLeft="46dp"
-        android:onClick="onClick_btn_contact"
         android:text="@string/about_contact" />
-
     <Button
         android:id="@+id/button_about"
         android:layout_width="wrap_content"

@@ -10,6 +10,7 @@
     <string name="how_to_share">选择分享方式</string>
     <string name="music_title">歌曲名</string>
     <string name="music_artist">演唱者</string>
+    <string name="music_album">专辑</string>
     <string name="menu_refresh">刷新音乐列表</string>
     <string name="refresh_success">刷新音乐列表成功</string>
     <string name="play">播放</string>
@@ -20,4 +21,5 @@
     <string name="menu_about">关于</string>
     <string name="about_contact">来人，捉虫！</string>
 	<string name="about_context">Paper Airplane Dev Team\n添乱1：@author @HarryChen-依旧初三15-\nhttp://weibo.com/yszzf\n添乱2：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2012.11.17\nVer 1.0</string>
+    <string name="url">http://t.cn/zjyeuup</string>
 </resources>
