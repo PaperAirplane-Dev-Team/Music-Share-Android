@@ -8,14 +8,10 @@
          android:layout_width="wrap_content"
          android:fastScrollEnabled="true"
          ></ListView>
-             <ImageButton 
-             android:id="@+id/empty"
-             android:layout_height="fill_parent"
-             android:layout_width="fill_parent"
-             android:contentDescription="@string/empty"
-             android:src="@drawable/empty"
-             android:scaleType="fitCenter"         
-             android:background="#e0000000" 
-             ></ImageButton>
-    
+            <ViewStub
+                android:id="@+id/empty"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout="@layout/empty"
+                 ></ViewStub>
 </LinearLayout>
