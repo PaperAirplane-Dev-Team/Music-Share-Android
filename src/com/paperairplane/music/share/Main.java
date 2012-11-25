@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -19,7 +20,9 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +49,7 @@ public class Main extends Activity {
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
+		ifHighVersion();
 		// 这些是强制英语
 		// android.content.res.Configuration conf=new
 		// android.content.res.Configuration();
@@ -136,7 +140,7 @@ public class Main extends Activity {
 					.findViewById(R.id.button_contact);
 			button_contact.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					Uri uri = Uri.parse(getString(R.string.url));
+					Uri uri = Uri.parse("http://weibo.com/xavieryao");
 					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 					startActivity(intent);
 				}
@@ -279,7 +283,7 @@ public class Main extends Activity {
 						+ musics[position].getTitle() + "】"
 						+ getString(R.string.music_artist) + "：【"
 						+ musics[position].getArtist() + "】"
-						+ getString(R.string.music_album) + ":【"
+						+ getString(R.string.music_album) + "：【"
 						+ musics[position].getAlbum() + "】" 
 						+ getString(R.string.music_url) +"【"
 						+ getMusicUrl(position) +"】(" 
@@ -292,10 +296,13 @@ public class Main extends Activity {
 
 	// 获取音乐地址
 	private String getMusicUrl(int position) {
+		
+		Log.v("Music Share DEBUG","方法 getMusicUrl被调用,歌曲编号为"+position);
 		String json = getJson(position);
 		String music_url = null;
         if (json == null){
 			music_url = getString(R.string.no_music_url_found);
+			Log.v("Music Share DEBUG","方法 getMusicUrl获得空的json字符串");
         }else{
 		try {
 			JSONObject rootObject = new JSONObject(json);
@@ -317,19 +324,24 @@ public class Main extends Activity {
 
 	// 通过豆瓣API获取音乐信息
 	private String getJson(int position) {
+		Log.v("Music Share DEBUG","方法 getJSON被调用,歌曲编号为"+position);
 		String api_url = "https://api.douban.com/v2/music/search?count=1&q="
 				+ java.net.URLEncoder.encode(musics[position].getTitle());
+		Log.v("Music Share DEBUG","方法 getJSON将要进行的请求为"+api_url);
 		String json = null;
 		HttpResponse httpResponse;
 		HttpGet httpGet = new HttpGet(api_url);
 		try {
 			httpResponse = new DefaultHttpClient().execute(httpGet);
+			Log.v("Music Share DEBUG","进行的HTTP GET返回状态为"+httpResponse.getStatusLine().getStatusCode());
 			if (httpResponse.getStatusLine().getStatusCode() == 200) {
 				json = EntityUtils.toString(httpResponse.getEntity());
 			} else {
 				json = null;
 			}
 		} catch (Exception e) {
+			Log.v("Music Share DEBUG","抛出错误"+e.getMessage());
+			e.printStackTrace();
 			json = null;
 		}
 		return json;
@@ -363,9 +375,34 @@ public class Main extends Activity {
 	private void showAbout() { // 显示关于窗口
 		showDialog(R.layout.about);// 那么,这个没啥用,只是告诉系统一个标识,在onCreateDialog里面判断一下的
 	}
+	
+	private void ifHighVersion(){
+		new AlertDialog.Builder(this)
+		.setIcon(android.R.drawable.ic_dialog_info)
+		.setTitle(getString(R.string.if_high_version))
+		.setPositiveButton(getString(android.R.string.ok),
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,
+							int whichButton) {
+						damnHighVersion();
+					}
+				})
+		.setNegativeButton(getString(android.R.string.cancel),
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,
+							int whichButton) {
+						
+					}
+				}).show();
+	}
+	@TargetApi(9)
+	private void damnHighVersion(){
+		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().permitAll().penaltyLog().build());
+	}
 }
 /**
- * Paper Airplane Dev Team 添乱1：@author @HarryChen-依旧初三15- http://weibo.com/yszzf
+ * Paper Airplane Dev Team
+ * 添乱1：@author @HarryChen-依旧初三15- http://weibo.com/yszzf
  * 添乱2：@author @姚沛然 http://weibo.com/xavieryao 美工：@author @七只小鸡1997
  * http://weibo.com/u/1579617160 2012.11.17
  **/
