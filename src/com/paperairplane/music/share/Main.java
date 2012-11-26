@@ -31,9 +31,9 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Main extends Activity {
 	// 存储音乐信息
@@ -49,17 +49,9 @@ public class Main extends Activity {
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
-		ifHighVersion();
-		// 这些是强制英语
-		// android.content.res.Configuration conf=new
-		// android.content.res.Configuration();
-		// conf.locale=java.util.Locale.ENGLISH;
-		// this.getResources().updateConfiguration(conf, null);
-		// 这些是强制中文
-		// android.content.res.Configuration conf=new
-		// android.content.res.Configuration();
-		// conf.locale=java.util.Locale.CHINESE;
-		// this.getResources().updateConfiguration(conf, null);
+		if(Integer.parseInt(android.os.Build.VERSION.SDK) > 9){
+			damnHighVersion();
+		}
 		super.onCreate(savedInstanceState);
 		try {
 			mediaPlayer = new MediaPlayer();
@@ -68,28 +60,15 @@ public class Main extends Activity {
 			listview = (ListView) findViewById(R.id.list);// 找ListView的ID
 			listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
 			listview.setEmptyView(findViewById(R.id.empty));
-			ImageButton img_empty = (ImageButton) findViewById(R.id.empty);
-			img_empty.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					refreshMusicList();
-				}
-			});
 			showMusicList();
 		} catch (Exception e) {
-			noSDCardFound();
+			setContentView(R.layout.empty);
 		}
 
 	}
 
-	private void noSDCardFound() {
-		setContentView(R.layout.empty);
-		ImageButton img_empty = (ImageButton) findViewById(R.id.empty);
-		img_empty.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
+	public void btn_empty(View v) {
 				refreshMusicList();
-			}
-		});
-
 	}
 
 	@Override
@@ -288,7 +267,8 @@ public class Main extends Activity {
 						+ getString(R.string.music_url) +"【"
 						+ getMusicUrl(position) +"】(" 
 						+ getString(R.string.share_by) + "："
-						+ getString(R.string.app_name) 
+						+ getString(R.string.app_name) +" "
+						+ getString(R.string.about_download_info)
 						+ getString(R.string.url) + ")" );
 		startActivity(Intent.createChooser(intent,
 				getString(R.string.how_to_share)));
@@ -311,7 +291,7 @@ public class Main extends Activity {
     			JSONArray contentArray = rootObject.getJSONArray("musics");
     			JSONObject item = contentArray.getJSONObject(0);
     			music_url = item.getString("mobile_link");
-                     }else{
+                     }else{                   
                     music_url = getString(R.string.no_music_url_found);
             }
 		} catch (JSONException e) {
@@ -326,7 +306,7 @@ public class Main extends Activity {
 	private String getJson(int position) {
 		Log.v("Music Share DEBUG","方法 getJSON被调用,歌曲编号为"+position);
 		String api_url = "https://api.douban.com/v2/music/search?count=1&q="
-				+ java.net.URLEncoder.encode(musics[position].getTitle());
+				+ java.net.URLEncoder.encode(musics[position].getTitle() + "+" + musics[position].getArtist());
 		Log.v("Music Share DEBUG","方法 getJSON将要进行的请求为"+api_url);
 		String json = null;
 		HttpResponse httpResponse;
@@ -337,10 +317,12 @@ public class Main extends Activity {
 			if (httpResponse.getStatusLine().getStatusCode() == 200) {
 				json = EntityUtils.toString(httpResponse.getEntity());
 			} else {
+				Toast.makeText(this,getString(R.string.error_internet) , Toast.LENGTH_SHORT).show();				
 				json = null;
 			}
 		} catch (Exception e) {
 			Log.v("Music Share DEBUG","抛出错误"+e.getMessage());
+			Toast.makeText(this, getString(R.string.error_internet), Toast.LENGTH_SHORT).show();
 			e.printStackTrace();
 			json = null;
 		}
@@ -368,7 +350,7 @@ public class Main extends Activity {
 							+ Environment.getExternalStorageDirectory()
 									.getAbsolutePath())));
 		} catch (Exception e) {
-			noSDCardFound();
+			setContentView(R.layout.empty);
 		}
 	}
 
@@ -376,25 +358,6 @@ public class Main extends Activity {
 		showDialog(R.layout.about);// 那么,这个没啥用,只是告诉系统一个标识,在onCreateDialog里面判断一下的
 	}
 	
-	private void ifHighVersion(){
-		new AlertDialog.Builder(this)
-		.setIcon(android.R.drawable.ic_dialog_info)
-		.setTitle(getString(R.string.if_high_version))
-		.setPositiveButton(getString(android.R.string.ok),
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,
-							int whichButton) {
-						damnHighVersion();
-					}
-				})
-		.setNegativeButton(getString(android.R.string.cancel),
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,
-							int whichButton) {
-						
-					}
-				}).show();
-	}
 	@TargetApi(9)
 	private void damnHighVersion(){
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().permitAll().penaltyLog().build());
@@ -403,6 +366,6 @@ public class Main extends Activity {
 /**
  * Paper Airplane Dev Team
  * 添乱1：@author @HarryChen-依旧初三15- http://weibo.com/yszzf
- * 添乱2：@author @姚沛然 http://weibo.com/xavieryao 美工：@author @七只小鸡1997
- * http://weibo.com/u/1579617160 2012.11.17
+ * 添乱2：@author @姚沛然 http://weibo.com/xavieryao 
+ * 美工：@author @七只小鸡1997 http://weibo.com/u/1579617160 2012.11.17
  **/
