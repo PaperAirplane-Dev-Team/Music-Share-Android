@@ -15,6 +15,7 @@ public class RefreshMusicListReceiver extends BroadcastReceiver{
 			toast.show();
 		}else if(Intent.ACTION_MEDIA_SCANNER_FINISHED.equals(action)){
             toast.setText(R.string.refresh_success);
+            toast.setDuration(Toast.LENGTH_SHORT);
             toast.show();
 		}
 		
