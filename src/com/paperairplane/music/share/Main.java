@@ -8,19 +8,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,23 +37,20 @@ public class Main extends Activity {
 	// 存储音乐信息
 	private MusicData[] musics;// 保存音乐数据
 	private ListView listview;// 列表对象
-	private MediaPlayer mediaPlayer;
 	private RefreshMusicListReceiver receiver;
+	private Intent musicIntent;
 	private String[] media_info = new String[] { MediaStore.Audio.Media.TITLE,
 			MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST,
 			MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.ALBUM };
+	private int PLAY=0,PAUSE=1,STOP=2,nowPlaying;
+	private boolean isPlaying=false;
 
 	// 已精简
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
-		if(Integer.parseInt(android.os.Build.VERSION.SDK) > 9){
-			damnHighVersion();
-		}
 		super.onCreate(savedInstanceState);
 		try {
-			mediaPlayer = new MediaPlayer();
-			mediaPlayer.reset();
 			setContentView(R.layout.main);
 			listview = (ListView) findViewById(R.id.list);// 找ListView的ID
 			listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
@@ -92,8 +87,6 @@ public class Main extends Activity {
 			showAbout();
 			break;
 		case R.id.menu_refresh:
-			mediaPlayer.stop();
-			mediaPlayer.reset();
 			refreshMusicList();
 			showMusicList();
 			break;
@@ -144,14 +137,21 @@ public class Main extends Activity {
 									shareMusic(_id);
 								}
 							}).create();
-		} else { // 这个是分享
+		} else { 
 			int newid = _id - 65535;
-			try {
-				mediaPlayer.reset();
-				mediaPlayer.setDataSource(musics[newid].getPath());
-				mediaPlayer.prepare();
-				mediaPlayer.start();
-			} catch (Exception e) {
+			if (!isPlaying||nowPlaying!=newid){
+				try {
+					musicIntent=new Intent();
+					musicIntent.setAction("com.paperairplane.music.share.PLAYMUSIC");
+					Bundle bundle=new Bundle();
+					bundle.putString("path", musics[newid].getPath());
+					bundle.putInt("op", PLAY);
+					musicIntent.putExtras(bundle);
+					startService(musicIntent);
+					isPlaying=true;
+					nowPlaying=newid;
+				} catch (Exception e) {
+				}
 			}
 			final View dialogView = LayoutInflater.from(this).inflate(
 					R.layout.player, null);
@@ -174,24 +174,43 @@ public class Main extends Activity {
 					android.R.drawable.ic_delete));
 			btnPP.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					if (mediaPlayer.isPlaying() == true) {
-						mediaPlayer.pause();
+					if (isPlaying == true) {
+						musicIntent=new Intent();
+						musicIntent.setAction("com.paperairplane.music.share.PLAYMUSIC");
+						Bundle bundle=new Bundle();
+						bundle.putInt("op", PAUSE);
+						musicIntent.putExtras(bundle);
+						startService(musicIntent);
 						btnPP.setBackgroundDrawable(getResources().getDrawable(
 								android.R.drawable.ic_media_play));
-					} else if (mediaPlayer.isPlaying() == false) {
-						mediaPlayer.start();
+						isPlaying = false;
+					} else if (isPlaying == false) {
+						musicIntent=new Intent();
+						musicIntent.setAction("com.paperairplane.music.share.PLAYMUSIC");
+						Bundle bundle=new Bundle();
+						bundle.putInt("op", PLAY);
+						musicIntent.putExtras(bundle);
+						startService(musicIntent);
+						//mediaPlayer.start();
 						btnPP.setBackgroundDrawable(getResources().getDrawable(
 								android.R.drawable.ic_media_pause));
+						isPlaying=true;
 					}
 				}
 			});
 			btnRT.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					mediaPlayer.stop();
+					musicIntent=new Intent();
+					musicIntent.setAction("com.paperairplane.music.share.PLAYMUSIC");
+					Bundle bundle=new Bundle();
+					bundle.putInt("op", STOP);
+					musicIntent.putExtras(bundle);
+					startService(musicIntent);
 					removeDialog(_id);
+					isPlaying=false;
 				}
 			});
-			return new AlertDialog.Builder(this).setView(dialogView).create();
+			return new AlertDialog.Builder(this).setView(dialogView).setCancelable(true).show();
 		}
 
 	}
@@ -199,8 +218,10 @@ public class Main extends Activity {
 	public class MusicListOnClickListener implements OnItemClickListener {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long id) {
-
-			removeDialog(position);
+			try{
+			dismissDialog(position);
+			}
+			catch(Exception e){}
 			showDialog(position);
 		}
 	}
@@ -253,86 +274,18 @@ public class Main extends Activity {
 
 	// 分享音乐
 	private void shareMusic(int position) {
-		Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
-		intent.putExtra(
-				Intent.EXTRA_TEXT,
-				getString(R.string.music_title) + "：【"
-						+ musics[position].getTitle() + "】"
-						+ getString(R.string.music_artist) + "：【"
-						+ musics[position].getArtist() + "】"
-						+ getString(R.string.music_album) + "：【"
-						+ musics[position].getAlbum() + "】" 
-						+ getString(R.string.music_url) +"【"
-						+ getMusicUrl(position) +"】(" 
-						+ getString(R.string.share_by) + "："
-						+ getString(R.string.app_name) +" "
-						+ getString(R.string.about_download_info)
-						+ getString(R.string.url) + ")" );
-		startActivity(Intent.createChooser(intent,
-				getString(R.string.how_to_share)));
-	}
-
-	// 获取音乐地址
-	private String getMusicUrl(int position) {
-		
-		Log.v("Music Share DEBUG","方法 getMusicUrl被调用,歌曲编号为"+position);
-		String json = getJson(position);
-		String music_url = null;
-        if (json == null){
-			music_url = getString(R.string.no_music_url_found);
-			Log.v("Music Share DEBUG","方法 getMusicUrl获得空的json字符串");
-        }else{
-		try {
-			JSONObject rootObject = new JSONObject(json);
-            int count = rootObject.getInt("count");
-            if(count == 1){
-    			JSONArray contentArray = rootObject.getJSONArray("musics");
-    			JSONObject item = contentArray.getJSONObject(0);
-    			music_url = item.getString("mobile_link");
-                     }else{                   
-                    music_url = getString(R.string.no_music_url_found);
-            }
-		} catch (JSONException e) {
-			music_url = getString(R.string.no_music_url_found);
-		}
-        }
-		return music_url;
-
-	}
-
-	// 通过豆瓣API获取音乐信息
-	private String getJson(int position) {
-		Log.v("Music Share DEBUG","方法 getJSON被调用,歌曲编号为"+position);
-		String api_url = "https://api.douban.com/v2/music/search?count=1&q="
-				+ java.net.URLEncoder.encode(musics[position].getTitle() + "+" + musics[position].getArtist());
-		Log.v("Music Share DEBUG","方法 getJSON将要进行的请求为"+api_url);
-		String json = null;
-		HttpResponse httpResponse;
-		HttpGet httpGet = new HttpGet(api_url);
-		try {
-			httpResponse = new DefaultHttpClient().execute(httpGet);
-			Log.v("Music Share DEBUG","进行的HTTP GET返回状态为"+httpResponse.getStatusLine().getStatusCode());
-			if (httpResponse.getStatusLine().getStatusCode() == 200) {
-				json = EntityUtils.toString(httpResponse.getEntity());
-			} else {
-				Toast.makeText(this,getString(R.string.error_internet) , Toast.LENGTH_SHORT).show();				
-				json = null;
-			}
-		} catch (Exception e) {
-			Log.v("Music Share DEBUG","抛出错误"+e.getMessage());
-			Toast.makeText(this, getString(R.string.error_internet), Toast.LENGTH_SHORT).show();
-			e.printStackTrace();
-			json = null;
-		}
-		return json;
+		QueryAndShareMusicInfo query=new QueryAndShareMusicInfo(position,this);
+		query.start();
+		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG).show();
 
 	}
 
 	// 播放音乐
 	private void playMusic(int position) {
-		removeDialog(position + 65535);
+		try{
+		dismissDialog(position + 65535);
+		}
+		catch(Exception e){}
 		showDialog(position + 65535);
 	}
 
@@ -358,9 +311,89 @@ public class Main extends Activity {
 		showDialog(R.layout.about);// 那么,这个没啥用,只是告诉系统一个标识,在onCreateDialog里面判断一下的
 	}
 	
-	@TargetApi(9)
-	private void damnHighVersion(){
-		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().permitAll().penaltyLog().build());
+	class QueryAndShareMusicInfo extends Thread{
+		private Context context;
+		private int id;
+		public void run(){
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
+			intent.putExtra(
+					Intent.EXTRA_TEXT,
+					getString(R.string.music_title) + "：【"
+							+ musics[id].getTitle() + "】"
+							+ getString(R.string.music_artist) + "：【"
+							+ musics[id].getArtist() + "】"
+							+ getString(R.string.music_album) + "：【"
+							+ musics[id].getAlbum() + "】" 
+							+ getString(R.string.music_url) +"【"
+							+ getMusicUrl(id) +"】(" 
+							+ getString(R.string.share_by) + "："
+							+ getString(R.string.app_name) +" "
+							+ getString(R.string.about_download_info)
+							+ getString(R.string.url) + ")" );
+			startActivity(Intent.createChooser(intent,
+					getString(R.string.how_to_share)));
+		}
+		// 获取音乐地址
+		private String getMusicUrl(int position) {
+			
+			Log.v("Music Share DEBUG","方法 getMusicUrl被调用,歌曲编号为"+position);
+			String json = getJson(position);
+			String music_url = null;
+		    if (json == null){
+				music_url = getString(R.string.no_music_url_found);
+				Log.v("Music Share DEBUG","方法 getMusicUrl获得空的json字符串");
+		    }else{
+			try {
+				JSONObject rootObject = new JSONObject(json);
+		        int count = rootObject.getInt("count");
+		        if(count == 1){
+					JSONArray contentArray = rootObject.getJSONArray("musics");
+					JSONObject item = contentArray.getJSONObject(0);
+					music_url = item.getString("mobile_link");
+		                 }else{                   
+		                music_url = getString(R.string.no_music_url_found);
+		        }
+			} catch (JSONException e) {
+				music_url = getString(R.string.no_music_url_found);
+			}
+		    }
+		    Log.v("Music Share DEBUG",music_url);
+			return music_url;
+		
+		}
+		// 通过豆瓣API获取音乐信息
+		private String getJson(int position) {
+			Log.v("Music Share DEBUG","方法 getJSON被调用,歌曲编号为"+position);
+			String api_url = "https://api.douban.com/v2/music/search?count=1&q="
+					+ java.net.URLEncoder.encode(musics[position].getTitle() + "+" + musics[position].getArtist());
+			Log.v("Music Share DEBUG","方法 getJSON将要进行的请求为"+api_url);
+			String json = null;
+			HttpResponse httpResponse;
+			HttpGet httpGet = new HttpGet(api_url);
+			try {
+				httpResponse = new DefaultHttpClient().execute(httpGet);
+				Log.v("Music Share DEBUG","进行的HTTP GET返回状态为"+httpResponse.getStatusLine().getStatusCode());
+				if (httpResponse.getStatusLine().getStatusCode() == 200) {
+					json = EntityUtils.toString(httpResponse.getEntity());
+				} else {
+					Toast.makeText(context,getString(R.string.error_internet) , Toast.LENGTH_SHORT).show();				
+					json = null;
+				}
+			} catch (Exception e) {
+				Log.v("Music Share DEBUG","抛出错误"+e.getMessage());
+				Toast.makeText(context, getString(R.string.error_internet), Toast.LENGTH_SHORT).show();
+				e.printStackTrace();
+				json = null;
+			}
+			return json;
+		
+		}
+		public QueryAndShareMusicInfo(int _id,Context _context){
+			id=_id;
+			context=_context;
+		}
 	}
 }
 /**

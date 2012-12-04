@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.paperairplane.music.share"
     android:versionCode="0003"
-    android:versionName="1.0.0003" >
+    android:versionName="0.4" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -21,6 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".MusicPlayerService" android:process=".remote">
+            <intent-filter>
+                <action android:name="com.paperairplane.music.share.PLAYMUSIC"/>
+                <category android:name="android.intent.category.default"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
