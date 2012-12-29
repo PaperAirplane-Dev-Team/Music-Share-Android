@@ -1,5 +1,8 @@
 package com.paperairplane.music.share;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -7,6 +10,14 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.weibo.sdk.android.Oauth2AccessToken;
+import com.weibo.sdk.android.Weibo;
+import com.weibo.sdk.android.WeiboAuthListener;
+import com.weibo.sdk.android.WeiboDialogError;
+import com.weibo.sdk.android.WeiboException;
+import com.weibo.sdk.android.api.StatusesAPI;
+import com.weibo.sdk.android.net.RequestListener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,6 +30,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +42,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,8 +57,13 @@ public class Main extends Activity {
 			MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST,
 			MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.ALBUM };
 	private int PLAY=0,PAUSE=1,STOP=2,nowPlaying;
+	final private int INTERNET_ERROR = 3,SEND_WEIBO = 4,SEND_SUCCEED = 5,AUTH_ERROR = 6,SEND_ERROR = 7,NOT_AUTHORIZED_ERROR = 8,AUTH_SUCCEED = 9;
 	private boolean isPlaying=false;
-
+	private static String APP_KEY = "1006183120";
+	private static String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
+	public static Oauth2AccessToken accessToken;
+	private Weibo weibo = Weibo.getInstance(APP_KEY , REDIRECT_URI);
+	private StatusesAPI api = null;
 	// 已精简
 	@Override
 	// 主体
@@ -58,6 +77,11 @@ public class Main extends Activity {
 			showMusicList();
 		} catch (Exception e) {
 			setContentView(R.layout.empty);
+		}
+		try{
+			Main.accessToken=AccessTokenKeeper.readAccessToken(this);
+		}catch(Exception e){	
+			e.printStackTrace();
 		}
 
 	}
@@ -86,6 +110,13 @@ public class Main extends Activity {
 		case R.id.menu_about:
 			showAbout();
 			break;
+		case R.id.menu_unauth:
+			if (Main.accessToken.isSessionValid()){
+				Main.accessToken = null;
+				AccessTokenKeeper.clear(Main.this);
+			}else{
+				handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
+			}
 		case R.id.menu_refresh:
 			refreshMusicList();
 			showMusicList();
@@ -95,6 +126,7 @@ public class Main extends Activity {
 	}
 
 	// 对话框处理
+
 	public Dialog onCreateDialog(final int _id) {
 		if (_id == R.layout.about) { // 这个是关于窗口
 			// 对话框尤其奇葩
@@ -274,7 +306,7 @@ public class Main extends Activity {
 
 	// 分享音乐
 	private void shareMusic(int position) {
-		QueryAndShareMusicInfo query=new QueryAndShareMusicInfo(position,this);
+		QueryAndShareMusicInfo query=new QueryAndShareMusicInfo(position);
 		query.start();
 		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG).show();
 
@@ -302,6 +334,7 @@ public class Main extends Activity {
 					Uri.parse("file://"
 							+ Environment.getExternalStorageDirectory()
 									.getAbsolutePath())));
+			unregisterReceiver(receiver);
 		} catch (Exception e) {
 			setContentView(R.layout.empty);
 		}
@@ -312,15 +345,9 @@ public class Main extends Activity {
 	}
 	
 	class QueryAndShareMusicInfo extends Thread{
-		private Context context;
 		private int id;
 		public void run(){
-			Intent intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("text/plain");
-			intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
-			intent.putExtra(
-					Intent.EXTRA_TEXT,
-					getString(R.string.music_title) + "：【"
+             String content = getString(R.string.music_title) + "：【"
 							+ musics[id].getTitle() + "】"
 							+ getString(R.string.music_artist) + "：【"
 							+ musics[id].getArtist() + "】"
@@ -331,9 +358,10 @@ public class Main extends Activity {
 							+ getString(R.string.share_by) + "："
 							+ getString(R.string.app_name) +" "
 							+ getString(R.string.about_download_info)
-							+ getString(R.string.url) + ")" );
-			startActivity(Intent.createChooser(intent,
-					getString(R.string.how_to_share)));
+							+ getString(R.string.url) + ")" ;
+             Log.e("Music_Share", "获取结束。");
+             Message m =handler.obtainMessage(SEND_WEIBO, content);
+             handler.sendMessage(m);
 		}
 		// 获取音乐地址
 		private String getMusicUrl(int position) {
@@ -378,23 +406,148 @@ public class Main extends Activity {
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					json = EntityUtils.toString(httpResponse.getEntity());
 				} else {
-					Toast.makeText(context,getString(R.string.error_internet) , Toast.LENGTH_SHORT).show();				
+					handler.sendEmptyMessage(INTERNET_ERROR);
 					json = null;
 				}
 			} catch (Exception e) {
 				Log.v("Music Share DEBUG","抛出错误"+e.getMessage());
-				Toast.makeText(context, getString(R.string.error_internet), Toast.LENGTH_SHORT).show();
+				handler.sendEmptyMessage(INTERNET_ERROR);
 				e.printStackTrace();
 				json = null;
 			}
 			return json;
 		
 		}
-		public QueryAndShareMusicInfo(int _id,Context _context){
+		public QueryAndShareMusicInfo(int _id){
 			id=_id;
-			context=_context;
 		}
 	}
+	//这是消息处理
+  Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg){
+			switch(msg.what){
+			case INTERNET_ERROR://网络错误
+				Toast.makeText(getApplicationContext(),getString(R.string.error_internet) , Toast.LENGTH_SHORT).show();
+				break;
+			case SEND_WEIBO://发送微博
+				View sendweibo = LayoutInflater.from(getApplicationContext()).inflate(R.layout.sendweibo,null);
+				final EditText et = (EditText)sendweibo.getRootView().findViewById(R.id.et_content);
+				et.setText((String) msg.obj);
+				new AlertDialog.Builder(Main.this)
+				       .setView(sendweibo)
+				       .setPositiveButton(getString(R.string.share), new DialogInterface.OnClickListener() {						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							String content = et.getText().toString();
+							if( calculateLength(content) > 140){//判断字数是否超过140
+								new AlertDialog.Builder(Main.this).setMessage(getString(R.string.too_long)).setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener(){				
+									@Override
+									public void onClick(DialogInterface dialog, int which) {			
+									}
+								});
+							}
+							else 
+								if (Main.accessToken.isSessionValid()){//检测之前是否授权过
+									sendWeibo(content);
+							}else{
+								handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
+								weibo.authorize(Main.this, new AuthDialogListener());//授权
+						     }
+							
+						}
+					})
+				       .show();
+				Log.e("Music_Share","弹出对话框");
+				break;
+			case SEND_SUCCEED:
+				Toast.makeText(Main.this,R.string.send_succeed,Toast.LENGTH_SHORT).show();
+				break;
+			case NOT_AUTHORIZED_ERROR:
+				Toast.makeText(Main.this,R.string.not_authorized_error,Toast.LENGTH_SHORT).show();
+				break;
+			case AUTH_ERROR:
+				Toast.makeText(Main.this,R.string.auth_error + (String)msg.obj, Toast.LENGTH_SHORT).show();
+				break;
+			case SEND_ERROR:
+				Toast.makeText(Main.this,R.string.send_error + (String) msg.obj,Toast.LENGTH_SHORT).show();
+				break;
+			}
+		}
+	};
+	
+	private void sendWeibo(String content){
+	    api = new StatusesAPI(Main.accessToken);
+	    api.update(content, null, null, requestListener);
+	}
+    private long calculateLength(CharSequence c) {  
+        double len = 0;  
+        for (int i = 0; i < c.length(); i++) {  
+            int tmp = (int) c.charAt(i);  
+            if (tmp > 0 && tmp < 127) {  
+                len += 0.5;  
+            } else {  
+                len++;  
+            }  
+        }  
+        return Math.round(len);  
+    }  
+	class AuthDialogListener implements WeiboAuthListener {
+		Message m = handler.obtainMessage();
+		@Override
+		public void onComplete(Bundle values){
+			String token = values.getString("access_token");
+			String expires_in = values.getString("expires_in");
+			Main.accessToken = new Oauth2AccessToken(token , expires_in);
+			AccessTokenKeeper.keepAccessToken(Main.this, accessToken);
+			handler.sendEmptyMessage(SEND_SUCCEED);
+		}
+		@Override
+		public void onCancel() {
+			
+		}
+
+		@Override
+		public void onError(WeiboDialogError e) {
+			String error = e.getMessage();
+			m.what = AUTH_ERROR;
+			m.obj = error;
+			handler.sendMessage(m);
+		}
+
+		@Override
+		public void onWeiboException(WeiboException e) {
+			 String error = e.getMessage();
+			 m.what = AUTH_ERROR;
+			 m.obj = error;
+			 handler.sendMessage(m);
+		}
+		}
+	private RequestListener requestListener = new RequestListener(){
+		Message m = handler.obtainMessage();
+		@Override
+		public void onComplete(String arg0) {
+			handler.sendEmptyMessage(SEND_SUCCEED);
+		}
+
+		@Override
+		public void onError(WeiboException e) {
+			String error = e.getMessage();
+			m.what=SEND_ERROR;
+			m.obj = error;
+			handler.sendMessage(m);		
+		}
+
+		@Override
+		public void onIOException(IOException arg0) {
+			String error = arg0.getMessage();
+			m.what=SEND_ERROR;
+			m.obj = error;
+			handler.sendMessage(m);
+		}
+		
+	};
+
 }
 /**
  * Paper Airplane Dev Team
