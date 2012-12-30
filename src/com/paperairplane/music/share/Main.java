@@ -1,7 +1,6 @@
 package com.paperairplane.music.share;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -16,7 +15,9 @@ import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.WeiboAuthListener;
 import com.weibo.sdk.android.WeiboDialogError;
 import com.weibo.sdk.android.WeiboException;
+import com.weibo.sdk.android.WeiboParameters;
 import com.weibo.sdk.android.api.StatusesAPI;
+import com.weibo.sdk.android.net.AsyncWeiboRunner;
 import com.weibo.sdk.android.net.RequestListener;
 import cn.jpush.android.api.JPushInterface;
 
@@ -43,6 +44,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -59,6 +61,8 @@ public class Main extends Activity {
 			MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.ALBUM };
 	private int PLAY=0,PAUSE=1,STOP=2,nowPlaying;
 	final private int INTERNET_ERROR = 3,SEND_WEIBO = 4,SEND_SUCCEED = 5,AUTH_ERROR = 6,SEND_ERROR = 7,NOT_AUTHORIZED_ERROR = 8,AUTH_SUCCEED = 9;
+	final private int WEIBO = 10,OTHERS=11;
+	final private int HARRY_UID=1689129907,XAVIER_UID=2121014783,APP_UID=1153267341;
 	private boolean isPlaying=false;
 	private static String APP_KEY = "1006183120";
 	private static String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
@@ -166,13 +170,22 @@ public class Main extends Activity {
 									playMusic(_id);
 								}
 							})
-					.setNegativeButton(getString(R.string.share),
+					.setNegativeButton(getString(R.string.share2others),
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
-									shareMusic(_id);
+									shareMusic(_id,OTHERS);
 								}
-							}).create();
+							})
+					.setNeutralButton(getString(R.string.share2weibo), new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							shareMusic(_id,WEIBO);
+							
+						}
+					})
+							.create();
 		} else { 
 			int newid = _id - 65535;
 			if (!isPlaying||nowPlaying!=newid){
@@ -309,10 +322,10 @@ public class Main extends Activity {
 	}
 
 	// 分享音乐
-	private void shareMusic(int position) {
-		QueryAndShareMusicInfo query=new QueryAndShareMusicInfo(position);
+	private void shareMusic(int position,int means) {
+		QueryAndShareMusicInfo query=new QueryAndShareMusicInfo(position,means);
 		query.start();
-		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG).show();
+		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_SHORT).show();
 
 	}
 
@@ -349,7 +362,7 @@ public class Main extends Activity {
 	}
 	
 	class QueryAndShareMusicInfo extends Thread{
-		private int id;
+		private int id,means;
 		public void run(){
              String content = getString(R.string.music_title) + "：【"
 							+ musics[id].getTitle() + "】"
@@ -364,8 +377,20 @@ public class Main extends Activity {
 							+ getString(R.string.about_download_info)
 							+ getString(R.string.url) + ")" ;
              Log.e("Music_Share", "获取结束。");
-             Message m =handler.obtainMessage(SEND_WEIBO, content);
-             handler.sendMessage(m);
+             switch(means){
+             case OTHERS:
+            	 Intent intent = new Intent(Intent.ACTION_SEND);
+            	 intent.setType("text/plain");
+            	 intent.putExtra(Intent.EXTRA_SUBJECT,getString(R.string.app_name));
+            	 intent.putExtra(Intent.EXTRA_TEXT,content);
+             	 startActivity(Intent.createChooser(intent, getString(R.string.how_to_share)));
+            	 break;
+             case WEIBO:
+                 Message m =handler.obtainMessage(SEND_WEIBO, content);
+                 handler.sendMessage(m);
+            	 break;
+             }
+
 		}
 		// 获取音乐地址
 		private String getMusicUrl(int position) {
@@ -422,12 +447,13 @@ public class Main extends Activity {
 			return json;
 		
 		}
-		public QueryAndShareMusicInfo(int _id){
+		public QueryAndShareMusicInfo(int _id,int _means){
 			id=_id;
+			means=_means;
 		}
 	}
 	//这是消息处理
-  Handler handler = new Handler(){
+   Handler handler = new Handler(){
 		@Override
 		public void handleMessage(Message msg){
 			switch(msg.what){
@@ -437,6 +463,7 @@ public class Main extends Activity {
 			case SEND_WEIBO://发送微博
 				View sendweibo = LayoutInflater.from(getApplicationContext()).inflate(R.layout.sendweibo,null);
 				final EditText et = (EditText)sendweibo.getRootView().findViewById(R.id.et_content);
+				final CheckBox cb = (CheckBox)sendweibo.findViewById(R.id.cb_follow);
 				et.setText((String) msg.obj);
 				new AlertDialog.Builder(Main.this)
 				       .setView(sendweibo)
@@ -453,7 +480,7 @@ public class Main extends Activity {
 							}
 							else 
 								if (Main.accessToken.isSessionValid()){//检测之前是否授权过
-									sendWeibo(content);
+									sendWeibo(content,cb.isChecked());
 							}else{
 								handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
 								weibo.authorize(Main.this, new AuthDialogListener());//授权
@@ -481,10 +508,38 @@ public class Main extends Activity {
 			}
 		}
 	};
-	
-	private void sendWeibo(String content){
+	//发送微博
+	private void sendWeibo(String content,boolean willFollow){
 	    api = new StatusesAPI(Main.accessToken);
 	    api.update(content, null, null, requestListener);
+		if (willFollow == true){//判断是否要关注开发者
+			follow(HARRY_UID);
+			follow(XAVIER_UID);
+			follow(APP_UID);
+		}
+		}
+	private void follow(int uid){
+		WeiboParameters params = new WeiboParameters();
+		params.add("access_token",Main.accessToken.getToken());
+		params.add("uid",uid);
+		String url = "https://api.weibo.com/2/friendships/create.json";
+		try{
+			AsyncWeiboRunner.request(url, params, "POST", new RequestListener(){
+				@Override
+				public void onComplete(String arg0) {
+					Log.v("Music Share DUBUG","followed");
+				}
+
+				@Override
+				public void onError(WeiboException arg0) {						
+				}
+
+				@Override
+				public void onIOException(IOException arg0) {
+				}
+			});
+		}catch(Exception e){
+		}
 	}
     private long calculateLength(CharSequence c) {  
         double len = 0;  
