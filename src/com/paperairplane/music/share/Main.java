@@ -18,11 +18,12 @@ import com.weibo.sdk.android.WeiboDialogError;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.net.RequestListener;
+import cn.jpush.android.api.JPushInterface;
+
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -51,7 +52,7 @@ public class Main extends Activity {
 	// 存储音乐信息
 	private MusicData[] musics;// 保存音乐数据
 	private ListView listview;// 列表对象
-	private RefreshMusicListReceiver receiver;
+	private Receiver receiver;
 	private Intent musicIntent;
 	private String[] media_info = new String[] { MediaStore.Audio.Media.TITLE,
 			MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST,
@@ -75,6 +76,8 @@ public class Main extends Activity {
 			listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
 			listview.setEmptyView(findViewById(R.id.empty));
 			showMusicList();
+			Log.v("Music Share DEBUG","Push Start");
+			JPushInterface.init(getApplicationContext());
 		} catch (Exception e) {
 			setContentView(R.layout.empty);
 		}
@@ -114,6 +117,7 @@ public class Main extends Activity {
 			if (Main.accessToken.isSessionValid()){
 				Main.accessToken = null;
 				AccessTokenKeeper.clear(Main.this);
+				Toast.makeText(Main.this, getString(R.string.unauthed), Toast.LENGTH_SHORT).show();
 			}else{
 				handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
 			}
@@ -144,7 +148,7 @@ public class Main extends Activity {
 					.findViewById(R.id.button_contact);
 			button_contact.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					Uri uri = Uri.parse("http://weibo.com/xavieryao");
+					Uri uri = Uri.parse(getString(R.string.url));
 					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 					startActivity(intent);
 				}
@@ -328,7 +332,7 @@ public class Main extends Activity {
 					Intent.ACTION_MEDIA_SCANNER_STARTED);
 			filter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
 			filter.addDataScheme("file");
-			receiver = new RefreshMusicListReceiver();
+			receiver = new Receiver();
 			registerReceiver(receiver, filter);
 			sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
 					Uri.parse("file://"
@@ -472,6 +476,8 @@ public class Main extends Activity {
 			case SEND_ERROR:
 				Toast.makeText(Main.this,R.string.send_error + (String) msg.obj,Toast.LENGTH_SHORT).show();
 				break;
+			case AUTH_SUCCEED:
+				
 			}
 		}
 	};
@@ -500,7 +506,7 @@ public class Main extends Activity {
 			String expires_in = values.getString("expires_in");
 			Main.accessToken = new Oauth2AccessToken(token , expires_in);
 			AccessTokenKeeper.keepAccessToken(Main.this, accessToken);
-			handler.sendEmptyMessage(SEND_SUCCEED);
+			handler.sendEmptyMessage(AUTH_SUCCEED);
 		}
 		@Override
 		public void onCancel() {
