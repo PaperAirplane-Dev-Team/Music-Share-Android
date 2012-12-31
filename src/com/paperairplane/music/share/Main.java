@@ -35,6 +35,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,7 +55,6 @@ public class Main extends Activity {
 	// 存储音乐信息
 	private MusicData[] musics;// 保存音乐数据
 	private ListView listview;// 列表对象
-	private Receiver receiver;
 	private Intent musicIntent;
 	private String[] media_info = new String[] { MediaStore.Audio.Media.TITLE,
 			MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST,
@@ -85,12 +85,12 @@ public class Main extends Activity {
 		} catch (Exception e) {
 			setContentView(R.layout.empty);
 		}
+//		读取已存储的授权信息
 		try{
 			Main.accessToken=AccessTokenKeeper.readAccessToken(this);
 		}catch(Exception e){	
 			e.printStackTrace();
 		}
-
 	}
 
 	public void btn_empty(View v) {
@@ -118,6 +118,7 @@ public class Main extends Activity {
 			showAbout();
 			break;
 		case R.id.menu_unauth:
+//			判断是否有已授权
 			if (Main.accessToken == null){
 				handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
 			}else{
@@ -125,6 +126,7 @@ public class Main extends Activity {
 				AccessTokenKeeper.clear(Main.this);
 				Toast.makeText(Main.this, getString(R.string.unauthed), Toast.LENGTH_SHORT).show();
 			}
+			break;
 		case R.id.menu_refresh:
 			refreshMusicList();
 			showMusicList();
@@ -263,7 +265,7 @@ public class Main extends Activity {
 		}
 
 	}
-
+//列表点击监听类
 	public class MusicListOnClickListener implements OnItemClickListener {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long id) {
@@ -345,13 +347,12 @@ public class Main extends Activity {
 					Intent.ACTION_MEDIA_SCANNER_STARTED);
 			filter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
 			filter.addDataScheme("file");
-			receiver = new Receiver();
+			Receiver receiver = new Receiver();
 			registerReceiver(receiver, filter);
 			sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
 					Uri.parse("file://"
 							+ Environment.getExternalStorageDirectory()
 									.getAbsolutePath())));
-			unregisterReceiver(receiver);
 		} catch (Exception e) {
 			setContentView(R.layout.empty);
 		}
@@ -360,10 +361,11 @@ public class Main extends Activity {
 	private void showAbout() { // 显示关于窗口
 		showDialog(R.layout.about);// 那么,这个没啥用,只是告诉系统一个标识,在onCreateDialog里面判断一下的
 	}
-	
+//	查询+分享线程
 	class QueryAndShareMusicInfo extends Thread{
 		private int id,means;
 		public void run(){
+//			获取信息生成字符串
              String content = getString(R.string.music_title) + "：【"
 							+ musics[id].getTitle() + "】"
 							+ getString(R.string.music_artist) + "：【"
@@ -376,8 +378,9 @@ public class Main extends Activity {
 							+ getString(R.string.app_name) +" "
 							+ getString(R.string.about_download_info)
 							+ getString(R.string.url) + ")" ;
-             Log.e("Music_Share", "获取结束。");
+             Log.e("Music Share DEBUG", "获取结束。");
              switch(means){
+//             根据分享方式执行操作
              case OTHERS:
             	 Intent intent = new Intent(Intent.ACTION_SEND);
             	 intent.setType("text/plain");
@@ -394,7 +397,6 @@ public class Main extends Activity {
 		}
 		// 获取音乐地址
 		private String getMusicUrl(int position) {
-			
 			Log.v("Music Share DEBUG","方法 getMusicUrl被调用,歌曲编号为"+position);
 			String json = getJson(position);
 			String music_url = null;
@@ -472,39 +474,43 @@ public class Main extends Activity {
 						public void onClick(DialogInterface dialog, int which) {
 							String content = et.getText().toString();
 							if( calculateLength(content) > 140){//判断字数是否超过140
+								Log.v("Music Share DEBUG", "超出字数");
 								new AlertDialog.Builder(Main.this).setMessage(getString(R.string.too_long)).setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener(){				
 									@Override
 									public void onClick(DialogInterface dialog, int which) {			
 									}
-								});
+								}).show();
 							}
 							else 
-								if (Main.accessToken.isSessionValid()){//检测之前是否授权过
-									sendWeibo(content,cb.isChecked());
+								if (Main.accessToken == null || (Main.accessToken.isSessionValid() == false) ){//检测之前是否授权过
+									handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
+									weibo.authorize(Main.this, new AuthDialogListener());//授权
 							}else{
-								handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
-								weibo.authorize(Main.this, new AuthDialogListener());//授权
+								sendWeibo(content,cb.isChecked());
 						     }
 							
 						}
 					})
 				       .show();
-				Log.e("Music_Share","弹出对话框");
+				Log.e("Music Share DEBUG","弹出对话框");
 				break;
-			case SEND_SUCCEED:
+			case SEND_SUCCEED://发送成功
 				Toast.makeText(Main.this,R.string.send_succeed,Toast.LENGTH_SHORT).show();
 				break;
-			case NOT_AUTHORIZED_ERROR:
+			case NOT_AUTHORIZED_ERROR://尚未授权
 				Toast.makeText(Main.this,R.string.not_authorized_error,Toast.LENGTH_SHORT).show();
 				break;
-			case AUTH_ERROR:
+			case AUTH_ERROR://授权错误
 				Toast.makeText(Main.this,R.string.auth_error + (String)msg.obj, Toast.LENGTH_SHORT).show();
+				Log.e("Music Share DEBUG","错误"+(String)msg.obj);
 				break;
-			case SEND_ERROR:
+			case SEND_ERROR://发送错误
 				Toast.makeText(Main.this,R.string.send_error + (String) msg.obj,Toast.LENGTH_SHORT).show();
+				Log.e("Music Share DEBUG","错误"+(String)msg.obj);
 				break;
-			case AUTH_SUCCEED:
-				
+			case AUTH_SUCCEED://授权成功
+				Toast.makeText(Main.this,R.string.auth_succeed,Toast.LENGTH_SHORT).show();
+				break;
 			}
 		}
 	};
@@ -513,11 +519,12 @@ public class Main extends Activity {
 	    api = new StatusesAPI(Main.accessToken);
 	    api.update(content, null, null, requestListener);
 		if (willFollow == true){//判断是否要关注开发者
-			follow(HARRY_UID);
-			follow(XAVIER_UID);
-			follow(APP_UID);
+			follow(HARRY_UID);//关注Harry Chen
+			follow(XAVIER_UID);//关注Xavier Yao
+			follow(APP_UID);//关注官方微博
 		}
 		}
+//	关注某人
 	private void follow(int uid){
 		WeiboParameters params = new WeiboParameters();
 		params.add("access_token",Main.accessToken.getToken());
@@ -540,7 +547,9 @@ public class Main extends Activity {
 			});
 		}catch(Exception e){
 		}
+//		既然关注就悄悄地进行不报错了
 	}
+//	计算微博字数（我感觉没必要……反正超字数就会抛出WeiboException）
     private long calculateLength(CharSequence c) {  
         double len = 0;  
         for (int i = 0; i < c.length(); i++) {  
@@ -553,6 +562,7 @@ public class Main extends Activity {
         }  
         return Math.round(len);  
     }  
+//    微博授权监听器
 	class AuthDialogListener implements WeiboAuthListener {
 		Message m = handler.obtainMessage();
 		@Override
@@ -562,6 +572,7 @@ public class Main extends Activity {
 			Main.accessToken = new Oauth2AccessToken(token , expires_in);
 			AccessTokenKeeper.keepAccessToken(Main.this, accessToken);
 			handler.sendEmptyMessage(AUTH_SUCCEED);
+			Log.v("Music Share DEBUG","授权成功，\n AccessToken:"+ token);
 		}
 		@Override
 		public void onCancel() {
