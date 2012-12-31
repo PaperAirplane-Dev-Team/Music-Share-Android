@@ -66,7 +66,7 @@ public class Main extends Activity {
 	private boolean isPlaying=false;
 	private static String APP_KEY = "1006183120";
 	private static String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
-	public static Oauth2AccessToken accessToken;
+	public static Oauth2AccessToken accessToken  =null;
 	private Weibo weibo = Weibo.getInstance(APP_KEY , REDIRECT_URI);
 	private StatusesAPI api = null;
 	// ÒÑ¾«¼ò
@@ -118,12 +118,12 @@ public class Main extends Activity {
 			showAbout();
 			break;
 		case R.id.menu_unauth:
-			if (Main.accessToken.isSessionValid()){
+			if (Main.accessToken == null){
+				handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
+			}else{
 				Main.accessToken = null;
 				AccessTokenKeeper.clear(Main.this);
 				Toast.makeText(Main.this, getString(R.string.unauthed), Toast.LENGTH_SHORT).show();
-			}else{
-				handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
 			}
 		case R.id.menu_refresh:
 			refreshMusicList();
