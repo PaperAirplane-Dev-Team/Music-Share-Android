@@ -19,6 +19,7 @@
     <string name="choose_an_operation">选择一个操作</string>
     <string name="very_long">                                                                              </string>
     <string name="refresh_on_process">刷新播放列表中</string>
+    <string name="about_context">Paper Airplane Dev Team\n添乱1：@author @HarryChen-依旧初三15-\nhttp://weibo.com/yszzf\n添乱2：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2013.1.1\nVer0.8</string>
     <string name="menu_about">关于</string>
     <string name="about_contact">来人，捉虫！</string>
 	<string name="about_download_info">戳我下载：</string>
@@ -26,6 +27,7 @@
     <string name="error_internet">请检查您的网络连接</string>  
     <string name="querying">查询中………请稍候</string> 
     <string name="too_long">超出字数限制</string>
+    <string name="url">http://t.cn/zjTrOh5</string>
     <string name="send_succeed">分享成功</string>
     <string name="not_authorized_error">请先授权</string>
     <string name="send_error">分享失败，错误：</string>

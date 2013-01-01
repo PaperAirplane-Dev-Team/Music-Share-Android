@@ -1,6 +1,12 @@
 package com.paperairplane.music.share;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -25,10 +31,15 @@ import cn.jpush.android.api.JPushInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -68,6 +79,7 @@ public class Main extends Activity {
 	private static String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken  =null;
 	private Weibo weibo = Weibo.getInstance(APP_KEY , REDIRECT_URI);
+	private final static String ARTWORK_PATH = Environment.getExternalStorageDirectory() + "/muisc_share/";
 	private StatusesAPI api = null;
 	// 已精简
 	@Override
@@ -104,6 +116,7 @@ public class Main extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+
 
 	@Override
 	// 菜单判断
@@ -327,7 +340,7 @@ public class Main extends Activity {
 	private void shareMusic(int position,int means) {
 		QueryAndShareMusicInfo query=new QueryAndShareMusicInfo(position,means);
 		query.start();
-		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG).show();
 
 	}
 
@@ -372,12 +385,30 @@ public class Main extends Activity {
 							+ musics[id].getArtist() + "】"
 							+ getString(R.string.music_album) + "：【"
 							+ musics[id].getAlbum() + "】" 
-							+ getString(R.string.music_url) +"【"
+							+ getString(R.string.music_url) +"：【"
 							+ getMusicUrl(id) +"】(" 
 							+ getString(R.string.share_by) + "："
-							+ getString(R.string.app_name) +" "
-							+ getString(R.string.about_download_info)
-							+ getString(R.string.url) + ")" ;
+							+ getString(R.string.app_name) +"||"
+							+ getString(R.string.about_download_info) + ":"
+							+ getString(R.string.url) + " )" ;
+             String _artworkurl = getArtworkUrl(id);
+             String artworkurl = null;
+             ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext()  
+                     .getSystemService(Context.CONNECTIVITY_SERVICE);  
+             NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();  
+             boolean isWifi = activeNetInfo != null && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI;
+             if (_artworkurl != null && isWifi){
+            	 artworkurl = _artworkurl.replace("spic", "lpic");
+             }else artworkurl = _artworkurl;
+             String fileName = getArtwork(artworkurl,id);
+             Bundle bundle = new Bundle();
+             bundle.putString("content", content);
+             if (fileName != null){
+            	 String fileDir = ARTWORK_PATH + fileName;
+            	 bundle.putString("fileDir",fileDir);
+             }else{
+            	 bundle.putString("fileDir", null);
+             }
              Log.e("Music Share DEBUG", "获取结束。");
              switch(means){
 //             根据分享方式执行操作
@@ -389,7 +420,7 @@ public class Main extends Activity {
              	 startActivity(Intent.createChooser(intent, getString(R.string.how_to_share)));
             	 break;
              case WEIBO:
-                 Message m =handler.obtainMessage(SEND_WEIBO, content);
+                 Message m =handler.obtainMessage(SEND_WEIBO, bundle);
                  handler.sendMessage(m);
             	 break;
              }
@@ -420,7 +451,66 @@ public class Main extends Activity {
 		    }
 		    Log.v("Music Share DEBUG",music_url);
 			return music_url;
-		
+		}
+		private String getArtworkUrl(int position) {
+			Log.v("Music Share DEBUG","方法 getArtwork被调用,歌曲编号为"+position);
+			String json = getJson(position);
+			String artwork_url = null;
+		    if (json == null){
+				artwork_url = getString(R.string.no_music_url_found);
+				Log.v("Music Share DEBUG","方法 getArtwork获得空的json字符串");
+		    }else{
+			try {
+				JSONObject rootObject = new JSONObject(json);
+		        int count = rootObject.getInt("count");
+		        if(count == 1){
+					JSONArray contentArray = rootObject.getJSONArray("musics");
+					JSONObject item = contentArray.getJSONObject(0);
+					artwork_url = item.getString("image");
+		                 }else{                   
+		                artwork_url = null;
+		        }
+			} catch (JSONException e) {
+				artwork_url = null;
+			}
+		    }
+		    Log.v("Music Share DEBUG",artwork_url);
+			return artwork_url;
+		}
+		private String getArtwork(String artwork_url,int id){
+			try {
+				String fileName = musics[id].getTitle() + ".jpg"; 
+				Bitmap bitmap = BitmapFactory.decodeStream(getImageStream(artwork_url));
+				saveFile(bitmap,fileName);
+				Log.v("Music Share DEBUG", "获取专辑封面成功");
+				return fileName;
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.e("Music Share DEBUG","获取专辑封面失败"+ e.getMessage());
+				return null;
+			}
+		}
+		private void saveFile(Bitmap bitmap, String fileName) throws IOException{
+			File dirFile = new File(ARTWORK_PATH);
+			if(!dirFile.exists()){
+				dirFile.mkdir();
+			}
+			File artwork = new File(ARTWORK_PATH + fileName);
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(artwork));
+			bitmap.compress(Bitmap.CompressFormat.JPEG,80, bos);
+			bos.flush();
+			bos.close();
+
+		}
+		private InputStream getImageStream(String artwork_url) throws Exception {
+			URL url = new URL(artwork_url);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setConnectTimeout(5 * 1000);
+			conn.setRequestMethod("GET");
+			if(conn.getResponseCode() == HttpURLConnection.HTTP_OK){
+				return conn.getInputStream();
+			}
+			return null;
 		}
 		// 通过豆瓣API获取音乐信息
 		private String getJson(int position) {
@@ -466,7 +556,10 @@ public class Main extends Activity {
 				View sendweibo = LayoutInflater.from(getApplicationContext()).inflate(R.layout.sendweibo,null);
 				final EditText et = (EditText)sendweibo.getRootView().findViewById(R.id.et_content);
 				final CheckBox cb = (CheckBox)sendweibo.findViewById(R.id.cb_follow);
-				et.setText((String) msg.obj);
+				Bundle bundle = (Bundle)msg.obj;
+				String _content = bundle.getString("content");
+				final String fileDir = bundle.getString("fileDir");
+				et.setText(_content);
 				new AlertDialog.Builder(Main.this)
 				       .setView(sendweibo)
 				       .setPositiveButton(getString(R.string.share), new DialogInterface.OnClickListener() {						
@@ -486,7 +579,7 @@ public class Main extends Activity {
 									handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
 									weibo.authorize(Main.this, new AuthDialogListener());//授权
 							}else{
-								sendWeibo(content,cb.isChecked());
+								sendWeibo(content,fileDir,cb.isChecked());
 						     }
 							
 						}
@@ -515,13 +608,18 @@ public class Main extends Activity {
 		}
 	};
 	//发送微博
-	private void sendWeibo(String content,boolean willFollow){
-	    api = new StatusesAPI(Main.accessToken);
+	private void sendWeibo(String content,String fileDir, boolean willFollow){
+		api = new StatusesAPI(Main.accessToken);
+		if(fileDir == null){
 	    api.update(content, null, null, requestListener);
+		}else{
+		api.upload(content, fileDir, null, null, requestListener);
+		}
 		if (willFollow == true){//判断是否要关注开发者
 			follow(HARRY_UID);//关注Harry Chen
 			follow(XAVIER_UID);//关注Xavier Yao
 			follow(APP_UID);//关注官方微博
+		
 		}
 		}
 //	关注某人
