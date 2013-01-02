@@ -1,12 +1,6 @@
 package com.paperairplane.music.share;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -35,8 +29,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -45,7 +37,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-//import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,6 +51,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.paperairplane.music.share.Utilities;
 
 public class Main extends Activity {
 	// 存储音乐信息
@@ -76,6 +69,7 @@ public class Main extends Activity {
 	final private int WEIBO = 10, OTHERS = 11;
 	final private int HARRY_UID = 1689129907, XAVIER_UID = 2121014783,
 			APP_UID = 1153267341;
+	final private int MUSIC=0,ARTWORK=1;
 	private boolean isPlaying = false;
 	private static String APP_KEY = "1006183120";
 	private static String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
@@ -87,7 +81,7 @@ public class Main extends Activity {
 	private final static String DEBUG_TAG = "Music Share DEBUG";
 	private StatusesAPI api = null;
 
-	// 已精简
+	
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
@@ -140,13 +134,17 @@ public class Main extends Activity {
 			break;
 		case R.id.menu_unauth:
 			// 判断是否有已授权
-			if (Main.accessToken == null) {
-				handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
-			} else {
-				Main.accessToken = null;
-				AccessTokenKeeper.clear(Main.this);
-				Toast.makeText(Main.this, getString(R.string.unauthed),
-						Toast.LENGTH_SHORT).show();
+			try {
+				if (Main.accessToken == null) {
+					handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
+				} else {
+					Main.accessToken = null;
+					AccessTokenKeeper.clear(Main.this);
+					Toast.makeText(Main.this, getString(R.string.unauthed),
+							Toast.LENGTH_SHORT).show();
+				}
+			} catch (Exception e) {
+				Log.v(DEBUG_TAG,e.getMessage());
 			}
 			break;
 		case R.id.menu_refresh:
@@ -311,14 +309,15 @@ public class Main extends Activity {
 
 		Cursor cursor = getContentResolver().query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, media_info,
-				MediaStore.Audio.Media.SIZE + ">='" + 15000 + "'", null,
+				MediaStore.Audio.Media.DURATION + ">='" + 30000 + "'", null,
 				MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+		//过滤小于30s的音乐
 		cursor.moveToFirst();
 		musics = new MusicData[cursor.getCount()];
 		for (int i = 0; i < cursor.getCount(); i++) {
 			musics[i] = new MusicData();
 			musics[i].setTitle(cursor.getString(0));
-			musics[i].setDuration(convertDuration(cursor.getInt(1)));
+			musics[i].setDuration(Utilities.convertDuration(cursor.getInt(1)));
 			musics[i].setArtist(cursor.getString(2));
 			musics[i].setPath(cursor.getString(3));
 			musics[i].setAlbum(cursor.getString(4));
@@ -328,29 +327,6 @@ public class Main extends Activity {
 
 	}
 
-	// 转换该死的Duration
-	// 话说你能不能优化一下这个,看着头晕啊
-	// 挺好的，简洁易懂……
-	private String convertDuration(int _duration) {
-		String duration = "";
-		_duration /= 1000;
-		String hour = ((Integer) (_duration / 3600)).toString();
-		String min = ((Integer) (_duration / 60)).toString();
-		String sec = ((Integer) (_duration % 60)).toString();
-		if (hour.length() == 1)
-			hour = "0" + hour;
-		if (hour.equals("0") || hour.equals("00"))
-			hour = "";
-		if (min.length() == 1)
-			min = "0" + min;
-		if (sec.length() == 1)
-			sec = "0" + sec;
-		if (hour.length() != 0)
-			duration = hour + ":" + min + ":" + sec;
-		if (hour.length() == 0)
-			duration = min + ":" + sec;
-		return duration;
-	}
 
 	// 分享音乐
 	private void shareMusic(int position, int means) {
@@ -399,18 +375,18 @@ public class Main extends Activity {
 
 		public void run() {
 			// 获取信息生成字符串
+			String urls[]=getMusicAndArtworkUrl(id);
 			String content = getString(R.string.music_title) + "：【"
 					+ musics[id].getTitle() + "】"
 					+ getString(R.string.music_artist) + "：【"
 					+ musics[id].getArtist() + "】"
 					+ getString(R.string.music_album) + "：【"
 					+ musics[id].getAlbum() + "】"
-					+ getString(R.string.music_url) + "：【" + getMusicUrl(id)
+					+ getString(R.string.music_url) + "：【" + urls[MUSIC]
 					+ "】(" + getString(R.string.share_by) + "："
 					+ getString(R.string.app_name) + "||"
-					+ getString(R.string.about_download_info) + ":"
+					+ getString(R.string.about_download_info)
 					+ getString(R.string.url) + " )";
-			String _artworkurl = getArtworkUrl(id);
 			String artworkurl = null;
 			ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext()
 					.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -418,11 +394,16 @@ public class Main extends Activity {
 					.getActiveNetworkInfo();
 			boolean isWifi = activeNetInfo != null
 					&& activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI;
-			if (_artworkurl != null && isWifi) {
-				artworkurl = _artworkurl.replace("spic", "lpic");
-			} else
-				artworkurl = _artworkurl;
-			String fileName = getArtwork(artworkurl, id);
+			String fileName=null;
+			try {
+				if (isWifi) {
+					artworkurl = urls[ARTWORK].replace("spic", "lpic");
+				} else
+					artworkurl = urls[ARTWORK].replace("spic", "mpic");
+			} catch (Exception e) {
+				Log.v(DEBUG_TAG,"!");
+			}
+			fileName = Utilities.getArtwork(artworkurl, musics[id].getTitle(),ARTWORK_PATH);
 			Bundle bundle = new Bundle();
 			bundle.putString("content", content);
 			if (fileName != null) {
@@ -451,14 +432,14 @@ public class Main extends Activity {
 
 		}
 
-		// 获取音乐地址
-		private String getMusicUrl(int position) {
-			Log.v(DEBUG_TAG, "方法 getMusicUrl被调用,歌曲编号为" + position);
+		// 获取音乐地址以及专辑封面地址,方法合并
+		private String[] getMusicAndArtworkUrl(int position) {
+			Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl被调用,歌曲编号为" + position);
 			String json = getJson(position);
-			String music_url = null;
+			String urls[]=new String[2];
 			if (json == null) {
-				music_url = getString(R.string.no_music_url_found);
-				Log.v(DEBUG_TAG, "方法 getMusicUrl获得空的json字符串");
+				urls[MUSIC] = getString(R.string.no_music_url_found);
+				Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl获得空的json字符串");
 			} else {
 				try {
 					JSONObject rootObject = new JSONObject(json);
@@ -467,85 +448,24 @@ public class Main extends Activity {
 						JSONArray contentArray = rootObject
 								.getJSONArray("musics");
 						JSONObject item = contentArray.getJSONObject(0);
-						music_url = item.getString("mobile_link");
+						urls[MUSIC] = item.getString("mobile_link");
+						urls[ARTWORK] = item.getString("image");
 					} else {
-						music_url = getString(R.string.no_music_url_found);
+						urls[MUSIC] = getString(R.string.no_music_url_found);
+						urls[ARTWORK] = null;
 					}
 				} catch (JSONException e) {
-					music_url = getString(R.string.no_music_url_found);
+					urls[MUSIC] = getString(R.string.no_music_url_found);
+					urls[ARTWORK] = null;
 				}
 			}
-			Log.v(DEBUG_TAG, music_url);
-			return music_url;
+			Log.v(DEBUG_TAG, urls[MUSIC]);
+			Log.v(DEBUG_TAG, "NO Artwork");
+			return urls;
 		}
 
-		private String getArtworkUrl(int position) {
-			Log.v(DEBUG_TAG, "方法 getArtwork被调用,歌曲编号为" + position);
-			String json = getJson(position);
-			String artwork_url = null;
-			if (json == null) {
-				artwork_url = getString(R.string.no_music_url_found);
-				Log.v(DEBUG_TAG, "方法 getArtwork获得空的json字符串");
-			} else {
-				try {
-					JSONObject rootObject = new JSONObject(json);
-					int count = rootObject.getInt("count");
-					if (count == 1) {
-						JSONArray contentArray = rootObject
-								.getJSONArray("musics");
-						JSONObject item = contentArray.getJSONObject(0);
-						artwork_url = item.getString("image");
-					} else {
-						artwork_url = null;
-					}
-				} catch (JSONException e) {
-					artwork_url = null;
-				}
-			}
-			Log.v(DEBUG_TAG, artwork_url);
-			return artwork_url;
-		}
 
-		private String getArtwork(String artwork_url, int id) {
-			try {
-				String fileName = musics[id].getTitle() + ".jpg";
-				Bitmap bitmap = BitmapFactory
-						.decodeStream(getImageStream(artwork_url));
-				saveFile(bitmap, fileName);
-				Log.v(DEBUG_TAG, "获取专辑封面成功");
-				return fileName;
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.e(DEBUG_TAG, "获取专辑封面失败" + e.getMessage());
-				return null;
-			}
-		}
 
-		private void saveFile(Bitmap bitmap, String fileName)
-				throws IOException {
-			File dirFile = new File(ARTWORK_PATH);
-			if (!dirFile.exists()) {
-				dirFile.mkdir();
-			}
-			File artwork = new File(ARTWORK_PATH + fileName);
-			BufferedOutputStream bos = new BufferedOutputStream(
-					new FileOutputStream(artwork));
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
-			bos.flush();
-			bos.close();
-
-		}
-
-		private InputStream getImageStream(String artwork_url) throws Exception {
-			URL url = new URL(artwork_url);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setConnectTimeout(5 * 1000);
-			conn.setRequestMethod("GET");
-			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				return conn.getInputStream();
-			}
-			return null;
-		}
 
 		// 通过豆瓣API获取音乐信息
 		private String getJson(int position) {
@@ -613,7 +533,7 @@ public class Main extends Activity {
 											int which) {
 										String content = et.getText()
 												.toString();
-										if (calculateLength(content) > 140) {// 判断字数是否超过140
+										if (Utilities.calculateLength(content) > 140) {// 判断字数是否超过140
 											Log.v(DEBUG_TAG, "超出字数");
 											new AlertDialog.Builder(Main.this)
 													.setMessage(
@@ -713,19 +633,6 @@ public class Main extends Activity {
 		// 既然关注就悄悄地进行不报错了
 	}
 
-	// 计算微博字数（我感觉没必要……反正超字数就会抛出WeiboException）
-	private long calculateLength(CharSequence c) {
-		double len = 0;
-		for (int i = 0; i < c.length(); i++) {
-			int tmp = (int) c.charAt(i);
-			if (tmp > 0 && tmp < 127) {
-				len += 0.5;
-			} else {
-				len++;
-			}
-		}
-		return Math.round(len);
-	}
 
 	// 微博授权监听器
 	class AuthDialogListener implements WeiboAuthListener {
@@ -792,7 +699,7 @@ public class Main extends Activity {
 }
 /**
  * Paper Airplane Dev Team
- * 添乱1：@author @HarryChen-依旧初三15- http://weibo.com/yszzf
+ * 添乱1：@author @HarryChen-SIGKILL- http://weibo.com/yszzf
  * 添乱2：@author @姚沛然 http://weibo.com/xavieryao 
  * 美工：@author @七只小鸡1997
  * http://weibo.com/u/1579617160 2013.1.2

@@ -2,28 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" 
-    android:baselineAligned="false">
- 
-        <TextView
-            android:id="@+id/musicname"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/to_show_title"
-            android:textColor="#ff7d7d7d"
-            android:textSize="18dp"
-            android:textStyle="bold" />
+    android:baselineAligned="false"
+    android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/singer"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="5dip"
-            android:text="@string/to_show_artist"
-            android:textColor="#ff7d7d7d"
-            android:textSize="13dp" />
-    
+    <TextView
+        android:id="@+id/musicname"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="@string/to_show_title"
+        android:textColor="#ff7d7d7d"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/singer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="5dip"
+        android:text="@string/to_show_artist"
+        android:textColor="#ff7d7d7d"
+        android:textSize="13dp" />
 
 </LinearLayout>
