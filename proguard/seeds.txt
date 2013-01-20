@@ -1,0 +1,1736 @@
+android.support.v4.app.BackStackState
+android.support.v4.app.BackStackState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.Fragment$SavedState
+android.support.v4.app.Fragment$SavedState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.FragmentManagerState
+android.support.v4.app.FragmentManagerState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.FragmentState
+android.support.v4.app.FragmentState: android.os.Parcelable$Creator CREATOR
+android.support.v4.content.ModernAsyncTask$Status: android.support.v4.content.ModernAsyncTask$Status[] values()
+android.support.v4.content.ModernAsyncTask$Status: android.support.v4.content.ModernAsyncTask$Status valueOf(java.lang.String)
+android.support.v4.view.PagerTabStrip: void setTabIndicatorColor(int)
+android.support.v4.view.PagerTabStrip: void setTabIndicatorColorResource(int)
+android.support.v4.view.PagerTabStrip: int getTabIndicatorColor()
+android.support.v4.view.PagerTabStrip: void setTextSpacing(int)
+android.support.v4.view.PagerTabStrip: void setBackgroundDrawable(android.graphics.drawable.Drawable)
+android.support.v4.view.PagerTabStrip: void setBackgroundColor(int)
+android.support.v4.view.PagerTabStrip: void setBackgroundResource(int)
+android.support.v4.view.PagerTabStrip: void setDrawFullUnderline(boolean)
+android.support.v4.view.PagerTabStrip: boolean getDrawFullUnderline()
+android.support.v4.view.PagerTabStrip: int getMinHeight()
+android.support.v4.view.PagerTitleStrip: void setSingleLineAllCaps(android.widget.TextView)
+android.support.v4.view.PagerTitleStrip: void setTextSpacing(int)
+android.support.v4.view.PagerTitleStrip: int getTextSpacing()
+android.support.v4.view.PagerTitleStrip: void setNonPrimaryAlpha(float)
+android.support.v4.view.PagerTitleStrip: void setTextColor(int)
+android.support.v4.view.PagerTitleStrip: void setGravity(int)
+android.support.v4.view.PagerTitleStrip: int getMinHeight()
+android.support.v4.view.ViewPager: void setScrollState(int)
+android.support.v4.view.ViewPager: void setAdapter(android.support.v4.view.PagerAdapter)
+android.support.v4.view.ViewPager: android.support.v4.view.PagerAdapter getAdapter()
+android.support.v4.view.ViewPager: void setOnAdapterChangeListener(android.support.v4.view.ViewPager$OnAdapterChangeListener)
+android.support.v4.view.ViewPager: void setCurrentItem(int)
+android.support.v4.view.ViewPager: int getCurrentItem()
+android.support.v4.view.ViewPager: void setOnPageChangeListener(android.support.v4.view.ViewPager$OnPageChangeListener)
+android.support.v4.view.ViewPager: int getOffscreenPageLimit()
+android.support.v4.view.ViewPager: void setOffscreenPageLimit(int)
+android.support.v4.view.ViewPager: void setPageMargin(int)
+android.support.v4.view.ViewPager: int getPageMargin()
+android.support.v4.view.ViewPager: void setPageMarginDrawable(android.graphics.drawable.Drawable)
+android.support.v4.view.ViewPager: void setPageMarginDrawable(int)
+android.support.v4.view.ViewPager: void setScrollingCacheEnabled(boolean)
+android.support.v4.view.ViewPager$SavedState
+android.support.v4.view.ViewPager$SavedState: android.os.Parcelable$Creator CREATOR
+cn.jpush.android.a
+cn.jpush.android.a: java.util.concurrent.atomic.AtomicBoolean i
+cn.jpush.android.a: int a
+cn.jpush.android.a: java.lang.String b
+cn.jpush.android.a: java.lang.String c
+cn.jpush.android.a: android.content.Context d
+cn.jpush.android.a: java.lang.String e
+cn.jpush.android.a: java.lang.String f
+cn.jpush.android.a: int g
+cn.jpush.android.a: java.lang.String h
+cn.jpush.android.a: java.lang.String[] z
+cn.jpush.android.a: boolean a(android.content.Context)
+cn.jpush.android.a: android.content.pm.ApplicationInfo b(android.content.Context)
+cn.jpush.android.a: void <clinit>()
+cn.jpush.android.a.a
+cn.jpush.android.a.a: org.json.JSONObject a
+cn.jpush.android.a.a: a()
+cn.jpush.android.a.a: boolean a(android.content.Context,org.json.JSONObject)
+cn.jpush.android.a.a: void a(android.content.Context)
+cn.jpush.android.a.aa
+cn.jpush.android.a.aa: int a
+cn.jpush.android.a.aa: java.lang.String R
+cn.jpush.android.a.aa: java.lang.String S
+cn.jpush.android.a.aa: java.lang.String T
+cn.jpush.android.a.aa: java.lang.String U
+cn.jpush.android.a.aa: java.lang.String V
+cn.jpush.android.a.aa: java.lang.String[] W
+cn.jpush.android.a.aa: aa()
+cn.jpush.android.a.aa: boolean a(android.content.Context,org.json.JSONObject)
+cn.jpush.android.a.aa: void a(android.content.Context)
+cn.jpush.android.a.aa: void <clinit>()
+cn.jpush.android.a.b
+cn.jpush.android.a.b: java.lang.String[] a
+cn.jpush.android.a.b: java.lang.String[] b
+cn.jpush.android.a.b: cn.jpush.android.a.b c
+cn.jpush.android.a.b: java.lang.String[] z
+cn.jpush.android.a.b: b(android.content.Context)
+cn.jpush.android.a.b: void onCreate(android.database.sqlite.SQLiteDatabase)
+cn.jpush.android.a.b: void onUpgrade(android.database.sqlite.SQLiteDatabase,int,int)
+cn.jpush.android.a.b: cn.jpush.android.a.b a(android.content.Context)
+cn.jpush.android.a.b: void a(android.content.Context,java.lang.String,java.lang.String,java.lang.String)
+cn.jpush.android.a.b: java.lang.String a(android.content.Context,java.lang.String)
+cn.jpush.android.a.b: void <clinit>()
+cn.jpush.android.a.c
+cn.jpush.android.a.c: int b
+cn.jpush.android.a.c: java.lang.String c
+cn.jpush.android.a.c: boolean d
+cn.jpush.android.a.c: int e
+cn.jpush.android.a.c: boolean f
+cn.jpush.android.a.c: java.lang.String g
+cn.jpush.android.a.c: java.lang.String h
+cn.jpush.android.a.c: java.lang.String i
+cn.jpush.android.a.c: java.lang.String j
+cn.jpush.android.a.c: java.lang.String k
+cn.jpush.android.a.c: java.lang.String l
+cn.jpush.android.a.c: int m
+cn.jpush.android.a.c: int n
+cn.jpush.android.a.c: boolean o
+cn.jpush.android.a.c: java.lang.String p
+cn.jpush.android.a.c: boolean q
+cn.jpush.android.a.c: java.lang.String r
+cn.jpush.android.a.c: boolean s
+cn.jpush.android.a.c: java.util.List t
+cn.jpush.android.a.c: boolean u
+cn.jpush.android.a.c: int v
+cn.jpush.android.a.c: java.lang.String w
+cn.jpush.android.a.c: int x
+cn.jpush.android.a.c: java.lang.String y
+cn.jpush.android.a.c: java.lang.String z
+cn.jpush.android.a.c: java.util.List A
+cn.jpush.android.a.c: int B
+cn.jpush.android.a.c: int C
+cn.jpush.android.a.c: int D
+cn.jpush.android.a.c: java.lang.String E
+cn.jpush.android.a.c: java.lang.String F
+cn.jpush.android.a.c: int G
+cn.jpush.android.a.c: int H
+cn.jpush.android.a.c: int I
+cn.jpush.android.a.c: boolean J
+cn.jpush.android.a.c: boolean K
+cn.jpush.android.a.c: boolean L
+cn.jpush.android.a.c: boolean M
+cn.jpush.android.a.c: int N
+cn.jpush.android.a.c: java.lang.String O
+cn.jpush.android.a.c: java.util.ArrayList P
+cn.jpush.android.a.c: java.lang.String Q
+cn.jpush.android.a.c: java.lang.String[] R
+cn.jpush.android.a.c: c()
+cn.jpush.android.a.c: boolean a()
+cn.jpush.android.a.c: boolean b()
+cn.jpush.android.a.c: boolean c()
+cn.jpush.android.a.c: java.lang.String d()
+cn.jpush.android.a.c: java.lang.String e()
+cn.jpush.android.a.c: boolean b(android.content.Context,org.json.JSONObject)
+cn.jpush.android.a.c: boolean a(android.content.Context,org.json.JSONObject)
+cn.jpush.android.a.c: void a(android.content.Context)
+cn.jpush.android.a.c: cn.jpush.android.a.c a(android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.a.c: boolean a(java.util.ArrayList,android.content.Context,java.lang.String,java.lang.String)
+cn.jpush.android.a.c: java.lang.String a(java.lang.String,java.lang.String,java.lang.String,android.content.Context)
+cn.jpush.android.a.c: java.lang.String f()
+cn.jpush.android.a.c: void b(android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.a.c: void <clinit>()
+cn.jpush.android.a.d
+cn.jpush.android.a.d: android.widget.LinearLayout c
+cn.jpush.android.a.d: android.widget.LinearLayout d
+cn.jpush.android.a.d: android.widget.LinearLayout e
+cn.jpush.android.a.d: android.widget.LinearLayout f
+cn.jpush.android.a.d: android.widget.LinearLayout g
+cn.jpush.android.a.d: android.widget.LinearLayout h
+cn.jpush.android.a.d: android.widget.ImageView i
+cn.jpush.android.a.d: android.widget.TextView j
+cn.jpush.android.a.d: android.widget.ScrollView k
+cn.jpush.android.a.d: android.widget.TextView l
+cn.jpush.android.a.d: android.widget.TextView m
+cn.jpush.android.a.d: android.widget.TextView n
+cn.jpush.android.a.d: android.widget.TextView o
+cn.jpush.android.a.d: android.widget.TextView p
+cn.jpush.android.a.d: android.widget.TextView q
+cn.jpush.android.a.d: android.widget.ImageView r
+cn.jpush.android.a.d: android.widget.Button s
+cn.jpush.android.a.d: android.widget.Button t
+cn.jpush.android.a.d: android.content.Context u
+cn.jpush.android.a.d: android.graphics.Bitmap v
+cn.jpush.android.a.d: android.graphics.Bitmap w
+cn.jpush.android.a.d: int x
+cn.jpush.android.a.d: int y
+cn.jpush.android.a.d: float z
+cn.jpush.android.a.d: int[][] a
+cn.jpush.android.a.d: android.webkit.WebView A
+cn.jpush.android.a.d: cn.jpush.android.a.c B
+cn.jpush.android.a.d: android.graphics.Bitmap C
+cn.jpush.android.a.d: android.graphics.Bitmap D
+cn.jpush.android.a.d: android.os.Handler b
+cn.jpush.android.a.d: java.lang.String[] E
+cn.jpush.android.a.d: d(android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.a.d: void a(android.widget.LinearLayout)
+cn.jpush.android.a.d: void onLayout(boolean,int,int,int,int)
+cn.jpush.android.a.d: void onMeasure(int,int)
+cn.jpush.android.a.d: boolean a(cn.jpush.android.a.j)
+cn.jpush.android.a.d: void a(java.lang.String)
+cn.jpush.android.a.d: void b(java.lang.String)
+cn.jpush.android.a.d: void c(java.lang.String)
+cn.jpush.android.a.d: void d(java.lang.String)
+cn.jpush.android.a.d: void e(java.lang.String)
+cn.jpush.android.a.d: boolean b(cn.jpush.android.a.j)
+cn.jpush.android.a.d: void a(boolean)
+cn.jpush.android.a.d: void a(java.lang.String,boolean,boolean)
+cn.jpush.android.a.d: void a()
+cn.jpush.android.a.d: void a(android.view.View$OnClickListener)
+cn.jpush.android.a.d: void b(android.view.View$OnClickListener)
+cn.jpush.android.a.d: void a(java.lang.String,int)
+cn.jpush.android.a.d: android.graphics.Bitmap a(cn.jpush.android.a.d,android.graphics.Bitmap)
+cn.jpush.android.a.d: android.graphics.Bitmap b(cn.jpush.android.a.d,android.graphics.Bitmap)
+cn.jpush.android.a.d: android.widget.ImageView a(cn.jpush.android.a.d)
+cn.jpush.android.a.d: android.graphics.Bitmap b(cn.jpush.android.a.d)
+cn.jpush.android.a.d: android.widget.ImageView c(cn.jpush.android.a.d)
+cn.jpush.android.a.d: android.graphics.Bitmap d(cn.jpush.android.a.d)
+cn.jpush.android.a.d: void <clinit>()
+cn.jpush.android.a.e
+cn.jpush.android.a.e: java.lang.String a
+cn.jpush.android.a.e: int b
+cn.jpush.android.a.e: cn.jpush.android.a.d c
+cn.jpush.android.a.e: e(cn.jpush.android.a.d,java.lang.String,int)
+cn.jpush.android.a.e: void run()
+cn.jpush.android.a.f
+cn.jpush.android.a.f: cn.jpush.android.a.d a
+cn.jpush.android.a.f: f(cn.jpush.android.a.d)
+cn.jpush.android.a.f: void handleMessage(android.os.Message)
+cn.jpush.android.a.g
+cn.jpush.android.a.g: java.lang.String a
+cn.jpush.android.a.g: java.lang.String R
+cn.jpush.android.a.g: boolean S
+cn.jpush.android.a.g: boolean T
+cn.jpush.android.a.g: int U
+cn.jpush.android.a.g: boolean V
+cn.jpush.android.a.g: int W
+cn.jpush.android.a.g: java.lang.String X
+cn.jpush.android.a.g: cn.jpush.android.a.j Y
+cn.jpush.android.a.g: java.lang.String Z
+cn.jpush.android.a.g: boolean aa
+cn.jpush.android.a.g: boolean ab
+cn.jpush.android.a.g: java.lang.String ac
+cn.jpush.android.a.g: boolean ad
+cn.jpush.android.a.g: java.lang.String[] bb
+cn.jpush.android.a.g: g()
+cn.jpush.android.a.g: boolean a(android.content.Context,org.json.JSONObject)
+cn.jpush.android.a.g: void a(android.content.Context)
+cn.jpush.android.a.g: void a(cn.jpush.android.a.g,cn.jpush.android.a.g,android.content.Context)
+cn.jpush.android.a.g: void <clinit>()
+cn.jpush.android.a.h
+cn.jpush.android.a.h: cn.jpush.android.a.g a
+cn.jpush.android.a.h: android.content.Context b
+cn.jpush.android.a.h: int c
+cn.jpush.android.a.h: cn.jpush.android.a.g d
+cn.jpush.android.a.h: java.lang.String z
+cn.jpush.android.a.h: h(cn.jpush.android.a.g,cn.jpush.android.a.g,android.content.Context,int)
+cn.jpush.android.a.h: void run()
+cn.jpush.android.a.h: void <clinit>()
+cn.jpush.android.a.i
+cn.jpush.android.a.i: android.content.Context a
+cn.jpush.android.a.i: int b
+cn.jpush.android.a.i: cn.jpush.android.a.g c
+cn.jpush.android.a.i: cn.jpush.android.a.g d
+cn.jpush.android.a.i: java.lang.String[] z
+cn.jpush.android.a.i: i(cn.jpush.android.a.g,android.content.Context,int,cn.jpush.android.a.g)
+cn.jpush.android.a.i: void run()
+cn.jpush.android.a.i: void <clinit>()
+cn.jpush.android.a.j
+cn.jpush.android.a.j: java.lang.String a
+cn.jpush.android.a.j: java.lang.String b
+cn.jpush.android.a.j: java.lang.String c
+cn.jpush.android.a.j: java.lang.String d
+cn.jpush.android.a.j: boolean e
+cn.jpush.android.a.j: java.lang.String f
+cn.jpush.android.a.j: java.lang.String g
+cn.jpush.android.a.j: java.lang.String h
+cn.jpush.android.a.j: boolean i
+cn.jpush.android.a.j: java.lang.String j
+cn.jpush.android.a.j: java.util.ArrayList k
+cn.jpush.android.a.j: java.lang.String l
+cn.jpush.android.a.j: java.lang.String m
+cn.jpush.android.a.j: java.lang.String n
+cn.jpush.android.a.j: cn.jpush.android.a.g o
+cn.jpush.android.a.j: java.lang.String[] z
+cn.jpush.android.a.j: j(cn.jpush.android.a.g)
+cn.jpush.android.a.j: org.json.JSONObject a()
+cn.jpush.android.a.j: java.lang.String toString()
+cn.jpush.android.a.j: void <clinit>()
+cn.jpush.android.a.k
+cn.jpush.android.a.k: java.lang.String[] z
+cn.jpush.android.a.k: cn.jpush.android.a.a a(android.content.Context,java.lang.String,java.lang.String,java.lang.String)
+cn.jpush.android.a.k: void a(android.content.Context,cn.jpush.android.a.a)
+cn.jpush.android.a.k: void a(android.content.Context,java.lang.String)
+cn.jpush.android.a.k: org.json.JSONObject a(android.content.Context,java.lang.String,java.lang.String)
+cn.jpush.android.a.k: org.json.JSONObject a(android.content.Context,java.lang.String,org.json.JSONObject,java.lang.String)
+cn.jpush.android.a.k: boolean a(java.lang.String)
+cn.jpush.android.a.k: void b(android.content.Context,java.lang.String,java.lang.String)
+cn.jpush.android.a.k: org.json.JSONObject a(org.json.JSONObject)
+cn.jpush.android.a.k: boolean b(java.lang.String)
+cn.jpush.android.a.k: boolean a(boolean,int,android.content.Context)
+cn.jpush.android.a.k: void <clinit>()
+cn.jpush.android.a.l
+cn.jpush.android.a.l: java.lang.String a
+cn.jpush.android.a.l: android.content.Context b
+cn.jpush.android.a.l: java.lang.String c
+cn.jpush.android.a.l: l(java.lang.String,android.content.Context,java.lang.String)
+cn.jpush.android.a.l: void run()
+cn.jpush.android.a.m
+cn.jpush.android.a.m: cn.jpush.android.a.m a
+cn.jpush.android.a.m: java.lang.String[] z
+cn.jpush.android.a.m: m(android.content.Context)
+cn.jpush.android.a.m: void onCreate(android.database.sqlite.SQLiteDatabase)
+cn.jpush.android.a.m: void onUpgrade(android.database.sqlite.SQLiteDatabase,int,int)
+cn.jpush.android.a.m: cn.jpush.android.a.m c(android.content.Context)
+cn.jpush.android.a.m: boolean a(android.content.Context,java.lang.String,java.lang.String)
+cn.jpush.android.a.m: boolean a(android.content.Context,java.lang.String)
+cn.jpush.android.a.m: android.database.Cursor a(android.content.Context)
+cn.jpush.android.a.m: android.database.Cursor b(android.content.Context)
+cn.jpush.android.a.m: boolean a(android.content.Context,int)
+cn.jpush.android.a.m: boolean b(android.content.Context,int)
+cn.jpush.android.a.m: void <clinit>()
+cn.jpush.android.a.n
+cn.jpush.android.a.n: java.lang.String a
+cn.jpush.android.a.n: int R
+cn.jpush.android.a.n: boolean S
+cn.jpush.android.a.n: java.util.ArrayList T
+cn.jpush.android.a.n: java.lang.String U
+cn.jpush.android.a.n: java.lang.String V
+cn.jpush.android.a.n: java.lang.String W
+cn.jpush.android.a.n: java.lang.String[] X
+cn.jpush.android.a.n: n()
+cn.jpush.android.a.n: boolean a(android.content.Context,org.json.JSONObject)
+cn.jpush.android.a.n: void a(android.content.Context)
+cn.jpush.android.a.n: void <clinit>()
+cn.jpush.android.a.o
+cn.jpush.android.a.o: android.content.Context a
+cn.jpush.android.a.o: cn.jpush.android.a.n b
+cn.jpush.android.a.o: cn.jpush.android.a.n c
+cn.jpush.android.a.o: java.lang.String[] z
+cn.jpush.android.a.o: o(cn.jpush.android.a.n,android.content.Context,cn.jpush.android.a.n)
+cn.jpush.android.a.o: void run()
+cn.jpush.android.a.o: void <clinit>()
+cn.jpush.android.a.p
+cn.jpush.android.a.p: cn.jpush.android.a.y a
+cn.jpush.android.a.p: android.app.Dialog b
+cn.jpush.android.a.p: int c
+cn.jpush.android.a.p: int d
+cn.jpush.android.a.p: android.widget.Button e
+cn.jpush.android.a.p: android.widget.Button f
+cn.jpush.android.a.p: java.lang.String[] z
+cn.jpush.android.a.p: void a(cn.jpush.android.a.y)
+cn.jpush.android.a.p: p(android.content.Context,java.util.ArrayList,boolean,boolean)
+cn.jpush.android.a.p: int a(android.content.Context,float)
+cn.jpush.android.a.p: void a()
+cn.jpush.android.a.p: int a(cn.jpush.android.a.p)
+cn.jpush.android.a.p: int a(cn.jpush.android.a.p,int)
+cn.jpush.android.a.p: android.widget.Button b(cn.jpush.android.a.p)
+cn.jpush.android.a.p: android.widget.Button c(cn.jpush.android.a.p)
+cn.jpush.android.a.p: cn.jpush.android.a.y d(cn.jpush.android.a.p)
+cn.jpush.android.a.p: android.app.Dialog e(cn.jpush.android.a.p)
+cn.jpush.android.a.p: int f(cn.jpush.android.a.p)
+cn.jpush.android.a.p: void <clinit>()
+cn.jpush.android.a.q
+cn.jpush.android.a.q: cn.jpush.android.a.p a
+cn.jpush.android.a.q: q(cn.jpush.android.a.p)
+cn.jpush.android.a.q: void onItemSelected(android.widget.AdapterView,android.view.View,int,long)
+cn.jpush.android.a.q: void onNothingSelected(android.widget.AdapterView)
+cn.jpush.android.a.r
+cn.jpush.android.a.r: boolean a
+cn.jpush.android.a.r: cn.jpush.android.a.p b
+cn.jpush.android.a.r: r(cn.jpush.android.a.p,boolean)
+cn.jpush.android.a.r: void onItemClick(android.widget.AdapterView,android.view.View,int,long)
+cn.jpush.android.a.s
+cn.jpush.android.a.s: cn.jpush.android.a.p a
+cn.jpush.android.a.s: s(cn.jpush.android.a.p)
+cn.jpush.android.a.s: void onClick(android.view.View)
+cn.jpush.android.a.t
+cn.jpush.android.a.t: cn.jpush.android.a.p a
+cn.jpush.android.a.t: t(cn.jpush.android.a.p)
+cn.jpush.android.a.t: void onClick(android.view.View)
+cn.jpush.android.a.u
+cn.jpush.android.a.u: cn.jpush.android.a.x a
+cn.jpush.android.a.u: cn.jpush.android.a.p b
+cn.jpush.android.a.u: u(cn.jpush.android.a.p,cn.jpush.android.a.x)
+cn.jpush.android.a.u: void onClick(android.view.View)
+cn.jpush.android.a.v
+cn.jpush.android.a.v: cn.jpush.android.a.x a
+cn.jpush.android.a.v: cn.jpush.android.a.p b
+cn.jpush.android.a.v: v(cn.jpush.android.a.p,cn.jpush.android.a.x)
+cn.jpush.android.a.v: void onClick(android.view.View)
+cn.jpush.android.a.w
+cn.jpush.android.a.w: java.util.ArrayList b
+cn.jpush.android.a.w: android.content.Context c
+cn.jpush.android.a.w: cn.jpush.android.a.p a
+cn.jpush.android.a.w: w(cn.jpush.android.a.p,android.content.Context,java.util.ArrayList)
+cn.jpush.android.a.w: int getCount()
+cn.jpush.android.a.w: java.lang.Object getItem(int)
+cn.jpush.android.a.w: long getItemId(int)
+cn.jpush.android.a.w: android.view.View getView(int,android.view.View,android.view.ViewGroup)
+cn.jpush.android.a.x
+cn.jpush.android.a.x: cn.jpush.android.a.p a
+cn.jpush.android.a.x: x(cn.jpush.android.a.p,android.content.Context)
+cn.jpush.android.a.x: boolean onFling(android.view.MotionEvent,android.view.MotionEvent,float,float)
+cn.jpush.android.a.y
+cn.jpush.android.a.y: void a()
+cn.jpush.android.a.y: void b()
+cn.jpush.android.a.y: void a(android.content.DialogInterface,boolean)
+cn.jpush.android.a.z
+cn.jpush.android.a.z: java.lang.String[] bb
+cn.jpush.android.a.z: z()
+cn.jpush.android.a.z: boolean a(android.content.Context,org.json.JSONObject)
+cn.jpush.android.a.z: void a(android.content.Context)
+cn.jpush.android.a.z: void <clinit>()
+cn.jpush.android.api.BasicPushNotificationBuilder
+cn.jpush.android.api.BasicPushNotificationBuilder: int notificationDefaults
+cn.jpush.android.api.BasicPushNotificationBuilder: int notificationFlags
+cn.jpush.android.api.BasicPushNotificationBuilder: int statusBarDrawable
+cn.jpush.android.api.BasicPushNotificationBuilder: java.lang.String developerArg0
+cn.jpush.android.api.BasicPushNotificationBuilder: android.content.Context a
+cn.jpush.android.api.BasicPushNotificationBuilder: java.lang.String[] z
+cn.jpush.android.api.BasicPushNotificationBuilder: BasicPushNotificationBuilder(android.content.Context)
+cn.jpush.android.api.BasicPushNotificationBuilder: java.lang.String a()
+cn.jpush.android.api.BasicPushNotificationBuilder: void a(android.app.Notification)
+cn.jpush.android.api.BasicPushNotificationBuilder: java.lang.String toString()
+cn.jpush.android.api.BasicPushNotificationBuilder: java.lang.String b()
+cn.jpush.android.api.BasicPushNotificationBuilder: void a(java.lang.String[])
+cn.jpush.android.api.BasicPushNotificationBuilder: cn.jpush.android.api.PushNotificationBuilder a(java.lang.String)
+cn.jpush.android.api.BasicPushNotificationBuilder: void <clinit>()
+cn.jpush.android.api.CustomPushNotificationBuilder
+cn.jpush.android.api.CustomPushNotificationBuilder: int layout
+cn.jpush.android.api.CustomPushNotificationBuilder: int layoutIconId
+cn.jpush.android.api.CustomPushNotificationBuilder: int layoutTitleId
+cn.jpush.android.api.CustomPushNotificationBuilder: int layoutContentId
+cn.jpush.android.api.CustomPushNotificationBuilder: int layoutIconDrawable
+cn.jpush.android.api.CustomPushNotificationBuilder: java.lang.String[] z
+cn.jpush.android.api.CustomPushNotificationBuilder: CustomPushNotificationBuilder(android.content.Context)
+cn.jpush.android.api.CustomPushNotificationBuilder: CustomPushNotificationBuilder(android.content.Context,int,int,int,int)
+cn.jpush.android.api.CustomPushNotificationBuilder: android.widget.RemoteViews b(java.lang.String)
+cn.jpush.android.api.CustomPushNotificationBuilder: java.lang.String toString()
+cn.jpush.android.api.CustomPushNotificationBuilder: java.lang.String b()
+cn.jpush.android.api.CustomPushNotificationBuilder: void a(java.lang.String[])
+cn.jpush.android.api.CustomPushNotificationBuilder: void <clinit>()
+cn.jpush.android.api.DefaultPushNotificationBuilder
+cn.jpush.android.api.DefaultPushNotificationBuilder: java.lang.String b
+cn.jpush.android.api.DefaultPushNotificationBuilder: java.lang.String[] z
+cn.jpush.android.api.DefaultPushNotificationBuilder: DefaultPushNotificationBuilder()
+cn.jpush.android.api.DefaultPushNotificationBuilder: java.lang.String a()
+cn.jpush.android.api.DefaultPushNotificationBuilder: android.widget.RemoteViews b(java.lang.String)
+cn.jpush.android.api.DefaultPushNotificationBuilder: void a(android.app.Notification)
+cn.jpush.android.api.DefaultPushNotificationBuilder: android.app.Notification a(java.lang.String,java.util.Map)
+cn.jpush.android.api.DefaultPushNotificationBuilder: void <clinit>()
+cn.jpush.android.api.InstrumentedActivity
+cn.jpush.android.api.InstrumentedActivity: java.lang.String z
+cn.jpush.android.api.InstrumentedActivity: InstrumentedActivity()
+cn.jpush.android.api.InstrumentedActivity: void onStart()
+cn.jpush.android.api.InstrumentedActivity: void onStop()
+cn.jpush.android.api.InstrumentedActivity: void <clinit>()
+cn.jpush.android.api.InstrumentedListActivity
+cn.jpush.android.api.InstrumentedListActivity: java.lang.String z
+cn.jpush.android.api.InstrumentedListActivity: InstrumentedListActivity()
+cn.jpush.android.api.InstrumentedListActivity: void onStart()
+cn.jpush.android.api.InstrumentedListActivity: void onStop()
+cn.jpush.android.api.InstrumentedListActivity: void <clinit>()
+cn.jpush.android.api.JPushInterface
+cn.jpush.android.api.JPushInterface: java.lang.String ACTION_REGISTRATION_ID
+cn.jpush.android.api.JPushInterface: java.lang.String ACTION_UNREGISTER
+cn.jpush.android.api.JPushInterface: java.lang.String ACTION_STOPPUSH
+cn.jpush.android.api.JPushInterface: java.lang.String ACTION_RESTOREPUSH
+cn.jpush.android.api.JPushInterface: java.lang.String ACTION_MESSAGE_RECEIVED
+cn.jpush.android.api.JPushInterface: java.lang.String ACTION_NOTIFICATION_RECEIVED
+cn.jpush.android.api.JPushInterface: java.lang.String ACTION_NOTIFICATION_OPENED
+cn.jpush.android.api.JPushInterface: java.lang.String EXTRA_REGISTRATION_ID
+cn.jpush.android.api.JPushInterface: java.lang.String EXTRA_APP_KEY
+cn.jpush.android.api.JPushInterface: java.lang.String EXTRA_NOTIFICATION_DEVELOPER_ARG0
+cn.jpush.android.api.JPushInterface: java.lang.String EXTRA_NOTIFICATION_TITLE
+cn.jpush.android.api.JPushInterface: java.lang.String EXTRA_PUSH_ID
+cn.jpush.android.api.JPushInterface: java.lang.String EXTRA_ALERT
+cn.jpush.android.api.JPushInterface: java.lang.String EXTRA_MESSAGE
+cn.jpush.android.api.JPushInterface: java.lang.String EXTRA_CONTENT_TYPE
+cn.jpush.android.api.JPushInterface: java.lang.String EXTRA_TITLE
+cn.jpush.android.api.JPushInterface: java.lang.String EXTRA_EXTRA
+cn.jpush.android.api.JPushInterface: java.lang.Integer a
+cn.jpush.android.api.JPushInterface: java.util.concurrent.ConcurrentHashMap b
+cn.jpush.android.api.JPushInterface: int c
+cn.jpush.android.api.JPushInterface: boolean d
+cn.jpush.android.api.JPushInterface: java.lang.String[] z
+cn.jpush.android.api.JPushInterface: JPushInterface()
+cn.jpush.android.api.JPushInterface: void init(android.content.Context)
+cn.jpush.android.api.JPushInterface: void resumePush(android.content.Context)
+cn.jpush.android.api.JPushInterface: void stopPush(android.content.Context)
+cn.jpush.android.api.JPushInterface: void setDebugMode(boolean)
+cn.jpush.android.api.JPushInterface: void setDefaultPushNotificationBuilder(cn.jpush.android.api.BasicPushNotificationBuilder)
+cn.jpush.android.api.JPushInterface: void setPushTime(android.content.Context,java.util.Set,int,int)
+cn.jpush.android.api.JPushInterface: void setPushNotificationBuilder(java.lang.Integer,cn.jpush.android.api.BasicPushNotificationBuilder)
+cn.jpush.android.api.JPushInterface: cn.jpush.android.api.PushNotificationBuilder a(int)
+cn.jpush.android.api.JPushInterface: void activityStarted(android.app.Activity)
+cn.jpush.android.api.JPushInterface: void activityStopped(android.app.Activity)
+cn.jpush.android.api.JPushInterface: void setAliasAndTags(android.content.Context,java.lang.String,java.util.Set)
+cn.jpush.android.api.JPushInterface: void a(android.content.Context,boolean,java.lang.String)
+cn.jpush.android.api.JPushInterface: boolean a(java.util.Set,java.lang.String)
+cn.jpush.android.api.JPushInterface: java.lang.String a(java.util.Set)
+cn.jpush.android.api.JPushInterface: java.lang.String getUdid(android.content.Context)
+cn.jpush.android.api.JPushInterface: void setLatestNotifactionNumber(android.content.Context,int)
+cn.jpush.android.api.JPushInterface: int a()
+cn.jpush.android.api.JPushInterface: boolean a(boolean)
+cn.jpush.android.api.JPushInterface: void <clinit>()
+cn.jpush.android.api.PushNotificationBuilder
+cn.jpush.android.api.PushNotificationBuilder: android.app.Notification a(java.lang.String,java.util.Map)
+cn.jpush.android.api.PushNotificationBuilder: java.lang.String a()
+cn.jpush.android.api.a
+cn.jpush.android.api.a: android.app.Activity a
+cn.jpush.android.api.a: a(android.app.Activity)
+cn.jpush.android.api.a: void handleMessage(android.os.Message)
+cn.jpush.android.api.b
+cn.jpush.android.api.b: java.util.Queue a
+cn.jpush.android.api.b: java.lang.String[] z
+cn.jpush.android.api.b: void a(android.content.Context,int)
+cn.jpush.android.api.b: void a(android.content.Context,java.lang.String,int)
+cn.jpush.android.api.b: void a(android.content.Context,java.lang.String)
+cn.jpush.android.api.b: android.app.Notification a(android.content.Context,int,android.content.Intent,cn.jpush.android.a.c,boolean,boolean)
+cn.jpush.android.api.b: void a(android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.api.b: void b(android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.api.b: cn.jpush.android.a.c c(android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.api.b: cn.jpush.android.a.c d(android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.api.b: void a(android.content.Context,cn.jpush.android.a.c,boolean,boolean)
+cn.jpush.android.api.b: void a(android.content.Intent,java.util.Map)
+cn.jpush.android.api.b: int a(java.lang.String,int)
+cn.jpush.android.api.b: int a(int)
+cn.jpush.android.api.b: java.util.HashMap a(java.lang.String,java.lang.String[])
+cn.jpush.android.api.b: int b(int)
+cn.jpush.android.api.b: void <clinit>()
+cn.jpush.android.api.c
+cn.jpush.android.api.c: android.content.Context a
+cn.jpush.android.api.c: cn.jpush.android.a.c b
+cn.jpush.android.api.c: c(android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.api.c: void run()
+cn.jpush.android.api.d
+cn.jpush.android.api.d: cn.jpush.android.api.e a
+cn.jpush.android.api.d: int b
+cn.jpush.android.api.d: cn.jpush.android.a.c c
+cn.jpush.android.api.d: java.lang.String[] z
+cn.jpush.android.api.d: d(cn.jpush.android.api.e,int,cn.jpush.android.a.c)
+cn.jpush.android.api.d: void a(boolean,java.lang.String)
+cn.jpush.android.api.d: void <clinit>()
+cn.jpush.android.api.e
+cn.jpush.android.api.e: android.app.NotificationManager a
+cn.jpush.android.api.e: android.app.Notification b
+cn.jpush.android.api.e: java.lang.String[] z
+cn.jpush.android.api.e: e(android.os.Looper,android.app.Notification,android.app.NotificationManager)
+cn.jpush.android.api.e: void handleMessage(android.os.Message)
+cn.jpush.android.api.e: void <clinit>()
+cn.jpush.android.b
+cn.jpush.android.b: b()
+cn.jpush.android.b: b(java.lang.String)
+cn.jpush.android.b.a
+cn.jpush.android.b.a: int a
+cn.jpush.android.b.a: int b
+cn.jpush.android.b.a: int c
+cn.jpush.android.b.a: int d
+cn.jpush.android.b.a: java.lang.String e
+cn.jpush.android.b.a: double f
+cn.jpush.android.b.a: double g
+cn.jpush.android.b.a: java.lang.String z
+cn.jpush.android.b.a: int a()
+cn.jpush.android.b.a: void a(int)
+cn.jpush.android.b.a: int b()
+cn.jpush.android.b.a: void b(int)
+cn.jpush.android.b.a: int c()
+cn.jpush.android.b.a: void c(int)
+cn.jpush.android.b.a: int d()
+cn.jpush.android.b.a: void d(int)
+cn.jpush.android.b.a: java.lang.String e()
+cn.jpush.android.b.a: void a(java.lang.String)
+cn.jpush.android.b.a: a()
+cn.jpush.android.b.a: java.lang.String toString()
+cn.jpush.android.b.a: void <clinit>()
+cn.jpush.android.b.b
+cn.jpush.android.b.b: int a
+cn.jpush.android.b.b: int b
+cn.jpush.android.b.b: int c
+cn.jpush.android.b.b: boolean d
+cn.jpush.android.b.b: boolean e
+cn.jpush.android.b.b: int f
+cn.jpush.android.b.b: double g
+cn.jpush.android.b.b: android.telephony.PhoneStateListener h
+cn.jpush.android.b.b: double i
+cn.jpush.android.b.b: int j
+cn.jpush.android.b.b: int k
+cn.jpush.android.b.b: int l
+cn.jpush.android.b.b: int m
+cn.jpush.android.b.b: android.telephony.TelephonyManager n
+cn.jpush.android.b.b: boolean o
+cn.jpush.android.b.b: java.lang.String p
+cn.jpush.android.b.b: java.util.ArrayList q
+cn.jpush.android.b.b: java.lang.String[] z
+cn.jpush.android.b.b: java.util.ArrayList a()
+cn.jpush.android.b.b: b(android.content.Context)
+cn.jpush.android.b.b: int b()
+cn.jpush.android.b.b: java.lang.String c()
+cn.jpush.android.b.b: org.json.JSONArray d()
+cn.jpush.android.b.b: int i()
+cn.jpush.android.b.b: int[] e()
+cn.jpush.android.b.b: boolean f()
+cn.jpush.android.b.b: boolean g()
+cn.jpush.android.b.b: float h()
+cn.jpush.android.b.b: void j()
+cn.jpush.android.b.b: boolean a(cn.jpush.android.b.b,boolean)
+cn.jpush.android.b.b: int a(cn.jpush.android.b.b,int)
+cn.jpush.android.b.b: void <clinit>()
+cn.jpush.android.b.c
+cn.jpush.android.b.c: cn.jpush.android.b.b a
+cn.jpush.android.b.c: c(cn.jpush.android.b.b)
+cn.jpush.android.b.c: void onCellLocationChanged(android.telephony.CellLocation)
+cn.jpush.android.b.c: void onSignalStrengthChanged(int)
+cn.jpush.android.b.d
+cn.jpush.android.b.d: java.lang.String a
+cn.jpush.android.b.d: boolean e
+cn.jpush.android.b.d: int b
+cn.jpush.android.b.d: boolean c
+cn.jpush.android.b.d: boolean f
+cn.jpush.android.b.d: int g
+cn.jpush.android.b.d: int h
+cn.jpush.android.b.d: cn.jpush.android.b.b i
+cn.jpush.android.b.d: cn.jpush.android.b.i j
+cn.jpush.android.b.d: android.content.Context k
+cn.jpush.android.b.d: boolean d
+cn.jpush.android.b.d: int[] l
+cn.jpush.android.b.d: double m
+cn.jpush.android.b.d: double n
+cn.jpush.android.b.d: cn.jpush.android.b.g o
+cn.jpush.android.b.d: boolean p
+cn.jpush.android.b.d: android.content.BroadcastReceiver q
+cn.jpush.android.b.d: long r
+cn.jpush.android.b.d: int s
+cn.jpush.android.b.d: cn.jpush.android.b.h t
+cn.jpush.android.b.d: long u
+cn.jpush.android.b.d: boolean v
+cn.jpush.android.b.d: boolean w
+cn.jpush.android.b.d: cn.jpush.android.b.l x
+cn.jpush.android.b.d: int y
+cn.jpush.android.b.d: java.util.Date z
+cn.jpush.android.b.d: org.json.JSONArray A
+cn.jpush.android.b.d: boolean B
+cn.jpush.android.b.d: boolean C
+cn.jpush.android.b.d: java.lang.String D
+cn.jpush.android.b.d: org.json.JSONArray E
+cn.jpush.android.b.d: java.lang.String F
+cn.jpush.android.b.d: java.lang.String G
+cn.jpush.android.b.d: java.lang.String H
+cn.jpush.android.b.d: java.lang.String I
+cn.jpush.android.b.d: java.lang.String[] J
+cn.jpush.android.b.d: boolean a()
+cn.jpush.android.b.d: java.lang.String b()
+cn.jpush.android.b.d: java.lang.String c()
+cn.jpush.android.b.d: org.json.JSONArray d()
+cn.jpush.android.b.d: void a(org.json.JSONArray)
+cn.jpush.android.b.d: org.json.JSONArray e()
+cn.jpush.android.b.d: void b(org.json.JSONArray)
+cn.jpush.android.b.d: java.lang.String f()
+cn.jpush.android.b.d: void a(java.lang.String)
+cn.jpush.android.b.d: java.lang.String g()
+cn.jpush.android.b.d: java.lang.String h()
+cn.jpush.android.b.d: void b(java.lang.String)
+cn.jpush.android.b.d: d(android.content.Context)
+cn.jpush.android.b.d: d(android.content.Context,java.lang.String)
+cn.jpush.android.b.d: d(android.content.Context,java.lang.String,boolean)
+cn.jpush.android.b.d: d(android.content.Context,java.lang.String,boolean,boolean)
+cn.jpush.android.b.d: void a(java.lang.Object)
+cn.jpush.android.b.d: void i()
+cn.jpush.android.b.d: void j()
+cn.jpush.android.b.d: void n()
+cn.jpush.android.b.d: void o()
+cn.jpush.android.b.d: void k()
+cn.jpush.android.b.d: boolean a(android.content.Context)
+cn.jpush.android.b.d: void l()
+cn.jpush.android.b.d: boolean m()
+cn.jpush.android.b.d: java.lang.String a(org.json.JSONArray[],java.lang.String)
+cn.jpush.android.b.d: java.lang.String p()
+cn.jpush.android.b.d: java.lang.String a(android.location.Address)
+cn.jpush.android.b.d: java.lang.String a(java.util.ArrayList)
+cn.jpush.android.b.d: android.content.Context a(cn.jpush.android.b.d)
+cn.jpush.android.b.d: cn.jpush.android.b.b b(cn.jpush.android.b.d)
+cn.jpush.android.b.d: java.lang.String a(cn.jpush.android.b.d,java.lang.String)
+cn.jpush.android.b.d: java.lang.String a(cn.jpush.android.b.d,java.util.ArrayList)
+cn.jpush.android.b.d: java.lang.String c(cn.jpush.android.b.d)
+cn.jpush.android.b.d: cn.jpush.android.b.g d(cn.jpush.android.b.d)
+cn.jpush.android.b.d: int e(cn.jpush.android.b.d)
+cn.jpush.android.b.d: int a(cn.jpush.android.b.d,int)
+cn.jpush.android.b.d: cn.jpush.android.b.h f(cn.jpush.android.b.d)
+cn.jpush.android.b.d: cn.jpush.android.b.h a(cn.jpush.android.b.d,cn.jpush.android.b.h)
+cn.jpush.android.b.d: cn.jpush.android.b.l g(cn.jpush.android.b.d)
+cn.jpush.android.b.d: void a(cn.jpush.android.b.d,java.lang.Object)
+cn.jpush.android.b.d: boolean h(cn.jpush.android.b.d)
+cn.jpush.android.b.d: boolean i(cn.jpush.android.b.d)
+cn.jpush.android.b.d: int j(cn.jpush.android.b.d)
+cn.jpush.android.b.d: int[] k(cn.jpush.android.b.d)
+cn.jpush.android.b.d: cn.jpush.android.b.i l(cn.jpush.android.b.d)
+cn.jpush.android.b.d: boolean m(cn.jpush.android.b.d)
+cn.jpush.android.b.d: long a(cn.jpush.android.b.d,long)
+cn.jpush.android.b.d: double a(cn.jpush.android.b.d,double)
+cn.jpush.android.b.d: double b(cn.jpush.android.b.d,double)
+cn.jpush.android.b.d: int b(cn.jpush.android.b.d,int)
+cn.jpush.android.b.d: int[] a(cn.jpush.android.b.d,int[])
+cn.jpush.android.b.d: int c(cn.jpush.android.b.d,int)
+cn.jpush.android.b.d: java.lang.String b(cn.jpush.android.b.d,java.lang.String)
+cn.jpush.android.b.d: java.lang.String c(cn.jpush.android.b.d,java.lang.String)
+cn.jpush.android.b.d: org.json.JSONArray a(cn.jpush.android.b.d,org.json.JSONArray)
+cn.jpush.android.b.d: android.content.BroadcastReceiver n(cn.jpush.android.b.d)
+cn.jpush.android.b.d: long o(cn.jpush.android.b.d)
+cn.jpush.android.b.d: boolean p(cn.jpush.android.b.d)
+cn.jpush.android.b.d: boolean a(cn.jpush.android.b.d,boolean)
+cn.jpush.android.b.d: void <clinit>()
+cn.jpush.android.b.e
+cn.jpush.android.b.e: cn.jpush.android.b.d a
+cn.jpush.android.b.e: java.lang.String[] z
+cn.jpush.android.b.e: e(cn.jpush.android.b.d)
+cn.jpush.android.b.e: void run()
+cn.jpush.android.b.e: void <clinit>()
+cn.jpush.android.b.f
+cn.jpush.android.b.f: cn.jpush.android.b.d a
+cn.jpush.android.b.f: java.lang.String[] z
+cn.jpush.android.b.f: f(cn.jpush.android.b.d)
+cn.jpush.android.b.f: void onReceive(android.content.Context,android.content.Intent)
+cn.jpush.android.b.f: f(cn.jpush.android.b.d,byte)
+cn.jpush.android.b.f: void <clinit>()
+cn.jpush.android.b.g
+cn.jpush.android.b.g: float b
+cn.jpush.android.b.g: org.json.JSONArray c
+cn.jpush.android.b.g: cn.jpush.android.b.d a
+cn.jpush.android.b.g: java.lang.String[] z
+cn.jpush.android.b.g: g(cn.jpush.android.b.d)
+cn.jpush.android.b.g: void handleMessage(android.os.Message)
+cn.jpush.android.b.g: g(cn.jpush.android.b.d,byte)
+cn.jpush.android.b.g: void <clinit>()
+cn.jpush.android.b.h
+cn.jpush.android.b.h: int a
+cn.jpush.android.b.h: int b
+cn.jpush.android.b.h: int[] c
+cn.jpush.android.b.h: double d
+cn.jpush.android.b.h: double e
+cn.jpush.android.b.h: long f
+cn.jpush.android.b.h: java.lang.String g
+cn.jpush.android.b.h: java.lang.String h
+cn.jpush.android.b.h: java.lang.String i
+cn.jpush.android.b.h: cn.jpush.android.b.d j
+cn.jpush.android.b.h: java.lang.String[] z
+cn.jpush.android.b.h: h(cn.jpush.android.b.d,int[],int)
+cn.jpush.android.b.h: java.lang.Void a(org.json.JSONArray[])
+cn.jpush.android.b.h: void a(java.lang.String)
+cn.jpush.android.b.h: void onPostExecute(java.lang.Object)
+cn.jpush.android.b.h: java.lang.Object doInBackground(java.lang.Object[])
+cn.jpush.android.b.h: void <clinit>()
+cn.jpush.android.b.i
+cn.jpush.android.b.i: android.content.Context d
+cn.jpush.android.b.i: android.location.LocationManager e
+cn.jpush.android.b.i: android.location.Location f
+cn.jpush.android.b.i: java.lang.String g
+cn.jpush.android.b.i: double a
+cn.jpush.android.b.i: double b
+cn.jpush.android.b.i: long h
+cn.jpush.android.b.i: cn.jpush.android.b.k c
+cn.jpush.android.b.i: android.location.LocationListener i
+cn.jpush.android.b.i: java.lang.String[] z
+cn.jpush.android.b.i: i(android.content.Context)
+cn.jpush.android.b.i: boolean a()
+cn.jpush.android.b.i: void b()
+cn.jpush.android.b.i: void a(android.location.Location)
+cn.jpush.android.b.i: void c()
+cn.jpush.android.b.i: java.lang.String d()
+cn.jpush.android.b.i: long e()
+cn.jpush.android.b.i: void a(cn.jpush.android.b.i,android.location.Location)
+cn.jpush.android.b.i: android.content.Context a(cn.jpush.android.b.i)
+cn.jpush.android.b.i: void <clinit>()
+cn.jpush.android.b.j
+cn.jpush.android.b.j: cn.jpush.android.b.i a
+cn.jpush.android.b.j: j(cn.jpush.android.b.i)
+cn.jpush.android.b.j: void onLocationChanged(android.location.Location)
+cn.jpush.android.b.j: void onProviderDisabled(java.lang.String)
+cn.jpush.android.b.j: void onProviderEnabled(java.lang.String)
+cn.jpush.android.b.j: void onStatusChanged(java.lang.String,int,android.os.Bundle)
+cn.jpush.android.b.k
+cn.jpush.android.b.k: cn.jpush.android.b.i a
+cn.jpush.android.b.k: k(cn.jpush.android.b.i)
+cn.jpush.android.b.k: java.lang.Integer a()
+cn.jpush.android.b.k: java.lang.Object doInBackground(java.lang.Object[])
+cn.jpush.android.b.k: k(cn.jpush.android.b.i,byte)
+cn.jpush.android.b.l
+cn.jpush.android.b.l: android.net.wifi.WifiManager a
+cn.jpush.android.b.l: java.lang.String z
+cn.jpush.android.b.l: l(android.content.Context)
+cn.jpush.android.b.l: java.util.List d()
+cn.jpush.android.b.l: boolean a()
+cn.jpush.android.b.l: android.net.wifi.WifiManager b()
+cn.jpush.android.b.l: org.json.JSONArray c()
+cn.jpush.android.b.l: void <clinit>()
+cn.jpush.android.b.m
+cn.jpush.android.b.m: java.lang.String a
+cn.jpush.android.b.m: int b
+cn.jpush.android.b.m: java.lang.String c
+cn.jpush.android.b.m: cn.jpush.android.b.l d
+cn.jpush.android.b.m: java.lang.String[] z
+cn.jpush.android.b.m: boolean equals(java.lang.Object)
+cn.jpush.android.b.m: int hashCode()
+cn.jpush.android.b.m: org.json.JSONObject a()
+cn.jpush.android.b.m: m(cn.jpush.android.b.l,android.net.wifi.ScanResult)
+cn.jpush.android.b.m: m(cn.jpush.android.b.l,java.lang.String,int,java.lang.String)
+cn.jpush.android.b.m: int compareTo(java.lang.Object)
+cn.jpush.android.b.m: void <clinit>()
+cn.jpush.android.c.a
+cn.jpush.android.c.a: java.util.List a
+cn.jpush.android.c.a: java.lang.String[] z
+cn.jpush.android.c.a: java.lang.String a(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: java.lang.String b(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: boolean c(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: boolean d(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: boolean e(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: boolean f(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: boolean g(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: boolean a(android.content.Context,java.lang.String,boolean)
+cn.jpush.android.c.a: boolean h(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: boolean b(android.content.Context,java.lang.String,boolean)
+cn.jpush.android.c.a: boolean i(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: void j(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: boolean a(android.content.Context)
+cn.jpush.android.c.a: boolean a()
+cn.jpush.android.c.a: boolean k(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: int a(android.content.Context,float)
+cn.jpush.android.c.a: boolean a(android.content.Context,java.lang.String,java.lang.String)
+cn.jpush.android.c.a: android.content.Intent l(android.content.Context,java.lang.String)
+cn.jpush.android.c.a: android.content.Intent a(android.content.Context,cn.jpush.android.a.c,boolean)
+cn.jpush.android.c.a: java.lang.String b(android.content.Context)
+cn.jpush.android.c.a: java.lang.String c(android.content.Context)
+cn.jpush.android.c.a: java.lang.String g(android.content.Context)
+cn.jpush.android.c.a: java.lang.String a(java.lang.String)
+cn.jpush.android.c.a: void d(android.content.Context)
+cn.jpush.android.c.a: java.lang.String e(android.content.Context)
+cn.jpush.android.c.a: java.lang.String h(android.content.Context)
+cn.jpush.android.c.a: boolean f(android.content.Context)
+cn.jpush.android.c.a: void <clinit>()
+cn.jpush.android.c.b
+cn.jpush.android.c.b: android.content.SharedPreferences a
+cn.jpush.android.c.b: android.content.SharedPreferences$Editor b
+cn.jpush.android.c.b: void a(android.content.Context)
+cn.jpush.android.c.b: void a(java.lang.String,java.lang.String)
+cn.jpush.android.c.b: java.lang.String b(java.lang.String,java.lang.String)
+cn.jpush.android.c.b: void <clinit>()
+cn.jpush.android.c.c
+cn.jpush.android.c.c: java.lang.String[] z
+cn.jpush.android.c.c: byte[] a(java.io.File)
+cn.jpush.android.c.c: java.lang.String b(java.io.File)
+cn.jpush.android.c.c: boolean a(java.lang.String,java.io.File)
+cn.jpush.android.c.c: void <clinit>()
+cn.jpush.android.c.d
+cn.jpush.android.c.d: java.util.ArrayList a(org.json.JSONArray)
+cn.jpush.android.c.d: org.json.JSONArray a(java.util.ArrayList)
+cn.jpush.android.c.e
+cn.jpush.android.c.e: java.lang.String[] z
+cn.jpush.android.c.e: void a(android.content.Context)
+cn.jpush.android.c.e: java.lang.String a(android.content.Context,java.lang.String)
+cn.jpush.android.c.e: java.lang.String b(android.content.Context)
+cn.jpush.android.c.e: java.lang.String a(java.lang.String)
+cn.jpush.android.c.e: void c(android.content.Context)
+cn.jpush.android.c.e: void <clinit>()
+cn.jpush.android.c.f
+cn.jpush.android.c.f: java.lang.String[] z
+cn.jpush.android.c.f: void a(java.lang.String)
+cn.jpush.android.c.f: boolean a(java.lang.String,java.lang.String,android.content.Context)
+cn.jpush.android.c.f: boolean a(java.lang.String,byte[],android.content.Context)
+cn.jpush.android.c.f: void <clinit>()
+cn.jpush.android.c.g
+cn.jpush.android.c.g: cn.jpush.android.ui.m a
+cn.jpush.android.c.g: boolean b
+cn.jpush.android.c.g: int c
+cn.jpush.android.c.g: int d
+cn.jpush.android.c.g: void a(android.content.Context)
+cn.jpush.android.c.g: void <clinit>()
+cn.jpush.android.c.h
+cn.jpush.android.c.h: boolean a
+cn.jpush.android.c.h: java.lang.String[] z
+cn.jpush.android.c.h: java.lang.String a(java.lang.String,int,long)
+cn.jpush.android.c.h: byte[] a(java.lang.String,int,long,int)
+cn.jpush.android.c.h: byte[] b(java.lang.String,int,long)
+cn.jpush.android.c.h: void a(java.lang.String,java.lang.String,cn.jpush.android.c.j)
+cn.jpush.android.c.h: org.apache.http.impl.client.DefaultHttpClient a()
+cn.jpush.android.c.h: boolean a(java.lang.String)
+cn.jpush.android.c.h: void <clinit>()
+cn.jpush.android.c.i
+cn.jpush.android.c.i: java.lang.String a
+cn.jpush.android.c.i: java.lang.String b
+cn.jpush.android.c.i: cn.jpush.android.c.j c
+cn.jpush.android.c.i: i(java.lang.String,java.lang.String,cn.jpush.android.c.j)
+cn.jpush.android.c.i: void run()
+cn.jpush.android.c.j
+cn.jpush.android.c.j: void a(boolean,java.lang.String)
+cn.jpush.android.c.k
+cn.jpush.android.c.k: java.lang.String[] a(android.content.Context)
+cn.jpush.android.c.l
+cn.jpush.android.c.l: java.lang.String[] z
+cn.jpush.android.c.l: void a(java.lang.String,java.lang.String)
+cn.jpush.android.c.l: void b(java.lang.String,java.lang.String)
+cn.jpush.android.c.l: void c(java.lang.String,java.lang.String)
+cn.jpush.android.c.l: void d(java.lang.String,java.lang.String)
+cn.jpush.android.c.l: void e(java.lang.String,java.lang.String)
+cn.jpush.android.c.l: void a(java.lang.String,java.lang.String,java.lang.Throwable)
+cn.jpush.android.c.l: void b(java.lang.String,java.lang.String,java.lang.Throwable)
+cn.jpush.android.c.l: boolean a(int)
+cn.jpush.android.c.l: void <clinit>()
+cn.jpush.android.c.m
+cn.jpush.android.c.m: java.lang.String a
+cn.jpush.android.c.m: java.lang.String b
+cn.jpush.android.c.m: java.lang.String c
+cn.jpush.android.c.m: int d
+cn.jpush.android.c.m: m()
+cn.jpush.android.c.m: java.lang.String toString()
+cn.jpush.android.c.n
+cn.jpush.android.c.n: java.util.regex.Pattern a
+cn.jpush.android.c.n: java.util.regex.Pattern b
+cn.jpush.android.c.n: java.util.regex.Pattern c
+cn.jpush.android.c.n: java.util.regex.Pattern d
+cn.jpush.android.c.n: java.util.regex.Pattern e
+cn.jpush.android.c.n: java.util.regex.Pattern f
+cn.jpush.android.c.n: java.lang.String[] z
+cn.jpush.android.c.n: boolean a(java.lang.String)
+cn.jpush.android.c.n: void <clinit>()
+cn.jpush.android.c.o
+cn.jpush.android.c.o: java.lang.String[] z
+cn.jpush.android.c.o: java.lang.String a(byte[],int,int)
+cn.jpush.android.c.o: int b(byte[],int,int)
+cn.jpush.android.c.o: java.lang.String c(byte[],int,int)
+cn.jpush.android.c.o: byte[] d(byte[],int,int)
+cn.jpush.android.c.o: byte[] a(byte[],java.lang.String,int)
+cn.jpush.android.c.o: byte[] a(java.lang.String)
+cn.jpush.android.c.o: java.lang.String a(byte[])
+cn.jpush.android.c.o: byte[] a(int,int)
+cn.jpush.android.c.o: byte[] a(int)
+cn.jpush.android.c.o: byte[] b(int)
+cn.jpush.android.c.o: void <clinit>()
+cn.jpush.android.c.p
+cn.jpush.android.c.p: java.lang.String z
+cn.jpush.android.c.p: void c(java.lang.String,java.lang.String)
+cn.jpush.android.c.p: java.lang.String a(java.lang.String)
+cn.jpush.android.c.p: void <clinit>()
+cn.jpush.android.c.q
+cn.jpush.android.c.q: android.content.SharedPreferences a
+cn.jpush.android.c.q: java.lang.String[] z
+cn.jpush.android.c.q: void a()
+cn.jpush.android.c.q: void a(android.content.Context)
+cn.jpush.android.c.q: void a(android.content.Context,org.json.JSONObject)
+cn.jpush.android.c.q: java.lang.String a(android.content.Context,java.lang.String,java.lang.String)
+cn.jpush.android.c.q: void b(android.content.Context,java.lang.String,java.lang.String)
+cn.jpush.android.c.q: int a(android.content.Context,java.lang.String,int)
+cn.jpush.android.c.q: void b(android.content.Context,java.lang.String,int)
+cn.jpush.android.c.q: android.content.SharedPreferences b(android.content.Context)
+cn.jpush.android.c.q: void <clinit>()
+cn.jpush.android.c.r
+cn.jpush.android.c.r: java.lang.String a
+cn.jpush.android.c.r: boolean a(java.lang.String)
+cn.jpush.android.c.r: void <clinit>()
+cn.jpush.android.c.s
+cn.jpush.android.c.s: java.lang.String[] z
+cn.jpush.android.c.s: org.json.JSONArray a(android.content.Context)
+cn.jpush.android.c.s: void <clinit>()
+cn.jpush.android.service.AlarmReceiver
+cn.jpush.android.service.AlarmReceiver: java.lang.String[] z
+cn.jpush.android.service.AlarmReceiver: AlarmReceiver()
+cn.jpush.android.service.AlarmReceiver: void onReceive(android.content.Context,android.content.Intent)
+cn.jpush.android.service.AlarmReceiver: void <clinit>()
+cn.jpush.android.service.DownloadService
+cn.jpush.android.service.DownloadService: android.os.Bundle b
+cn.jpush.android.service.DownloadService: java.util.concurrent.ConcurrentLinkedQueue a
+cn.jpush.android.service.DownloadService: android.app.NotificationManager c
+cn.jpush.android.service.DownloadService: cn.jpush.android.a.c d
+cn.jpush.android.service.DownloadService: cn.jpush.android.service.f e
+cn.jpush.android.service.DownloadService: android.app.Notification f
+cn.jpush.android.service.DownloadService: android.widget.RemoteViews g
+cn.jpush.android.service.DownloadService: java.lang.Integer h
+cn.jpush.android.service.DownloadService: java.lang.Integer i
+cn.jpush.android.service.DownloadService: java.lang.Integer j
+cn.jpush.android.service.DownloadService: java.lang.Integer k
+cn.jpush.android.service.DownloadService: java.lang.Integer l
+cn.jpush.android.service.DownloadService: android.os.Handler m
+cn.jpush.android.service.DownloadService: java.lang.String[] z
+cn.jpush.android.service.DownloadService: DownloadService()
+cn.jpush.android.service.DownloadService: void onCreate()
+cn.jpush.android.service.DownloadService: void onDestroy()
+cn.jpush.android.service.DownloadService: void onHandleIntent(android.content.Intent)
+cn.jpush.android.service.DownloadService: void a(cn.jpush.android.a.c,int,long,long)
+cn.jpush.android.service.DownloadService: void a(cn.jpush.android.a.c,boolean)
+cn.jpush.android.service.DownloadService: boolean a()
+cn.jpush.android.service.DownloadService: void a(android.content.Context)
+cn.jpush.android.service.DownloadService: cn.jpush.android.a.c a(cn.jpush.android.service.DownloadService)
+cn.jpush.android.service.DownloadService: void a(cn.jpush.android.service.DownloadService,cn.jpush.android.a.c,int,long,long)
+cn.jpush.android.service.DownloadService: android.os.Handler b(cn.jpush.android.service.DownloadService)
+cn.jpush.android.service.DownloadService: void a(cn.jpush.android.service.DownloadService,cn.jpush.android.a.c)
+cn.jpush.android.service.DownloadService: android.app.NotificationManager c(cn.jpush.android.service.DownloadService)
+cn.jpush.android.service.DownloadService: void a(cn.jpush.android.service.DownloadService,int,cn.jpush.android.a.c,int)
+cn.jpush.android.service.DownloadService: void <clinit>()
+cn.jpush.android.service.PushProtocol
+cn.jpush.android.service.PushProtocol: int InitConn()
+cn.jpush.android.service.PushProtocol: int HbJPush(int,long)
+cn.jpush.android.service.PushProtocol: int RegPush(int,java.lang.String,java.lang.String,java.lang.String)
+cn.jpush.android.service.PushProtocol: int LogPush(int,long,java.lang.String,long)
+cn.jpush.android.service.PushProtocol: int MsgResponse(int,int,long,byte,long)
+cn.jpush.android.service.PushProtocol: int RecvPush(int,byte[],int)
+cn.jpush.android.service.PushProtocol: int RepPush(int,long,byte,java.lang.String)
+cn.jpush.android.service.PushProtocol: int GetChnelId(int,long,java.lang.String,java.lang.String)
+cn.jpush.android.service.PushProtocol: int UnChnelId(int,long,java.lang.String,java.lang.String)
+cn.jpush.android.service.PushProtocol: int EnChannel(int,long,java.lang.String,java.lang.String)
+cn.jpush.android.service.PushProtocol: int UnRegPush(int,long,java.lang.String,java.lang.String)
+cn.jpush.android.service.PushProtocol: int TagAlias(int,long,java.lang.String,java.lang.String)
+cn.jpush.android.service.PushProtocol: int PushTime(int,long,java.lang.String,java.lang.String)
+cn.jpush.android.service.PushProtocol: int Close(int)
+cn.jpush.android.service.PushProtocol: int GetCmd(int)
+cn.jpush.android.service.PushProtocol: int Stop(int)
+cn.jpush.android.service.PushProtocol: int InitPush(int,java.lang.String,int)
+cn.jpush.android.service.PushProtocol: java.lang.String GetEsg(int)
+cn.jpush.android.service.PushProtocol: void <clinit>()
+cn.jpush.android.service.PushReceiver
+cn.jpush.android.service.PushReceiver: cn.jpush.android.a.c a
+cn.jpush.android.service.PushReceiver: java.lang.String[] z
+cn.jpush.android.service.PushReceiver: PushReceiver()
+cn.jpush.android.service.PushReceiver: void onReceive(android.content.Context,android.content.Intent)
+cn.jpush.android.service.PushReceiver: void a(cn.jpush.android.service.PushReceiver,android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.service.PushReceiver: void <clinit>()
+cn.jpush.android.service.PushService
+cn.jpush.android.service.PushService: long a
+cn.jpush.android.service.PushService: boolean b
+cn.jpush.android.service.PushService: boolean c
+cn.jpush.android.service.PushService: int d
+cn.jpush.android.service.PushService: int e
+cn.jpush.android.service.PushService: boolean r
+cn.jpush.android.service.PushService: boolean s
+cn.jpush.android.service.PushService: java.lang.String t
+cn.jpush.android.service.PushService: java.lang.String u
+cn.jpush.android.service.PushService: int v
+cn.jpush.android.service.PushService: java.lang.String w
+cn.jpush.android.service.PushService: java.lang.String x
+cn.jpush.android.service.PushService: int y
+cn.jpush.android.service.PushService: int z
+cn.jpush.android.service.PushService: boolean f
+cn.jpush.android.service.PushService: boolean g
+cn.jpush.android.service.PushService: java.lang.String A
+cn.jpush.android.service.PushService: long h
+cn.jpush.android.service.PushService: java.lang.String i
+cn.jpush.android.service.PushService: int j
+cn.jpush.android.service.PushService: byte[] k
+cn.jpush.android.service.PushService: java.util.Queue l
+cn.jpush.android.service.PushService: cn.jpush.android.service.m B
+cn.jpush.android.service.PushService: boolean C
+cn.jpush.android.service.PushService: boolean D
+cn.jpush.android.service.PushService: boolean E
+cn.jpush.android.service.PushService: boolean F
+cn.jpush.android.service.PushService: boolean G
+cn.jpush.android.service.PushService: boolean H
+cn.jpush.android.service.PushService: int I
+cn.jpush.android.service.PushService: boolean m
+cn.jpush.android.service.PushService: cn.jpush.android.b.d J
+cn.jpush.android.service.PushService: boolean K
+cn.jpush.android.service.PushService: java.lang.String n
+cn.jpush.android.service.PushService: boolean o
+cn.jpush.android.service.PushService: boolean p
+cn.jpush.android.service.PushService: java.util.List L
+cn.jpush.android.service.PushService: int q
+cn.jpush.android.service.PushService: java.util.ArrayList M
+cn.jpush.android.service.PushService: java.util.ArrayList N
+cn.jpush.android.service.PushService: java.util.ArrayList O
+cn.jpush.android.service.PushService: cn.jpush.android.service.PushReceiver P
+cn.jpush.android.service.PushService: android.os.Handler Q
+cn.jpush.android.service.PushService: java.lang.String[] R
+cn.jpush.android.service.PushService: PushService()
+cn.jpush.android.service.PushService: void a(boolean)
+cn.jpush.android.service.PushService: boolean a()
+cn.jpush.android.service.PushService: void b(boolean)
+cn.jpush.android.service.PushService: void a(java.lang.String)
+cn.jpush.android.service.PushService: void b(java.lang.String)
+cn.jpush.android.service.PushService: void a(int)
+cn.jpush.android.service.PushService: void c(java.lang.String)
+cn.jpush.android.service.PushService: void d(java.lang.String)
+cn.jpush.android.service.PushService: void b(int)
+cn.jpush.android.service.PushService: void c(int)
+cn.jpush.android.service.PushService: void c(boolean)
+cn.jpush.android.service.PushService: void d(int)
+cn.jpush.android.service.PushService: void d(boolean)
+cn.jpush.android.service.PushService: boolean b()
+cn.jpush.android.service.PushService: void p()
+cn.jpush.android.service.PushService: void c()
+cn.jpush.android.service.PushService: byte[] q()
+cn.jpush.android.service.PushService: void r()
+cn.jpush.android.service.PushService: boolean d()
+cn.jpush.android.service.PushService: void e()
+cn.jpush.android.service.PushService: java.lang.String s()
+cn.jpush.android.service.PushService: void f()
+cn.jpush.android.service.PushService: void e(int)
+cn.jpush.android.service.PushService: void f(java.lang.String)
+cn.jpush.android.service.PushService: void a(int,int,int,java.lang.String,java.lang.String,java.lang.String)
+cn.jpush.android.service.PushService: void a(java.lang.String,java.lang.String,java.lang.String,int,int)
+cn.jpush.android.service.PushService: void g(java.lang.String)
+cn.jpush.android.service.PushService: void h(java.lang.String)
+cn.jpush.android.service.PushService: void i(java.lang.String)
+cn.jpush.android.service.PushService: void j(java.lang.String)
+cn.jpush.android.service.PushService: void a(int,int,java.lang.String,java.lang.String,java.lang.String)
+cn.jpush.android.service.PushService: void g()
+cn.jpush.android.service.PushService: android.os.IBinder onBind(android.content.Intent)
+cn.jpush.android.service.PushService: void onCreate()
+cn.jpush.android.service.PushService: int onStartCommand(android.content.Intent,int,int)
+cn.jpush.android.service.PushService: void t()
+cn.jpush.android.service.PushService: void k(java.lang.String)
+cn.jpush.android.service.PushService: void a(java.lang.String,java.lang.String)
+cn.jpush.android.service.PushService: void l(java.lang.String)
+cn.jpush.android.service.PushService: void b(java.lang.String,java.lang.String)
+cn.jpush.android.service.PushService: void c(java.lang.String,java.lang.String)
+cn.jpush.android.service.PushService: void d(java.lang.String,java.lang.String)
+cn.jpush.android.service.PushService: void e(java.lang.String,java.lang.String)
+cn.jpush.android.service.PushService: void f(java.lang.String,java.lang.String)
+cn.jpush.android.service.PushService: void g(java.lang.String,java.lang.String)
+cn.jpush.android.service.PushService: void u()
+cn.jpush.android.service.PushService: void onDestroy()
+cn.jpush.android.service.PushService: void a(android.content.Context)
+cn.jpush.android.service.PushService: void v()
+cn.jpush.android.service.PushService: void w()
+cn.jpush.android.service.PushService: void x()
+cn.jpush.android.service.PushService: boolean h()
+cn.jpush.android.service.PushService: void y()
+cn.jpush.android.service.PushService: void z()
+cn.jpush.android.service.PushService: void a(android.content.Context,java.lang.String)
+cn.jpush.android.service.PushService: cn.jpush.android.b.d a(android.content.Context,java.lang.String,boolean,boolean)
+cn.jpush.android.service.PushService: void b(android.content.Context)
+cn.jpush.android.service.PushService: boolean i()
+cn.jpush.android.service.PushService: java.lang.String j()
+cn.jpush.android.service.PushService: java.lang.String e(java.lang.String)
+cn.jpush.android.service.PushService: java.lang.String k()
+cn.jpush.android.service.PushService: int l()
+cn.jpush.android.service.PushService: boolean a(cn.jpush.android.service.PushService,boolean)
+cn.jpush.android.service.PushService: boolean a(cn.jpush.android.service.PushService)
+cn.jpush.android.service.PushService: boolean m()
+cn.jpush.android.service.PushService: void b(cn.jpush.android.service.PushService)
+cn.jpush.android.service.PushService: java.lang.String n()
+cn.jpush.android.service.PushService: boolean o()
+cn.jpush.android.service.PushService: cn.jpush.android.service.m c(cn.jpush.android.service.PushService)
+cn.jpush.android.service.PushService: void d(cn.jpush.android.service.PushService)
+cn.jpush.android.service.PushService: void e(cn.jpush.android.service.PushService)
+cn.jpush.android.service.PushService: void <clinit>()
+cn.jpush.android.service.ServiceInterface
+cn.jpush.android.service.ServiceInterface: long a
+cn.jpush.android.service.ServiceInterface: java.lang.String b
+cn.jpush.android.service.ServiceInterface: int c
+cn.jpush.android.service.ServiceInterface: java.lang.String d
+cn.jpush.android.service.ServiceInterface: int e
+cn.jpush.android.service.ServiceInterface: java.lang.String[] z
+cn.jpush.android.service.ServiceInterface: ServiceInterface()
+cn.jpush.android.service.ServiceInterface: void a(android.content.Context)
+cn.jpush.android.service.ServiceInterface: void b(android.content.Context)
+cn.jpush.android.service.ServiceInterface: void c(android.content.Context)
+cn.jpush.android.service.ServiceInterface: void d(android.content.Context)
+cn.jpush.android.service.ServiceInterface: void e(android.content.Context)
+cn.jpush.android.service.ServiceInterface: void f(android.content.Context)
+cn.jpush.android.service.ServiceInterface: void a(android.content.Context,java.lang.String,java.lang.String)
+cn.jpush.android.service.ServiceInterface: void a(android.content.Context,boolean,java.lang.String)
+cn.jpush.android.service.ServiceInterface: void a(android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.service.ServiceInterface: void g(android.content.Context)
+cn.jpush.android.service.ServiceInterface: void a(java.lang.String,int,android.content.Context)
+cn.jpush.android.service.ServiceInterface: void a(java.lang.String,int,java.lang.String,android.content.Context)
+cn.jpush.android.service.ServiceInterface: void a(android.content.Context,org.json.JSONObject)
+cn.jpush.android.service.ServiceInterface: void a(android.content.Context,java.lang.String)
+cn.jpush.android.service.ServiceInterface: void a(java.lang.String)
+cn.jpush.android.service.ServiceInterface: void a(int)
+cn.jpush.android.service.ServiceInterface: void b(java.lang.String)
+cn.jpush.android.service.ServiceInterface: void b(int)
+cn.jpush.android.service.ServiceInterface: boolean b(int,byte[])
+cn.jpush.android.service.ServiceInterface: void a(android.content.Context,org.json.JSONObject,java.lang.String)
+cn.jpush.android.service.ServiceInterface: boolean a(java.lang.String,byte[])
+cn.jpush.android.service.ServiceInterface: long h(android.content.Context)
+cn.jpush.android.service.ServiceInterface: java.lang.String a(int,java.lang.String,org.json.JSONArray,int,int)
+cn.jpush.android.service.ServiceInterface: int a(int,byte[])
+cn.jpush.android.service.ServiceInterface: void i(android.content.Context)
+cn.jpush.android.service.ServiceInterface: void b(android.content.Context,java.lang.String,java.lang.String)
+cn.jpush.android.service.ServiceInterface: void a(android.content.Context,int)
+cn.jpush.android.service.ServiceInterface: void a(android.content.Context,java.lang.String,int,org.json.JSONArray,java.lang.String)
+cn.jpush.android.service.ServiceInterface: java.lang.String a()
+cn.jpush.android.service.ServiceInterface: int b()
+cn.jpush.android.service.ServiceInterface: java.lang.String c()
+cn.jpush.android.service.ServiceInterface: int d()
+cn.jpush.android.service.ServiceInterface: void <clinit>()
+cn.jpush.android.service.a
+cn.jpush.android.service.a: cn.jpush.android.service.b c
+cn.jpush.android.service.a: long d
+cn.jpush.android.service.a: long e
+cn.jpush.android.service.a: android.os.Bundle f
+cn.jpush.android.service.a: boolean a
+cn.jpush.android.service.a: boolean b
+cn.jpush.android.service.a: java.lang.String[] z
+cn.jpush.android.service.a: a(android.content.Context,cn.jpush.android.a.c,android.os.Bundle,cn.jpush.android.service.c,int)
+cn.jpush.android.service.a: int a(android.content.Context,cn.jpush.android.service.c,cn.jpush.android.a.c)
+cn.jpush.android.service.a: void a(java.io.InputStream,java.io.BufferedInputStream,java.io.FileOutputStream,java.io.BufferedOutputStream,org.apache.http.HttpEntity)
+cn.jpush.android.service.a: org.apache.http.impl.client.DefaultHttpClient a()
+cn.jpush.android.service.a: org.apache.http.client.methods.HttpGet a(java.lang.String,long)
+cn.jpush.android.service.a: long a(org.apache.http.HttpResponse)
+cn.jpush.android.service.a: int a(long)
+cn.jpush.android.service.a: boolean a(int)
+cn.jpush.android.service.a: long a(cn.jpush.android.service.a)
+cn.jpush.android.service.a: long b(cn.jpush.android.service.a)
+cn.jpush.android.service.a: cn.jpush.android.service.b c(cn.jpush.android.service.a)
+cn.jpush.android.service.a: void <clinit>()
+cn.jpush.android.service.b
+cn.jpush.android.service.b: cn.jpush.android.service.c b
+cn.jpush.android.service.b: cn.jpush.android.service.a a
+cn.jpush.android.service.b: b(cn.jpush.android.service.a,android.os.Looper,cn.jpush.android.service.c)
+cn.jpush.android.service.b: void handleMessage(android.os.Message)
+cn.jpush.android.service.c
+cn.jpush.android.service.c: void a(java.lang.String,boolean)
+cn.jpush.android.service.c: void a(int)
+cn.jpush.android.service.c: void a(long,long)
+cn.jpush.android.service.d
+cn.jpush.android.service.d: boolean a
+cn.jpush.android.service.d: int b
+cn.jpush.android.service.d: cn.jpush.android.service.DownloadService c
+cn.jpush.android.service.d: java.lang.String[] z
+cn.jpush.android.service.d: d(cn.jpush.android.service.DownloadService,boolean,int)
+cn.jpush.android.service.d: void a(long,long)
+cn.jpush.android.service.d: void a(java.lang.String,boolean)
+cn.jpush.android.service.d: void a(int)
+cn.jpush.android.service.d: void <clinit>()
+cn.jpush.android.service.e
+cn.jpush.android.service.e: cn.jpush.android.service.DownloadService a
+cn.jpush.android.service.e: e(cn.jpush.android.service.DownloadService)
+cn.jpush.android.service.e: void handleMessage(android.os.Message)
+cn.jpush.android.service.f
+cn.jpush.android.service.f: android.content.Context b
+cn.jpush.android.service.f: cn.jpush.android.service.DownloadService a
+cn.jpush.android.service.f: java.lang.String z
+cn.jpush.android.service.f: f(cn.jpush.android.service.DownloadService,android.content.Context)
+cn.jpush.android.service.f: void handleMessage(android.os.Message)
+cn.jpush.android.service.f: void <clinit>()
+cn.jpush.android.service.g
+cn.jpush.android.service.g: android.content.Context a
+cn.jpush.android.service.g: cn.jpush.android.a.c b
+cn.jpush.android.service.g: cn.jpush.android.service.PushReceiver c
+cn.jpush.android.service.g: g(cn.jpush.android.service.PushReceiver,android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.service.g: void a(android.content.DialogInterface,boolean)
+cn.jpush.android.service.g: void a()
+cn.jpush.android.service.g: void b()
+cn.jpush.android.service.h
+cn.jpush.android.service.h: cn.jpush.android.service.PushReceiver a
+cn.jpush.android.service.h: h(cn.jpush.android.service.PushReceiver)
+cn.jpush.android.service.h: void a()
+cn.jpush.android.service.i
+cn.jpush.android.service.i: android.content.Context a
+cn.jpush.android.service.i: cn.jpush.android.a.c b
+cn.jpush.android.service.i: cn.jpush.android.service.PushReceiver c
+cn.jpush.android.service.i: i(cn.jpush.android.service.PushReceiver,android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.service.i: void a()
+cn.jpush.android.service.j
+cn.jpush.android.service.j: android.content.Context a
+cn.jpush.android.service.j: cn.jpush.android.a.c b
+cn.jpush.android.service.j: cn.jpush.android.service.PushReceiver c
+cn.jpush.android.service.j: j(cn.jpush.android.service.PushReceiver,android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.service.j: void a()
+cn.jpush.android.service.k
+cn.jpush.android.service.k: cn.jpush.android.service.PushService e
+cn.jpush.android.service.k: java.lang.String[] J
+cn.jpush.android.service.k: k(cn.jpush.android.service.PushService,android.content.Context,java.lang.String,boolean,boolean)
+cn.jpush.android.service.k: void n()
+cn.jpush.android.service.k: void o()
+cn.jpush.android.service.k: void p()
+cn.jpush.android.service.k: void i()
+cn.jpush.android.service.k: void <clinit>()
+cn.jpush.android.service.l
+cn.jpush.android.service.l: cn.jpush.android.service.PushService a
+cn.jpush.android.service.l: java.lang.String z
+cn.jpush.android.service.l: l(cn.jpush.android.service.PushService)
+cn.jpush.android.service.l: void handleMessage(android.os.Message)
+cn.jpush.android.service.l: void <clinit>()
+cn.jpush.android.service.m
+cn.jpush.android.service.m: cn.jpush.android.service.PushService a
+cn.jpush.android.service.m: java.lang.String[] z
+cn.jpush.android.service.m: m(cn.jpush.android.service.PushService)
+cn.jpush.android.service.m: void run()
+cn.jpush.android.service.m: void <clinit>()
+cn.jpush.android.service.n
+cn.jpush.android.service.n: android.content.Context a
+cn.jpush.android.service.n: java.lang.String b
+cn.jpush.android.service.n: n(android.content.Context,java.lang.String)
+cn.jpush.android.service.n: void run()
+cn.jpush.android.service.o
+cn.jpush.android.service.o: java.lang.String a
+cn.jpush.android.service.o: byte[] b
+cn.jpush.android.service.o: java.lang.String[] z
+cn.jpush.android.service.o: o(java.lang.String,byte[])
+cn.jpush.android.service.o: void run()
+cn.jpush.android.service.o: void <clinit>()
+cn.jpush.android.service.p
+cn.jpush.android.service.p: int a
+cn.jpush.android.service.p: byte[] b
+cn.jpush.android.service.p: java.lang.String[] z
+cn.jpush.android.service.p: p(int,byte[])
+cn.jpush.android.service.p: void run()
+cn.jpush.android.service.p: void <clinit>()
+cn.jpush.android.service.q
+cn.jpush.android.service.q: java.util.HashMap a
+cn.jpush.android.service.q: java.util.HashMap b
+cn.jpush.android.service.q: long c
+cn.jpush.android.service.q: java.lang.String[] z
+cn.jpush.android.service.q: java.lang.String a(int)
+cn.jpush.android.service.q: java.lang.String b(int)
+cn.jpush.android.service.q: org.json.JSONObject a(java.lang.String)
+cn.jpush.android.service.q: org.json.JSONObject b(java.lang.String)
+cn.jpush.android.service.q: org.json.JSONObject a(boolean)
+cn.jpush.android.service.q: void <clinit>()
+cn.jpush.android.service.r
+cn.jpush.android.service.r: java.lang.String[] z
+cn.jpush.android.service.r: java.lang.String a(android.content.Context,java.lang.String,java.lang.String)
+cn.jpush.android.service.r: void <clinit>()
+cn.jpush.android.service.s
+cn.jpush.android.service.s: cn.jpush.android.service.s a
+cn.jpush.android.service.s: android.os.PowerManager$WakeLock b
+cn.jpush.android.service.s: s()
+cn.jpush.android.service.s: cn.jpush.android.service.s a()
+cn.jpush.android.service.s: android.os.PowerManager$WakeLock b()
+cn.jpush.android.service.s: void a(android.os.PowerManager$WakeLock)
+cn.jpush.android.service.s: void <clinit>()
+cn.jpush.android.ui.JPushRemoteViews
+cn.jpush.android.ui.JPushRemoteViews: android.view.View apply(android.content.Context,android.view.ViewGroup)
+cn.jpush.android.ui.JPushRemoteViews: void reapply(android.content.Context,android.view.View)
+cn.jpush.android.ui.ListViewActivity
+cn.jpush.android.ui.ListViewActivity: cn.jpush.android.a.c a
+cn.jpush.android.ui.ListViewActivity: java.lang.String z
+cn.jpush.android.ui.ListViewActivity: ListViewActivity()
+cn.jpush.android.ui.ListViewActivity: void onCreate(android.os.Bundle)
+cn.jpush.android.ui.ListViewActivity: void <clinit>()
+cn.jpush.android.ui.MediaView
+cn.jpush.android.ui.MediaView: int x
+cn.jpush.android.ui.MediaView: boolean a
+cn.jpush.android.ui.MediaView: android.media.MediaPlayer b
+cn.jpush.android.ui.MediaView: android.widget.RelativeLayout$LayoutParams c
+cn.jpush.android.ui.MediaView: android.view.SurfaceView d
+cn.jpush.android.ui.MediaView: android.view.SurfaceHolder e
+cn.jpush.android.ui.MediaView: android.content.Context f
+cn.jpush.android.ui.MediaView: android.widget.LinearLayout g
+cn.jpush.android.ui.MediaView: android.widget.ImageButton h
+cn.jpush.android.ui.MediaView: android.widget.ImageButton i
+cn.jpush.android.ui.MediaView: android.widget.ProgressBar j
+cn.jpush.android.ui.MediaView: android.widget.ProgressBar k
+cn.jpush.android.ui.MediaView: android.widget.TextView l
+cn.jpush.android.ui.MediaView: android.widget.TextView m
+cn.jpush.android.ui.MediaView: android.widget.TextView n
+cn.jpush.android.ui.MediaView: float o
+cn.jpush.android.ui.MediaView: boolean p
+cn.jpush.android.ui.MediaView: boolean q
+cn.jpush.android.ui.MediaView: cn.jpush.android.ui.k r
+cn.jpush.android.ui.MediaView: boolean s
+cn.jpush.android.ui.MediaView: int t
+cn.jpush.android.ui.MediaView: int u
+cn.jpush.android.ui.MediaView: java.lang.String v
+cn.jpush.android.ui.MediaView: android.os.Handler w
+cn.jpush.android.ui.MediaView: java.lang.String[] z
+cn.jpush.android.ui.MediaView: MediaView(android.content.Context)
+cn.jpush.android.ui.MediaView: MediaView(android.content.Context,android.util.AttributeSet)
+cn.jpush.android.ui.MediaView: MediaView(android.content.Context,android.util.AttributeSet,int)
+cn.jpush.android.ui.MediaView: void a(cn.jpush.android.ui.k)
+cn.jpush.android.ui.MediaView: void a(java.lang.String)
+cn.jpush.android.ui.MediaView: void a()
+cn.jpush.android.ui.MediaView: void a(boolean)
+cn.jpush.android.ui.MediaView: void surfaceCreated(android.view.SurfaceHolder)
+cn.jpush.android.ui.MediaView: void surfaceChanged(android.view.SurfaceHolder,int,int,int)
+cn.jpush.android.ui.MediaView: void surfaceDestroyed(android.view.SurfaceHolder)
+cn.jpush.android.ui.MediaView: void b()
+cn.jpush.android.ui.MediaView: void c()
+cn.jpush.android.ui.MediaView: void d()
+cn.jpush.android.ui.MediaView: java.lang.String a(int)
+cn.jpush.android.ui.MediaView: boolean onInfo(android.media.MediaPlayer,int,int)
+cn.jpush.android.ui.MediaView: boolean onError(android.media.MediaPlayer,int,int)
+cn.jpush.android.ui.MediaView: void onCompletion(android.media.MediaPlayer)
+cn.jpush.android.ui.MediaView: void onPrepared(android.media.MediaPlayer)
+cn.jpush.android.ui.MediaView: void onBufferingUpdate(android.media.MediaPlayer,int)
+cn.jpush.android.ui.MediaView: java.lang.String a(cn.jpush.android.ui.MediaView,int)
+cn.jpush.android.ui.MediaView: void <clinit>()
+cn.jpush.android.ui.PushActivity
+cn.jpush.android.ui.PushActivity: cn.jpush.android.a.c b
+cn.jpush.android.ui.PushActivity: java.lang.String c
+cn.jpush.android.ui.PushActivity: cn.jpush.android.a.d d
+cn.jpush.android.ui.PushActivity: cn.jpush.android.ui.a e
+cn.jpush.android.ui.PushActivity: boolean f
+cn.jpush.android.ui.PushActivity: android.app.ProgressDialog g
+cn.jpush.android.ui.PushActivity: android.app.AlertDialog h
+cn.jpush.android.ui.PushActivity: cn.jpush.android.ui.k a
+cn.jpush.android.ui.PushActivity: android.os.Handler i
+cn.jpush.android.ui.PushActivity: java.lang.String[] z
+cn.jpush.android.ui.PushActivity: PushActivity()
+cn.jpush.android.ui.PushActivity: void onCreate(android.os.Bundle)
+cn.jpush.android.ui.PushActivity: void a(android.content.Intent)
+cn.jpush.android.ui.PushActivity: void onDestroy()
+cn.jpush.android.ui.PushActivity: boolean onKeyDown(int,android.view.KeyEvent)
+cn.jpush.android.ui.PushActivity: void onBackPressed()
+cn.jpush.android.ui.PushActivity: void onNewIntent(android.content.Intent)
+cn.jpush.android.ui.PushActivity: java.lang.String a(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.PushActivity: android.app.ProgressDialog a(cn.jpush.android.ui.PushActivity,android.app.ProgressDialog)
+cn.jpush.android.ui.PushActivity: android.app.ProgressDialog b(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.PushActivity: android.os.Handler c(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.PushActivity: cn.jpush.android.a.c d(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.PushActivity: boolean a(cn.jpush.android.ui.PushActivity,boolean)
+cn.jpush.android.ui.PushActivity: void e(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.PushActivity: void f(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.PushActivity: void <clinit>()
+cn.jpush.android.ui.a
+cn.jpush.android.ui.a: android.content.Context b
+cn.jpush.android.ui.a: android.webkit.WebView c
+cn.jpush.android.ui.a: android.widget.ImageView a
+cn.jpush.android.ui.a: java.lang.String[] z
+cn.jpush.android.ui.a: a(android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.ui.a: void a(android.view.View$OnClickListener)
+cn.jpush.android.ui.a: void a(java.lang.String)
+cn.jpush.android.ui.a: void a()
+cn.jpush.android.ui.a: void <clinit>()
+cn.jpush.android.ui.aa
+cn.jpush.android.ui.aa: cn.jpush.android.ui.PushActivity a
+cn.jpush.android.ui.aa: aa(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.aa: void onClick(android.view.View)
+cn.jpush.android.ui.ab
+cn.jpush.android.ui.ab: cn.jpush.android.ui.PushActivity a
+cn.jpush.android.ui.ab: ab(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.ab: void onClick(android.view.View)
+cn.jpush.android.ui.ac
+cn.jpush.android.ui.ac: cn.jpush.android.a.g a
+cn.jpush.android.ui.ac: cn.jpush.android.ui.PushActivity b
+cn.jpush.android.ui.ac: java.lang.String[] z
+cn.jpush.android.ui.ac: ac(cn.jpush.android.ui.PushActivity,cn.jpush.android.a.g)
+cn.jpush.android.ui.ac: void onClick(android.view.View)
+cn.jpush.android.ui.ac: void <clinit>()
+cn.jpush.android.ui.ad
+cn.jpush.android.ui.ad: cn.jpush.android.ui.PushActivity a
+cn.jpush.android.ui.ad: ad(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.ad: void onClick(android.view.View)
+cn.jpush.android.ui.ae
+cn.jpush.android.ui.ae: cn.jpush.android.ui.PushActivity a
+cn.jpush.android.ui.ae: java.lang.String z
+cn.jpush.android.ui.ae: ae(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.ae: void b()
+cn.jpush.android.ui.ae: void a()
+cn.jpush.android.ui.ae: void c()
+cn.jpush.android.ui.ae: void d()
+cn.jpush.android.ui.ae: void <clinit>()
+cn.jpush.android.ui.af
+cn.jpush.android.ui.af: java.lang.ref.WeakReference a
+cn.jpush.android.ui.af: cn.jpush.android.a.c b
+cn.jpush.android.ui.af: af(android.content.Context,cn.jpush.android.a.c)
+cn.jpush.android.ui.b
+cn.jpush.android.ui.b: android.widget.ProgressBar a
+cn.jpush.android.ui.b: android.os.Handler b
+cn.jpush.android.ui.b: b(android.widget.ProgressBar)
+cn.jpush.android.ui.b: void onProgressChanged(android.webkit.WebView,int)
+cn.jpush.android.ui.b: android.widget.ProgressBar a(cn.jpush.android.ui.b)
+cn.jpush.android.ui.c
+cn.jpush.android.ui.c: cn.jpush.android.ui.b a
+cn.jpush.android.ui.c: c(cn.jpush.android.ui.b)
+cn.jpush.android.ui.c: void handleMessage(android.os.Message)
+cn.jpush.android.ui.d
+cn.jpush.android.ui.d: cn.jpush.android.a.c a
+cn.jpush.android.ui.d: java.lang.String[] z
+cn.jpush.android.ui.d: d(cn.jpush.android.a.c)
+cn.jpush.android.ui.d: boolean shouldOverrideUrlLoading(android.webkit.WebView,java.lang.String)
+cn.jpush.android.ui.d: void onPageStarted(android.webkit.WebView,java.lang.String,android.graphics.Bitmap)
+cn.jpush.android.ui.d: void onPageFinished(android.webkit.WebView,java.lang.String)
+cn.jpush.android.ui.d: void onLoadResource(android.webkit.WebView,java.lang.String)
+cn.jpush.android.ui.d: void <clinit>()
+cn.jpush.android.ui.e
+cn.jpush.android.ui.e: java.util.List a
+cn.jpush.android.ui.e: cn.jpush.android.ui.ListViewActivity b
+cn.jpush.android.ui.e: e(cn.jpush.android.ui.ListViewActivity,java.util.List)
+cn.jpush.android.ui.e: void onItemClick(android.widget.AdapterView,android.view.View,int,long)
+cn.jpush.android.ui.f
+cn.jpush.android.ui.f: cn.jpush.android.ui.MediaView a
+cn.jpush.android.ui.f: f(cn.jpush.android.ui.MediaView)
+cn.jpush.android.ui.f: void onClick(android.view.View)
+cn.jpush.android.ui.g
+cn.jpush.android.ui.g: cn.jpush.android.ui.MediaView a
+cn.jpush.android.ui.g: g(cn.jpush.android.ui.MediaView)
+cn.jpush.android.ui.g: void onClick(android.view.View)
+cn.jpush.android.ui.h
+cn.jpush.android.ui.h: cn.jpush.android.ui.MediaView a
+cn.jpush.android.ui.h: h(cn.jpush.android.ui.MediaView)
+cn.jpush.android.ui.h: void onClick(android.view.View)
+cn.jpush.android.ui.i
+cn.jpush.android.ui.i: cn.jpush.android.ui.MediaView a
+cn.jpush.android.ui.i: i(cn.jpush.android.ui.MediaView)
+cn.jpush.android.ui.i: void handleMessage(android.os.Message)
+cn.jpush.android.ui.j
+cn.jpush.android.ui.j: int a
+cn.jpush.android.ui.j: cn.jpush.android.ui.MediaView b
+cn.jpush.android.ui.j: j(cn.jpush.android.ui.MediaView,int)
+cn.jpush.android.ui.j: void run()
+cn.jpush.android.ui.k
+cn.jpush.android.ui.k: void a()
+cn.jpush.android.ui.k: void b()
+cn.jpush.android.ui.k: void c()
+cn.jpush.android.ui.k: void d()
+cn.jpush.android.ui.l
+cn.jpush.android.ui.l: android.content.Context a
+cn.jpush.android.ui.l: java.lang.String[] z
+cn.jpush.android.ui.l: l(android.content.Context,int,java.util.List)
+cn.jpush.android.ui.l: android.view.View getView(int,android.view.View,android.view.ViewGroup)
+cn.jpush.android.ui.l: void <clinit>()
+cn.jpush.android.ui.m
+cn.jpush.android.ui.m: long a
+cn.jpush.android.ui.m: boolean b
+cn.jpush.android.ui.m: cn.jpush.android.ui.r h
+cn.jpush.android.ui.m: android.view.WindowManager i
+cn.jpush.android.ui.m: android.content.Context j
+cn.jpush.android.ui.m: cn.jpush.android.a.c c
+cn.jpush.android.ui.m: android.view.WindowManager$LayoutParams k
+cn.jpush.android.ui.m: boolean l
+cn.jpush.android.ui.m: android.content.Context d
+cn.jpush.android.ui.m: boolean m
+cn.jpush.android.ui.m: java.util.Random n
+cn.jpush.android.ui.m: android.widget.TextView e
+cn.jpush.android.ui.m: int o
+cn.jpush.android.ui.m: int p
+cn.jpush.android.ui.m: int q
+cn.jpush.android.ui.m: int r
+cn.jpush.android.ui.m: int s
+cn.jpush.android.ui.m: boolean t
+cn.jpush.android.ui.m: android.widget.ImageView u
+cn.jpush.android.ui.m: float v
+cn.jpush.android.ui.m: float w
+cn.jpush.android.ui.m: float x
+cn.jpush.android.ui.m: float y
+cn.jpush.android.ui.m: float z
+cn.jpush.android.ui.m: float A
+cn.jpush.android.ui.m: float B
+cn.jpush.android.ui.m: float C
+cn.jpush.android.ui.m: int D
+cn.jpush.android.ui.m: int E
+cn.jpush.android.ui.m: android.os.Handler F
+cn.jpush.android.ui.m: java.lang.Runnable G
+cn.jpush.android.ui.m: boolean f
+cn.jpush.android.ui.m: boolean H
+cn.jpush.android.ui.m: boolean I
+cn.jpush.android.ui.m: boolean g
+cn.jpush.android.ui.m: cn.jpush.android.ui.s J
+cn.jpush.android.ui.m: java.lang.String[] K
+cn.jpush.android.ui.m: m(android.content.Context,cn.jpush.android.a.c,boolean)
+cn.jpush.android.ui.m: void a()
+cn.jpush.android.ui.m: void b()
+cn.jpush.android.ui.m: int a(android.content.Context,float)
+cn.jpush.android.ui.m: void a(cn.jpush.android.ui.r)
+cn.jpush.android.ui.m: void c()
+cn.jpush.android.ui.m: boolean onTouchEvent(android.view.MotionEvent)
+cn.jpush.android.ui.m: void d()
+cn.jpush.android.ui.m: void e()
+cn.jpush.android.ui.m: void f()
+cn.jpush.android.ui.m: android.view.WindowManager$LayoutParams a(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: android.os.Handler b(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: boolean a(cn.jpush.android.ui.m,boolean)
+cn.jpush.android.ui.m: boolean c(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: java.lang.Runnable d(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: cn.jpush.android.ui.s e(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: boolean b(cn.jpush.android.ui.m,boolean)
+cn.jpush.android.ui.m: void f(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: int g(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: int h(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: int a(cn.jpush.android.ui.m,int)
+cn.jpush.android.ui.m: int i(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: int j(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: int k(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: int l(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: int m(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: int n(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: void b(cn.jpush.android.ui.m,int)
+cn.jpush.android.ui.m: android.view.WindowManager o(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: boolean p(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: boolean q(cn.jpush.android.ui.m)
+cn.jpush.android.ui.m: int c(cn.jpush.android.ui.m,boolean)
+cn.jpush.android.ui.m: int c(cn.jpush.android.ui.m,int)
+cn.jpush.android.ui.m: void <clinit>()
+cn.jpush.android.ui.n
+cn.jpush.android.ui.n: cn.jpush.android.ui.m a
+cn.jpush.android.ui.n: n(cn.jpush.android.ui.m)
+cn.jpush.android.ui.n: void a()
+cn.jpush.android.ui.o
+cn.jpush.android.ui.o: cn.jpush.android.ui.m a
+cn.jpush.android.ui.o: o(cn.jpush.android.ui.m)
+cn.jpush.android.ui.o: void handleMessage(android.os.Message)
+cn.jpush.android.ui.p
+cn.jpush.android.ui.p: cn.jpush.android.ui.m a
+cn.jpush.android.ui.p: p(cn.jpush.android.ui.m)
+cn.jpush.android.ui.p: void run()
+cn.jpush.android.ui.q
+cn.jpush.android.ui.q: android.graphics.Movie b
+cn.jpush.android.ui.q: long c
+cn.jpush.android.ui.q: cn.jpush.android.ui.m a
+cn.jpush.android.ui.q: q(cn.jpush.android.ui.m,android.content.Context,java.io.InputStream,boolean)
+cn.jpush.android.ui.q: void onDraw(android.graphics.Canvas)
+cn.jpush.android.ui.r
+cn.jpush.android.ui.r: void a()
+cn.jpush.android.ui.s
+cn.jpush.android.ui.s: cn.jpush.android.ui.m a
+cn.jpush.android.ui.s: s(cn.jpush.android.ui.m)
+cn.jpush.android.ui.s: void run()
+cn.jpush.android.ui.s: s(cn.jpush.android.ui.m,byte)
+cn.jpush.android.ui.t
+cn.jpush.android.ui.t: java.util.List a
+cn.jpush.android.ui.t: cn.jpush.android.ui.PushActivity b
+cn.jpush.android.ui.t: t(cn.jpush.android.ui.PushActivity,java.util.List)
+cn.jpush.android.ui.t: void onItemClick(android.widget.AdapterView,android.view.View,int,long)
+cn.jpush.android.ui.u
+cn.jpush.android.ui.u: cn.jpush.android.ui.PushActivity a
+cn.jpush.android.ui.u: java.lang.String[] z
+cn.jpush.android.ui.u: u(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.u: void handleMessage(android.os.Message)
+cn.jpush.android.ui.u: void <clinit>()
+cn.jpush.android.ui.v
+cn.jpush.android.ui.v: cn.jpush.android.a.aa a
+cn.jpush.android.ui.v: cn.jpush.android.ui.u b
+cn.jpush.android.ui.v: v(cn.jpush.android.ui.u,cn.jpush.android.a.aa)
+cn.jpush.android.ui.v: void onClick(android.content.DialogInterface,int)
+cn.jpush.android.ui.w
+cn.jpush.android.ui.w: cn.jpush.android.ui.u a
+cn.jpush.android.ui.w: w(cn.jpush.android.ui.u)
+cn.jpush.android.ui.w: void onClick(android.content.DialogInterface,int)
+cn.jpush.android.ui.x
+cn.jpush.android.ui.x: java.util.List a
+cn.jpush.android.ui.x: cn.jpush.android.ui.PushActivity b
+cn.jpush.android.ui.x: x(cn.jpush.android.ui.PushActivity,java.util.List)
+cn.jpush.android.ui.x: void onItemClick(android.widget.AdapterView,android.view.View,int,long)
+cn.jpush.android.ui.y
+cn.jpush.android.ui.y: cn.jpush.android.a.c a
+cn.jpush.android.ui.y: cn.jpush.android.ui.PushActivity b
+cn.jpush.android.ui.y: y(cn.jpush.android.ui.PushActivity,cn.jpush.android.a.c)
+cn.jpush.android.ui.y: void onClick(android.content.DialogInterface,int)
+cn.jpush.android.ui.z
+cn.jpush.android.ui.z: cn.jpush.android.ui.PushActivity a
+cn.jpush.android.ui.z: z(cn.jpush.android.ui.PushActivity)
+cn.jpush.android.ui.z: void onClick(android.content.DialogInterface,int)
+com.paperairplane.music.share.Main
+com.paperairplane.music.share.Main: Main()
+com.paperairplane.music.share.Main: void btn_empty(android.view.View)
+com.paperairplane.music.share.MusicPlayerService
+com.paperairplane.music.share.MusicPlayerService: MusicPlayerService()
+com.paperairplane.music.share.R$drawable: int empty
+com.paperairplane.music.share.R$drawable: int ic_action_search
+com.paperairplane.music.share.R$drawable: int ic_launcher
+com.paperairplane.music.share.R$id: int about
+com.paperairplane.music.share.R$id: int button_about
+com.paperairplane.music.share.R$id: int button_contact
+com.paperairplane.music.share.R$id: int button_player_pause
+com.paperairplane.music.share.R$id: int button_player_return
+com.paperairplane.music.share.R$id: int cb_follow
+com.paperairplane.music.share.R$id: int empty
+com.paperairplane.music.share.R$id: int et_content
+com.paperairplane.music.share.R$id: int list
+com.paperairplane.music.share.R$id: int menu_about
+com.paperairplane.music.share.R$id: int menu_exit
+com.paperairplane.music.share.R$id: int menu_refresh
+com.paperairplane.music.share.R$id: int menu_unauth
+com.paperairplane.music.share.R$id: int musicname
+com.paperairplane.music.share.R$id: int singer
+com.paperairplane.music.share.R$id: int textView1
+com.paperairplane.music.share.R$id: int text_player_singer
+com.paperairplane.music.share.R$id: int text_player_title
+com.paperairplane.music.share.R$id: int viewempty
+com.paperairplane.music.share.R$layout: int about
+com.paperairplane.music.share.R$layout: int empty
+com.paperairplane.music.share.R$layout: int main
+com.paperairplane.music.share.R$layout: int musiclist_item
+com.paperairplane.music.share.R$layout: int player
+com.paperairplane.music.share.R$layout: int sendweibo
+com.paperairplane.music.share.R$menu: int main
+com.paperairplane.music.share.R$string: int about_contact
+com.paperairplane.music.share.R$string: int about_context
+com.paperairplane.music.share.R$string: int about_download_info
+com.paperairplane.music.share.R$string: int app_name
+com.paperairplane.music.share.R$string: int auth_error
+com.paperairplane.music.share.R$string: int auth_succeed
+com.paperairplane.music.share.R$string: int choose_an_operation
+com.paperairplane.music.share.R$string: int empty
+com.paperairplane.music.share.R$string: int error_internet
+com.paperairplane.music.share.R$string: int followauthor
+com.paperairplane.music.share.R$string: int how_to_share
+com.paperairplane.music.share.R$string: int menu_about
+com.paperairplane.music.share.R$string: int menu_exit
+com.paperairplane.music.share.R$string: int menu_refresh
+com.paperairplane.music.share.R$string: int music_album
+com.paperairplane.music.share.R$string: int music_artist
+com.paperairplane.music.share.R$string: int music_title
+com.paperairplane.music.share.R$string: int music_url
+com.paperairplane.music.share.R$string: int no_music_url_found
+com.paperairplane.music.share.R$string: int not_authorized_error
+com.paperairplane.music.share.R$string: int play
+com.paperairplane.music.share.R$string: int querying
+com.paperairplane.music.share.R$string: int refresh_on_process
+com.paperairplane.music.share.R$string: int refresh_success
+com.paperairplane.music.share.R$string: int send_error
+com.paperairplane.music.share.R$string: int send_succeed
+com.paperairplane.music.share.R$string: int share
+com.paperairplane.music.share.R$string: int share2others
+com.paperairplane.music.share.R$string: int share2weibo
+com.paperairplane.music.share.R$string: int share_by
+com.paperairplane.music.share.R$string: int title_activity_main
+com.paperairplane.music.share.R$string: int to_show_artist
+com.paperairplane.music.share.R$string: int to_show_title
+com.paperairplane.music.share.R$string: int too_long
+com.paperairplane.music.share.R$string: int unauth
+com.paperairplane.music.share.R$string: int unauthed
+com.paperairplane.music.share.R$string: int url
+com.paperairplane.music.share.R$string: int very_long
+com.paperairplane.music.share.R$style: int AppTheme
+com.paperairplane.music.share.Receiver
+com.paperairplane.music.share.Receiver: Receiver()
+com.weibo.sdk.android.R$color: int dialog_title_blue
+com.weibo.sdk.android.R$color: int text_num_gray
+com.weibo.sdk.android.R$color: int transparent
+com.weibo.sdk.android.R$dimen: int weibosdk_dialog_bottom_margin
+com.weibo.sdk.android.R$dimen: int weibosdk_dialog_left_margin
+com.weibo.sdk.android.R$dimen: int weibosdk_dialog_right_margin
+com.weibo.sdk.android.R$dimen: int weibosdk_dialog_top_margin
+com.weibo.sdk.android.R$drawable: int weibosdk_dialog_bg
+com.weibo.sdk.android.api.WeiboAPI$AUTHOR_FILTER: com.weibo.sdk.android.api.WeiboAPI$AUTHOR_FILTER[] values()
+com.weibo.sdk.android.api.WeiboAPI$AUTHOR_FILTER: com.weibo.sdk.android.api.WeiboAPI$AUTHOR_FILTER valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$CAPITAL: com.weibo.sdk.android.api.WeiboAPI$CAPITAL[] values()
+com.weibo.sdk.android.api.WeiboAPI$CAPITAL: com.weibo.sdk.android.api.WeiboAPI$CAPITAL valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$COMMENTS_TYPE: com.weibo.sdk.android.api.WeiboAPI$COMMENTS_TYPE[] values()
+com.weibo.sdk.android.api.WeiboAPI$COMMENTS_TYPE: com.weibo.sdk.android.api.WeiboAPI$COMMENTS_TYPE valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$COUNT_TYPE: com.weibo.sdk.android.api.WeiboAPI$COUNT_TYPE[] values()
+com.weibo.sdk.android.api.WeiboAPI$COUNT_TYPE: com.weibo.sdk.android.api.WeiboAPI$COUNT_TYPE valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$EMOTION_TYPE: com.weibo.sdk.android.api.WeiboAPI$EMOTION_TYPE[] values()
+com.weibo.sdk.android.api.WeiboAPI$EMOTION_TYPE: com.weibo.sdk.android.api.WeiboAPI$EMOTION_TYPE valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$FEATURE: com.weibo.sdk.android.api.WeiboAPI$FEATURE[] values()
+com.weibo.sdk.android.api.WeiboAPI$FEATURE: com.weibo.sdk.android.api.WeiboAPI$FEATURE valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$FRIEND_TYPE: com.weibo.sdk.android.api.WeiboAPI$FRIEND_TYPE[] values()
+com.weibo.sdk.android.api.WeiboAPI$FRIEND_TYPE: com.weibo.sdk.android.api.WeiboAPI$FRIEND_TYPE valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$LANGUAGE: com.weibo.sdk.android.api.WeiboAPI$LANGUAGE[] values()
+com.weibo.sdk.android.api.WeiboAPI$LANGUAGE: com.weibo.sdk.android.api.WeiboAPI$LANGUAGE valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$RANGE: com.weibo.sdk.android.api.WeiboAPI$RANGE[] values()
+com.weibo.sdk.android.api.WeiboAPI$RANGE: com.weibo.sdk.android.api.WeiboAPI$RANGE valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$SCHOOL_TYPE: com.weibo.sdk.android.api.WeiboAPI$SCHOOL_TYPE[] values()
+com.weibo.sdk.android.api.WeiboAPI$SCHOOL_TYPE: com.weibo.sdk.android.api.WeiboAPI$SCHOOL_TYPE valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$SORT: com.weibo.sdk.android.api.WeiboAPI$SORT[] values()
+com.weibo.sdk.android.api.WeiboAPI$SORT: com.weibo.sdk.android.api.WeiboAPI$SORT valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$SORT2: com.weibo.sdk.android.api.WeiboAPI$SORT2[] values()
+com.weibo.sdk.android.api.WeiboAPI$SORT2: com.weibo.sdk.android.api.WeiboAPI$SORT2 valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$SORT3: com.weibo.sdk.android.api.WeiboAPI$SORT3[] values()
+com.weibo.sdk.android.api.WeiboAPI$SORT3: com.weibo.sdk.android.api.WeiboAPI$SORT3 valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$SRC_FILTER: com.weibo.sdk.android.api.WeiboAPI$SRC_FILTER[] values()
+com.weibo.sdk.android.api.WeiboAPI$SRC_FILTER: com.weibo.sdk.android.api.WeiboAPI$SRC_FILTER valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$STATUSES_TYPE: com.weibo.sdk.android.api.WeiboAPI$STATUSES_TYPE[] values()
+com.weibo.sdk.android.api.WeiboAPI$STATUSES_TYPE: com.weibo.sdk.android.api.WeiboAPI$STATUSES_TYPE valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$TYPE: com.weibo.sdk.android.api.WeiboAPI$TYPE[] values()
+com.weibo.sdk.android.api.WeiboAPI$TYPE: com.weibo.sdk.android.api.WeiboAPI$TYPE valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$TYPE_FILTER: com.weibo.sdk.android.api.WeiboAPI$TYPE_FILTER[] values()
+com.weibo.sdk.android.api.WeiboAPI$TYPE_FILTER: com.weibo.sdk.android.api.WeiboAPI$TYPE_FILTER valueOf(java.lang.String)
+com.weibo.sdk.android.api.WeiboAPI$USER_CATEGORY: com.weibo.sdk.android.api.WeiboAPI$USER_CATEGORY[] values()
+com.weibo.sdk.android.api.WeiboAPI$USER_CATEGORY: com.weibo.sdk.android.api.WeiboAPI$USER_CATEGORY valueOf(java.lang.String)
+com.weibo.sdk.android.net.NetStateManager$NetState: com.weibo.sdk.android.net.NetStateManager$NetState[] values()
+com.weibo.sdk.android.net.NetStateManager$NetState: com.weibo.sdk.android.net.NetStateManager$NetState valueOf(java.lang.String)

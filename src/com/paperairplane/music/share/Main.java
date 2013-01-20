@@ -383,7 +383,7 @@ public class Main extends Activity {
 					+ getString(R.string.music_album) + "£º¡¾"
 					+ musics[id].getAlbum() + "¡¿"
 					+ getString(R.string.music_url) + "£º¡¾" + urls[MUSIC]
-					+ "¡¿(" + getString(R.string.share_by) + "£º"
+					+ "¡¿(" + getString(R.string.share_by) + "£º@"
 					+ getString(R.string.app_name) + "||"
 					+ getString(R.string.about_download_info)
 					+ getString(R.string.url) + " )";
