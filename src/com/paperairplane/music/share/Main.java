@@ -28,10 +28,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -87,6 +89,7 @@ public class Main extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
+
 			setContentView(R.layout.main);
 			listview = (ListView) findViewById(R.id.list);// 找ListView的ID
 			listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
@@ -551,6 +554,10 @@ public class Main extends Activity {
 												|| (Main.accessToken
 														.isSessionValid() == false)) {// 检测之前是否授权过
 											handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
+											SharedPreferences preferences = getApplicationContext().getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
+											preferences.edit().putString("content", content).commit();
+											preferences.edit().putBoolean("willFollow", cb.isChecked()).commit();
+											preferences.edit().putString("fileDir",fileDir).commit();
 											weibo.authorize(Main.this,
 													new AuthDialogListener());// 授权
 										} else {
@@ -602,7 +609,6 @@ public class Main extends Activity {
 			follow(HARRY_UID);// 关注Harry Chen
 			follow(XAVIER_UID);// 关注Xavier Yao
 			follow(APP_UID);// 关注官方微博
-
 		}
 	}
 
@@ -646,6 +652,12 @@ public class Main extends Activity {
 			AccessTokenKeeper.keepAccessToken(Main.this, accessToken);
 			handler.sendEmptyMessage(AUTH_SUCCEED);
 			Log.v(DEBUG_TAG, "授权成功，\n AccessToken:" + token);
+			SharedPreferences preferences = getApplicationContext().getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
+			String content = preferences.getString("content", null);
+			String fileDir = preferences.getString("fileDir",null);
+			boolean willFollow = preferences.getBoolean("willFollow", false);
+			Log.v(DEBUG_TAG,"获取状态\n"+content+"\n"+fileDir+"\n"+willFollow);
+			sendWeibo(content, fileDir, willFollow);
 		}
 
 		@Override
