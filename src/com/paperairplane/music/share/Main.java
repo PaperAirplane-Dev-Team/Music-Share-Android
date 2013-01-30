@@ -30,10 +30,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -379,42 +376,17 @@ public class Main extends Activity {
 		public void run() {
 			// 获取信息生成字符串
 			String urls[]=getMusicAndArtworkUrl(id);
-			String content = getString(R.string.music_title) + "：【"
-					+ musics[id].getTitle() + "】"
-					+ getString(R.string.music_artist) + "：【"
-					+ musics[id].getArtist() + "】"
-					+ getString(R.string.music_album) + "：【"
-					+ musics[id].getAlbum() + "】"
-					+ getString(R.string.music_url) + "：【" + urls[MUSIC]
-					+ "】(" + getString(R.string.share_by) + "：@"
-					+ getString(R.string.app_name) + "||"
-					+ getString(R.string.about_download_info)
-					+ getString(R.string.url) + " )";
-			String artworkurl = null;
-			ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext()
-					.getSystemService(Context.CONNECTIVITY_SERVICE);
-			NetworkInfo activeNetInfo = connectivityManager
-					.getActiveNetworkInfo();
-			boolean isWifi = activeNetInfo != null
-					&& activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI;
-			String fileName=null;
-			try {
-				if (isWifi) {
-					artworkurl = urls[ARTWORK].replace("spic", "lpic");
-				} else
-					artworkurl = urls[ARTWORK].replace("spic", "mpic");
-			} catch (Exception e) {
-				Log.v(DEBUG_TAG,"!");
-			}
-			fileName = Utilities.getArtwork(artworkurl, musics[id].getTitle(),ARTWORK_PATH);
+			String content = getString(R.string.share_by) 
+					+ musics[id].getArtist()				
+					+ getString(R.string.music_artist) 
+					+ musics[id].getTitle()  
+					+ getString(R.string.music_album) 
+					+ musics[id].getAlbum() + "  "+ urls[MUSIC];
+			String artworkUrl = null;
+			artworkUrl = urls[ARTWORK].replace("spic", "lpic");			
 			Bundle bundle = new Bundle();
 			bundle.putString("content", content);
-			if (fileName != null) {
-				String fileDir = ARTWORK_PATH + fileName;
-				bundle.putString("fileDir", fileDir);
-			} else {
-				bundle.putString("fileDir", null);
-			}
+		    bundle.putString("artworkUrl", artworkUrl);
 			Log.e(DEBUG_TAG, "获取结束。");
 			switch (means) {
 			// 根据分享方式执行操作
@@ -458,12 +430,14 @@ public class Main extends Activity {
 						urls[ARTWORK] = null;
 					}
 				} catch (JSONException e) {
+					Log.e(DEBUG_TAG,"JSON解析错误");
+					e.printStackTrace();
 					urls[MUSIC] = getString(R.string.no_music_url_found);
 					urls[ARTWORK] = null;
 				}
 			}
 			Log.v(DEBUG_TAG, urls[MUSIC]);
-			Log.v(DEBUG_TAG, "NO Artwork");
+			Log.v(DEBUG_TAG,urls[ARTWORK]);
 			return urls;
 		}
 
@@ -473,7 +447,7 @@ public class Main extends Activity {
 		// 通过豆瓣API获取音乐信息
 		private String getJson(int position) {
 			Log.v(DEBUG_TAG, "方法 getJSON被调用,歌曲编号为" + position);
-			String api_url = "https://api.douban.com/v2/music/search?count=1&q="
+			String api_url = "http://paperairplane.sinaapp.com/proxy.php?q="
 					+ java.net.URLEncoder.encode(musics[position].getTitle()
 							+ "+" + musics[position].getArtist());
 			Log.v(DEBUG_TAG, "方法 getJSON将要进行的请求为" + api_url);
@@ -486,6 +460,7 @@ public class Main extends Activity {
 						+ httpResponse.getStatusLine().getStatusCode());
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					json = EntityUtils.toString(httpResponse.getEntity());
+					Log.v(DEBUG_TAG,"返回结果为"+json);
 				} else {
 					handler.sendEmptyMessage(INTERNET_ERROR);
 					json = null;
@@ -525,7 +500,8 @@ public class Main extends Activity {
 						.findViewById(R.id.cb_follow);
 				Bundle bundle = (Bundle) msg.obj;
 				String _content = bundle.getString("content");
-				final String fileDir = bundle.getString("fileDir");
+				final String artworkUrl = bundle.getString("artworkUrl");
+				Log.v(DEBUG_TAG,artworkUrl);
 				et.setText(_content);
 				new AlertDialog.Builder(Main.this)
 						.setView(sendweibo)
@@ -557,11 +533,11 @@ public class Main extends Activity {
 											SharedPreferences preferences = getApplicationContext().getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
 											preferences.edit().putString("content", content).commit();
 											preferences.edit().putBoolean("willFollow", cb.isChecked()).commit();
-											preferences.edit().putString("fileDir",fileDir).commit();
+											preferences.edit().putString("artworkUrl",artworkUrl).commit();
 											weibo.authorize(Main.this,
 													new AuthDialogListener());// 授权
 										} else {
-											sendWeibo(content, fileDir,
+											sendWeibo(content, artworkUrl,
 													cb.isChecked());
 										}
 
@@ -601,9 +577,16 @@ public class Main extends Activity {
 	private void sendWeibo(String content, String fileDir, boolean willFollow) {
 		api = new StatusesAPI(Main.accessToken);
 		if (fileDir == null) {
+			Log.v(DEBUG_TAG,"发送无图微博");
 			api.update(content, null, null, requestListener);
 		} else {
-			api.upload(content, fileDir, null, null, requestListener);
+			Log.v(DEBUG_TAG,"发送带图微博，url="+fileDir);
+			String url="https://api.weibo.com/2/statuses/upload_url_text.json";
+			WeiboParameters params = new WeiboParameters();
+			params.add("access_token", Main.accessToken.getToken());
+			params.add("status",content);
+			params.add("url",fileDir);
+			AsyncWeiboRunner.request(url, params, "POST", requestListener);
 		}
 		if (willFollow == true) {// 判断是否要关注开发者
 			follow(HARRY_UID);// 关注Harry Chen
@@ -654,10 +637,10 @@ public class Main extends Activity {
 			Log.v(DEBUG_TAG, "授权成功，\n AccessToken:" + token);
 			SharedPreferences preferences = getApplicationContext().getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
 			String content = preferences.getString("content", null);
-			String fileDir = preferences.getString("fileDir",null);
+			String artworkUrl = preferences.getString("artworkUrl",null);
 			boolean willFollow = preferences.getBoolean("willFollow", false);
-			Log.v(DEBUG_TAG,"获取状态\n"+content+"\n"+fileDir+"\n"+willFollow);
-			sendWeibo(content, fileDir, willFollow);
+			Log.v(DEBUG_TAG,"获取状态\n"+content+"\n"+artworkUrl+"\n"+willFollow);
+			sendWeibo(content, artworkUrl, willFollow);
 		}
 
 		@Override
@@ -713,6 +696,7 @@ public class Main extends Activity {
  * Paper Airplane Dev Team
  * 添乱1：@author @HarryChen-SIGKILL- http://weibo.com/yszzf
  * 添乱2：@author @姚沛然 http://weibo.com/xavieryao 
- * 美工：@author @七只小鸡1997
- * http://weibo.com/u/1579617160 2013.1.2
+ * 美工：@author @七只小鸡1997 http://weibo.com/u/1579617160 
+ * Code Version 0015 2013.1.30
+ * p.s.我想年前上线不知道Bug能不能改完……
  **/

@@ -6,12 +6,10 @@
     <string name="to_show_title">显示音乐名</string>
     <string name="to_show_artist">显示歌手</string>
     <string name="menu_exit">退出</string>
-    <string name="share_by">分享自</string>
+    <string name="share_by">我用@纸飞机音乐分享 (http://t.cn/zYyzZOK )分享了</string>
     <string name="how_to_share">选择分享方式</string>
-    <string name="music_title">歌曲名</string>
-    <string name="music_artist">演唱者</string>
-    <string name="music_album">专辑</string>
-    <string name="music_url">地址 </string>
+    <string name="music_artist"> 的歌曲</string>
+    <string name="music_album"> 来自专辑</string>
     <string name="menu_refresh">刷新音乐列表</string>
     <string name="refresh_success">刷新音乐列表成功</string>
     <string name="play">播放</string>
@@ -19,7 +17,7 @@
     <string name="choose_an_operation">选择一个操作</string>
     <string name="very_long">                                                                              </string>
     <string name="refresh_on_process">刷新播放列表中</string>
-    <string name="about_context">Paper Airplane Dev Team\n添乱1：@author @HarryChen-SIGKILL-\nhttp://weibo.com/yszzf\n添乱2：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2013.1.3 凌晨02:30\nVer0.8.2</string>
+    <string name="about_context">Paper Airplane Dev Team\n添乱1：@author @HarryChen-SIGKILL-\nhttp://weibo.com/yszzf\n添乱2：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2013.1.30\nVer0.8.3</string>
     <string name="menu_about">关于</string>
     <string name="about_contact">来人，捉虫！</string>
 	<string name="about_download_info">戳我下载：</string>
@@ -27,7 +25,7 @@
     <string name="error_internet">请检查您的网络连接</string>  
     <string name="querying">查询中………请稍候</string> 
     <string name="too_long">超出字数限制</string>
-    <string name="url">http://paperairplane.tk/mobile-apps</string>
+    <string name="url">http://t.cn/zYyzZOK</string>
     <string name="send_succeed">分享成功</string>
     <string name="not_authorized_error">请先授权</string>
     <string name="send_error">分享失败，错误：</string>
