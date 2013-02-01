@@ -15,21 +15,22 @@
         android:textColor="#fff" />
 
     <Button
-        android:id="@+id/button_contact"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_marginLeft="46dp"
-        android:text="@string/about_contact" />
-
-    <Button
         android:id="@+id/button_about"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:layout_marginRight="45dp"
+        android:layout_alignBaseline="@+id/button_contact"
+        android:layout_alignBottom="@+id/button_contact"
+        android:layout_toRightOf="@+id/button_contact"
         android:gravity="center"
         android:text="@android:string/ok" />
+
+    <Button
+        android:id="@+id/button_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView1"
+        android:layout_marginLeft="34dp"
+        android:text="@string/about_contact" />
 
 </RelativeLayout>

@@ -2,7 +2,7 @@
 
     <string name="app_name">Music Share</string>
     <string name="title_activity_main">Music Share</string>
-    <string name="empty">No Music Found</string>
+    <string name="empty">Type Something First</string>
     <string name="to_show_title">To Show Music Title Here</string>
     <string name="to_show_artist">To Show Artist Here</string>
     <string name="menu_exit">Exit</string>
@@ -36,4 +36,8 @@
     <string name="share2others">Share to Others</string>
     <string name="share2weibo">Share to Weibo</string>
     <string name="followauthor">Follow Author</string>
+    <string name="search">Search the Internet</string>
+    <string name="title">Title</string>
+    <string name="artist">Artist</string>
+    <string name="album">Album</string>
 </resources>

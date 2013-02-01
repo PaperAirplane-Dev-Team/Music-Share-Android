@@ -2,7 +2,7 @@
 
     <string name="app_name">纸飞机音乐分享</string>
     <string name="title_activity_main">音乐分享</string>
-    <string name="empty">未发现音乐</string>
+    <string name="empty">字段是空的…你这是坑爹啊？</string>
     <string name="to_show_title">显示音乐名</string>
     <string name="to_show_artist">显示歌手</string>
     <string name="menu_exit">退出</string>
@@ -36,4 +36,8 @@
     <string name="share2others">分享到别处</string>
     <string name="share2weibo">分享到微博</string>
     <string name="followauthor">关注开发者</string>
+    <string name="search">搜索互联网</string>
+    <string name="title">标题</string>
+    <string name="artist">表演者</string>
+    <string name="album">专辑</string>
 </resources>
