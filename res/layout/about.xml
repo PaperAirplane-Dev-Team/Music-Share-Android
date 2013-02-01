@@ -7,30 +7,36 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
+        android:id="@+id/textAbout"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/about_context"
         android:textColor="#fff" />
 
-    <Button
-        android:id="@+id/button_about"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button_contact"
-        android:layout_alignBottom="@+id/button_contact"
-        android:layout_toRightOf="@+id/button_contact"
-        android:gravity="center"
-        android:text="@android:string/ok" />
-
-    <Button
-        android:id="@+id/button_contact"
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
-        android:layout_marginLeft="34dp"
-        android:text="@string/about_contact" />
+        android:layout_below="@+id/textAbout"
+        android:stretchColumns="*" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/button_about"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@android:string/ok" />
+
+            <Button
+                android:id="@+id/button_contact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/about_contact" />
+        </TableRow>
+    </TableLayout>
 
 </RelativeLayout>

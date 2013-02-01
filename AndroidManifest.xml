@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.paperairplane.music.share"
-    android:versionCode="0017"
+    android:versionCode="0018"
     android:versionName="0.8.4alpha" >
 
     <permission
@@ -39,7 +39,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+	
+        <activity android:name=".MusicPlayer" />
+        
         <service
             android:name=".MusicPlayerService"
             android:process="android.process.acore" >

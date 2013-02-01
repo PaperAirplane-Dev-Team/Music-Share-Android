@@ -72,7 +72,6 @@ public class Main extends Activity {
 	private final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken = null;
 	private Weibo weibo = Weibo.getInstance(APP_KEY, REDIRECT_URI);
-	// fatal error哈哈谁让你打错
 	private final static String DEBUG_TAG = "Music Share DEBUG";
 	private StatusesAPI api = null;
 
@@ -181,7 +180,7 @@ public class Main extends Activity {
 
 			});
 			return new AlertDialog.Builder(this).setView(about).create();
-		} else if (_id <= 65535) { // 这个是播放音乐
+		} else/* if (_id < 65535)*/ { 
 			return new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.choose_an_operation))
@@ -213,7 +212,7 @@ public class Main extends Activity {
 
 								}
 							}).create();
-		} else {
+		}/* else {
 			int newid = _id - 65535;
 			if (!isPlaying || nowPlaying != newid) {
 				try {
@@ -293,7 +292,7 @@ public class Main extends Activity {
 			return new AlertDialog.Builder(this).setView(dialogView)
 					.setCancelable(true).show();
 		}
-
+*/
 	}
 
 	public void footer(View v) {
@@ -382,6 +381,7 @@ public class Main extends Activity {
 			musics[i] = new MusicData();
 			musics[i].setTitle(cursor.getString(0));
 			musics[i].setDuration(Utilities.convertDuration(cursor.getInt(1)));
+			musics[i].setOrgDuration(cursor.getInt(1));
 			musics[i].setArtist(cursor.getString(2));
 			musics[i].setPath(cursor.getString(3));
 			musics[i].setAlbum(cursor.getString(4));
@@ -402,11 +402,21 @@ public class Main extends Activity {
 
 	// 播放音乐
 	private void playMusic(int position) {
-		try {
+		/*try {
 			dismissDialog(position + 65535);
 		} catch (Exception e) {
 		}
-		showDialog(position + 65535);
+		showDialog(position + 65535);*/
+		Bundle bundle=new Bundle();
+		bundle.putString("path", musics[position].getPath());
+		bundle.putInt("id", position);
+		bundle.putString("title", musics[position].getTitle());
+		bundle.putString("artist", musics[position].getArtist());
+		bundle.putString("duration", musics[position].getDuration());
+		bundle.putInt("orgDuration",musics[position].getOrgDuration());
+		Intent musicIntent=new Intent(Main.this,MusicPlayer.class);
+		musicIntent.putExtras(bundle);
+		startActivity(musicIntent);
 	}
 
 	// 刷新音乐列表
@@ -771,8 +781,11 @@ public class Main extends Activity {
 
 }
 /**
- * Paper Airplane Dev Team 添乱1：@author @HarryChen-SIGKILL-
- * http://weibo.com/yszzf 添乱2：@author @姚沛然 http://weibo.com/xavieryao 美工：@author @七只小鸡1997
- * http://weibo.com/u/1579617160 Code Version 0015 2013.1.30
+ * Paper Airplane Dev Team 
+ * 添乱1：@author @HarryChen-SIGKILL- http://weibo.com/yszzf 
+ * 添乱2：@author @姚沛然 http://weibo.com/xavieryao 
+ * 美工：@author @七只小鸡1997 http://weibo.com/u/1579617160
+ * Code Version 0018 2013.2.01
  * p.s.我想年前上线不知道Bug能不能改完……
+ * P.P.S.What?…………
  **/

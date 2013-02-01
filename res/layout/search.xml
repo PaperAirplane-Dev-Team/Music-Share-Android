@@ -62,22 +62,33 @@
         android:ems="10"
         android:hint="@string/artist" />
 
-    <Button
-        android:id="@+id/btn_share2weibo"
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/et_album"
-        android:text="@string/share2weibo" />
+        android:stretchColumns="*" >
 
-    <Button
-        android:id="@+id/btn_share2others"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btn_share2weibo"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@+id/btn_share2weibo"
-        android:layout_below="@+id/et_album"
-        android:text="@string/share2others" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/btn_share2weibo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/et_album"
+                android:text="@string/share2weibo" />
+
+            <Button
+                android:id="@+id/btn_share2others"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/btn_share2weibo"
+                android:layout_toRightOf="@+id/btn_share2weibo"
+                android:text="@string/share2others" />
+        </TableRow>
+    </TableLayout>
 
 </RelativeLayout>

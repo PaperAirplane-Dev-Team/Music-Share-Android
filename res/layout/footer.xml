@@ -2,16 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_horizontal"
->
+    android:gravity="center_horizontal" >
+
     <Button
-        android:onClick="footer"
+        style="@style/ListItemStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="footer"
         android:text="@string/search"
         android:textSize="18sp"
-        android:textStyle="bold"
-        style="@style/ListItemStyle"
-/>
+        android:textStyle="bold" />
 
 </LinearLayout>
