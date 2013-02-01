@@ -90,6 +90,7 @@ public class Main extends Activity {
 			listview.addFooterView(footerView);
 			showMusicList();
 			Log.v(DEBUG_TAG, "Push Start");
+//			JPushInterface.setAliasAndTags(getApplicationContext(), "Debug", null);
 			JPushInterface.init(getApplicationContext());
 		} catch (Exception e) {
 			Log.e(DEBUG_TAG, e.getMessage());
@@ -195,7 +196,9 @@ public class Main extends Activity {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
-									shareMusic(musics[_id].getTitle(), musics[_id].getArtist(), musics[_id].getAlbum(), OTHERS);
+									shareMusic(musics[_id].getTitle(),
+											musics[_id].getArtist(),
+											musics[_id].getAlbum(), OTHERS);
 								}
 							})
 					.setNeutralButton(getString(R.string.share2weibo),
@@ -204,7 +207,9 @@ public class Main extends Activity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									shareMusic(musics[_id].getTitle(), musics[_id].getArtist(), musics[_id].getAlbum(), WEIBO);
+									shareMusic(musics[_id].getTitle(),
+											musics[_id].getArtist(),
+											musics[_id].getAlbum(), WEIBO);
 
 								}
 							}).create();
@@ -293,50 +298,54 @@ public class Main extends Activity {
 
 	public void footer(View v) {
 		Log.v(DEBUG_TAG, "点击");
-		View search = LayoutInflater.from(this).inflate(
-				R.layout.search, null);
-		final EditText et_title = (EditText)search.findViewById(R.id.et_title);
-		final EditText et_artist = (EditText)search.findViewById(R.id.et_artist);
-		final EditText et_album = (EditText)search.findViewById(R.id.et_album);
-		Button button_weibo = (Button) search.findViewById(R.id.btn_share2weibo);
+		View search = LayoutInflater.from(this).inflate(R.layout.search, null);
+		final EditText et_title = (EditText) search.findViewById(R.id.et_title);
+		final EditText et_artist = (EditText) search
+				.findViewById(R.id.et_artist);
+		final EditText et_album = (EditText) search.findViewById(R.id.et_album);
+		Button button_weibo = (Button) search
+				.findViewById(R.id.btn_share2weibo);
 		button_weibo.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				if(et_title.getText().toString().trim().equals("")&&et_artist.getText().toString().trim().equals("")){
+				if (et_title.getText().toString().trim().equals("")
+						&& et_artist.getText().toString().trim().equals("")) {
 					new AlertDialog.Builder(Main.this)
-					.setMessage(
-							getString(R.string.empty))
-					.setPositiveButton(
-							getString(android.R.string.ok),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(
-										DialogInterface dialog,
-										int which) {
-								}
-							}).show();
-				}else{
-					shareMusic(et_title.getText().toString(), et_artist.getText().toString(), et_album.getText().toString(), WEIBO);
+							.setMessage(getString(R.string.empty))
+							.setPositiveButton(getString(android.R.string.ok),
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+										}
+									}).show();
+				} else {
+					shareMusic(et_title.getText().toString(), et_artist
+							.getText().toString(), et_album.getText()
+							.toString(), WEIBO);
 				}
 			}
 		});
-		Button button_others = (Button) search.findViewById(R.id.btn_share2others);
+		Button button_others = (Button) search
+				.findViewById(R.id.btn_share2others);
 		button_others.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				if(et_title.getText().toString().trim().equals("")&&et_artist.getText().toString().trim().equals("")){
+				if (et_title.getText().toString().trim().equals("")
+						&& et_artist.getText().toString().trim().equals("")) {
 					new AlertDialog.Builder(Main.this)
-					.setMessage(
-							getString(R.string.empty))
-					.setPositiveButton(
-							getString(android.R.string.ok),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(
-										DialogInterface dialog,
-										int which) {
-								}
-							}).show();
-				}else{
-					shareMusic(et_title.getText().toString(), et_artist.getText().toString(), et_album.getText().toString(), OTHERS);
+							.setMessage(getString(R.string.empty))
+							.setPositiveButton(getString(android.R.string.ok),
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+										}
+									}).show();
+				} else {
+					shareMusic(et_title.getText().toString(), et_artist
+							.getText().toString(), et_album.getText()
+							.toString(), OTHERS);
 				}
 			}
 		});
@@ -383,8 +392,9 @@ public class Main extends Activity {
 	}
 
 	// 分享音乐
-	private void shareMusic(String title,String artist,String album, int means) {
-		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title, artist,album, means);
+	private void shareMusic(String title, String artist, String album, int means) {
+		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
+				artist, album, means);
 		query.start();
 		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG)
 				.show();
@@ -496,13 +506,15 @@ public class Main extends Activity {
 		// 通过豆瓣API获取音乐信息
 		private String getJson(String title, String artist) {
 			Log.v(DEBUG_TAG, "方法 getJSON被调用");
-			String api_url = "http://paperairplane.sinaapp.com/proxy.php?q="
-					+ java.net.URLEncoder.encode(title + "+" + artist);
-			Log.v(DEBUG_TAG, "方法 getJSON将要进行的请求为" + api_url);
 			String json = null;
 			HttpResponse httpResponse;
-			HttpGet httpGet = new HttpGet(api_url);
 			try {
+				String api_url = "http://paperairplane.sinaapp.com/proxy.php?q="
+						+ java.net.URLEncoder.encode(title + "+" + artist,
+								"UTF-8");
+				Log.v(DEBUG_TAG, "方法 getJSON将要进行的请求为" + api_url);
+				HttpGet httpGet = new HttpGet(api_url);
+
 				httpResponse = new DefaultHttpClient().execute(httpGet);
 				Log.v(DEBUG_TAG, "进行的HTTP GET返回状态为"
 						+ httpResponse.getStatusLine().getStatusCode());
