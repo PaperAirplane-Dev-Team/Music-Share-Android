@@ -207,6 +207,7 @@ public class MusicPlayer extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
+		nm.cancel(0);
 		unregisterReceiver(positionReceiver);
 	}
 
