@@ -37,7 +37,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import cn.jpush.android.api.JPushInterface;
 
@@ -59,7 +58,6 @@ public class Main extends Activity {
 	private String[] media_info = new String[] { MediaStore.Audio.Media.TITLE,
 			MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST,
 			MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.ALBUM };
-	private int PLAY = 0, PAUSE = 1, STOP = 2, nowPlaying;
 	final private int INTERNET_ERROR = 3, SEND_WEIBO = 4, SEND_SUCCEED = 5,
 			AUTH_ERROR = 6, SEND_ERROR = 7, NOT_AUTHORIZED_ERROR = 8,
 			AUTH_SUCCEED = 9;
@@ -67,7 +65,6 @@ public class Main extends Activity {
 	final private int HARRY_UID = 1689129907, XAVIER_UID = 2121014783,
 			APP_UID = 1153267341;
 	final private int MUSIC = 0, ARTWORK = 1;
-	private boolean isPlaying = false;
 	private final String APP_KEY = "1006183120";
 	private final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken = null;
@@ -407,6 +404,7 @@ public class Main extends Activity {
 		} catch (Exception e) {
 		}
 		showDialog(position + 65535);*/
+		
 		Bundle bundle=new Bundle();
 		bundle.putString("path", musics[position].getPath());
 		bundle.putInt("id", position);
@@ -417,6 +415,7 @@ public class Main extends Activity {
 		Intent musicIntent=new Intent(Main.this,MusicPlayer.class);
 		musicIntent.putExtras(bundle);
 		startActivity(musicIntent);
+		
 	}
 
 	// À¢–¬“Ù¿÷¡–±Ì

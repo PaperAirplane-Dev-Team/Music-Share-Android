@@ -1,36 +1,68 @@
 package com.paperairplane.music.share;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ProgressBar;
+import android.widget.RemoteViews;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class MusicPlayer extends Activity {
-	private int nowPlaying,nowDuration;
-	private final static int PLAY = 0, PAUSE = 1, STOP = 2;
+	private int nowPlaying, nowDuration, maxTime;
+	private final static int PLAY = 0, PAUSE = 1, STOP = 2,
+			PROGRESS_CHANGE = 3;
 	private boolean isPlaying = false;
 	private final static String DEBUG_TAG = "Music Share DEBUG";
 	private Intent musicIntent;
-	private RefreshProgressBar refresh;
-	private ProgressBar progressMusic;
+	private SeekBar seekBar;
+	private Button btnPP = null;
+	private Button btnRT = null;
+	private RemoteViews rv = null;
+	private NotificationManager nm = null;
+	private String title, artist;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.player);
+		int id = 0;
+		String duration = null,path=null;
+		SharedPreferences pref = MusicPlayer.this.getSharedPreferences("Play Status", Context.MODE_PRIVATE);
+		try{
 		Bundle extras = getIntent().getExtras();
-		int id = extras.getInt("id");
-		String duration = extras.getString("duration");
-		final int orgDuration = extras.getInt("orgDuration")/1000;
-		String path = extras.getString("path");
-		String title = extras.getString("title");
-		String artist = extras.getString("artist");
+		id = extras.getInt("id");
+		duration = extras.getString("duration");
+		path = extras.getString("path");
+		title = extras.getString("title");
+		artist = extras.getString("artist");
+		pref.edit().putInt("id", id).commit();
+		pref.edit().putString("duration",duration).commit();
+		pref.edit().putString("path", path).commit();
+		pref.edit().putString("title", title).commit();
+		pref.edit().putString("artist", artist).commit();
+		}catch(Exception e){
+			id = pref.getInt("id", 0);
+			duration = pref.getString("duration", null);
+			path = pref.getString("path",null);
+			title = pref.getString("title", null);
+			artist = pref.getString("artist", null);
+			isPlaying = true;//FIXME: 我无力了……重回Activity的时候虽然不崩溃了可是没法恢复状态…………
+		}
 
+		initReceiver();
+		initNotification();
 		if (!isPlaying || nowPlaying != id) {
 			try {
 				musicIntent = new Intent();
@@ -44,23 +76,42 @@ public class MusicPlayer extends Activity {
 				isPlaying = true;
 				nowPlaying = id;
 			} catch (Throwable e) {
-				//Log.d(DEBUG_TAG,e.getMessage());
-				//e.printStackTrace();
+				Log.d(DEBUG_TAG, "!!" + e.getMessage());
+				e.printStackTrace();
 			}
-			refresh=new RefreshProgressBar(orgDuration);
-			refresh.setMean(PLAY);
-			refresh.run();
-			//FIXME 这里麻烦很大，估计出问题了
-			//FIXME 我看来又是子线程没法操作View,弄不好又要Handler了
 		}
-		
+
 		final TextView tvTitle = (TextView) findViewById(R.id.text_player_title);
 		final TextView tvSinger = (TextView) findViewById(R.id.text_player_singer);
-		tvTitle.setText(title + "(" + duration + ")"+ getString(R.string.very_long));
+		tvTitle.setText(title + "(" + duration + ")"
+				+ getString(R.string.very_long));
 		tvSinger.setText(artist + getString(R.string.very_long));
-		progressMusic=(ProgressBar)findViewById(R.id.progressMusic);
-		final Button btnPP = (Button) findViewById(R.id.button_player_pause);
-		final Button btnRT = (Button) findViewById(R.id.button_player_return);
+		seekBar = (SeekBar) findViewById(R.id.seekMusic);
+		seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				play();
+			}
+
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				pause();
+			}
+
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				if (fromUser) {
+					musicIntent = new Intent();
+					musicIntent
+							.setAction("com.paperairplane.music.share.PLAYMUSIC");
+					Bundle bundle = new Bundle();
+					bundle.putInt("op", PROGRESS_CHANGE);
+					bundle.putInt("progress", progress);
+					musicIntent.putExtras(bundle);
+					startService(musicIntent);
+				}
+			}
+		});
+		btnPP = (Button) findViewById(R.id.button_player_pause);
+		btnRT = (Button) findViewById(R.id.button_player_return);
 		btnPP.setBackgroundDrawable(getResources().getDrawable(
 				android.R.drawable.ic_media_pause));
 		btnRT.setBackgroundDrawable(getResources().getDrawable(
@@ -68,28 +119,11 @@ public class MusicPlayer extends Activity {
 		btnPP.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isPlaying == true) {
-					musicIntent = new Intent();
-					musicIntent
-							.setAction("com.paperairplane.music.share.PLAYMUSIC");
-					Bundle bundle = new Bundle();
-					bundle.putInt("op", PAUSE);
-					musicIntent.putExtras(bundle);
-					startService(musicIntent);
-					btnPP.setBackgroundDrawable(getResources().getDrawable(
-							android.R.drawable.ic_media_play));
-					isPlaying = false;
-					refresh.setMean(PAUSE);
+					pause();
+
 				} else if (isPlaying == false) {
 					musicIntent = new Intent();
-					musicIntent.setAction("com.paperairplane.music.share.PLAYMUSIC");
-					Bundle bundle = new Bundle();
-					bundle.putInt("op", PLAY);
-					musicIntent.putExtras(bundle);
-					startService(musicIntent);
-					btnPP.setBackgroundDrawable(getResources().getDrawable(
-							android.R.drawable.ic_media_pause));
-					isPlaying = true;
-					refresh.setMean(PLAY);
+					play();
 				}
 			}
 		});
@@ -102,46 +136,97 @@ public class MusicPlayer extends Activity {
 				bundle.putInt("op", STOP);
 				musicIntent.putExtras(bundle);
 				startService(musicIntent);
-				refresh.setMean(STOP);
 				isPlaying = false;
 				finish();
-				
+
 			}
 		});
 	}
-	
-	class RefreshProgressBar extends Thread{
-		int max,now,mean;
-		@Override
-		public void run(){
-			//FIXME 这里,这里,这些代码是废物
-			progressMusic.setMax(max);
-			progressMusic.setIndeterminate(false);
-			try{
-				while (mean==PLAY){
-					Thread.sleep(1);
-					now++;
-					//progressMusic.setProgress(now);
-					progressMusic.incrementProgressBy(1);
-					Log.v(DEBUG_TAG,"Progress!");
-				}
-			}
-			catch (Exception e){
-				Log.d(DEBUG_TAG,e.getMessage());
-			}
-		}
-		RefreshProgressBar(int _max){
-			max=_max;
-			now=0;
-		}
-		
-		public void setMean(int _mean){
-			mean=_mean;
-		}
-		
-		public int getNowDuration(){
-			return now;
+
+	private void initNotification() {
+		try {
+			nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			rv = new RemoteViews(MusicPlayer.this.getPackageName(),
+					R.layout.remoteplayer);
+			String notification_title = getString(R.string.now_playing) + title;
+			@SuppressWarnings("deprecation")
+			Notification n = new Notification(R.drawable.ic_launcher, notification_title,
+					System.currentTimeMillis());
+			n.flags = Notification.FLAG_ONGOING_EVENT;
+			rv.setTextViewText(R.id.text_remoteplayer_title, title);
+			rv.setTextViewText(R.id.text_remoteplayer_singer, artist);
+			n.contentView = rv;
+			Intent intent = new Intent(this, MusicPlayer.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+					intent, PendingIntent.FLAG_UPDATE_CURRENT);
+			n.contentIntent = contentIntent;
+			nm.notify(0, n);
+			Log.d(DEBUG_TAG, "发送通知");
+		} catch (Throwable e) {
+			e.printStackTrace();
 		}
 	}
+
+	protected void play() {
+		musicIntent = new Intent();
+		musicIntent.setAction("com.paperairplane.music.share.PLAYMUSIC");
+		Bundle bundle = new Bundle();
+		bundle.putInt("op", PLAY);
+		musicIntent.putExtras(bundle);
+		startService(musicIntent);
+		btnPP.setBackgroundDrawable(getResources().getDrawable(
+				android.R.drawable.ic_media_pause));
+		isPlaying = true;
+	}
+
+	protected void pause() {
+		musicIntent = new Intent();
+		musicIntent.setAction("com.paperairplane.music.share.PLAYMUSIC");
+		Bundle bundle = new Bundle();
+		bundle.putInt("op", PAUSE);
+		musicIntent.putExtras(bundle);
+		startService(musicIntent);
+		btnPP.setBackgroundDrawable(getResources().getDrawable(
+				android.R.drawable.ic_media_play));
+		isPlaying = false;
+	}
+
+	private void initReceiver() {
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("com.paperairplane.music.share.CurrentTime");
+		filter.addAction("com.paperairplane.music.share.MaxTime");
+		registerReceiver(positionReceiver, filter);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		unregisterReceiver(positionReceiver);
+	}
+
+	private BroadcastReceiver positionReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (action.equals("com.paperairplane.music.share.CurrentTime")) {
+				nowDuration = intent.getExtras().getInt("currentTime");
+				// Log.d(DEBUG_TAG, "收到的时间点" + nowDuration);
+				seekBar.setProgress(nowDuration);
+				rv.setInt(R.id.progressMusic, "setProgress", nowDuration);
+			} else if (action.equals("com.paperairplane.music.share.MaxTime")) {
+				maxTime = intent.getExtras().getInt("maxTime");
+				seekBar.setMax(maxTime);
+				rv.setInt(R.id.progressMusic, "setMax", maxTime);
+				Log.d(DEBUG_TAG, "设置seekBar-Max" + maxTime);
+				//FIXME RemoteView里的ProgressBar动不了啊！！……
+			}
+		}
+	};
 
 }

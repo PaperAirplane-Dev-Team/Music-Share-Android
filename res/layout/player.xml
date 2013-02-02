@@ -23,9 +23,9 @@
         android:text="@string/to_show_artist"
         android:textColor="#fff"
         android:textSize="13dp" />
-
-    <ProgressBar
-        android:id="@+id/progressMusic"
+
+    <SeekBar
+        android:id="@+id/seekMusic"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
