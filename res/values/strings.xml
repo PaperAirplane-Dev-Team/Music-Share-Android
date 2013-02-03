@@ -10,6 +10,7 @@
     <string name="how_to_share">Choose an App to Share</string>
     <string name="music_artist">\u0008 \'s music\u0008</string>
     <string name="music_album">\u0008from the album\u0008 </string>
+    <string name="before_url"> , tap the link for more details</string>
     <string name="menu_refresh">Refresh Music List</string>
     <string name="refresh_success">Successfully Refreshed Music List</string>
     <string name="play">Play</string>

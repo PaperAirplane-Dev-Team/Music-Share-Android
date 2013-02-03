@@ -50,6 +50,8 @@ import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.net.AsyncWeiboRunner;
 import com.weibo.sdk.android.net.RequestListener;
 
+
+//FIXME FIXME FIXME FIXME请注意分散在代码中的FIXME注释！不要编译运行，不要！
 public class Main extends Activity {
 	// 存储音乐信息
 	private MusicData[] musics;// 保存音乐数据
@@ -64,7 +66,7 @@ public class Main extends Activity {
 	final private int WEIBO = 10, OTHERS = 11;
 	final private int HARRY_UID = 1689129907, XAVIER_UID = 2121014783,
 			APP_UID = 1153267341;
-	final private int MUSIC = 0, ARTWORK = 1;
+	final private int MUSIC = 0, ARTWORK = 1, ARTIST = 2;
 	private final String APP_KEY = "1006183120";
 	private final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken = null;
@@ -209,91 +211,12 @@ public class Main extends Activity {
 
 								}
 							}).create();
-		}/* else {
-			int newid = _id - 65535;
-			if (!isPlaying || nowPlaying != newid) {
-				try {
-					musicIntent = new Intent();
-					musicIntent
-							.setAction("com.paperairplane.music.share.PLAYMUSIC");
-					Bundle bundle = new Bundle();
-					bundle.putString("path", musics[newid].getPath());
-					bundle.putInt("op", PLAY);
-					musicIntent.putExtras(bundle);
-					startService(musicIntent);
-					isPlaying = true;
-					nowPlaying = newid;
-				} catch (Exception e) {
-				}
-			}
-			final View dialogView = LayoutInflater.from(this).inflate(
-					R.layout.player, null);
-			final TextView tvTitle = (TextView) dialogView
-					.findViewById(R.id.text_player_title);
-			final TextView tvSinger = (TextView) dialogView
-					.findViewById(R.id.text_player_singer);
-			tvTitle.setText(musics[newid].getTitle() + "("
-					+ musics[newid].getDuration() + ")"
-					+ getString(R.string.very_long));
-			tvSinger.setText(musics[newid].getArtist()
-					+ getString(R.string.very_long));
-			final Button btnPP = (Button) dialogView
-					.findViewById(R.id.button_player_pause);
-			final Button btnRT = (Button) dialogView
-					.findViewById(R.id.button_player_return);
-			btnPP.setBackgroundDrawable(getResources().getDrawable(
-					android.R.drawable.ic_media_pause));
-			btnRT.setBackgroundDrawable(getResources().getDrawable(
-					android.R.drawable.ic_delete));
-			btnPP.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					if (isPlaying == true) {
-						musicIntent = new Intent();
-						musicIntent
-								.setAction("com.paperairplane.music.share.PLAYMUSIC");
-						Bundle bundle = new Bundle();
-						bundle.putInt("op", PAUSE);
-						musicIntent.putExtras(bundle);
-						startService(musicIntent);
-						btnPP.setBackgroundDrawable(getResources().getDrawable(
-								android.R.drawable.ic_media_play));
-						isPlaying = false;
-					} else if (isPlaying == false) {
-						musicIntent = new Intent();
-						musicIntent
-								.setAction("com.paperairplane.music.share.PLAYMUSIC");
-						Bundle bundle = new Bundle();
-						bundle.putInt("op", PLAY);
-						musicIntent.putExtras(bundle);
-						startService(musicIntent);
-						// mediaPlayer.start();
-						btnPP.setBackgroundDrawable(getResources().getDrawable(
-								android.R.drawable.ic_media_pause));
-						isPlaying = true;
-					}
-				}
-			});
-			btnRT.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					musicIntent = new Intent();
-					musicIntent
-							.setAction("com.paperairplane.music.share.PLAYMUSIC");
-					Bundle bundle = new Bundle();
-					bundle.putInt("op", STOP);
-					musicIntent.putExtras(bundle);
-					startService(musicIntent);
-					removeDialog(_id);
-					isPlaying = false;
-				}
-			});
-			return new AlertDialog.Builder(this).setView(dialogView)
-					.setCancelable(true).show();
 		}
-*/
 	}
 
 	public void footer(View v) {
-		Log.v(DEBUG_TAG, "点击");
+		Log.v(DEBUG_TAG, "点击footer");
+		//FIXME 注意注意！这里抛出错误,未能解决,也没有catch！
 		View search = LayoutInflater.from(this).inflate(R.layout.search, null);
 		final EditText et_title = (EditText) search.findViewById(R.id.et_title);
 		final EditText et_artist = (EditText) search
@@ -303,8 +226,7 @@ public class Main extends Activity {
 				.findViewById(R.id.btn_share2weibo);
 		button_weibo.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				if (et_title.getText().toString().trim().equals("")
-						&& et_artist.getText().toString().trim().equals("")) {
+				if (et_title.getText().toString().trim().equals("")) {
 					new AlertDialog.Builder(Main.this)
 							.setMessage(getString(R.string.empty))
 							.setPositiveButton(getString(android.R.string.ok),
@@ -326,8 +248,8 @@ public class Main extends Activity {
 				.findViewById(R.id.btn_share2others);
 		button_others.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				if (et_title.getText().toString().trim().equals("")
-						&& et_artist.getText().toString().trim().equals("")) {
+				if (et_title.getText().toString().trim().equals("")) {
+				//忘了保存,只要有Title就够了~
 					new AlertDialog.Builder(Main.this)
 							.setMessage(getString(R.string.empty))
 							.setPositiveButton(getString(android.R.string.ok),
@@ -354,13 +276,12 @@ public class Main extends Activity {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long id) {
 			if (position != listview.getCount()) {
-
-				try {
-					dismissDialog(position);
-				} catch (Exception e) {
+				try{
+				dismissDialog(position);
 				}
-				showDialog(position);
+				catch(Exception e){}
 			}
+			showDialog(position);
 		}
 	}
 
@@ -399,11 +320,6 @@ public class Main extends Activity {
 
 	// 播放音乐
 	private void playMusic(int position) {
-		/*try {
-			dismissDialog(position + 65535);
-		} catch (Exception e) {
-		}
-		showDialog(position + 65535);*/
 		
 		Bundle bundle=new Bundle();
 		bundle.putString("path", musics[position].getPath());
@@ -448,13 +364,13 @@ public class Main extends Activity {
 
 		public void run() {
 			// 获取信息生成字符串
-			String urls[] = getMusicAndArtworkUrl(title, artist);
-			String content = getString(R.string.share_by) + artist
+			String info[] = getMusicAndArtworkUrl(title, artist);
+			String content = getString(R.string.share_by) + ((artist.equals(""))?info[ARTIST]:artist)
 					+ getString(R.string.music_artist) + title
-					+ getString(R.string.music_album) + album + "  "
-					+ urls[MUSIC];
+					+ getString(R.string.music_album) + album + getString(R.string.before_url)
+					+ info[MUSIC];
 			String artworkUrl = null;
-			artworkUrl = urls[ARTWORK].replace("spic", "lpic");
+			artworkUrl = info[ARTWORK].replace("spic", "lpic");
 			Bundle bundle = new Bundle();
 			bundle.putString("content", content);
 			bundle.putString("artworkUrl", artworkUrl);
@@ -482,9 +398,9 @@ public class Main extends Activity {
 		private String[] getMusicAndArtworkUrl(String title, String artist) {
 			Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl被调用");
 			String json = getJson(title, artist);
-			String urls[] = new String[2];
+			String info[] = new String[3];
 			if (json == null) {
-				urls[MUSIC] = getString(R.string.no_music_url_found);
+				info[MUSIC] = getString(R.string.no_music_url_found);
 				Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl获得空的json字符串");
 			} else {
 				try {
@@ -494,22 +410,26 @@ public class Main extends Activity {
 						JSONArray contentArray = rootObject
 								.getJSONArray("musics");
 						JSONObject item = contentArray.getJSONObject(0);
-						urls[MUSIC] = item.getString("mobile_link");
-						urls[ARTWORK] = item.getString("image");
+						info[MUSIC] = item.getString("mobile_link");
+						info[ARTWORK] = item.getString("image");
+						info[ARTIST]=item.getJSONArray("author").getJSONObject(0).getString("name");
+						//这里,这里,这样就不会有蛋疼的空白错误了
 					} else {
-						urls[MUSIC] = getString(R.string.no_music_url_found);
-						urls[ARTWORK] = null;
+						info[MUSIC] = getString(R.string.no_music_url_found);
+						info[ARTWORK] = null;
+						info[ARTIST]=null;
 					}
 				} catch (JSONException e) {
 					Log.e(DEBUG_TAG, "JSON解析错误");
 					e.printStackTrace();
-					urls[MUSIC] = getString(R.string.no_music_url_found);
-					urls[ARTWORK] = null;
+					info[MUSIC] = getString(R.string.no_music_url_found);
+					info[ARTWORK] = null;
+					info[ARTIST]=null;
 				}
 			}
-			Log.v(DEBUG_TAG, urls[MUSIC]);
-			Log.v(DEBUG_TAG, urls[ARTWORK]);
-			return urls;
+			Log.v(DEBUG_TAG, info[MUSIC]);
+			Log.v(DEBUG_TAG, info[ARTWORK]);
+			return info;
 		}
 
 		// 通过豆瓣API获取音乐信息
@@ -784,7 +704,6 @@ public class Main extends Activity {
  * 添乱1：@author @HarryChen-SIGKILL- http://weibo.com/yszzf 
  * 添乱2：@author @姚沛然 http://weibo.com/xavieryao 
  * 美工：@author @七只小鸡1997 http://weibo.com/u/1579617160
- * Code Version 0018 2013.2.01
- * p.s.我想年前上线不知道Bug能不能改完……
- * P.P.S.What?…………
+ * Code Version 0019 2013.2.3
+ * P.S.我添乱啊啊啊！
  **/

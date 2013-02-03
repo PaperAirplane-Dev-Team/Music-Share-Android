@@ -251,6 +251,7 @@ public class MusicPlayer extends Activity {
 				Log.d(DEBUG_TAG, "设置seekBar-Max" + maxTime);
 				Log.d(DEBUG_TAG, "seek-bar" + seekBar.getMax());
 				// FIXME RemoteView里的ProgressBar动不了啊！！……
+				//XXX 我就是不知道怎么刷新RemoteView有木有 
 			} else if (action
 					.equals("com.paperairplane.music.share.InitActivity")) {
 				maxTime = intent.getExtras().getInt("max");
