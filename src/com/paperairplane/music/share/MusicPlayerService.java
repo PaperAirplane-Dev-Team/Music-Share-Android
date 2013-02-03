@@ -2,7 +2,9 @@ package com.paperairplane.music.share;
 
 import java.io.IOException;
 
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
@@ -14,7 +16,8 @@ import android.util.Log;
 
 public class MusicPlayerService extends Service {
 	private MediaPlayer mplayer;
-	private final int PLAY = 0, PAUSE = 1, STOP = 2, PROGRESS_CHANGE = 3;
+	private final int PLAY = 0, PAUSE = 1, STOP = 2, PROGRESS_CHANGE = 3,
+			INIT_ACTIVITY = 4;
 	private int currentTime;
 	private Handler handler;
 	private final static String DEBUG_TAG = "Music Share DEBUG";
@@ -45,6 +48,8 @@ public class MusicPlayerService extends Service {
 		}
 		mplayer.release();
 		mplayer = null;
+		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		nm.cancel(0);
 	}
 
 	@Override
@@ -82,7 +87,21 @@ public class MusicPlayerService extends Service {
 			mplayer.seekTo(progress);
 			Log.d(DEBUG_TAG, "progress change" + progress);
 			break;
+		case INIT_ACTIVITY:
+			Log.d(DEBUG_TAG, "≥ı ºªØActivity");
+			initPlayerActivity();
+			break;
 		}
+	}
+
+	private void initPlayerActivity() {
+		Intent intent = new Intent();
+		intent.setAction("com.paperairplane.music.share.InitActivity");
+		Bundle bundle = new Bundle();
+		bundle.putInt("max", mplayer.getDuration());
+		bundle.putInt("position", mplayer.getCurrentPosition());
+		intent.putExtras(bundle);
+		sendBroadcast(intent);
 	}
 
 	private void sendMaxTime() {

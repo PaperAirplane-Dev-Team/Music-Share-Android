@@ -28,8 +28,8 @@
     <string name="too_long">Your content is out of the max length.</string>
     <string name="send_succeed">Succeeded</string>
     <string name="not_authorized_error">You Should Authotize First</string>
-    <string name="send_error">Send Failed,Error:</string>
-    <string name="auth_error">Authorize Failed,Error:</string>
+    <string name="send_error">Send Failed,\u0008 Error:</string>
+    <string name="auth_error">Authorize Failed,\u0008 Error:</string>
     <string name="unauth">Unauthorize</string>
     <string name="auth_succeed">Succeeded</string>
     <string name="unauthed">Unauthorized</string>
