@@ -1,96 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
-	<!-注意！这个布局一塌糊涂！->
-    <TextView
-        android:id="@+id/text_album"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/et_artist"
-        android:layout_marginLeft="20dp"
-        android:text="@string/album"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <EditText
-        android:id="@+id/et_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:ems="10"
-        android:hint="@string/title" >
 
-        <requestFocus />
-    </EditText>
-
-    <EditText
-        android:id="@+id/et_artist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/et_title"
-        android:ems="10"
-        android:hint="@string/artist" >
-
-    </EditText>
-
-    <TableLayout
+    <!-- title -->
+    <LinearLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/text_album"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
-        android:stretchColumns="*" >
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="@string/title"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        <EditText
+            android:id="@+id/et_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/title" />
+    </LinearLayout>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/btn_share2weibo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/share2weibo" />
-
-            <Button
-                android:id="@+id/btn_share2others"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/share2others" />
-        </TableRow>
-    </TableLayout>
-
-    <TextView
-        android:id="@+id/text_artist"
-        android:layout_width="wrap_content"
+    <!-- artist -->
+    <LinearLayout 
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/et_artist"
-        android:layout_alignBottom="@+id/et_artist"
-        android:layout_marginLeft="20dp"
-        android:text="@string/artist"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/text_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/et_title"
-        android:layout_marginLeft="20dp"
-        android:text="@string/title"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/text_artist"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="@string/artist"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        <EditText
+            android:id="@+id/et_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/artist" />
+    </LinearLayout>
 
-    <EditText
-        android:id="@+id/et_album"
-        android:layout_width="wrap_content"
+    <!-- album -->
+    <LinearLayout 
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/text_album"
-        android:ems="10"
-        android:hint="@string/album"
-        android:paddingBottom="@id/et_artist" />
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/text_album"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="@string/album"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-</RelativeLayout>
+        <EditText
+            android:id="@+id/et_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/album"
+            android:paddingBottom="@id/et_artist" />
+    </LinearLayout>
+
+    <!-- button -->
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical|center_horizontal">
+        <Button
+            android:id="@+id/btn_share2weibo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/share2weibo" />
+        <Button
+            android:id="@+id/btn_share2others"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/share2others" />
+    </LinearLayout>
+
+</LinearLayout>
