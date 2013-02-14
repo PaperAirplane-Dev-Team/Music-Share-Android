@@ -51,7 +51,6 @@ import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.net.AsyncWeiboRunner;
 import com.weibo.sdk.android.net.RequestListener;
 
-//FIXME FIXME FIXME FIXME请注意分散在代码中的FIXME注释！不要编译运行，不要！
 public class Main extends Activity {
 	// 存储音乐信息
 	private MusicData[] musics;// 保存音乐数据
@@ -122,9 +121,6 @@ public class Main extends Activity {
 		super.onOptionsItemSelected(menu);
 		switch (menu.getItemId()) {
 		case R.id.menu_exit:
-			musicIntent = new Intent();
-			musicIntent.setAction("com.paperairplane.music.share.PLAYMUSIC");
-			stopService(musicIntent);
 			finish();
 			System.exit(0);
 			break;
@@ -217,7 +213,6 @@ public class Main extends Activity {
 
 	public void footer(View v) {
 		Log.v(DEBUG_TAG, "点击footer");
-		// FIXME 注意注意！这里抛出错误,未能解决,也没有catch！
 		View search = LayoutInflater.from(this).inflate(R.layout.search, null);
 		final EditText et_title = (EditText) search.findViewById(R.id.et_title);
 		final EditText et_artist = (EditText) search
