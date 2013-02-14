@@ -51,7 +51,6 @@ import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.net.AsyncWeiboRunner;
 import com.weibo.sdk.android.net.RequestListener;
 
-
 //FIXME FIXME FIXME FIXME请注意分散在代码中的FIXME注释！不要编译运行，不要！
 public class Main extends Activity {
 	// 存储音乐信息
@@ -89,7 +88,8 @@ public class Main extends Activity {
 			listview.addFooterView(footerView);
 			showMusicList();
 			Log.v(DEBUG_TAG, "Push Start");
-//			JPushInterface.setAliasAndTags(getApplicationContext(), "Debug", null);
+			// JPushInterface.setAliasAndTags(getApplicationContext(), "Debug",
+			// null);
 			JPushInterface.init(getApplicationContext());
 		} catch (Exception e) {
 			Log.e(DEBUG_TAG, e.getMessage());
@@ -180,7 +180,7 @@ public class Main extends Activity {
 
 			});
 			return new AlertDialog.Builder(this).setView(about).create();
-		} else/* if (_id < 65535)*/ { 
+		} else/* if (_id < 65535) */{
 			return new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.choose_an_operation))
@@ -217,7 +217,7 @@ public class Main extends Activity {
 
 	public void footer(View v) {
 		Log.v(DEBUG_TAG, "点击footer");
-		//FIXME 注意注意！这里抛出错误,未能解决,也没有catch！
+		// FIXME 注意注意！这里抛出错误,未能解决,也没有catch！
 		View search = LayoutInflater.from(this).inflate(R.layout.search, null);
 		final EditText et_title = (EditText) search.findViewById(R.id.et_title);
 		final EditText et_artist = (EditText) search
@@ -250,7 +250,7 @@ public class Main extends Activity {
 		button_others.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (et_title.getText().toString().trim().equals("")) {
-				//忘了保存,只要有Title就够了~
+					// 忘了保存,只要有Title就够了~
 					new AlertDialog.Builder(Main.this)
 							.setMessage(getString(R.string.empty))
 							.setPositiveButton(getString(android.R.string.ok),
@@ -277,10 +277,10 @@ public class Main extends Activity {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long id) {
 			if (position != listview.getCount()) {
-				try{
-				dismissDialog(position);
+				try {
+					dismissDialog(position);
+				} catch (Exception e) {
 				}
-				catch(Exception e){}
 			}
 			showDialog(position);
 		}
@@ -322,23 +322,22 @@ public class Main extends Activity {
 	// 播放音乐
 	private void playMusic(int position) {
 		/*
-		Bundle bundle=new Bundle();
-		bundle.putString("path", musics[position].getPath());
-		bundle.putInt("id", position);
-		bundle.putString("title", musics[position].getTitle());
-		bundle.putString("artist", musics[position].getArtist());
-		bundle.putString("duration", musics[position].getDuration());
-		bundle.putInt("orgDuration",musics[position].getOrgDuration());
-		Intent musicIntent=new Intent(Main.this,MusicPlayer.class);
-		musicIntent.putExtras(bundle);
-		startActivity(musicIntent);
-		*/
+		 * Bundle bundle=new Bundle(); bundle.putString("path",
+		 * musics[position].getPath()); bundle.putInt("id", position);
+		 * bundle.putString("title", musics[position].getTitle());
+		 * bundle.putString("artist", musics[position].getArtist());
+		 * bundle.putString("duration", musics[position].getDuration());
+		 * bundle.putInt("orgDuration",musics[position].getOrgDuration());
+		 * Intent musicIntent=new Intent(Main.this,MusicPlayer.class);
+		 * musicIntent.putExtras(bundle); startActivity(musicIntent);
+		 */
 		Intent musicIntent = new Intent();
 		musicIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		musicIntent.setAction(android.content.Intent.ACTION_VIEW);
-		musicIntent.setDataAndType(Uri.fromFile(new File(musics[position].getPath())), "audio/*");
+		musicIntent.setDataAndType(
+				Uri.fromFile(new File(musics[position].getPath())), "audio/*");
 		startActivity(musicIntent);
-		
+
 	}
 
 	// 刷新音乐列表
@@ -372,12 +371,15 @@ public class Main extends Activity {
 		public void run() {
 			// 获取信息生成字符串
 			String info[] = getMusicAndArtworkUrl(title, artist);
-			String content = getString(R.string.share_by) + ((artist.equals(""))?info[ARTIST]:artist)
+			String content = getString(R.string.share_by)
+					+ ((artist.equals("")) ? info[ARTIST] : artist)
 					+ getString(R.string.music_artist) + title
-					+ getString(R.string.music_album) + album + getString(R.string.before_url)
-					+ info[MUSIC];
+					+ getString(R.string.music_album) + album
+					+ getString(R.string.before_url) + info[MUSIC];
 			String artworkUrl = null;
-			artworkUrl = info[ARTWORK].replace("spic", "lpic");
+			if (info[ARTWORK] != null) {
+				artworkUrl = info[ARTWORK].replace("spic", "lpic");
+			}
 			Bundle bundle = new Bundle();
 			bundle.putString("content", content);
 			bundle.putString("artworkUrl", artworkUrl);
@@ -419,24 +421,25 @@ public class Main extends Activity {
 						JSONObject item = contentArray.getJSONObject(0);
 						info[MUSIC] = item.getString("mobile_link");
 						info[ARTWORK] = item.getString("image");
-						info[ARTIST]=item.getJSONArray("author").getJSONObject(0).getString("name");
-						//这里,这里,这样就不会有蛋疼的空白错误了
+						info[ARTIST] = item.getJSONArray("author")
+								.getJSONObject(0).getString("name");
+						// 这里,这里,这样就不会有蛋疼的空白错误了
 					} else {
 						info[MUSIC] = getString(R.string.no_music_url_found);
 						info[ARTWORK] = null;
-						info[ARTIST]=null;
+						info[ARTIST] = null;
 					}
 				} catch (JSONException e) {
 					Log.e(DEBUG_TAG, "JSON解析错误");
 					e.printStackTrace();
 					info[MUSIC] = getString(R.string.no_music_url_found);
 					info[ARTWORK] = null;
-					info[ARTIST]=null;
+					info[ARTIST] = null;
 				}
 			}
-//			Log.v(DEBUG_TAG, info[MUSIC]);
-//			Log.v(DEBUG_TAG, info[ARTWORK]);
-//			加Log的话如果上面那两个值有null就会崩溃……懒得catch
+			// Log.v(DEBUG_TAG, info[MUSIC]);
+			// Log.v(DEBUG_TAG, info[ARTWORK]);
+			// 加Log的话如果上面那两个值有null就会崩溃……懒得catch
 			return info;
 		}
 
@@ -501,7 +504,7 @@ public class Main extends Activity {
 				Bundle bundle = (Bundle) msg.obj;
 				String _content = bundle.getString("content");
 				final String artworkUrl = bundle.getString("artworkUrl");
-				Log.v(DEBUG_TAG, artworkUrl);
+//				Log.v(DEBUG_TAG, artworkUrl);
 				et.setText(_content);
 				new AlertDialog.Builder(Main.this)
 						.setView(sendweibo)
@@ -708,10 +711,7 @@ public class Main extends Activity {
 
 }
 /**
- * Paper Airplane Dev Team 
- * 添乱1：@author @HarryChen-SIGKILL- http://weibo.com/yszzf 
- * 添乱2：@author @姚沛然 http://weibo.com/xavieryao 
- * 美工：@author @七只小鸡1997 http://weibo.com/u/1579617160
- * Code Version 0019 2013.2.3
- * P.S.我添乱啊啊啊！
+ * Paper Airplane Dev Team 添乱1：@author @HarryChen-SIGKILL-
+ * http://weibo.com/yszzf 添乱2：@author @姚沛然 http://weibo.com/xavieryao 美工：@author @七只小鸡1997
+ * http://weibo.com/u/1579617160 Code Version 0019 2013.2.3 P.S.我添乱啊啊啊！
  **/
