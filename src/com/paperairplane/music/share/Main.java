@@ -66,7 +66,7 @@ public class Main extends Activity {
 	final private int WEIBO = 10, OTHERS = 11;
 	final private int HARRY_UID = 1689129907, XAVIER_UID = 2121014783,
 			APP_UID = 1153267341;
-	final private int MUSIC = 0, ARTWORK = 1, ARTIST = 2;
+	final private int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3;
 	private final String APP_KEY = "1006183120";
 	private final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken = null;
@@ -382,7 +382,8 @@ public class Main extends Activity {
 			String content = getString(R.string.share_by)
 					+ ((artist.equals("")) ? info[ARTIST] : artist)
 					+ getString(R.string.music_artist) + title
-					+ getString(R.string.music_album) + album
+					+ getString(R.string.music_album)
+					+ ((album.equals("")) ? info[ALBUM] : album)
 					+ getString(R.string.before_url) + info[MUSIC];
 			String artworkUrl = null;
 			if (info[ARTWORK] != null) {
@@ -415,7 +416,7 @@ public class Main extends Activity {
 		private String[] getMusicAndArtworkUrl(String title, String artist) {
 			Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl被调用");
 			String json = getJson(title, artist);
-			String info[] = new String[3];
+			String info[] = new String[4];
 			if (json == null) {
 				info[MUSIC] = getString(R.string.no_music_url_found);
 				Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl获得空的json字符串");
@@ -431,11 +432,14 @@ public class Main extends Activity {
 						info[ARTWORK] = item.getString("image");
 						info[ARTIST] = item.getJSONArray("author")
 								.getJSONObject(0).getString("name");
+						info[ALBUM] = item.getJSONObject("attrs").getString(
+								"title");
 						// 这里,这里,这样就不会有蛋疼的空白错误了
 					} else {
 						info[MUSIC] = getString(R.string.no_music_url_found);
 						info[ARTWORK] = null;
 						info[ARTIST] = null;
+						info[ALBUM] = null;
 					}
 				} catch (JSONException e) {
 					Log.e(DEBUG_TAG, "JSON解析错误");
@@ -443,7 +447,13 @@ public class Main extends Activity {
 					info[MUSIC] = getString(R.string.no_music_url_found);
 					info[ARTWORK] = null;
 					info[ARTIST] = null;
+					info[ALBUM] = null;
 				}
+			}
+			if (info[ALBUM] != null) {
+				info[ALBUM] = info[ALBUM].replace("[\"", "");
+				info[ALBUM] = info[ALBUM].replace("\"]","");
+				Log.d(DEBUG_TAG, info[ALBUM]);
 			}
 			// Log.v(DEBUG_TAG, info[MUSIC]);
 			// Log.v(DEBUG_TAG, info[ARTWORK]);
