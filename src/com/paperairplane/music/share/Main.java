@@ -56,7 +56,6 @@ public class Main extends Activity {
 	// 存储音乐信息
 	private MusicData[] musics;// 保存音乐数据
 	private ListView listview;// 列表对象
-	private Intent musicIntent;
 	private String[] media_info = new String[] { MediaStore.Audio.Media.TITLE,
 			MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST,
 			MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.ALBUM };
@@ -73,6 +72,7 @@ public class Main extends Activity {
 	private Weibo weibo = Weibo.getInstance(APP_KEY, REDIRECT_URI);
 	private final static String DEBUG_TAG = "Music Share DEBUG";
 	private StatusesAPI api = null;
+	private Receiver receiver;
 
 	@Override
 	// 主体
@@ -92,7 +92,7 @@ public class Main extends Activity {
 			// null);
 			JPushInterface.init(getApplicationContext());
 		} catch (Exception e) {
-			Log.e(DEBUG_TAG, e.getMessage());
+			// Log.e(DEBUG_TAG, e.getMessage());
 			e.printStackTrace();
 			setContentView(R.layout.empty);
 		}
@@ -106,6 +106,16 @@ public class Main extends Activity {
 
 	public void btn_empty(View v) {
 		refreshMusicList();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		try {
+			unregisterReceiver(receiver);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -355,7 +365,7 @@ public class Main extends Activity {
 					Intent.ACTION_MEDIA_SCANNER_STARTED);
 			filter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
 			filter.addDataScheme("file");
-			Receiver receiver = new Receiver();
+			receiver = new Receiver();
 			registerReceiver(receiver, filter);
 			sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
 					Uri.parse("file://"
@@ -452,7 +462,7 @@ public class Main extends Activity {
 			}
 			if (info[ALBUM] != null) {
 				info[ALBUM] = info[ALBUM].replace("[\"", "");
-				info[ALBUM] = info[ALBUM].replace("\"]","");
+				info[ALBUM] = info[ALBUM].replace("\"]", "");
 				Log.d(DEBUG_TAG, info[ALBUM]);
 			}
 			// Log.v(DEBUG_TAG, info[MUSIC]);
