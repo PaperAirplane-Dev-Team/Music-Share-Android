@@ -9,7 +9,7 @@
     <string name="share_by">我用@纸飞机音乐分享 (http://t.cn/zYyzZOK )分享了</string>
     <string name="how_to_share">选择分享方式</string>
     <string name="music_artist">的音乐</string>
-    <string name="music_album"> ,此音乐音乐属于专辑《</string>
+    <string name="music_album"> ,此音乐属于专辑《</string>
     <string name="before_url">》,详见</string>
     <string name="menu_refresh">刷新音乐列表</string>
     <string name="refresh_success">刷新音乐列表成功</string>
@@ -42,4 +42,5 @@
     <string name="artist">表演者</string>
     <string name="album">专辑</string>
     <string name="now_playing">现在播放：</string>
+    <string name="no_player_found">找不到适合的播放器</string>
 </resources>

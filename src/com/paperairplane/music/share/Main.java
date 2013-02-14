@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -331,7 +332,19 @@ public class Main extends Activity {
 		musicIntent.setAction(android.content.Intent.ACTION_VIEW);
 		musicIntent.setDataAndType(
 				Uri.fromFile(new File(musics[position].getPath())), "audio/*");
-		startActivity(musicIntent);
+		try {
+			startActivity(musicIntent);
+		} catch (ActivityNotFoundException e) {
+			new AlertDialog.Builder(Main.this)
+					.setMessage(getString(R.string.no_player_found))
+					.setPositiveButton(getString(android.R.string.ok),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+								}
+							}).show();
+		}
 
 	}
 
@@ -499,7 +512,7 @@ public class Main extends Activity {
 				Bundle bundle = (Bundle) msg.obj;
 				String _content = bundle.getString("content");
 				final String artworkUrl = bundle.getString("artworkUrl");
-//				Log.v(DEBUG_TAG, artworkUrl);
+				// Log.v(DEBUG_TAG, artworkUrl);
 				et.setText(_content);
 				new AlertDialog.Builder(Main.this)
 						.setView(sendweibo)

@@ -42,4 +42,5 @@
     <string name="artist">Artist</string>
     <string name="album">Album</string>
     <string name="now_playing">Now Playing:</string>
+    <string name="no_player_found">No proper player found</string>
 </resources>
