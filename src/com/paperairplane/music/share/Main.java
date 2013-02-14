@@ -1,5 +1,6 @@
 package com.paperairplane.music.share;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.http.HttpResponse;
@@ -320,7 +321,7 @@ public class Main extends Activity {
 
 	// 播放音乐
 	private void playMusic(int position) {
-		
+		/*
 		Bundle bundle=new Bundle();
 		bundle.putString("path", musics[position].getPath());
 		bundle.putInt("id", position);
@@ -330,6 +331,12 @@ public class Main extends Activity {
 		bundle.putInt("orgDuration",musics[position].getOrgDuration());
 		Intent musicIntent=new Intent(Main.this,MusicPlayer.class);
 		musicIntent.putExtras(bundle);
+		startActivity(musicIntent);
+		*/
+		Intent musicIntent = new Intent();
+		musicIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		musicIntent.setAction(android.content.Intent.ACTION_VIEW);
+		musicIntent.setDataAndType(Uri.fromFile(new File(musics[position].getPath())), "audio/*");
 		startActivity(musicIntent);
 		
 	}
@@ -427,8 +434,9 @@ public class Main extends Activity {
 					info[ARTIST]=null;
 				}
 			}
-			Log.v(DEBUG_TAG, info[MUSIC]);
-			Log.v(DEBUG_TAG, info[ARTWORK]);
+//			Log.v(DEBUG_TAG, info[MUSIC]);
+//			Log.v(DEBUG_TAG, info[ARTWORK]);
+//			加Log的话如果上面那两个值有null就会崩溃……懒得catch
 			return info;
 		}
 
