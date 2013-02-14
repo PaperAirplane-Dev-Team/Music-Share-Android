@@ -6,11 +6,11 @@
     <string name="to_show_title">To Show Music Title Here</string>
     <string name="to_show_artist">To Show Artist Here</string>
     <string name="menu_exit">Exit</string>
-    <string name="share_by">I used Paper Airplane\'s Music Share (http://t.cn/zYyzZOK )to share\u0008</string>
+    <string name="share_by">I used Paper Airplane\'s Music Share (http://t.cn/zYyzZOK )to share</string>
     <string name="how_to_share">Choose an App to Share</string>
-    <string name="music_artist">\u0008 \'s music\u0008</string>
-    <string name="music_album">\u0008from the album\u0008 </string>
-    <string name="before_url"> , tap the link for more details：\u0008</string>
+    <string name="music_artist">\'s music</string>
+    <string name="music_album">from the album</string>
+    <string name="before_url"> , tap the link for more details： </string>
     <string name="menu_refresh">Refresh Music List</string>
     <string name="refresh_success">Successfully Refreshed Music List</string>
     <string name="play">Play</string>
@@ -29,8 +29,8 @@
     <string name="too_long">Your content is out of the max length.</string>
     <string name="send_succeed">Succeeded</string>
     <string name="not_authorized_error">You Should Authotize First</string>
-    <string name="send_error">Send Failed,\u0008 Error:</string>
-    <string name="auth_error">Authorize Failed,\u0008 Error:</string>
+    <string name="send_error">Send Failed, Error:</string>
+    <string name="auth_error">Authorize Failed, Error:</string>
     <string name="unauth">Unauthorize</string>
     <string name="auth_succeed">Succeeded</string>
     <string name="unauthed">Unauthorized</string>

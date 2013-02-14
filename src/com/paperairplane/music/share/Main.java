@@ -389,12 +389,12 @@ public class Main extends Activity {
 		public void run() {
 			// 获取信息生成字符串
 			String info[] = getMusicAndArtworkUrl(title, artist);
-			String content = getString(R.string.share_by)
-					+ ((artist.equals("")) ? info[ARTIST] : artist)
-					+ getString(R.string.music_artist) + title
-					+ getString(R.string.music_album)
-					+ ((album.equals("")) ? info[ALBUM] : album)
-					+ getString(R.string.before_url) + info[MUSIC];
+			String content = getString(R.string.share_by) + " "
+					+ ((artist.equals("")) ? info[ARTIST] : artist) +" "
+					+ getString(R.string.music_artist) + " " + title
+					+ getString(R.string.music_album) + " "
+					+ ((album.equals("")) ? info[ALBUM] : album)+" "
+					+ getString(R.string.before_url) + " " + info[MUSIC];
 			String artworkUrl = null;
 			if (info[ARTWORK] != null) {
 				artworkUrl = info[ARTWORK].replace("spic", "lpic");
