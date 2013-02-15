@@ -13,7 +13,6 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -62,7 +61,7 @@ public class Main extends Activity {
 	final private int INTERNET_ERROR = 3, SEND_WEIBO = 4, SEND_SUCCEED = 5,
 			AUTH_ERROR = 6, SEND_ERROR = 7, NOT_AUTHORIZED_ERROR = 8,
 			AUTH_SUCCEED = 9;
-	final private int WEIBO = 10, OTHERS = 11;
+	final private int WEIBO = 0, OTHERS = 1;
 	final private int HARRY_UID = 1689129907, XAVIER_UID = 2121014783,
 			APP_UID = 1153267341;
 	final private int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3,
@@ -74,10 +73,12 @@ public class Main extends Activity {
 	private final static String DEBUG_TAG = "Music Share DEBUG";
 	private StatusesAPI api = null;
 	private Receiver receiver;
+	private AlertDialog dialogMain, dialogAbout;
 
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
+		Log.v(DEBUG_TAG, "!!!");
 		super.onCreate(savedInstanceState);
 		try {
 			setContentView(R.layout.main);
@@ -103,10 +104,6 @@ public class Main extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void btn_empty(View v) {
-		refreshMusicList();
 	}
 
 	@Override
@@ -162,65 +159,8 @@ public class Main extends Activity {
 		return true;
 	}
 
-	// 对话框处理
-
-	public Dialog onCreateDialog(final int _id) {
-		if (_id == R.layout.about) { // 这个是关于窗口
-			// 对话框尤其奇葩
-			// 现在还凑合……RelativeLayout是个好东西
-			View about = LayoutInflater.from(this)
-					.inflate(R.layout.about, null);
-			Button button_about = (Button) about
-					.findViewById(R.id.button_about);
-			button_about.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					removeDialog(R.layout.about);
-				}
-			});
-			Button button_contact = (Button) about
-					.findViewById(R.id.button_contact);
-			button_contact.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					Uri uri = Uri.parse(getString(R.string.url));
-					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-					startActivity(intent);
-				}
-
-			});
-			return new AlertDialog.Builder(this).setView(about).create();
-		} else/* if (_id < 65535) */{
-			return new AlertDialog.Builder(this)
-					.setIcon(android.R.drawable.ic_dialog_info)
-					.setTitle(getString(R.string.choose_an_operation))
-					.setPositiveButton(getString(R.string.play),
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									playMusic(_id);
-								}
-							})
-					.setNegativeButton(getString(R.string.share2others),
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									shareMusic(musics[_id].getTitle(),
-											musics[_id].getArtist(),
-											musics[_id].getAlbum(), OTHERS);
-								}
-							})
-					.setNeutralButton(getString(R.string.share2weibo),
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									shareMusic(musics[_id].getTitle(),
-											musics[_id].getArtist(),
-											musics[_id].getAlbum(), WEIBO);
-
-								}
-							}).create();
-		}
+	public void btn_empty(View v) {
+		refreshMusicList();
 	}
 
 	public void footer(View v) {
@@ -279,17 +219,80 @@ public class Main extends Activity {
 				.show();
 	}
 
+	
+
+	// 对话框处理
+
+	private void showCustomDialog(final int _id) {
+		if (_id == R.layout.about) { // 这个是关于窗口
+			// 对话框尤其奇葩
+			// 现在还凑合……RelativeLayout是个好东西
+			View about = LayoutInflater.from(this)
+					.inflate(R.layout.about, null);
+			Button button_about = (Button) about
+					.findViewById(R.id.button_about);
+			button_about.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					dialogAbout.cancel();
+				}
+			});
+			Button button_contact = (Button) about
+					.findViewById(R.id.button_contact);
+			button_contact.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					Uri uri = Uri.parse(getString(R.string.url));
+					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+					startActivity(intent);
+				}
+
+			});
+			dialogAbout=new AlertDialog.Builder(this).setView(about).show();
+		} else {
+			dialogMain= new AlertDialog.Builder(this)
+					.setIcon(android.R.drawable.ic_dialog_info)
+					.setTitle(getString(R.string.choose_an_operation))
+					.setPositiveButton(getString(R.string.play),
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									playMusic(_id);
+								}
+							})
+					.setNegativeButton(getString(R.string.share2others),
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									shareMusic(musics[_id].getTitle(),
+											musics[_id].getArtist(),
+											musics[_id].getAlbum(), OTHERS);
+								}
+							})
+					.setNeutralButton(getString(R.string.share2weibo),
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									shareMusic(musics[_id].getTitle(),
+											musics[_id].getArtist(),
+											musics[_id].getAlbum(), WEIBO);
+
+								}
+							}).show();
+		}
+	}
+
 	// 列表点击监听类
-	public class MusicListOnClickListener implements OnItemClickListener {
+	private class MusicListOnClickListener implements OnItemClickListener {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long id) {
 			if (position != listview.getCount()) {
 				try {
-					dismissDialog(position);
+					dialogMain.cancel();
 				} catch (Exception e) {
 				}
 			}
-			showDialog(position);
+			showCustomDialog(position);
 		}
 	}
 
@@ -379,11 +382,11 @@ public class Main extends Activity {
 	}
 
 	private void showAbout() { // 显示关于窗口
-		showDialog(R.layout.about);// 那么,这个没啥用,只是告诉系统一个标识,在onCreateDialog里面判断一下的
+		showCustomDialog(R.layout.about);// 那么,这个没啥用,只是告诉系统一个标识,在onCreateDialog里面判断一下的
 	}
 
 	// 查询+分享线程
-	class QueryAndShareMusicInfo extends Thread {
+	private class QueryAndShareMusicInfo extends Thread {
 		private int means;
 		private String artist, title, album;
 
@@ -521,7 +524,7 @@ public class Main extends Activity {
 	}
 
 	// 这是消息处理
-	Handler handler = new Handler() {
+	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -676,7 +679,7 @@ public class Main extends Activity {
 	}
 
 	// 微博授权监听器
-	class AuthDialogListener implements WeiboAuthListener {
+	public class AuthDialogListener implements WeiboAuthListener {
 		Message m = handler.obtainMessage();
 
 		@Override
@@ -744,10 +747,12 @@ public class Main extends Activity {
 		}
 
 	};
+	
 
 }
 /**
- * Paper Airplane Dev Team 添乱1：@author @HarryChen-SIGKILL-
+ * Paper Airplane Dev Team
+ * 添乱1：@author @HarryChen-SIGKILL-
  * http://weibo.com/yszzf 添乱2：@author @姚沛然 http://weibo.com/xavieryao 美工：@author @七只小鸡1997
  * http://weibo.com/u/1579617160 Code Version 0019 2013.2.3 P.S.我添乱啊啊啊！
  **/

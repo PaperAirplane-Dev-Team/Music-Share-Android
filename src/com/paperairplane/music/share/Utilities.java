@@ -1,9 +1,7 @@
 package com.paperairplane.music.share;
 
 
-
 public class Utilities {
-	//哦我终于精简了它!
 	public static String convertDuration(int _duration){
 		_duration /= 1000;
 		String min,hour,sec;

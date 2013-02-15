@@ -1,7 +1,17 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="AppTheme" parent="android:Theme.Holo" />
-    <style name = "ListItemStyle">
+
+    <style name="ListItemStyle">
         <item name="android:textColor">#FFFFFF</item>
     </style>
+
+    <style name="TextViewStyle">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
 </resources>

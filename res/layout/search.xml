@@ -1,103 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/et_title"
-        android:layout_alignBottom="@+id/et_title"
-        android:layout_alignParentLeft="true"
-        android:text="@string/title"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+    <!-- title -->
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/et_title"
-        android:text="@string/artist"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/et_artist"
-        android:text="@string/album"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <EditText
-        android:id="@+id/et_album"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/et_artist"
-        android:layout_alignTop="@+id/textView3"
-        android:ems="10"
-        android:hint="@string/album"
-        android:lines="1"
-        android:maxLines="1"
-        android:singleLine="true" />
-
-    <EditText
-        android:id="@+id/et_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:ems="10"
-        android:hint="@string/title"
-        android:lines="1"
-        android:maxLines="1"
-        android:singleLine="true" >
-
-        <requestFocus />
-    </EditText>
-
-    <EditText
-        android:id="@+id/et_artist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/et_title"
-        android:ems="10"
-        android:hint="@string/artist"
-        android:lines="1"
-        android:maxLines="1"
-        android:singleLine="true" />
-
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/et_album"
-        android:stretchColumns="*" >
+        android:orientation="horizontal" >
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+        <TextView
+            style="@style/TextViewStyle"
+            android:text="@string/title" />
 
-            <Button
-                android:id="@+id/btn_share2weibo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/et_album"
-                android:text="@string/share2weibo" />
+        <EditText
+            android:id="@+id/et_title"
+            style="@style/EditTextStyle"
+            android:hint="@string/title" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_share2others"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/btn_share2weibo"
-                android:layout_toRightOf="@+id/btn_share2weibo"
-                android:text="@string/share2others" />
-        </TableRow>
-    </TableLayout>
+    <!-- artist -->
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/TextViewStyle"
+            android:text="@string/artist" />
+
+        <EditText
+            android:id="@+id/et_artist"
+			style="@style/EditTextStyle"
+            android:hint="@string/artist" />
+    </LinearLayout>
+
+    <!-- album -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/TextViewStyle"
+            android:text="@string/album" />
+
+        <EditText
+            android:id="@+id/et_album"
+			style="@style/EditTextStyle"
+            android:hint="@string/album"
+            android:paddingBottom="@id/et_artist" />
+    </LinearLayout>
+
+    <!-- button -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btn_share2weibo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/share2weibo" />
+
+        <Button
+            android:id="@+id/btn_share2others"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/share2others" />
+    </LinearLayout>
+
+</LinearLayout>

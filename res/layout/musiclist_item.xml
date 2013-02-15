@@ -6,8 +6,8 @@
     android:orientation="vertical" >
 
     <TextView
-                style="@style/ListItemStyle"
         android:id="@+id/musicname"
+        style="@style/ListItemStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -16,8 +16,8 @@
         android:textStyle="bold" />
 
     <TextView
-        style="@style/ListItemStyle"
         android:id="@+id/singer"
+        style="@style/ListItemStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.paperairplane.music.share"
-    android:versionCode="0024"
-    android:versionName="0.9.3" >
+    android:versionCode="0025"
+    android:versionName="0.9.4" >
 
     <permission
         android:name="com.paperairplane.music.share.permission.JPUSH_MESSAGE"
@@ -39,18 +39,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-	
-        <activity android:name=".MusicPlayer" />
-        
-        <service
-            android:name=".MusicPlayerService"
-            android:process="android.process.acore" >
-            <intent-filter>
-                <action android:name="com.paperairplane.music.share.PLAYMUSIC" />
 
-                <category android:name="android.intent.category.default" />
-            </intent-filter>
-        </service>
         <service
             android:name="cn.jpush.android.service.PushService"
             android:enabled="true"
@@ -77,21 +66,26 @@
 
                 <data android:scheme="package" />
             </intent-filter>
+            <intent-filter android:priority="1000" >
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY" />
+ <!-- Required 显示通知栏 -->
+                <category android:name="com.papaerairplane.music.share" />
+            </intent-filter>
         </receiver>
         <receiver
             android:name="com.paperairplane.music.share.Receiver"
             android:enabled="true" >
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.REGISTRATION" />
- <!-- Required  用户注册SDK的权限 -->
+                <!-- Required  用户注册SDK的权限 -->
                 <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" />
- <!-- Required  用户接收SDK消息的权限 -->
+                <!-- Required  用户接收SDK消息的权限 -->
                 <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" />
- <!-- Required  用户接收SDK通知栏信息的权限 -->
+                <!-- Required  用户接收SDK通知栏信息的权限 -->
                 <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" />
- <!-- Required  用户打开自定义通知栏的权限 -->
- 				<action android:name="android.intent.action.ACTION_MEDIA_SCANNER_STARTED" />
- 				<action android:name="android.intent.action.ACTION_MEDIA_SCANNER_FINISHED" />
+                <!-- Required  用户打开自定义通知栏的权限 -->
+                <action android:name="android.intent.action.ACTION_MEDIA_SCANNER_STARTED" />
+                <action android:name="android.intent.action.ACTION_MEDIA_SCANNER_FINISHED" />
                 <!-- NOTE: replace the package name "cn.jpush.android" to your app package name -->
                 <category android:name="com.paperairplane.music.share" />
             </intent-filter>
