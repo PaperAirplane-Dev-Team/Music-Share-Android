@@ -65,7 +65,8 @@ public class Main extends Activity {
 	final private int WEIBO = 10, OTHERS = 11;
 	final private int HARRY_UID = 1689129907, XAVIER_UID = 2121014783,
 			APP_UID = 1153267341;
-	final private int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3;
+	final private int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3,
+			VERSION = 4;
 	private final String APP_KEY = "1006183120";
 	private final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken = null;
@@ -389,12 +390,15 @@ public class Main extends Activity {
 		public void run() {
 			// 获取信息生成字符串
 			String info[] = getMusicAndArtworkUrl(title, artist);
-			String content = getString(R.string.share_by) + " "
-					+ ((artist.equals("")) ? info[ARTIST] : artist) +" "
-					+ getString(R.string.music_artist) + " " + title
-					+ getString(R.string.music_album) + " "
-					+ ((album.equals("")) ? info[ALBUM] : album)+" "
-					+ getString(R.string.before_url) + " " + info[MUSIC];
+			String content;
+			boolean isSingle =  ((info[VERSION]!=null)&&info[VERSION].equals("[\"单曲\"]"));
+							
+			content = getString(R.string.share_by) + " "
+					+ ((artist.equals("")) ? info[ARTIST] : artist) + " "
+					+ (isSingle ?getString(R.string.music_single):getString(R.string.music_artist)) + " " + title
+					+ (isSingle?"":getString(R.string.music_album) + " "
+					+ ((album.equals("")) ? info[ALBUM] : album) + " ")
+					+ getString(R.string.before_url) + info[MUSIC];
 			String artworkUrl = null;
 			if (info[ARTWORK] != null) {
 				artworkUrl = info[ARTWORK].replace("spic", "lpic");
@@ -402,7 +406,7 @@ public class Main extends Activity {
 			Bundle bundle = new Bundle();
 			bundle.putString("content", content);
 			bundle.putString("artworkUrl", artworkUrl);
-			Log.e(DEBUG_TAG, "获取结束。");
+			Log.d(DEBUG_TAG, "获取结束。");
 			switch (means) {
 			// 根据分享方式执行操作
 			case OTHERS:
@@ -426,7 +430,7 @@ public class Main extends Activity {
 		private String[] getMusicAndArtworkUrl(String title, String artist) {
 			Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl被调用");
 			String json = getJson(title, artist);
-			String info[] = new String[4];
+			String info[] = new String[5];
 			if (json == null) {
 				info[MUSIC] = getString(R.string.no_music_url_found);
 				Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl获得空的json字符串");
@@ -444,12 +448,15 @@ public class Main extends Activity {
 								.getJSONObject(0).getString("name");
 						info[ALBUM] = item.getJSONObject("attrs").getString(
 								"title");
+						info[VERSION] = item.getJSONObject("attrs").getString(
+								"version");
 						// 这里,这里,这样就不会有蛋疼的空白错误了
 					} else {
 						info[MUSIC] = getString(R.string.no_music_url_found);
 						info[ARTWORK] = null;
 						info[ARTIST] = null;
 						info[ALBUM] = null;
+						info[VERSION] = null;
 					}
 				} catch (JSONException e) {
 					Log.e(DEBUG_TAG, "JSON解析错误");
@@ -458,6 +465,7 @@ public class Main extends Activity {
 					info[ARTWORK] = null;
 					info[ARTIST] = null;
 					info[ALBUM] = null;
+					info[VERSION] = null;
 				}
 			}
 			if (info[ALBUM] != null) {
@@ -588,7 +596,7 @@ public class Main extends Activity {
 
 									}
 								}).show();
-				Log.e(DEBUG_TAG, "弹出对话框");
+				Log.v(DEBUG_TAG, "弹出对话框");
 				break;
 			case SEND_SUCCEED:// 发送成功
 				Toast.makeText(Main.this, R.string.send_succeed,
