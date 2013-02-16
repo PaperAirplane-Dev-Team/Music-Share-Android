@@ -60,16 +60,12 @@ public class Main extends Activity {
 		super.onCreate(savedInstanceState);
 		try {
 			setContentView(R.layout.main);
-			listview = (ListView) findViewById(R.id.list);// 找ListView的ID
-			listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
-			listview.setEmptyView(findViewById(R.id.empty));
-			View footerView = LayoutInflater.from(this).inflate(
-					R.layout.footer, null);
-			listview.addFooterView(footerView);
+			initListView();
 			showMusicList();
 			Log.v(DEBUG_TAG, "Push Start");
 			// JPushInterface.setAliasAndTags(getApplicationContext(), "Debug",
 			// null);
+			//这是JPush的Debug标签
 			JPushInterface.init(getApplicationContext());
 		} catch (Exception e) {
 			// Log.e(DEBUG_TAG, e.getMessage());
@@ -82,6 +78,15 @@ public class Main extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void initListView() {
+		listview = (ListView) findViewById(R.id.list);// 找ListView的ID
+		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
+		listview.setEmptyView(findViewById(R.id.empty));
+		View footerView = LayoutInflater.from(this).inflate(
+				R.layout.footer, null);
+		listview.addFooterView(footerView);		
 	}
 
 	@Override
@@ -342,6 +347,7 @@ public class Main extends Activity {
 					Uri.parse("file://"
 							+ Environment.getExternalStorageDirectory()
 									.getAbsolutePath())));
+			showMusicList();//我、我肯定是哪次改的时候脑残把这句删了
 		} catch (Exception e) {
 			e.printStackTrace();
 			setContentView(R.layout.empty);
@@ -390,24 +396,7 @@ public class Main extends Activity {
 												|| (Main.accessToken
 														.isSessionValid() == false)) {// 检测之前是否授权过
 											handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
-											SharedPreferences preferences = getApplicationContext()
-													.getSharedPreferences(
-															"ShareStatus",
-															Context.MODE_PRIVATE);
-											preferences
-													.edit()
-													.putString("content",
-															content).commit();
-											preferences
-													.edit()
-													.putBoolean("willFollow",
-															cb.isChecked())
-													.commit();
-											preferences
-													.edit()
-													.putString("artworkUrl",
-															artworkUrl)
-													.commit();
+											saveSendStatus(content,cb.isChecked(),artworkUrl);
 											weibo.authorize(Main.this,
 													weiboHelper.getListener());// 授权
 										} else {
@@ -416,6 +405,8 @@ public class Main extends Activity {
 										}
 
 									}
+
+
 								}).show();
 				Log.v(DEBUG_TAG, "弹出对话框");
 				break;
@@ -446,6 +437,28 @@ public class Main extends Activity {
 			}
 		}
 	};
+	private void saveSendStatus(String content,
+			boolean checked, String artworkUrl) {
+		SharedPreferences preferences = getApplicationContext()
+				.getSharedPreferences(
+						"ShareStatus",
+						Context.MODE_PRIVATE);
+		preferences
+				.edit()
+				.putString("content",
+						content).commit();
+		preferences
+				.edit()
+				.putBoolean("willFollow",
+						checked)
+				.commit();
+		preferences
+				.edit()
+				.putString("artworkUrl",
+						artworkUrl)
+				.commit();
+		
+	}
 
 }
 /**
