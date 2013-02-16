@@ -4,8 +4,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <!-- title -->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,8 +19,6 @@
             android:hint="@string/title" />
     </LinearLayout>
 
-    <!-- artist -->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,11 +30,9 @@
 
         <EditText
             android:id="@+id/et_artist"
-			style="@style/EditTextStyle"
+            style="@style/EditTextStyle"
             android:hint="@string/artist" />
     </LinearLayout>
-
-    <!-- album -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,12 +45,10 @@
 
         <EditText
             android:id="@+id/et_album"
-			style="@style/EditTextStyle"
+            style="@style/EditTextStyle"
             android:hint="@string/album"
             android:paddingBottom="@id/et_artist" />
     </LinearLayout>
-
-    <!-- button -->
 
     <LinearLayout
         android:layout_width="match_parent"

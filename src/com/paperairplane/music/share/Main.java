@@ -1,15 +1,6 @@
 package com.paperairplane.music.share;
 
 import java.io.File;
-import java.io.IOException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -43,13 +34,6 @@ import cn.jpush.android.api.JPushInterface;
 
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
-import com.weibo.sdk.android.WeiboAuthListener;
-import com.weibo.sdk.android.WeiboDialogError;
-import com.weibo.sdk.android.WeiboException;
-import com.weibo.sdk.android.WeiboParameters;
-import com.weibo.sdk.android.api.StatusesAPI;
-import com.weibo.sdk.android.net.AsyncWeiboRunner;
-import com.weibo.sdk.android.net.RequestListener;
 
 public class Main extends Activity {
 	// 存储音乐信息
@@ -62,23 +46,17 @@ public class Main extends Activity {
 			AUTH_ERROR = 6, SEND_ERROR = 7, NOT_AUTHORIZED_ERROR = 8,
 			AUTH_SUCCEED = 9;
 	final private int WEIBO = 0, OTHERS = 1;
-	final private int HARRY_UID = 1689129907, XAVIER_UID = 2121014783,
-			APP_UID = 1153267341;
-	final private int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3,
-			VERSION = 4;
 	private final String APP_KEY = "1006183120";
 	private final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken = null;
 	private Weibo weibo = Weibo.getInstance(APP_KEY, REDIRECT_URI);
 	private final static String DEBUG_TAG = "Music Share DEBUG";
-	private StatusesAPI api = null;
 	private Receiver receiver;
 	private AlertDialog dialogMain, dialogAbout;
 
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
-		Log.v(DEBUG_TAG, "!!!");
 		super.onCreate(savedInstanceState);
 		try {
 			setContentView(R.layout.main);
@@ -219,8 +197,6 @@ public class Main extends Activity {
 				.show();
 	}
 
-	
-
 	// 对话框处理
 
 	private void showCustomDialog(final int _id) {
@@ -246,9 +222,9 @@ public class Main extends Activity {
 				}
 
 			});
-			dialogAbout=new AlertDialog.Builder(this).setView(about).show();
+			dialogAbout = new AlertDialog.Builder(this).setView(about).show();
 		} else {
-			dialogMain= new AlertDialog.Builder(this)
+			dialogMain = new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.choose_an_operation))
 					.setPositiveButton(getString(R.string.play),
@@ -323,7 +299,8 @@ public class Main extends Activity {
 	// 分享音乐
 	private void shareMusic(String title, String artist, String album, int means) {
 		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
-				artist, album, means);
+				artist, album, means, getApplicationContext());
+		query.setHandler(handler);
 		query.start();
 		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG)
 				.show();
@@ -331,16 +308,6 @@ public class Main extends Activity {
 
 	// 播放音乐
 	private void playMusic(int position) {
-		/*
-		 * Bundle bundle=new Bundle(); bundle.putString("path",
-		 * musics[position].getPath()); bundle.putInt("id", position);
-		 * bundle.putString("title", musics[position].getTitle());
-		 * bundle.putString("artist", musics[position].getArtist());
-		 * bundle.putString("duration", musics[position].getDuration());
-		 * bundle.putInt("orgDuration",musics[position].getOrgDuration());
-		 * Intent musicIntent=new Intent(Main.this,MusicPlayer.class);
-		 * musicIntent.putExtras(bundle); startActivity(musicIntent);
-		 */
 		Intent musicIntent = new Intent();
 		musicIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		musicIntent.setAction(android.content.Intent.ACTION_VIEW);
@@ -385,144 +352,6 @@ public class Main extends Activity {
 		showCustomDialog(R.layout.about);// 那么,这个没啥用,只是告诉系统一个标识,在onCreateDialog里面判断一下的
 	}
 
-	// 查询+分享线程
-	private class QueryAndShareMusicInfo extends Thread {
-		private int means;
-		private String artist, title, album;
-
-		public void run() {
-			// 获取信息生成字符串
-			String info[] = getMusicAndArtworkUrl(title, artist);
-			String content;
-			boolean isSingle =  ((info[VERSION]!=null)&&info[VERSION].equals("[\"单曲\"]"));
-							
-			content = getString(R.string.share_by) + " "
-					+ ((artist.equals("")) ? info[ARTIST] : artist) + " "
-					+ (isSingle ?getString(R.string.music_single):getString(R.string.music_artist)) + " " + title
-					+ (isSingle?"":getString(R.string.music_album) + " "
-					+ ((album.equals("")) ? info[ALBUM] : album) + " ")
-					+ getString(R.string.before_url) + info[MUSIC];
-			String artworkUrl = null;
-			if (info[ARTWORK] != null) {
-				artworkUrl = info[ARTWORK].replace("spic", "lpic");
-			}
-			Bundle bundle = new Bundle();
-			bundle.putString("content", content);
-			bundle.putString("artworkUrl", artworkUrl);
-			Log.d(DEBUG_TAG, "获取结束。");
-			switch (means) {
-			// 根据分享方式执行操作
-			case OTHERS:
-				Intent intent = new Intent(Intent.ACTION_SEND);
-				intent.setType("text/plain");
-				intent.putExtra(Intent.EXTRA_SUBJECT,
-						getString(R.string.app_name));
-				intent.putExtra(Intent.EXTRA_TEXT, content);
-				startActivity(Intent.createChooser(intent,
-						getString(R.string.how_to_share)));
-				break;
-			case WEIBO:
-				Message m = handler.obtainMessage(SEND_WEIBO, bundle);
-				handler.sendMessage(m);
-				break;
-			}
-
-		}
-
-		// 获取音乐地址以及专辑封面地址,方法合并
-		private String[] getMusicAndArtworkUrl(String title, String artist) {
-			Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl被调用");
-			String json = getJson(title, artist);
-			String info[] = new String[5];
-			if (json == null) {
-				info[MUSIC] = getString(R.string.no_music_url_found);
-				Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl获得空的json字符串");
-			} else {
-				try {
-					JSONObject rootObject = new JSONObject(json);
-					int count = rootObject.getInt("count");
-					if (count == 1) {
-						JSONArray contentArray = rootObject
-								.getJSONArray("musics");
-						JSONObject item = contentArray.getJSONObject(0);
-						info[MUSIC] = item.getString("mobile_link");
-						info[ARTWORK] = item.getString("image");
-						info[ARTIST] = item.getJSONArray("author")
-								.getJSONObject(0).getString("name");
-						info[ALBUM] = item.getJSONObject("attrs").getString(
-								"title");
-						info[VERSION] = item.getJSONObject("attrs").getString(
-								"version");
-						// 这里,这里,这样就不会有蛋疼的空白错误了
-					} else {
-						info[MUSIC] = getString(R.string.no_music_url_found);
-						info[ARTWORK] = null;
-						info[ARTIST] = null;
-						info[ALBUM] = null;
-						info[VERSION] = null;
-					}
-				} catch (JSONException e) {
-					Log.e(DEBUG_TAG, "JSON解析错误");
-					e.printStackTrace();
-					info[MUSIC] = getString(R.string.no_music_url_found);
-					info[ARTWORK] = null;
-					info[ARTIST] = null;
-					info[ALBUM] = null;
-					info[VERSION] = null;
-				}
-			}
-			if (info[ALBUM] != null) {
-				info[ALBUM] = info[ALBUM].replace("[\"", "");
-				info[ALBUM] = info[ALBUM].replace("\"]", "");
-				Log.d(DEBUG_TAG, info[ALBUM]);
-			}
-			// Log.v(DEBUG_TAG, info[MUSIC]);
-			// Log.v(DEBUG_TAG, info[ARTWORK]);
-			// 加Log的话如果上面那两个值有null就会崩溃……懒得catch
-			return info;
-		}
-
-		// 通过豆瓣API获取音乐信息
-		private String getJson(String title, String artist) {
-			Log.v(DEBUG_TAG, "方法 getJSON被调用");
-			String json = null;
-			HttpResponse httpResponse;
-			try {
-				String api_url = "http://paperairplane.sinaapp.com/proxy.php?q="
-						+ java.net.URLEncoder.encode(title + "+" + artist,
-								"UTF-8");
-				Log.v(DEBUG_TAG, "方法 getJSON将要进行的请求为" + api_url);
-				HttpGet httpGet = new HttpGet(api_url);
-
-				httpResponse = new DefaultHttpClient().execute(httpGet);
-				Log.v(DEBUG_TAG, "进行的HTTP GET返回状态为"
-						+ httpResponse.getStatusLine().getStatusCode());
-				if (httpResponse.getStatusLine().getStatusCode() == 200) {
-					json = EntityUtils.toString(httpResponse.getEntity());
-					Log.v(DEBUG_TAG, "返回结果为" + json);
-				} else {
-					handler.sendEmptyMessage(INTERNET_ERROR);
-					json = null;
-				}
-			} catch (Exception e) {
-				Log.v(DEBUG_TAG, "抛出错误" + e.getMessage());
-				handler.sendEmptyMessage(INTERNET_ERROR);
-				e.printStackTrace();
-				json = null;
-			}
-			return json;
-
-		}
-
-		public QueryAndShareMusicInfo(String _title, String _artist,
-				String _album, int _means) {
-			title = _title;
-			artist = _artist;
-			album = _album;
-			means = _means;
-		}
-	}
-
 	// 这是消息处理
 	private Handler handler = new Handler() {
 		@Override
@@ -544,6 +373,8 @@ public class Main extends Activity {
 				String _content = bundle.getString("content");
 				final String artworkUrl = bundle.getString("artworkUrl");
 				// Log.v(DEBUG_TAG, artworkUrl);
+				final WeiboHelper weiboHelper = new WeiboHelper(handler,
+						Main.this, getApplicationContext());
 				et.setText(_content);
 				new AlertDialog.Builder(Main.this)
 						.setView(sendweibo)
@@ -554,21 +385,8 @@ public class Main extends Activity {
 											int which) {
 										String content = et.getText()
 												.toString();
-										if (Utilities.calculateLength(content) > 140) {// 判断字数是否超过140
-											Log.v(DEBUG_TAG, "超出字数");
-											new AlertDialog.Builder(Main.this)
-													.setMessage(
-															getString(R.string.too_long))
-													.setPositiveButton(
-															getString(android.R.string.ok),
-															new DialogInterface.OnClickListener() {
-																@Override
-																public void onClick(
-																		DialogInterface dialog,
-																		int which) {
-																}
-															}).show();
-										} else if (Main.accessToken == null
+
+										if (Main.accessToken == null
 												|| (Main.accessToken
 														.isSessionValid() == false)) {// 检测之前是否授权过
 											handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
@@ -591,10 +409,10 @@ public class Main extends Activity {
 															artworkUrl)
 													.commit();
 											weibo.authorize(Main.this,
-													new AuthDialogListener());// 授权
+													weiboHelper.getListener());// 授权
 										} else {
-											sendWeibo(content, artworkUrl,
-													cb.isChecked());
+											weiboHelper.sendWeibo(content,
+													artworkUrl, cb.isChecked());
 										}
 
 									}
@@ -629,130 +447,9 @@ public class Main extends Activity {
 		}
 	};
 
-	// 发送微博
-	private void sendWeibo(String content, String fileDir, boolean willFollow) {
-		api = new StatusesAPI(Main.accessToken);
-		if (fileDir == null) {
-			Log.v(DEBUG_TAG, "发送无图微博");
-			api.update(content, null, null, requestListener);
-		} else {
-			Log.v(DEBUG_TAG, "发送带图微博，url=" + fileDir);
-			String url = "https://api.weibo.com/2/statuses/upload_url_text.json";
-			WeiboParameters params = new WeiboParameters();
-			params.add("access_token", Main.accessToken.getToken());
-			params.add("status", content);
-			params.add("url", fileDir);
-			AsyncWeiboRunner.request(url, params, "POST", requestListener);
-		}
-		if (willFollow == true) {// 判断是否要关注开发者
-			follow(HARRY_UID);// 关注Harry Chen
-			follow(XAVIER_UID);// 关注Xavier Yao
-			follow(APP_UID);// 关注官方微博
-		}
-	}
-
-	// 关注某人
-	private void follow(int uid) {
-		WeiboParameters params = new WeiboParameters();
-		params.add("access_token", Main.accessToken.getToken());
-		params.add("uid", uid);
-		String url = "https://api.weibo.com/2/friendships/create.json";
-		try {
-			AsyncWeiboRunner.request(url, params, "POST",
-					new RequestListener() {
-						@Override
-						public void onComplete(String arg0) {
-							Log.v("Music Share DUBUG", "followed");
-						}
-
-						@Override
-						public void onError(WeiboException arg0) {
-						}
-
-						@Override
-						public void onIOException(IOException arg0) {
-						}
-					});
-		} catch (Exception e) {
-		}
-		// 既然关注就悄悄地进行不报错了
-	}
-
-	// 微博授权监听器
-	public class AuthDialogListener implements WeiboAuthListener {
-		Message m = handler.obtainMessage();
-
-		@Override
-		public void onComplete(Bundle values) {
-			String token = values.getString("access_token");
-			String expires_in = values.getString("expires_in");
-			Main.accessToken = new Oauth2AccessToken(token, expires_in);
-			AccessTokenKeeper.keepAccessToken(Main.this, accessToken);
-			handler.sendEmptyMessage(AUTH_SUCCEED);
-			Log.v(DEBUG_TAG, "授权成功，\n AccessToken:" + token);
-			SharedPreferences preferences = getApplicationContext()
-					.getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
-			String content = preferences.getString("content", null);
-			String artworkUrl = preferences.getString("artworkUrl", null);
-			boolean willFollow = preferences.getBoolean("willFollow", false);
-			Log.v(DEBUG_TAG, "获取状态\n" + content + "\n" + artworkUrl + "\n"
-					+ willFollow);
-			sendWeibo(content, artworkUrl, willFollow);
-		}
-
-		@Override
-		public void onCancel() {
-
-		}
-
-		@Override
-		public void onError(WeiboDialogError e) {
-			String error = e.getMessage();
-			m.what = AUTH_ERROR;
-			m.obj = error;
-			handler.sendMessage(m);
-		}
-
-		@Override
-		public void onWeiboException(WeiboException e) {
-			String error = e.getMessage();
-			m.what = AUTH_ERROR;
-			m.obj = error;
-			handler.sendMessage(m);
-		}
-	}
-
-	private RequestListener requestListener = new RequestListener() {
-		Message m = handler.obtainMessage();
-
-		@Override
-		public void onComplete(String arg0) {
-			handler.sendEmptyMessage(SEND_SUCCEED);
-		}
-
-		@Override
-		public void onError(WeiboException e) {
-			String error = e.getMessage();
-			m.what = SEND_ERROR;
-			m.obj = error;
-			handler.sendMessage(m);
-		}
-
-		@Override
-		public void onIOException(IOException arg0) {
-			String error = arg0.getMessage();
-			m.what = SEND_ERROR;
-			m.obj = error;
-			handler.sendMessage(m);
-		}
-
-	};
-	
-
 }
 /**
- * Paper Airplane Dev Team
- * 添乱1：@author @HarryChen-SIGKILL-
+ * Paper Airplane Dev Team 添乱1：@author @HarryChen-SIGKILL-
  * http://weibo.com/yszzf 添乱2：@author @姚沛然 http://weibo.com/xavieryao 美工：@author @七只小鸡1997
- * http://weibo.com/u/1579617160 Code Version 0019 2013.2.3 P.S.我添乱啊啊啊！
+ * http://weibo.com/u/1579617160 Code Version 0026 2013.2.16 P.S.重构万岁！！！
  **/

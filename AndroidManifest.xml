@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.paperairplane.music.share"
-    android:versionCode="0025"
+    android:versionCode="0026"
     android:versionName="0.9.4" >
 
     <permission
