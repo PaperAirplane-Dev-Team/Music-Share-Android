@@ -74,7 +74,7 @@ public class Main extends Activity {
 		}
 		// 读取已存储的授权信息
 		try {
-			Main.accessToken = AccessTokenKeeper.readAccessToken(this);
+			Main.accessToken = AccessTokenKeeper.readAccessToken(getApplicationContext());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -126,7 +126,7 @@ public class Main extends Activity {
 					handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
 				} else {
 					Main.accessToken = null;
-					AccessTokenKeeper.clear(Main.this);
+					AccessTokenKeeper.clear(getApplicationContext());
 					Toast.makeText(Main.this, getString(R.string.unauthed),
 							Toast.LENGTH_SHORT).show();
 				}

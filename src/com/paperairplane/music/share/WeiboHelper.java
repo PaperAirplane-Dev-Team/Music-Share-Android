@@ -26,19 +26,17 @@ public class WeiboHelper {
 	private Handler handler = null;
 	final private int SEND_SUCCEED = 5, AUTH_ERROR = 6, SEND_ERROR = 7,
 			AUTH_SUCCEED = 9;
-	private Context context, applicationContext;
+	private Context applicationContext;
 	private AuthDialogListener listener;
 	private RequestListener requestListener;
 /**
  * WeiboHelper构造函数
  * @param _handler 用于控制UI线程的Handler
- * @param _context 用于读取、保存授权信息的Context
  * @param _applicationContext 用于暂存微博内容和其它信息的（Application）Context
  */
 	public WeiboHelper(Handler _handler, Context _context,
 			Context _applicationContext) {
 		handler = _handler;
-		context = _context;
 		applicationContext = _applicationContext;
 	}
 /**
@@ -141,7 +139,7 @@ public class WeiboHelper {
 			String token = values.getString("access_token");
 			String expires_in = values.getString("expires_in");
 			Main.accessToken = new Oauth2AccessToken(token, expires_in);
-			AccessTokenKeeper.keepAccessToken(context, Main.accessToken);
+			AccessTokenKeeper.keepAccessToken(applicationContext, Main.accessToken);
 			handler.sendEmptyMessage(AUTH_SUCCEED);
 			Log.v(DEBUG_TAG, "授权成功，\n AccessToken:" + token);
 			SharedPreferences preferences = applicationContext
