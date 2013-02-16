@@ -19,7 +19,7 @@ public class QueryAndShareMusicInfo extends Thread {
 	private Handler handler = null;
 
 	public void run() {
-		// »ñÈ¡ÐÅÏ¢Éú³É×Ö·û´®
+		// ï¿½ï¿½È¡ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½Ö·ï¿½
 		String[] info = Utilities.getMusicAndArtworkUrl(title, artist, context,
 				handler);
 		String content;
@@ -32,9 +32,9 @@ public class QueryAndShareMusicInfo extends Thread {
 		Bundle bundle = new Bundle();
 		bundle.putString("content", content);
 		bundle.putString("artworkUrl", artworkUrl);
-		Log.d(DEBUG_TAG, "»ñÈ¡½áÊø¡£");
+		Log.d(DEBUG_TAG, "ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½");
 		switch (means) {
-		// ¸ù¾Ý·ÖÏí·½Ê½Ö´ÐÐ²Ù×÷
+		// ï¿½ï¿½Ý·ï¿½ï¿½?Ê½Ö´ï¿½Ð²ï¿½ï¿½ï¿½
 		case OTHERS:
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
@@ -42,7 +42,7 @@ public class QueryAndShareMusicInfo extends Thread {
 					context.getString(R.string.app_name));
 			intent.putExtra(Intent.EXTRA_TEXT, content);
 			context.startActivity(Intent.createChooser(intent,
-					context.getString(R.string.how_to_share)));
+					context.getString(R.string.how_to_share)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 			break;
 		case WEIBO:
 			Message m = handler.obtainMessage(SEND_WEIBO, bundle);
@@ -54,7 +54,7 @@ public class QueryAndShareMusicInfo extends Thread {
 
 	private String genContent(String[] info) {
 		boolean isSingle = ((info[VERSION] != null) && info[VERSION]
-				.equals("[\"µ¥Çú\"]"));
+				.equals("[\"ï¿½ï¿½ï¿½ï¿½\"]"));
 		String content = context.getString(R.string.share_by)
 				+ " "
 				+ ((artist.equals("")) ? info[ARTIST] : artist)

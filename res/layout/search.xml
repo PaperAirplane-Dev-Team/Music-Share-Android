@@ -4,64 +4,75 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <!-- title -->
+    <LinearLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
+        android:orientation="horizontal">
         <TextView
-            style="@style/TextViewStyle"
-            android:text="@string/title" />
-
+            android:id="@+id/text_title"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="@string/title"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
         <EditText
             android:id="@+id/et_title"
-            style="@style/EditTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:hint="@string/title" />
     </LinearLayout>
 
-    <LinearLayout
+    <!-- artist -->
+    <LinearLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
+        android:orientation="horizontal">
         <TextView
-            style="@style/TextViewStyle"
-            android:text="@string/artist" />
-
+            android:id="@+id/text_artist"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="@string/artist"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
         <EditText
             android:id="@+id/et_artist"
-            style="@style/EditTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:hint="@string/artist" />
     </LinearLayout>
 
-    <LinearLayout
+    <!-- album -->
+    <LinearLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
+        android:orientation="horizontal">
         <TextView
-            style="@style/TextViewStyle"
-            android:text="@string/album" />
+            android:id="@+id/text_album"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="@string/album"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
             android:id="@+id/et_album"
-            style="@style/EditTextStyle"
-            android:hint="@string/album"
-            android:paddingBottom="@id/et_artist" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/album"/>
     </LinearLayout>
 
-    <LinearLayout
+    <!-- button -->
+    <LinearLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical|center_horizontal"
-        android:orientation="horizontal" >
-
+        android:orientation="horizontal"
+        android:gravity="center_vertical|center_horizontal">
         <Button
             android:id="@+id/btn_share2weibo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/share2weibo" />
-
         <Button
             android:id="@+id/btn_share2others"
             android:layout_width="wrap_content"
