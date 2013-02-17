@@ -34,8 +34,8 @@ public class WeiboHelper {
  * @param _handler 用于控制UI线程的Handler
  * @param _applicationContext 用于暂存微博内容和其它信息的（Application）Context
  */
-	public WeiboHelper(Handler _handler, Context _context,
-			Context _applicationContext) {
+	//那么请问……你的第二个Activity的Context要来做什么?似乎你没用到……
+	public WeiboHelper(Handler _handler, Context _applicationContext) {
 		handler = _handler;
 		applicationContext = _applicationContext;
 	}

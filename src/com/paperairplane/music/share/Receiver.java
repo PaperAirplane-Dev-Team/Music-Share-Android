@@ -13,7 +13,7 @@ import android.widget.Toast;
 import cn.jpush.android.api.JPushInterface;
 
 public class Receiver extends BroadcastReceiver {
-	private static final String TAG = "MyReceiver";
+	private static final String DEBUG_TAG = "Music Share RECEIVER";
 	private Toast toast = null;
 
 	public void onReceive(Context context, Intent intent) {
@@ -29,7 +29,7 @@ public class Receiver extends BroadcastReceiver {
 			toast.show();
 		} else {
 			Bundle bundle = intent.getExtras();
-			Log.d(TAG, "onReceive - " + intent.getAction() + ", extras: "
+			Log.d(DEBUG_TAG, "onReceive - " + intent.getAction() + ", extras: "
 					+ printBundle(bundle));
 
 			if (JPushInterface.ACTION_REGISTRATION_ID
@@ -37,24 +37,24 @@ public class Receiver extends BroadcastReceiver {
 
 			} else if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(intent
 					.getAction())) {
-				Log.d(TAG,
+				Log.d(DEBUG_TAG,
 						"接受到推送下来的自定义消息: "
 								+ bundle.getString(JPushInterface.EXTRA_MESSAGE));
 
 			} else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED
 					.equals(intent.getAction())) {
-				Log.d(TAG, "接受到推送下来的通知");
+				Log.d(DEBUG_TAG, "接受到推送下来的通知");
 
 			} else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent
 					.getAction())) {
-				Log.d(TAG, "用户点击打开了通知");
+				Log.d(DEBUG_TAG, "用户点击打开了通知");
 				String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
 				String url = null;
 				Uri uri;
 				try {
 					JSONObject jsonObject = new JSONObject(extra);
 					url = jsonObject.getString("url");
-					Log.d(TAG, "取到值url"+url);
+					Log.d(DEBUG_TAG, "取到值url"+url);
 				} catch (JSONException e) {
 					url = null;
 					e.printStackTrace();
@@ -73,7 +73,7 @@ public class Receiver extends BroadcastReceiver {
 					e.printStackTrace();
 				}
 			} else {
-				Log.d(TAG, "Unhandled intent - " + intent.getAction());
+				Log.d(DEBUG_TAG, "Unhandled intent - " + intent.getAction());
 			}
 		}
 

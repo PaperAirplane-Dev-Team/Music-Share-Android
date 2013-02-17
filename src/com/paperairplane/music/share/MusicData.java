@@ -2,7 +2,6 @@ package com.paperairplane.music.share;
 
 class MusicData{
 	private String title,artist,duration,path,album;
-	private int orgDuration;
 	public void setPath(String _path){
 		path=_path;
 	}
@@ -18,9 +17,6 @@ class MusicData{
 	public void setDuration(String _duration){
 		duration=_duration;
 	}
-	public void setOrgDuration(int _orgDuration){
-		orgDuration=_orgDuration;
-	}
 	public String getPath(){
 		return path;
 	}
@@ -35,12 +31,6 @@ class MusicData{
 	}
 	public String getAlbum(){
 	    return album;
-	}
-	public int getOrgDuration(){
-		return orgDuration;
-	}
-	public MusicData(){
-		
 	}
 
 }

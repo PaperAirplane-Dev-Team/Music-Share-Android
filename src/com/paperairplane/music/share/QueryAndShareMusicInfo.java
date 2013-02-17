@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-public class QueryAndShareMusicInfo extends Thread {
+class QueryAndShareMusicInfo extends Thread {
 	final private int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3,
 			VERSION = 4;
 	final private int SEND_WEIBO = 4;
@@ -14,7 +14,7 @@ public class QueryAndShareMusicInfo extends Thread {
 	private int means;
 	private String artist, title, album;
 	private Context context;
-	private Handler handler = null;
+	private Handler handler;
 
 	public void run() {
 		String[] info = Utilities.getMusicAndArtworkUrl(title, artist, context,
@@ -68,15 +68,13 @@ public class QueryAndShareMusicInfo extends Thread {
 	}
 
 	public QueryAndShareMusicInfo(String _title, String _artist, String _album,
-			int _means, Context _context) {
+			int _means, Context _context, Handler _handler) {
 		title = _title;
 		artist = _artist;
 		album = _album;
 		means = _means;
 		context = _context;
-	}
-
-	public void setHandler(Handler _handler) {
 		handler = _handler;
 	}
+
 }

@@ -2,7 +2,7 @@
 
     <string name="app_name">纸飞机音乐分享</string>
     <string name="title_activity_main">音乐分享</string>
-    <string name="empty">歌曲标题是空的…一边凉快去……</string>
+    <string name="empty">歌曲标题是空的…才不会崩溃给你看,一边凉快去…</string>
     <string name="to_show_title">显示音乐名</string>
     <string name="to_show_artist">显示歌手</string>
     <string name="menu_exit">退出</string>
@@ -19,7 +19,7 @@
     <string name="choose_an_operation">选择一个操作</string>
     <string name="very_long">                                                                              </string>
     <string name="refresh_on_process">刷新播放列表中</string>
-    <string name="about_context">Paper Airplane Dev Team\n添乱1：@author @HarryChen-SIGKILL-\nhttp://weibo.com/yszzf\n添乱2：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2013.2.14 \n情人节特别版 P.S.Like You\nVer0.9.2</string>
+    <string name="about_context">Paper Airplane Dev Team\n主力：@author @姚沛然\nhttp://weibo.com/xavieryao\n添乱：@author @HarryChen-SIGKILL-\nhttp://weibo.com/yszzf\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2013.2.17\nRelease Preview \nVer0.9.5</string>
     <string name="menu_about">关于</string>
     <string name="about_contact">来人，捉虫！</string>
 	<string name="about_download_info">戳我下载：</string>

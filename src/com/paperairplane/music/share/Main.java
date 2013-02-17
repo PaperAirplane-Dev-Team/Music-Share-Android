@@ -39,13 +39,14 @@ public class Main extends Activity {
 	// 存储音乐信息
 	private MusicData[] musics;// 保存音乐数据
 	private ListView listview;// 列表对象
-	private String[] media_info = new String[] { MediaStore.Audio.Media.TITLE,
+	private final String[] media_info = new String[] { MediaStore.Audio.Media.TITLE,
 			MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST,
 			MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.ALBUM };
-	final private int INTERNET_ERROR = 3, SEND_WEIBO = 4, SEND_SUCCEED = 5,
+	private final int INTERNET_ERROR = 3, SEND_WEIBO = 4, SEND_SUCCEED = 5,
 			AUTH_ERROR = 6, SEND_ERROR = 7, NOT_AUTHORIZED_ERROR = 8,
 			AUTH_SUCCEED = 9;
-	final private int WEIBO = 0, OTHERS = 1;
+	private final int WEIBO = 0, OTHERS = 1;
+	private final int DIALOG_SHARE=0, DIALOG_ABOUT=1;
 	private final String APP_KEY = "1006183120";
 	private final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken = null;
@@ -65,7 +66,7 @@ public class Main extends Activity {
 			Log.v(DEBUG_TAG, "Push Start");
 			// JPushInterface.setAliasAndTags(getApplicationContext(), "Debug",
 			// null);
-			//这是JPush的Debug标签
+			// 这是JPush的Debug标签
 			JPushInterface.init(getApplicationContext());
 		} catch (Exception e) {
 			// Log.e(DEBUG_TAG, e.getMessage());
@@ -74,7 +75,8 @@ public class Main extends Activity {
 		}
 		// 读取已存储的授权信息
 		try {
-			Main.accessToken = AccessTokenKeeper.readAccessToken(getApplicationContext());
+			Main.accessToken = AccessTokenKeeper
+					.readAccessToken(getApplicationContext());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -84,9 +86,9 @@ public class Main extends Activity {
 		listview = (ListView) findViewById(R.id.list);// 找ListView的ID
 		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
 		listview.setEmptyView(findViewById(R.id.empty));
-		View footerView = LayoutInflater.from(this).inflate(
-				R.layout.footer, null);
-		listview.addFooterView(footerView);		
+		View footerView = LayoutInflater.from(this).inflate(R.layout.footer,
+				null);
+		listview.addFooterView(footerView);
 	}
 
 	@Override
@@ -204,31 +206,30 @@ public class Main extends Activity {
 
 	// 对话框处理
 
-	private void showCustomDialog(final int _id) {
-		if (_id == R.layout.about) { // 这个是关于窗口
-			// 对话框尤其奇葩
-			// 现在还凑合……RelativeLayout是个好东西
-			View about = LayoutInflater.from(this)
-					.inflate(R.layout.about, null);
-			Button button_about = (Button) about
-					.findViewById(R.id.button_about);
-			button_about.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					dialogAbout.cancel();
-				}
-			});
-			Button button_contact = (Button) about
-					.findViewById(R.id.button_contact);
-			button_contact.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					Uri uri = Uri.parse(getString(R.string.url));
-					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-					startActivity(intent);
-				}
-
-			});
-			dialogAbout = new AlertDialog.Builder(this).setView(about).show();
-		} else {
+	private void showCustomDialog(final int _id, int whichDialog) {
+		if (whichDialog==DIALOG_ABOUT) { 
+			//既然你说它奇葩,嗯,那这样子就不奇葩了
+			//不过在显示关于窗口是方法第一个传入参数没啥用
+			dialogAbout = new AlertDialog.Builder(this)
+			.setIcon(android.R.drawable.ic_dialog_info)
+			.setTitle(getString(R.string.menu_about))
+			.setPositiveButton(getString(android.R.string.ok),
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							dialogAbout.cancel();
+						}
+					})
+			.setNegativeButton(getString(R.string.about_contact),
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							Uri uri = Uri.parse(getString(R.string.url));
+							Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+							startActivity(intent);
+						}
+					}).show();
+		} else if (whichDialog==DIALOG_SHARE){
 			dialogMain = new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.choose_an_operation))
@@ -257,9 +258,11 @@ public class Main extends Activity {
 									shareMusic(musics[_id].getTitle(),
 											musics[_id].getArtist(),
 											musics[_id].getAlbum(), WEIBO);
-
 								}
 							}).show();
+		}
+		else{
+			throw new RuntimeException("What the hell are you doing?");
 		}
 	}
 
@@ -273,7 +276,7 @@ public class Main extends Activity {
 				} catch (Exception e) {
 				}
 			}
-			showCustomDialog(position);
+			showCustomDialog(position, DIALOG_SHARE);
 		}
 	}
 
@@ -291,7 +294,6 @@ public class Main extends Activity {
 			musics[i] = new MusicData();
 			musics[i].setTitle(cursor.getString(0));
 			musics[i].setDuration(Utilities.convertDuration(cursor.getInt(1)));
-			musics[i].setOrgDuration(cursor.getInt(1));
 			musics[i].setArtist(cursor.getString(2));
 			musics[i].setPath(cursor.getString(3));
 			musics[i].setAlbum(cursor.getString(4));
@@ -304,8 +306,7 @@ public class Main extends Activity {
 	// 分享音乐
 	private void shareMusic(String title, String artist, String album, int means) {
 		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
-				artist, album, means, getApplicationContext());
-		query.setHandler(handler);
+				artist, album, means, getApplicationContext(), handler);
 		query.start();
 		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG)
 				.show();
@@ -347,7 +348,8 @@ public class Main extends Activity {
 					Uri.parse("file://"
 							+ Environment.getExternalStorageDirectory()
 									.getAbsolutePath())));
-			showMusicList();//我、我肯定是哪次改的时候脑残把这句删了
+			showMusicList();// 我、我肯定是哪次改的时候脑残把这句删了
+			// 然后它就没没效果?
 		} catch (Exception e) {
 			e.printStackTrace();
 			setContentView(R.layout.empty);
@@ -355,7 +357,7 @@ public class Main extends Activity {
 	}
 
 	private void showAbout() { // 显示关于窗口
-		showCustomDialog(R.layout.about);// 那么,这个没啥用,只是告诉系统一个标识,在onCreateDialog里面判断一下的
+		showCustomDialog(0, DIALOG_ABOUT);
 	}
 
 	// 这是消息处理
@@ -379,8 +381,7 @@ public class Main extends Activity {
 				String _content = bundle.getString("content");
 				final String artworkUrl = bundle.getString("artworkUrl");
 				// Log.v(DEBUG_TAG, artworkUrl);
-				final WeiboHelper weiboHelper = new WeiboHelper(handler,
-						Main.this, getApplicationContext());
+				final WeiboHelper weiboHelper = new WeiboHelper(handler, getApplicationContext());
 				et.setText(_content);
 				new AlertDialog.Builder(Main.this)
 						.setView(sendweibo)
@@ -396,7 +397,8 @@ public class Main extends Activity {
 												|| (Main.accessToken
 														.isSessionValid() == false)) {// 检测之前是否授权过
 											handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
-											saveSendStatus(content,cb.isChecked(),artworkUrl);
+											saveSendStatus(content,
+													cb.isChecked(), artworkUrl);
 											weibo.authorize(Main.this,
 													weiboHelper.getListener());// 授权
 										} else {
@@ -405,7 +407,6 @@ public class Main extends Activity {
 										}
 
 									}
-
 
 								}).show();
 				Log.v(DEBUG_TAG, "弹出对话框");
@@ -437,32 +438,23 @@ public class Main extends Activity {
 			}
 		}
 	};
-	private void saveSendStatus(String content,
-			boolean checked, String artworkUrl) {
+
+	private void saveSendStatus(String content, boolean checked,
+			String artworkUrl) {
 		SharedPreferences preferences = getApplicationContext()
-				.getSharedPreferences(
-						"ShareStatus",
-						Context.MODE_PRIVATE);
-		preferences
-				.edit()
-				.putString("content",
-						content).commit();
-		preferences
-				.edit()
-				.putBoolean("willFollow",
-						checked)
-				.commit();
-		preferences
-				.edit()
-				.putString("artworkUrl",
-						artworkUrl)
-				.commit();
-		
+				.getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
+		preferences.edit().putString("content", content).commit();
+		preferences.edit().putBoolean("willFollow", checked).commit();
+		preferences.edit().putString("artworkUrl", artworkUrl).commit();
+
 	}
 
 }
 /**
- * Paper Airplane Dev Team 添乱1：@author @HarryChen-SIGKILL-
- * http://weibo.com/yszzf 添乱2：@author @姚沛然 http://weibo.com/xavieryao 美工：@author @七只小鸡1997
- * http://weibo.com/u/1579617160 Code Version 0026 2013.2.16 P.S.重构万岁！！！
+ * Paper Airplane Dev Team
+ * 主力：@author @姚沛然 http://weibo.com/xavieryao
+ * 添乱：@author @HarryChen-SIGKILL- http://weibo.com/yszzf
+ * 美工：@author @七只小鸡1997 http://weibo.com/u/1579617160
+ * Code Version 0028 2013.2.17
+ * P.S.康师傅番茄笋干排骨面味道不错
  **/

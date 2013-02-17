@@ -12,20 +12,21 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
-public class Utilities {
-	private final static String  API_URL = "http://paperairplane.sinaapp.com/proxy.php?q=";
+class Utilities {
+	private final static String API_URL = "http://paperairplane.sinaapp.com/proxy.php?q=";
 	private final static int INTERNET_ERROR = 3;
 	private final static String DEBUG_TAG = "Music Share DEBUG";
 	final private static int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3,
 			VERSION = 4;
-	
-/**
- * 将integer类型的时间长度格式化
- * @param _duration int类型的时间长度（ms）
- * @return 格式化好的时长字符串
- */
-	public static String convertDuration(int _duration) {
-		_duration /= 1000;
+
+	/**
+	 * 将integer类型的时间长度格式化
+	 * 
+	 * @param _duration int类型的时间长度（ms）
+	 * @return 格式化好的时长字符串
+	 */
+	public static String convertDuration(long _duration) {
+		/*_duration /= 1000;
 		String min, hour, sec;
 		if (_duration / 3600 > 0) {
 			return (((hour = ((Integer) (_duration / 3600)).toString())
@@ -44,14 +45,24 @@ public class Utilities {
 					+ (((sec = ((Integer) (_duration % 60)).toString())
 							.length() == 1) ? "0" + sec : sec);
 		}
-
+		*/
+        StringBuffer sb = new StringBuffer();
+        long m = _duration / (60 * 1000);
+        sb.append(m < 10 ? "0" + m : m);
+        sb.append(":");
+        long s = (_duration % (60 * 1000)) / 1000;
+        sb.append(s < 10 ? "0" + s : s);
+        return sb.toString();
+        //嗯,直接用人家的方法了,嘿
 	}
+
 	/**
 	 * 通过豆瓣API获取音乐的信息
-	 * @param title 音乐标题
-	 * @param artist 音乐作者
-	 * @param context 用于获取资源的context
-	 * @param handler 用于控制UI线程的Handler
+	 * 
+	 * @param title      音乐标题
+	 * @param artist     音乐作者
+	 * @param context    用于获取资源的context
+	 * @param handler    用于控制UI线程的Handler
 	 * @return 包含音乐详情地址、歌手、专辑、单曲or专辑、专辑封面的字符串数组
 	 */
 	public static String[] getMusicAndArtworkUrl(String title, String artist,
@@ -97,8 +108,7 @@ public class Utilities {
 			}
 		}
 		if (info[ALBUM] != null) {
-			info[ALBUM] = info[ALBUM].replace("[\"", "");
-			info[ALBUM] = info[ALBUM].replace("\"]", "");
+			info[ALBUM] = info[ALBUM].replace("[\"", "").replace("\"]", "");
 			Log.d(DEBUG_TAG, info[ALBUM]);
 		}
 		// Log.v(DEBUG_TAG, info[MUSIC]);
