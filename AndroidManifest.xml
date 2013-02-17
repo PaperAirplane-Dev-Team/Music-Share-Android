@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.paperairplane.music.share"
-    android:versionCode="0027"
-    android:versionName="0.9.4" >
+    android:versionCode="0028"
+    android:versionName="1.0" >
 
     <permission
         android:name="com.paperairplane.music.share.permission.JPUSH_MESSAGE"

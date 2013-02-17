@@ -1,83 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    style="@style/EditTextStyle"
     android:orientation="vertical" >
 
     <!-- title -->
-    <LinearLayout 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+
+    <LinearLayout
+        style="@style/EditTextStyle"
+        android:orientation="horizontal" >
+
         <TextView
             android:id="@+id/text_title"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="@string/title"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            style="@style/TextViewStyle"
+            android:text="@string/title" />
+
         <EditText
             android:id="@+id/et_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/EditTextStyle"
             android:hint="@string/title" />
     </LinearLayout>
 
     <!-- artist -->
-    <LinearLayout 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+
+    <LinearLayout
+        style="@style/EditTextStyle"
+        android:orientation="horizontal" >
+
         <TextView
             android:id="@+id/text_artist"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="@string/artist"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            style="@style/TextViewStyle"
+            android:text="@string/artist" />
+
         <EditText
             android:id="@+id/et_artist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/EditTextStyle"
             android:hint="@string/artist" />
     </LinearLayout>
 
     <!-- album -->
-    <LinearLayout 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+
+    <LinearLayout
+        style="@style/EditTextStyle"
+        android:orientation="horizontal" >
+
         <TextView
             android:id="@+id/text_album"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="@string/album"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            style="@style/TextViewStyle"
+            android:text="@string/album" />
 
         <EditText
             android:id="@+id/et_album"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/album"/>
+            style="@style/EditTextStyle"
+            android:hint="@string/album" />
     </LinearLayout>
 
     <!-- button -->
-    <LinearLayout 
+
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical|center_horizontal">
-        <Button
-            android:id="@+id/btn_share2weibo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/share2weibo" />
-        <Button
-            android:id="@+id/btn_share2others"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/share2others" />
-    </LinearLayout>
+        android:stretchColumns="*" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/btn_share2weibo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/share2weibo" />
+
+            <Button
+                android:id="@+id/btn_share2others"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/share2others" />
+        </TableRow>
+    </TableLayout>
 
 </LinearLayout>

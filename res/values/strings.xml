@@ -44,5 +44,6 @@
     <string name="album">Album</string>
     <string name="now_playing">Now Playing:</string>
     <string name="no_player_found">No proper player found</string>
+    <string name="single">[\&quot;单曲\&quot;]</string>
 
 </resources>

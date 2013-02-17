@@ -5,21 +5,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 public class QueryAndShareMusicInfo extends Thread {
 	final private int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3,
 			VERSION = 4;
 	final private int SEND_WEIBO = 4;
 	final private int WEIBO = 0, OTHERS = 1;
-	private final static String DEBUG_TAG = "Music Share DEBUG";
 	private int means;
 	private String artist, title, album;
 	private Context context;
 	private Handler handler = null;
 
 	public void run() {
-		// ��ȡ��Ϣ����ַ�
 		String[] info = Utilities.getMusicAndArtworkUrl(title, artist, context,
 				handler);
 		String content;
@@ -32,9 +29,7 @@ public class QueryAndShareMusicInfo extends Thread {
 		Bundle bundle = new Bundle();
 		bundle.putString("content", content);
 		bundle.putString("artworkUrl", artworkUrl);
-		Log.d(DEBUG_TAG, "��ȡ����");
 		switch (means) {
-		// ��ݷ��?ʽִ�в���
 		case OTHERS:
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
@@ -42,7 +37,8 @@ public class QueryAndShareMusicInfo extends Thread {
 					context.getString(R.string.app_name));
 			intent.putExtra(Intent.EXTRA_TEXT, content);
 			context.startActivity(Intent.createChooser(intent,
-					context.getString(R.string.how_to_share)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+					context.getString(R.string.how_to_share)).addFlags(
+					Intent.FLAG_ACTIVITY_NEW_TASK));
 			break;
 		case WEIBO:
 			Message m = handler.obtainMessage(SEND_WEIBO, bundle);
@@ -54,7 +50,7 @@ public class QueryAndShareMusicInfo extends Thread {
 
 	private String genContent(String[] info) {
 		boolean isSingle = ((info[VERSION] != null) && info[VERSION]
-				.equals("[\"����\"]"));
+				.equals(context.getString(R.string.single)));
 		String content = context.getString(R.string.share_by)
 				+ " "
 				+ ((artist.equals("")) ? info[ARTIST] : artist)

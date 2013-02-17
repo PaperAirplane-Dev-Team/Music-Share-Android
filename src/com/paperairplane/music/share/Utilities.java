@@ -18,9 +18,10 @@ public class Utilities {
 	private final static String DEBUG_TAG = "Music Share DEBUG";
 	final private static int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3,
 			VERSION = 4;
+	
 /**
  * 将integer类型的时间长度格式化
- * @param _duration int类型的时间长度（mm）
+ * @param _duration int类型的时间长度（ms）
  * @return 格式化好的时长字符串
  */
 	public static String convertDuration(int _duration) {
