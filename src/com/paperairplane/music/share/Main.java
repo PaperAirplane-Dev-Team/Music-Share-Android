@@ -39,14 +39,15 @@ public class Main extends Activity {
 	// 存储音乐信息
 	private MusicData[] musics;// 保存音乐数据
 	private ListView listview;// 列表对象
-	private final String[] media_info = new String[] { MediaStore.Audio.Media.TITLE,
-			MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST,
-			MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.ALBUM };
+	private final String[] media_info = new String[] {
+			MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DURATION,
+			MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.DATA,
+			MediaStore.Audio.Media.ALBUM };
 	private final int INTERNET_ERROR = 3, SEND_WEIBO = 4, SEND_SUCCEED = 5,
 			AUTH_ERROR = 6, SEND_ERROR = 7, NOT_AUTHORIZED_ERROR = 8,
 			AUTH_SUCCEED = 9;
 	private final int WEIBO = 0, OTHERS = 1;
-	private final int DIALOG_SHARE=0, DIALOG_ABOUT=1;
+	private final int DIALOG_SHARE = 0, DIALOG_ABOUT = 1;
 	private final String APP_KEY = "1006183120";
 	private final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken = null;
@@ -64,8 +65,8 @@ public class Main extends Activity {
 			initListView();
 			showMusicList();
 			Log.v(DEBUG_TAG, "Push Start");
-			// JPushInterface.setAliasAndTags(getApplicationContext(), "Debug",
-			// null);
+			JPushInterface.setAliasAndTags(getApplicationContext(), "Debug",
+					null);
 			// 这是JPush的Debug标签
 			JPushInterface.init(getApplicationContext());
 		} catch (Exception e) {
@@ -207,29 +208,33 @@ public class Main extends Activity {
 	// 对话框处理
 
 	private void showCustomDialog(final int _id, int whichDialog) {
-		if (whichDialog==DIALOG_ABOUT) { 
-			//既然你说它奇葩,嗯,那这样子就不奇葩了
-			//不过在显示关于窗口是方法第一个传入参数没啥用
+		if (whichDialog == DIALOG_ABOUT) {
+			// 既然你说它奇葩,嗯,那这样子就不奇葩了
+			// 不过在显示关于窗口是方法第一个传入参数没啥用
+			// ……我只能说奇葩那个注释是你加上去的……还有你是不是忘加内容了？
 			dialogAbout = new AlertDialog.Builder(this)
-			.setIcon(android.R.drawable.ic_dialog_info)
-			.setTitle(getString(R.string.menu_about))
-			.setPositiveButton(getString(android.R.string.ok),
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							dialogAbout.cancel();
-						}
-					})
-			.setNegativeButton(getString(R.string.about_contact),
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							Uri uri = Uri.parse(getString(R.string.url));
-							Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-							startActivity(intent);
-						}
-					}).show();
-		} else if (whichDialog==DIALOG_SHARE){
+					.setIcon(android.R.drawable.ic_dialog_info)
+					.setTitle(getString(R.string.menu_about))
+					.setMessage(getString(R.string.about_content))
+					.setPositiveButton(getString(android.R.string.ok),
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									dialogAbout.cancel();
+								}
+							})
+					.setNegativeButton(getString(R.string.about_contact),
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									Uri uri = Uri
+											.parse(getString(R.string.url));
+									Intent intent = new Intent(
+											Intent.ACTION_VIEW, uri);
+									startActivity(intent);
+								}
+							}).show();
+		} else if (whichDialog == DIALOG_SHARE) {
 			dialogMain = new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.choose_an_operation))
@@ -260,8 +265,7 @@ public class Main extends Activity {
 											musics[_id].getAlbum(), WEIBO);
 								}
 							}).show();
-		}
-		else{
+		} else {
 			throw new RuntimeException("What the hell are you doing?");
 		}
 	}
@@ -381,8 +385,10 @@ public class Main extends Activity {
 				String _content = bundle.getString("content");
 				final String artworkUrl = bundle.getString("artworkUrl");
 				// Log.v(DEBUG_TAG, artworkUrl);
-				final WeiboHelper weiboHelper = new WeiboHelper(handler, getApplicationContext());
+				final WeiboHelper weiboHelper = new WeiboHelper(handler,
+						getApplicationContext());
 				et.setText(_content);
+				et.setSelection(_content.length());
 				new AlertDialog.Builder(Main.this)
 						.setView(sendweibo)
 						.setPositiveButton(getString(R.string.share),
@@ -451,10 +457,12 @@ public class Main extends Activity {
 
 }
 /**
- * Paper Airplane Dev Team
- * 主力：@author @姚沛然 http://weibo.com/xavieryao
+ * Paper Airplane Dev Team 
  * 添乱：@author @HarryChen-SIGKILL- http://weibo.com/yszzf
- * 美工：@author @七只小鸡1997 http://weibo.com/u/1579617160
- * Code Version 0028 2013.2.17
+ * 添乱：@author @姚沛然 http://weibo.com/xavieryao 
+ * 美工：@author @七只小鸡1997 http://weibo.com/u/1579617160 
+ * Code Version 0030 
+ * 2013.2.17 RTM
  * P.S.康师傅番茄笋干排骨面味道不错
+ * P.P.S.没吃过……确切的说超市里也没见过…… 还有，我的寒假作业啊！！！！！！
  **/

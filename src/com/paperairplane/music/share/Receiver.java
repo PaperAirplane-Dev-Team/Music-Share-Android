@@ -3,6 +3,8 @@ package com.paperairplane.music.share;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cn.jpush.android.api.JPushInterface;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +12,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-import cn.jpush.android.api.JPushInterface;
 
 public class Receiver extends BroadcastReceiver {
-	private static final String DEBUG_TAG = "Music Share RECEIVER";
+	private static final String DEBUG_TAG = "Music Share DEBUG";
 	private Toast toast = null;
 
 	public void onReceive(Context context, Intent intent) {
