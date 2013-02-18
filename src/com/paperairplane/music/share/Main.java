@@ -2,8 +2,9 @@ package com.paperairplane.music.share;
 
 import java.io.File;
 
-import android.app.Activity;
+//import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,7 +36,7 @@ import cn.jpush.android.api.JPushInterface;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 
-public class Main extends Activity {
+public class Main extends ListActivity {
 	// 存储音乐信息
 	private MusicData[] musics;// 保存音乐数据
 	private ListView listview;// 列表对象
@@ -65,7 +66,7 @@ public class Main extends Activity {
 			initListView();
 			showMusicList();
 			Log.v(DEBUG_TAG, "Push Start");
-			JPushInterface.setAliasAndTags(getApplicationContext(), "Debug",
+			JPushInterface.setAliasAndTags(getApplicationContext(), "XavierYao",
 					null);
 			// 这是JPush的Debug标签
 			JPushInterface.init(getApplicationContext());
@@ -84,9 +85,9 @@ public class Main extends Activity {
 	}
 
 	private void initListView() {
-		listview = (ListView) findViewById(R.id.list);// 找ListView的ID
+		listview = (ListView) findViewById(android.R.id.list);// 找ListView的ID
 		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
-		listview.setEmptyView(findViewById(R.id.empty));
+//		listview.setEmptyView(findViewById(R.id.empty));
 		View footerView = LayoutInflater.from(this).inflate(R.layout.footer,
 				null);
 		listview.addFooterView(footerView);

@@ -4,7 +4,7 @@
     android:layout_height="fill_parent" >
 
     <ListView
-        android:id="@+id/list"
+        android:id="@id/android:list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fastScrollEnabled="true"
@@ -12,7 +12,7 @@
     </ListView>
 
     <ViewStub
-        android:id="@+id/empty"
+        android:id="@id/android:empty"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout="@layout/empty" >
