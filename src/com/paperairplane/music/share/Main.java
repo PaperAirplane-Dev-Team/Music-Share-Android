@@ -35,6 +35,7 @@ import cn.jpush.android.api.JPushInterface;
 
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
+import com.weibo.sdk.android.sso.SsoHandler;
 
 public class Main extends ListActivity {
 	// 存储音乐信息
@@ -56,6 +57,7 @@ public class Main extends ListActivity {
 	private final static String DEBUG_TAG = "Music Share DEBUG";
 	private Receiver receiver;
 	private AlertDialog dialogMain, dialogAbout;
+	private SsoHandler ssoHandler;
 
 	@Override
 	// 主体
@@ -65,9 +67,10 @@ public class Main extends ListActivity {
 			setContentView(R.layout.main);
 			initListView();
 			showMusicList();
+			ssoHandler=new SsoHandler(Main.this, weibo);
 			Log.v(DEBUG_TAG, "Push Start");
-			JPushInterface.setAliasAndTags(getApplicationContext(), "XavierYao",
-					null);
+//			JPushInterface.setAliasAndTags(getApplicationContext(), "XavierYao",
+//					null);
 			// 这是JPush的Debug标签
 			JPushInterface.init(getApplicationContext());
 		} catch (Exception e) {
@@ -102,6 +105,12 @@ public class Main extends ListActivity {
 			e.printStackTrace();
 		}
 	}
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+            ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+    }
+
 
 	@Override
 	// 构建菜单
@@ -406,7 +415,7 @@ public class Main extends ListActivity {
 											handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
 											saveSendStatus(content,
 													cb.isChecked(), artworkUrl);
-											weibo.authorize(Main.this,
+											ssoHandler.authorize(
 													weiboHelper.getListener());// 授权
 										} else {
 											weiboHelper.sendWeibo(content,

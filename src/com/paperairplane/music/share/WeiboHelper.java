@@ -136,6 +136,7 @@ public class WeiboHelper {
 
 		@Override
 		public void onComplete(Bundle values) {
+			Log.d(DEBUG_TAG,"接收到授权信息");
 			String token = values.getString("access_token");
 			String expires_in = values.getString("expires_in");
 			Main.accessToken = new Oauth2AccessToken(token, expires_in);
