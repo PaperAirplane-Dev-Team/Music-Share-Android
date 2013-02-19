@@ -49,14 +49,14 @@ public class Main extends ListActivity {
 			AUTH_ERROR = 6, SEND_ERROR = 7, NOT_AUTHORIZED_ERROR = 8,
 			AUTH_SUCCEED = 9;
 	private final int WEIBO = 0, OTHERS = 1;
-	private final int DIALOG_SHARE = 0, DIALOG_ABOUT = 1;
+	private final int DIALOG_SHARE = 0, DIALOG_ABOUT = 1, DIALOG_SEARCH = 2;
 	private final String APP_KEY = "1006183120";
 	private final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken = null;
 	private Weibo weibo = Weibo.getInstance(APP_KEY, REDIRECT_URI);
 	private final static String DEBUG_TAG = "Music Share DEBUG";
 	private Receiver receiver;
-	private AlertDialog dialogMain, dialogAbout;
+	private AlertDialog dialogMain, dialogAbout, dialogSearch;
 	private SsoHandler ssoHandler;
 
 	@Override
@@ -67,10 +67,11 @@ public class Main extends ListActivity {
 			setContentView(R.layout.main);
 			initListView();
 			showMusicList();
-			ssoHandler=new SsoHandler(Main.this, weibo);
+			ssoHandler = new SsoHandler(Main.this, weibo);
 			Log.v(DEBUG_TAG, "Push Start");
-//			JPushInterface.setAliasAndTags(getApplicationContext(), "XavierYao",
-//					null);
+			// JPushInterface.setAliasAndTags(getApplicationContext(),
+			// "XavierYao",
+			// null);
 			// 这是JPush的Debug标签
 			JPushInterface.init(getApplicationContext());
 		} catch (Exception e) {
@@ -90,7 +91,7 @@ public class Main extends ListActivity {
 	private void initListView() {
 		listview = (ListView) findViewById(android.R.id.list);// 找ListView的ID
 		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
-//		listview.setEmptyView(findViewById(R.id.empty));
+		// listview.setEmptyView(findViewById(R.id.empty));
 		View footerView = LayoutInflater.from(this).inflate(R.layout.footer,
 				null);
 		listview.addFooterView(footerView);
@@ -105,12 +106,12 @@ public class Main extends ListActivity {
 			e.printStackTrace();
 		}
 	}
-	@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-            ssoHandler.authorizeCallBack(requestCode, resultCode, data);
-    }
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+	}
 
 	@Override
 	// 构建菜单
@@ -160,65 +161,14 @@ public class Main extends ListActivity {
 	}
 
 	public void footer(View v) {
-		Log.v(DEBUG_TAG, "点击footer");
-		View search = LayoutInflater.from(this).inflate(R.layout.search, null);
-		final EditText et_title = (EditText) search.findViewById(R.id.et_title);
-		final EditText et_artist = (EditText) search
-				.findViewById(R.id.et_artist);
-		final EditText et_album = (EditText) search.findViewById(R.id.et_album);
-		Button button_weibo = (Button) search
-				.findViewById(R.id.btn_share2weibo);
-		button_weibo.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (et_title.getText().toString().trim().equals("")) {
-					new AlertDialog.Builder(Main.this)
-							.setMessage(getString(R.string.empty))
-							.setPositiveButton(getString(android.R.string.ok),
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-										}
-									}).show();
-				} else {
-					shareMusic(et_title.getText().toString(), et_artist
-							.getText().toString(), et_album.getText()
-							.toString(), WEIBO);
-				}
-			}
-		});
-		Button button_others = (Button) search
-				.findViewById(R.id.btn_share2others);
-		button_others.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (et_title.getText().toString().trim().equals("")) {
-					// 忘了保存,只要有Title就够了~
-					new AlertDialog.Builder(Main.this)
-							.setMessage(getString(R.string.empty))
-							.setPositiveButton(getString(android.R.string.ok),
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-										}
-									}).show();
-				} else {
-					shareMusic(et_title.getText().toString(), et_artist
-							.getText().toString(), et_album.getText()
-							.toString(), OTHERS);
-				}
-			}
-		});
-		new AlertDialog.Builder(this).setView(search).setCancelable(true)
-				.show();
+		showCustomDialog(0,DIALOG_SEARCH);
 	}
 
 	// 对话框处理
 
 	private void showCustomDialog(final int _id, int whichDialog) {
-		if (whichDialog == DIALOG_ABOUT) {
+		switch (whichDialog) {
+		case DIALOG_ABOUT:
 			// 既然你说它奇葩,嗯,那这样子就不奇葩了
 			// 不过在显示关于窗口是方法第一个传入参数没啥用
 			// ……我只能说奇葩那个注释是你加上去的……还有你是不是忘加内容了？
@@ -244,7 +194,8 @@ public class Main extends ListActivity {
 									startActivity(intent);
 								}
 							}).show();
-		} else if (whichDialog == DIALOG_SHARE) {
+			break;
+		case DIALOG_SHARE:
 			dialogMain = new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.choose_an_operation))
@@ -275,7 +226,71 @@ public class Main extends ListActivity {
 											musics[_id].getAlbum(), WEIBO);
 								}
 							}).show();
-		} else {
+			break;
+		case DIALOG_SEARCH:
+			Log.v(DEBUG_TAG, "点击footer");
+			View search = LayoutInflater.from(this).inflate(R.layout.search,
+					null);
+			final EditText et_title = (EditText) search
+					.findViewById(R.id.et_title);
+			final EditText et_artist = (EditText) search
+					.findViewById(R.id.et_artist);
+			final EditText et_album = (EditText) search
+					.findViewById(R.id.et_album);
+			Button button_weibo = (Button) search
+					.findViewById(R.id.btn_share2weibo);
+			button_weibo.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					if (et_title.getText().toString().trim().equals("")) {
+						new AlertDialog.Builder(Main.this)
+								.setMessage(getString(R.string.empty))
+								.setPositiveButton(
+										getString(android.R.string.ok),
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+											}
+										}).show();
+					} else {
+						shareMusic(et_title.getText().toString(), et_artist
+								.getText().toString(), et_album.getText()
+								.toString(), WEIBO);
+						dialogSearch.cancel();
+					}
+				}
+			});
+			Button button_others = (Button) search
+					.findViewById(R.id.btn_share2others);
+			button_others.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					if (et_title.getText().toString().trim().equals("")) {
+						// 忘了保存,只要有Title就够了~
+						new AlertDialog.Builder(Main.this)
+								.setMessage(getString(R.string.empty))
+								.setPositiveButton(
+										getString(android.R.string.ok),
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+											}
+										}).show();
+					} else {
+						shareMusic(et_title.getText().toString(), et_artist
+								.getText().toString(), et_album.getText()
+								.toString(), OTHERS);
+						dialogSearch.cancel();
+					}
+				}
+			});
+			dialogSearch = new AlertDialog.Builder(this).setView(search)
+					.setCancelable(true).create();
+			dialogSearch.show();
+			break;
+		default:
 			throw new RuntimeException("What the hell are you doing?");
 		}
 	}
@@ -415,8 +430,8 @@ public class Main extends ListActivity {
 											handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
 											saveSendStatus(content,
 													cb.isChecked(), artworkUrl);
-											ssoHandler.authorize(
-													weiboHelper.getListener());// 授权
+											ssoHandler.authorize(weiboHelper
+													.getListener());// 授权
 										} else {
 											weiboHelper.sendWeibo(content,
 													artworkUrl, cb.isChecked());
@@ -467,12 +482,8 @@ public class Main extends ListActivity {
 
 }
 /**
- * Paper Airplane Dev Team 
- * 添乱：@author @HarryChen-SIGKILL- http://weibo.com/yszzf
- * 添乱：@author @姚沛然 http://weibo.com/xavieryao 
- * 美工：@author @七只小鸡1997 http://weibo.com/u/1579617160 
- * Code Version 0030 
- * 2013.2.17 RTM
- * P.S.康师傅番茄笋干排骨面味道不错
- * P.P.S.没吃过……确切的说超市里也没见过…… 还有，我的寒假作业啊！！！！！！
+ * Paper Airplane Dev Team 添乱：@author @HarryChen-SIGKILL- http://weibo.com/yszzf
+ * 添乱：@author @姚沛然 http://weibo.com/xavieryao 美工：@author @七只小鸡1997
+ * http://weibo.com/u/1579617160 Code Version 0030 2013.2.17 RTM
+ * P.S.康师傅番茄笋干排骨面味道不错 P.P.S.没吃过……确切的说超市里也没见过…… 还有，我的寒假作业啊！！！！！！
  **/

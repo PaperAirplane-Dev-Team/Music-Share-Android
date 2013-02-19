@@ -1,5 +1,13 @@
 package com.paperairplane.music.share;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -9,6 +17,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.util.Log;
 
@@ -116,7 +126,47 @@ class Utilities {
 		// 加Log的话如果上面那两个值有null就会崩溃……懒得catch
 		return info;
 	}
+	public static InputStream getImageStream(String artwork_url) throws Exception {
+		URL url = new URL(artwork_url);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setConnectTimeout(5 * 1000);
+		conn.setRequestMethod("GET");
+		if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+			return conn.getInputStream();
+		}
+		return null;
+	}
 
+	public static void saveFile(Bitmap bitmap, String fileName,String artwork_path)
+			throws IOException {
+		File dirFile = new File(artwork_path);
+		if (!dirFile.exists()) {
+			dirFile.mkdir();
+		}
+		File artwork = new File(artwork_path + fileName);
+		BufferedOutputStream bos = new BufferedOutputStream(
+				new FileOutputStream(artwork));
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+		bos.flush();
+		bos.close();
+
+	}
+
+	public static String getArtwork(String artwork_url, String title,String artwork_path) {
+		String fileName = title + ".jpg";
+		if (new File(artwork_path+fileName).exists())return fileName;
+		try {
+			Bitmap bitmap = BitmapFactory
+					.decodeStream(Utilities.getImageStream(artwork_url));
+			Utilities.saveFile(bitmap, fileName,artwork_path);
+			Log.v(DEBUG_TAG, "获取专辑封面成功");
+			return fileName;
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e(DEBUG_TAG, "获取专辑封面失败" + e.getMessage());
+			return null;
+		}
+	}
 	// 通过豆瓣API获取音乐信息
 	private static String getJson(String title, String artist, Handler handler) {
 		Log.v(DEBUG_TAG, "方法 getJSON被调用");

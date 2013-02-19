@@ -1,10 +1,15 @@
 package com.paperairplane.music.share;
 
+import java.io.File;
+
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 class QueryAndShareMusicInfo extends Thread {
 	final private int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3,
@@ -15,6 +20,9 @@ class QueryAndShareMusicInfo extends Thread {
 	private String artist, title, album;
 	private Context context;
 	private Handler handler;
+	private final static String DEBUG_TAG = "Music Share DEBUG";
+	private final String ARTWORK_PATH = Environment
+			.getExternalStorageDirectory() + "/music_share/";
 
 	public void run() {
 		String[] info = Utilities.getMusicAndArtworkUrl(title, artist, context,
@@ -31,8 +39,20 @@ class QueryAndShareMusicInfo extends Thread {
 		bundle.putString("artworkUrl", artworkUrl);
 		switch (means) {
 		case OTHERS:
+			if (info[ARTWORK] != null) {
+				artworkUrl = info[ARTWORK].replace("spic", "lpic");
+			}
+			String fileName = null;
+			String type = "text/plain";
+			fileName = ARTWORK_PATH
+					+ Utilities.getArtwork(artworkUrl, title, ARTWORK_PATH);
 			Intent intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("text/plain");
+			if (fileName != null) {
+				intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(fileName)));
+				Log.d(DEBUG_TAG, "Intent " + fileName);
+				type = "image/*";
+			}
+			intent.setType(type);
 			intent.putExtra(Intent.EXTRA_SUBJECT,
 					context.getString(R.string.app_name));
 			intent.putExtra(Intent.EXTRA_TEXT, content);
