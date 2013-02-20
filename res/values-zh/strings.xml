@@ -43,4 +43,5 @@
     <string name="album">专辑</string>
     <string name="now_playing">现在播放：</string>
     <string name="no_player_found">找不到适合的播放器</string>
+    <string name="unauth_confirm">确定要取消授权吗？</string>
 </resources>

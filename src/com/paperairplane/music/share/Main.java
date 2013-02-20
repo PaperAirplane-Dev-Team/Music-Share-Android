@@ -69,6 +69,7 @@ public class Main extends ListActivity {
 			showMusicList();
 			ssoHandler = new SsoHandler(Main.this, weibo);
 			Log.v(DEBUG_TAG, "Push Start");
+			// this.getResources().updateConfiguration(conf, null);
 			// JPushInterface.setAliasAndTags(getApplicationContext(),
 			// "XavierYao",
 			// null);
@@ -139,12 +140,34 @@ public class Main extends ListActivity {
 				if (Main.accessToken == null) {
 					handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
 				} else {
-					Main.accessToken = null;
-					AccessTokenKeeper.clear(getApplicationContext());
-					Toast.makeText(Main.this, getString(R.string.unauthed),
-							Toast.LENGTH_SHORT).show();
+					new AlertDialog.Builder(this)
+							.setIcon(android.R.drawable.ic_dialog_alert)
+							.setTitle(R.string.unauth_confirm)
+							.setPositiveButton(android.R.string.ok,
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface arg0, int arg1) {
+											Main.accessToken = null;
+											AccessTokenKeeper
+													.clear(getApplicationContext());
+											Toast.makeText(
+													Main.this,
+													getString(R.string.unauthed),
+													Toast.LENGTH_SHORT).show();
+										}
+									})
+							.setNegativeButton(android.R.string.cancel,
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface arg0, int arg1) {
+										}
+									}).show();
+
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				Log.v(DEBUG_TAG, e.getMessage());
 			}
 			break;
@@ -161,7 +184,7 @@ public class Main extends ListActivity {
 	}
 
 	public void footer(View v) {
-		showCustomDialog(0,DIALOG_SEARCH);
+		showCustomDialog(0, DIALOG_SEARCH);
 	}
 
 	// 对话框处理
