@@ -2,7 +2,6 @@ package com.paperairplane.music.share;
 
 import java.io.File;
 
-//import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ActivityNotFoundException;
@@ -49,7 +48,7 @@ public class Main extends ListActivity {
 			AUTH_ERROR = 6, SEND_ERROR = 7, NOT_AUTHORIZED_ERROR = 8,
 			AUTH_SUCCEED = 9;
 	private final int WEIBO = 0, OTHERS = 1;
-	private final int DIALOG_SHARE = 0, DIALOG_ABOUT = 1, DIALOG_SEARCH = 2;
+	private final int DIALOG_SHARE = 0, DIALOG_ABOUT = 1, DIALOG_SEARCH = 2, DIALOG_EMPTY=3;
 	private final String APP_KEY = "1006183120";
 	private final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken = null;
@@ -199,14 +198,14 @@ public class Main extends ListActivity {
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.menu_about))
 					.setMessage(getString(R.string.about_content))
-					.setPositiveButton(getString(android.R.string.ok),
+					.setPositiveButton(android.R.string.ok,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
 									dialogAbout.cancel();
 								}
 							})
-					.setNegativeButton(getString(R.string.about_contact),
+					.setNegativeButton(R.string.about_contact,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
@@ -216,20 +215,53 @@ public class Main extends ListActivity {
 											Intent.ACTION_VIEW, uri);
 									startActivity(intent);
 								}
+							})
+					.setNeutralButton(R.string.feedback,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									View feedback = LayoutInflater.from(Main.this).inflate(R.layout.feedback, null);
+									final EditText content=(EditText)feedback.findViewById(R.id.et_feedback);
+									new AlertDialog.Builder(Main.this).setView(feedback).setPositiveButton(R.string.feedback,new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											String contentString=content.getText().toString().trim();
+											if(contentString.equals("")){
+												showCustomDialog(0, DIALOG_EMPTY);
+											}
+											else{
+												SendFeedback feedback=new SendFeedback(contentString);
+												feedback.start();
+												/*if(Utilities.sendFeedback(contentString)){
+													Toast.makeText(Main.this, R.string.feedback_succeed,Toast.LENGTH_LONG).show();
+												}
+												else{
+													Toast.makeText(Main.this, R.string.feedback_failed, Toast.LENGTH_LONG).show();
+													SharedPreferences preferences = getApplicationContext()
+															.getSharedPreferences("Feedback", Context.MODE_PRIVATE);
+													preferences.edit().putString("content", contentString).commit();
+													//我想睡了……所以这个你接着来，可能在onCreate或者哪里再试一下
+												}*/
+											}
+										}
+									}).show();
+								}
 							}).show();
 			break;
 		case DIALOG_SHARE:
 			dialogMain = new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
-					.setTitle(getString(R.string.choose_an_operation))
-					.setPositiveButton(getString(R.string.play),
+					.setTitle(R.string.choose_an_operation)
+					.setPositiveButton(R.string.play,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
 									playMusic(_id);
 								}
 							})
-					.setNegativeButton(getString(R.string.share2others),
+					.setNegativeButton(R.string.share2others,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
@@ -238,7 +270,7 @@ public class Main extends ListActivity {
 											musics[_id].getAlbum(), OTHERS);
 								}
 							})
-					.setNeutralButton(getString(R.string.share2weibo),
+					.setNeutralButton(R.string.share2weibo,
 							new DialogInterface.OnClickListener() {
 
 								@Override
@@ -265,17 +297,7 @@ public class Main extends ListActivity {
 			button_weibo.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					if (et_title.getText().toString().trim().equals("")) {
-						new AlertDialog.Builder(Main.this)
-								.setMessage(getString(R.string.empty))
-								.setPositiveButton(
-										getString(android.R.string.ok),
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int which) {
-											}
-										}).show();
+						showCustomDialog(0, DIALOG_EMPTY);
 					} else {
 						shareMusic(et_title.getText().toString(), et_artist
 								.getText().toString(), et_album.getText()
@@ -290,17 +312,7 @@ public class Main extends ListActivity {
 				public void onClick(View v) {
 					if (et_title.getText().toString().trim().equals("")) {
 						// 忘了保存,只要有Title就够了~
-						new AlertDialog.Builder(Main.this)
-								.setMessage(getString(R.string.empty))
-								.setPositiveButton(
-										getString(android.R.string.ok),
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int which) {
-											}
-										}).show();
+
 					} else {
 						shareMusic(et_title.getText().toString(), et_artist
 								.getText().toString(), et_album.getText()
@@ -312,6 +324,19 @@ public class Main extends ListActivity {
 			dialogSearch = new AlertDialog.Builder(this).setView(search)
 					.setCancelable(true).create();
 			dialogSearch.show();
+			break;
+		case DIALOG_EMPTY:
+			new AlertDialog.Builder(Main.this)
+			.setMessage(getString(R.string.empty))
+			.setPositiveButton(
+					getString(android.R.string.ok),
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(
+								DialogInterface dialog,
+								int which) {
+						}
+					}).show();
 			break;
 		default:
 			throw new RuntimeException("What the hell are you doing?");

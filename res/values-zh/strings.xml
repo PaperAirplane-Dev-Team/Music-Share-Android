@@ -2,7 +2,7 @@
 
     <string name="app_name">纸飞机音乐分享</string>
     <string name="title_activity_main">音乐分享</string>
-    <string name="empty">歌曲标题是空的…才不会崩溃给你看,一边凉快去…</string>
+    <string name="empty">重要字段是空的…才不会崩溃给你看,一边凉快去…</string>
     <string name="to_show_title">显示音乐名</string>
     <string name="to_show_artist">显示歌手</string>
     <string name="menu_exit">退出</string>
@@ -20,7 +20,7 @@
     <string name="very_long">                                                                              </string>
     <string name="refresh_on_process">刷新播放列表中</string>
     <string name="menu_about">关于</string>
-    <string name="about_contact">来人，捉虫！</string>
+    <string name="about_contact">联系我们</string>
 	<string name="about_download_info">戳我下载：</string>
     <string name="no_music_url_found">我真没用没找到详情地址……</string>
     <string name="error_internet">请检查您的网络连接</string>  
@@ -41,7 +41,11 @@
     <string name="title">标题</string>
     <string name="artist">表演者</string>
     <string name="album">专辑</string>
-    <string name="now_playing">现在播放：</string>
     <string name="no_player_found">找不到适合的播放器</string>
     <string name="unauth_confirm">确定要取消授权吗？</string>
+    <string name="feedback">发送反馈</string>
+    <string name="thank_for_feedback">感谢您的反馈！</string>
+    <string name="feedback_hint">请提供尽可能详细的信息，例如您的手机型号、系统版本、问题重现方式等等。我们真的很感谢您的帮助！</string>
+    <string name="feedback_succeed">反馈成功，十分感谢！</string>
+    <string name="feedback_failed">抱歉，反馈失败，我们会重新尝试的~仍然感谢！</string>
 </resources>

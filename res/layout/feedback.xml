@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tv_feedback"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/thank_for_feedback" />
+
+    <EditText
+        android:id="@+id/et_feedback"
+        android:layout_width="fill_parent"
+        android:layout_height="200dip"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:hint="@string/feedback_hint" />
+
+</LinearLayout>
