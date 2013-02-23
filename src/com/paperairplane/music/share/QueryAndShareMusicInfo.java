@@ -12,15 +12,10 @@ import android.os.Message;
 import android.util.Log;
 
 class QueryAndShareMusicInfo extends Thread {
-	final private int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3,
-			VERSION = 4;
-	final private int SEND_WEIBO = 4;
-	final private int WEIBO = 0, OTHERS = 1;
 	private int means;
 	private String artist, title, album;
 	private Context context;
 	private Handler handler;
-	private final static String DEBUG_TAG = "Music Share DEBUG";
 	private final String ARTWORK_PATH = Environment
 			.getExternalStorageDirectory() + "/music_share/";
 
@@ -31,16 +26,16 @@ class QueryAndShareMusicInfo extends Thread {
 		content = genContent(info);
 
 		String artworkUrl = null;
-		if (info[ARTWORK] != null) {
-			artworkUrl = info[ARTWORK].replace("spic", "lpic");
+		if (info[Consts.ArraySubscript.ARTWORK] != null) {
+			artworkUrl = info[Consts.ArraySubscript.ARTWORK].replace("spic", "lpic");
 		}
 		Bundle bundle = new Bundle();
 		bundle.putString("content", content);
 		bundle.putString("artworkUrl", artworkUrl);
 		switch (means) {
-		case OTHERS:
-			if (info[ARTWORK] != null) {
-				artworkUrl = info[ARTWORK].replace("spic", "lpic");
+		case Consts.ShareMeans.OTHERS:
+			if (info[Consts.ArraySubscript.ARTWORK] != null) {
+				artworkUrl = info[Consts.ArraySubscript.ARTWORK].replace("spic", "lpic");
 			}
 			String fileName = null;
 			String type = "text/plain";
@@ -49,7 +44,7 @@ class QueryAndShareMusicInfo extends Thread {
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			if (fileName != null) {
 				intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(fileName)));
-				Log.d(DEBUG_TAG, "Intent " + fileName);
+				Log.d(Consts.DEBUG_TAG, "Intent " + fileName);
 				type = "image/*";
 			}
 			intent.setType(type);
@@ -60,8 +55,8 @@ class QueryAndShareMusicInfo extends Thread {
 					context.getString(R.string.how_to_share)).addFlags(
 					Intent.FLAG_ACTIVITY_NEW_TASK));
 			break;
-		case WEIBO:
-			Message m = handler.obtainMessage(SEND_WEIBO, bundle);
+		case Consts.ShareMeans.WEIBO:
+			Message m = handler.obtainMessage(Consts.Status.SEND_WEIBO, bundle);
 			handler.sendMessage(m);
 			break;
 		}
@@ -69,11 +64,11 @@ class QueryAndShareMusicInfo extends Thread {
 	}
 
 	private String genContent(String[] info) {
-		boolean isSingle = ((info[VERSION] != null) && info[VERSION]
+		boolean isSingle = ((info[Consts.ArraySubscript.VERSION] != null) && info[Consts.ArraySubscript.VERSION]
 				.equals(context.getString(R.string.single)));
 		String content = context.getString(R.string.share_by)
 				+ " "
-				+ ((artist.equals("")) ? info[ARTIST] : artist)
+				+ ((artist.equals("")) ? info[Consts.ArraySubscript.ARTIST] : artist)
 				+ " "
 				+ (isSingle ? context.getString(R.string.music_single)
 						: context.getString(R.string.music_artist))
@@ -81,9 +76,9 @@ class QueryAndShareMusicInfo extends Thread {
 				+ title
 				+ " "
 				+ (isSingle ? "" : context.getString(R.string.music_album)
-						+ " " + ((album.equals("")) ? info[ALBUM] : album)
+						+ " " + ((album.equals("")) ? info[Consts.ArraySubscript.ALBUM] : album)
 						+ " ") + context.getString(R.string.before_url)
-				+ info[MUSIC] + " ";
+				+ info[Consts.ArraySubscript.MUSIC] + " ";
 		return content;
 	}
 

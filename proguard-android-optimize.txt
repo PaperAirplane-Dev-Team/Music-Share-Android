@@ -14,7 +14,7 @@
 -optimizationpasses 5
 -allowaccessmodification
 -dontpreverify
--libraryjars E:\adt-bundle-windows-x86\adt-bundle-windows-x86\sdk\platforms\android-10\android.jar
+-libraryjars D:\³ÂêÉì÷\Programming\android-sdk-windows\platforms\android-15\android.jar
 
 # The remainder of this file is identical to the non-optimized version
 # of the Proguard configuration file (except that the other file has

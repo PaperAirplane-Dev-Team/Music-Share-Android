@@ -18,14 +18,11 @@ import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.net.AsyncWeiboRunner;
 import com.weibo.sdk.android.net.RequestListener;
 
+import com.paperairplane.music.share.Consts;
+
 public class WeiboHelper {
 	private StatusesAPI api = null;
-	final private int HARRY_UID = 1689129907, XAVIER_UID = 2121014783,
-			APP_UID = 1153267341;
-	private final static String DEBUG_TAG = "Music Share DEBUG";
 	private Handler handler = null;
-	final private int SEND_SUCCEED = 5, AUTH_ERROR = 6, SEND_ERROR = 7,
-			AUTH_SUCCEED = 9;
 	private Context applicationContext;
 	private AuthDialogListener listener;
 	private RequestListener requestListener;
@@ -58,10 +55,10 @@ public class WeiboHelper {
 		initRequestListener();
 
 		if (artworkUrl == null) {
-			Log.v(DEBUG_TAG, "发送无图微博");
+			Log.v(Consts.DEBUG_TAG, "发送无图微博");
 			api.update(content, null, null, requestListener);
 		} else {
-			Log.v(DEBUG_TAG, "发送带图微博，url=" + artworkUrl);
+			Log.v(Consts.DEBUG_TAG, "发送带图微博，url=" + artworkUrl);
 			String url = "https://api.weibo.com/2/statuses/upload_url_text.json";
 			WeiboParameters params = new WeiboParameters();
 			params.add("access_token", Main.accessToken.getToken());
@@ -70,9 +67,9 @@ public class WeiboHelper {
 			AsyncWeiboRunner.request(url, params, "POST", requestListener);
 		}
 		if (willFollow == true) {// 判断是否要关注开发者
-			follow(HARRY_UID);// 关注Harry Chen
-			follow(XAVIER_UID);// 关注Xavier Yao
-			follow(APP_UID);// 关注官方微博
+			follow(Consts.WeiboUid.HARRY_UID);// 关注Harry Chen
+			follow(Consts.WeiboUid.XAVIER_UID);// 关注Xavier Yao
+			follow(Consts.WeiboUid.APP_UID);// 关注官方微博
 		}
 	}
 
@@ -82,13 +79,13 @@ public class WeiboHelper {
 
 			@Override
 			public void onComplete(String arg0) {
-				handler.sendEmptyMessage(SEND_SUCCEED);
+				handler.sendEmptyMessage(Consts.Status.SEND_SUCCEED);
 			}
 
 			@Override
 			public void onError(WeiboException e) {
 				String error = e.getMessage();
-				m.what = SEND_ERROR;
+				m.what = Consts.Status.SEND_ERROR;
 				m.obj = error;
 				handler.sendMessage(m);
 			}
@@ -96,7 +93,7 @@ public class WeiboHelper {
 			@Override
 			public void onIOException(IOException arg0) {
 				String error = arg0.getMessage();
-				m.what = SEND_ERROR;
+				m.what = Consts.Status.SEND_ERROR;
 				m.obj = error;
 				handler.sendMessage(m);
 			}
@@ -136,19 +133,19 @@ public class WeiboHelper {
 
 		@Override
 		public void onComplete(Bundle values) {
-			Log.d(DEBUG_TAG,"接收到授权信息");
+			Log.d(Consts.DEBUG_TAG,"接收到授权信息");
 			String token = values.getString("access_token");
 			String expires_in = values.getString("expires_in");
 			Main.accessToken = new Oauth2AccessToken(token, expires_in);
 			AccessTokenKeeper.keepAccessToken(applicationContext, Main.accessToken);
-			handler.sendEmptyMessage(AUTH_SUCCEED);
-			Log.v(DEBUG_TAG, "授权成功，\n AccessToken:" + token);
+			handler.sendEmptyMessage(Consts.Status.AUTH_SUCCEED);
+			Log.v(Consts.DEBUG_TAG, "授权成功，\n AccessToken:" + token);
 			SharedPreferences preferences = applicationContext
 					.getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
 			String content = preferences.getString("content", null);
 			String artworkUrl = preferences.getString("artworkUrl", null);
 			boolean willFollow = preferences.getBoolean("willFollow", false);
-			Log.v(DEBUG_TAG, "获取状态\n" + content + "\n" + artworkUrl + "\n"
+			Log.v(Consts.DEBUG_TAG, "获取状态\n" + content + "\n" + artworkUrl + "\n"
 					+ willFollow);
 			sendWeibo(content, artworkUrl, willFollow);
 		}
@@ -161,7 +158,7 @@ public class WeiboHelper {
 		@Override
 		public void onError(WeiboDialogError e) {
 			String error = e.getMessage();
-			m.what = AUTH_ERROR;
+			m.what = Consts.Status.AUTH_ERROR;
 			m.obj = error;
 			handler.sendMessage(m);
 		}
@@ -169,7 +166,7 @@ public class WeiboHelper {
 		@Override
 		public void onWeiboException(WeiboException e) {
 			String error = e.getMessage();
-			m.what = AUTH_ERROR;
+			m.what = Consts.Status.AUTH_ERROR;
 			m.obj = error;
 			handler.sendMessage(m);
 		}

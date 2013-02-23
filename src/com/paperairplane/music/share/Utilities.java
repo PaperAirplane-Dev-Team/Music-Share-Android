@@ -29,12 +29,6 @@ import android.os.Handler;
 import android.util.Log;
 
 class Utilities {
-	private final static String API_URL = "http://paperairplane.sinaapp.com/proxy.php?q=";
-	private final static String FEEDBACK_URL="http://paperairplane.sinaapp.com/feedback.php";
-	private final static int INTERNET_ERROR = 3;
-	private final static String DEBUG_TAG = "Music Share DEBUG";
-	final private static int MUSIC = 0, ARTWORK = 1, ARTIST = 2, ALBUM = 3,
-			VERSION = 4;
 
 	/**
 	 * 将integer类型的时间长度格式化
@@ -80,12 +74,12 @@ class Utilities {
 	 */
 	public static String[] getMusicAndArtworkUrl(String title, String artist,
 			Context context, Handler handler) {
-		Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl被调用");
+		Log.v(Consts.DEBUG_TAG, "方法 getMusicAndArtworkUrl被调用");
 		String json = getJson(title, artist, handler);
 		String info[] = new String[5];
 		if (json == null) {
-			info[MUSIC] = context.getString(R.string.no_music_url_found);
-			Log.v(DEBUG_TAG, "方法 getMusicAndArtworkUrl获得空的json字符串");
+			info[Consts.ArraySubscript.MUSIC] = context.getString(R.string.no_music_url_found);
+			Log.v(Consts.DEBUG_TAG, "方法 getMusicAndArtworkUrl获得空的json字符串");
 		} else {
 			try {
 				JSONObject rootObject = new JSONObject(json);
@@ -93,39 +87,39 @@ class Utilities {
 				if (count == 1) {
 					JSONArray contentArray = rootObject.getJSONArray("musics");
 					JSONObject item = contentArray.getJSONObject(0);
-					info[MUSIC] = item.getString("mobile_link");
-					info[ARTWORK] = item.getString("image");
-					info[ARTIST] = item.getJSONArray("author").getJSONObject(0)
+					info[Consts.ArraySubscript.MUSIC] = item.getString("mobile_link");
+					info[Consts.ArraySubscript.ARTWORK] = item.getString("image");
+					info[Consts.ArraySubscript.ARTIST] = item.getJSONArray("author").getJSONObject(0)
 							.getString("name");
-					info[ALBUM] = item.getJSONObject("attrs")
+					info[Consts.ArraySubscript.ALBUM] = item.getJSONObject("attrs")
 							.getString("title");
-					info[VERSION] = item.getJSONObject("attrs").getString(
+					info[Consts.ArraySubscript.VERSION] = item.getJSONObject("attrs").getString(
 							"version");
 					// 这里,这里,这样就不会有蛋疼的空白错误了
 				} else {
-					info[MUSIC] = context
+					info[Consts.ArraySubscript.MUSIC] = context
 							.getString(R.string.no_music_url_found);
-					info[ARTWORK] = null;
-					info[ARTIST] = null;
-					info[ALBUM] = null;
-					info[VERSION] = null;
+					info[Consts.ArraySubscript.ARTWORK] = null;
+					info[Consts.ArraySubscript.ARTIST] = null;
+					info[Consts.ArraySubscript.ALBUM] = null;
+					info[Consts.ArraySubscript.VERSION] = null;
 				}
 			} catch (JSONException e) {
-				Log.e(DEBUG_TAG, "JSON解析错误");
+				Log.e(Consts.DEBUG_TAG, "JSON解析错误");
 				e.printStackTrace();
-				info[MUSIC] = context.getString(R.string.no_music_url_found);
-				info[ARTWORK] = null;
-				info[ARTIST] = null;
-				info[ALBUM] = null;
-				info[VERSION] = null;
+				info[Consts.ArraySubscript.MUSIC] = context.getString(R.string.no_music_url_found);
+				info[Consts.ArraySubscript.ARTWORK] = null;
+				info[Consts.ArraySubscript.ARTIST] = null;
+				info[Consts.ArraySubscript.ALBUM] = null;
+				info[Consts.ArraySubscript.VERSION] = null;
 			}
 		}
-		if (info[ALBUM] != null) {
-			info[ALBUM] = info[ALBUM].replace("[\"", "").replace("\"]", "");
-			Log.d(DEBUG_TAG, info[ALBUM]);
+		if (info[Consts.ArraySubscript.ALBUM] != null) {
+			info[Consts.ArraySubscript.ALBUM] = info[Consts.ArraySubscript.ALBUM].replace("[\"", "").replace("\"]", "");
+			Log.d(Consts.DEBUG_TAG, info[Consts.ArraySubscript.ALBUM]);
 		}
-		// Log.v(DEBUG_TAG, info[MUSIC]);
-		// Log.v(DEBUG_TAG, info[ARTWORK]);
+		// Log.v(Consts.DEBUG_TAG, info[MUSIC]);
+		// Log.v(Consts.DEBUG_TAG, info[ARTWORK]);
 		// 加Log的话如果上面那两个值有null就会崩溃……懒得catch
 		return info;
 	}
@@ -166,39 +160,39 @@ class Utilities {
 			Bitmap bitmap = BitmapFactory.decodeStream(Utilities
 					.getImageStream(artwork_url));
 			Utilities.saveFile(bitmap, fileName, artwork_path);
-			Log.v(DEBUG_TAG, "获取专辑封面成功");
+			Log.v(Consts.DEBUG_TAG, "获取专辑封面成功");
 			return fileName;
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e(DEBUG_TAG, "获取专辑封面失败" + e.getMessage());
+			Log.e(Consts.DEBUG_TAG, "获取专辑封面失败" + e.getMessage());
 			return null;
 		}
 	}
 
 	// 通过豆瓣API获取音乐信息
 	private static String getJson(String title, String artist, Handler handler) {
-		Log.v(DEBUG_TAG, "方法 getJSON被调用");
+		Log.v(Consts.DEBUG_TAG, "方法 getJSON被调用");
 		String json = null;
 		HttpResponse httpResponse;
 		try {
-			String api_url = API_URL
+			String api_url = Consts.API_URL
 					+ java.net.URLEncoder.encode(title + "+" + artist, "UTF-8");
-			Log.v(DEBUG_TAG, "方法 getJSON将要进行的请求为" + api_url);
+			Log.v(Consts.DEBUG_TAG, "方法 getJSON将要进行的请求为" + api_url);
 			HttpGet httpGet = new HttpGet(api_url);
 
 			httpResponse = new DefaultHttpClient().execute(httpGet);
-			Log.v(DEBUG_TAG, "进行的HTTP GET返回状态为"
+			Log.v(Consts.DEBUG_TAG, "进行的HTTP GET返回状态为"
 					+ httpResponse.getStatusLine().getStatusCode());
 			if (httpResponse.getStatusLine().getStatusCode() == 200) {
 				json = EntityUtils.toString(httpResponse.getEntity());
-				Log.v(DEBUG_TAG, "返回结果为" + json);
+				Log.v(Consts.DEBUG_TAG, "返回结果为" + json);
 			} else {
-				handler.sendEmptyMessage(INTERNET_ERROR);
+				handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
 				json = null;
 			}
 		} catch (Exception e) {
-			Log.v(DEBUG_TAG, "抛出错误" + e.getMessage());
-			handler.sendEmptyMessage(INTERNET_ERROR);
+			Log.v(Consts.DEBUG_TAG, "抛出错误" + e.getMessage());
+			handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
 			e.printStackTrace();
 			json = null;
 		}
@@ -207,27 +201,24 @@ class Utilities {
 	}
 
 	public static boolean sendFeedback(String content) {
-		HttpPost post=new HttpPost(FEEDBACK_URL);
+		HttpPost post=new HttpPost(Consts.FEEDBACK_URL);
 		List<NameValuePair> params=new ArrayList<NameValuePair>();
-		Log.v(DEBUG_TAG,"content is "+content);
+		Log.v(Consts.DEBUG_TAG,"content is "+content);
 		try {
 			params.add(new BasicNameValuePair("content", java.net.URLEncoder.encode(content,"UTF-8")));
-			Log.v(DEBUG_TAG,"param is "+params.toString());
+			Log.v(Consts.DEBUG_TAG,"param is "+params.toString());
 			post.setEntity(new UrlEncodedFormEntity(params));
 			HttpResponse response=new DefaultHttpClient().execute(post);
 			if (response.getStatusLine().getStatusCode()==200){
-				Log.v(DEBUG_TAG,"Feedback succeed");
+				Log.v(Consts.DEBUG_TAG,"Feedback succeed");
 				return true;
 			}
 			else throw new RuntimeException();
 		} catch (Exception e) {
-			Log.d(DEBUG_TAG,"Feedbak failed");
+			Log.d(Consts.DEBUG_TAG,"Feedbak failed");
 			e.printStackTrace();
 			return false;
 		}
-
-		
-		
 	}
 
 }

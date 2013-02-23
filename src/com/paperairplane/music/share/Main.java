@@ -40,20 +40,8 @@ public class Main extends ListActivity {
 	// 存储音乐信息
 	private MusicData[] musics;// 保存音乐数据
 	private ListView listview;// 列表对象
-	private final String[] media_info = new String[] {
-			MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DURATION,
-			MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.DATA,
-			MediaStore.Audio.Media.ALBUM };
-	private final int INTERNET_ERROR = 3, SEND_WEIBO = 4, SEND_SUCCEED = 5,
-			AUTH_ERROR = 6, SEND_ERROR = 7, NOT_AUTHORIZED_ERROR = 8,
-			AUTH_SUCCEED = 9;
-	private final int WEIBO = 0, OTHERS = 1;
-	private final int DIALOG_SHARE = 0, DIALOG_ABOUT = 1, DIALOG_SEARCH = 2, DIALOG_EMPTY=3;
-	private final String APP_KEY = "1006183120";
-	private final String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public static Oauth2AccessToken accessToken = null;
-	private Weibo weibo = Weibo.getInstance(APP_KEY, REDIRECT_URI);
-	private final static String DEBUG_TAG = "Music Share DEBUG";
+	private Weibo weibo = Weibo.getInstance(Consts.APP_KEY, Consts.REDIRECT_URI);
 	private Receiver receiver;
 	private AlertDialog dialogMain, dialogAbout, dialogSearch;
 	private SsoHandler ssoHandler;
@@ -67,7 +55,7 @@ public class Main extends ListActivity {
 			initListView();
 			showMusicList();
 			ssoHandler = new SsoHandler(Main.this, weibo);
-			Log.v(DEBUG_TAG, "Push Start");
+			Log.v(Consts.DEBUG_TAG, "Push Start");
 			// this.getResources().updateConfiguration(conf, null);
 			// JPushInterface.setAliasAndTags(getApplicationContext(),
 			// "XavierYao",
@@ -75,7 +63,7 @@ public class Main extends ListActivity {
 			// 这是JPush的Debug标签
 			JPushInterface.init(getApplicationContext());
 		} catch (Exception e) {
-			// Log.e(DEBUG_TAG, e.getMessage());
+			// Log.e(Consts.DEBUG_TAG, e.getMessage());
 			e.printStackTrace();
 			setContentView(R.layout.empty);
 		}
@@ -137,7 +125,7 @@ public class Main extends ListActivity {
 			// 判断是否有已授权
 			try {
 				if (Main.accessToken == null) {
-					handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
+					handler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
 				} else {
 					new AlertDialog.Builder(this)
 							.setIcon(android.R.drawable.ic_dialog_alert)
@@ -167,7 +155,7 @@ public class Main extends ListActivity {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				Log.v(DEBUG_TAG, e.getMessage());
+				Log.v(Consts.DEBUG_TAG, e.getMessage());
 			}
 			break;
 		case R.id.menu_refresh:
@@ -183,14 +171,14 @@ public class Main extends ListActivity {
 	}
 
 	public void footer(View v) {
-		showCustomDialog(0, DIALOG_SEARCH);
+		showCustomDialog(0, Consts.Dialogs.SEARCH);
 	}
 
 	// 对话框处理
 
 	private void showCustomDialog(final int _id, int whichDialog) {
 		switch (whichDialog) {
-		case DIALOG_ABOUT:
+		case Consts.Dialogs.ABOUT:
 			// 既然你说它奇葩,嗯,那这样子就不奇葩了
 			// 不过在显示关于窗口是方法第一个传入参数没啥用
 			// ……我只能说奇葩那个注释是你加上去的……还有你是不是忘加内容了？
@@ -229,10 +217,10 @@ public class Main extends ListActivity {
 												int which) {
 											String contentString=content.getText().toString().trim();
 											if(contentString.equals("")){
-												showCustomDialog(0, DIALOG_EMPTY);
+												showCustomDialog(0, Consts.Dialogs.EMPTY);
 											}
 											else{
-												SendFeedback feedback=new SendFeedback(contentString);
+												SendFeedback feedback=new SendFeedback(contentString,handler);
 												feedback.start();
 												/*if(Utilities.sendFeedback(contentString)){
 													Toast.makeText(Main.this, R.string.feedback_succeed,Toast.LENGTH_LONG).show();
@@ -250,7 +238,7 @@ public class Main extends ListActivity {
 								}
 							}).show();
 			break;
-		case DIALOG_SHARE:
+		case Consts.Dialogs.SHARE:
 			dialogMain = new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.choose_an_operation)
@@ -267,7 +255,7 @@ public class Main extends ListActivity {
 										int whichButton) {
 									shareMusic(musics[_id].getTitle(),
 											musics[_id].getArtist(),
-											musics[_id].getAlbum(), OTHERS);
+											musics[_id].getAlbum(), Consts.ShareMeans.OTHERS);
 								}
 							})
 					.setNeutralButton(R.string.share2weibo,
@@ -278,12 +266,12 @@ public class Main extends ListActivity {
 										int which) {
 									shareMusic(musics[_id].getTitle(),
 											musics[_id].getArtist(),
-											musics[_id].getAlbum(), WEIBO);
+											musics[_id].getAlbum(), Consts.ShareMeans.WEIBO);
 								}
 							}).show();
 			break;
-		case DIALOG_SEARCH:
-			Log.v(DEBUG_TAG, "点击footer");
+		case Consts.Dialogs.SEARCH:
+			Log.v(Consts.DEBUG_TAG, "点击footer");
 			View search = LayoutInflater.from(this).inflate(R.layout.search,
 					null);
 			final EditText et_title = (EditText) search
@@ -297,11 +285,11 @@ public class Main extends ListActivity {
 			button_weibo.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					if (et_title.getText().toString().trim().equals("")) {
-						showCustomDialog(0, DIALOG_EMPTY);
+						showCustomDialog(0, Consts.Dialogs.EMPTY);
 					} else {
 						shareMusic(et_title.getText().toString(), et_artist
 								.getText().toString(), et_album.getText()
-								.toString(), WEIBO);
+								.toString(), Consts.ShareMeans.WEIBO);
 						dialogSearch.cancel();
 					}
 				}
@@ -316,7 +304,7 @@ public class Main extends ListActivity {
 					} else {
 						shareMusic(et_title.getText().toString(), et_artist
 								.getText().toString(), et_album.getText()
-								.toString(), OTHERS);
+								.toString(), Consts.ShareMeans.OTHERS);
 						dialogSearch.cancel();
 					}
 				}
@@ -325,7 +313,7 @@ public class Main extends ListActivity {
 					.setCancelable(true).create();
 			dialogSearch.show();
 			break;
-		case DIALOG_EMPTY:
+		case Consts.Dialogs.EMPTY:
 			new AlertDialog.Builder(Main.this)
 			.setMessage(getString(R.string.empty))
 			.setPositiveButton(
@@ -353,7 +341,7 @@ public class Main extends ListActivity {
 				} catch (Exception e) {
 				}
 			}
-			showCustomDialog(position, DIALOG_SHARE);
+			showCustomDialog(position, Consts.Dialogs.SHARE);
 		}
 	}
 
@@ -361,7 +349,7 @@ public class Main extends ListActivity {
 	private void showMusicList() {
 
 		Cursor cursor = getContentResolver().query(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, media_info,
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Consts.MEDIA_INFO,
 				MediaStore.Audio.Media.DURATION + ">='" + 30000 + "'", null,
 				MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 		// 过滤小于30s的音乐
@@ -434,7 +422,7 @@ public class Main extends ListActivity {
 	}
 
 	private void showAbout() { // 显示关于窗口
-		showCustomDialog(0, DIALOG_ABOUT);
+		showCustomDialog(0, Consts.Dialogs.ABOUT);
 	}
 
 	// 这是消息处理
@@ -442,12 +430,12 @@ public class Main extends ListActivity {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case INTERNET_ERROR:// 网络错误
+			case Consts.Status.INTERNET_ERROR:// 网络错误
 				Toast.makeText(getApplicationContext(),
 						getString(R.string.error_internet), Toast.LENGTH_SHORT)
 						.show();
 				break;
-			case SEND_WEIBO:// 发送微博
+			case Consts.Status.SEND_WEIBO:// 发送微博
 				View sendweibo = LayoutInflater.from(getApplicationContext())
 						.inflate(R.layout.sendweibo, null);
 				final EditText et = (EditText) sendweibo.getRootView()
@@ -457,7 +445,7 @@ public class Main extends ListActivity {
 				Bundle bundle = (Bundle) msg.obj;
 				String _content = bundle.getString("content");
 				final String artworkUrl = bundle.getString("artworkUrl");
-				// Log.v(DEBUG_TAG, artworkUrl);
+				// Log.v(Consts.DEBUG_TAG, artworkUrl);
 				final WeiboHelper weiboHelper = new WeiboHelper(handler,
 						getApplicationContext());
 				et.setText(_content);
@@ -475,7 +463,7 @@ public class Main extends ListActivity {
 										if (Main.accessToken == null
 												|| (Main.accessToken
 														.isSessionValid() == false)) {// 检测之前是否授权过
-											handler.sendEmptyMessage(NOT_AUTHORIZED_ERROR);
+											handler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
 											saveSendStatus(content,
 													cb.isChecked(), artworkUrl);
 											ssoHandler.authorize(weiboHelper
@@ -488,31 +476,41 @@ public class Main extends ListActivity {
 									}
 
 								}).show();
-				Log.v(DEBUG_TAG, "弹出对话框");
+				Log.v(Consts.DEBUG_TAG, "弹出对话框");
 				break;
-			case SEND_SUCCEED:// 发送成功
+			case Consts.Status.SEND_SUCCEED:// 发送成功
 				Toast.makeText(Main.this, R.string.send_succeed,
 						Toast.LENGTH_SHORT).show();
 				break;
-			case NOT_AUTHORIZED_ERROR:// 尚未授权
+			case Consts.Status.NOT_AUTHORIZED_ERROR:// 尚未授权
 				Toast.makeText(Main.this, R.string.not_authorized_error,
 						Toast.LENGTH_SHORT).show();
 				break;
-			case AUTH_ERROR:// 授权错误
+			case Consts.Status.AUTH_ERROR:// 授权错误
 				Toast.makeText(Main.this,
 						R.string.auth_error + (String) msg.obj,
 						Toast.LENGTH_SHORT).show();
-				Log.e(DEBUG_TAG, "错误" + (String) msg.obj);
+				Log.e(Consts.DEBUG_TAG, "错误" + (String) msg.obj);
 				break;
-			case SEND_ERROR:// 发送错误
+			case Consts.Status.SEND_ERROR:// 发送错误
 				Toast.makeText(Main.this,
 						R.string.send_error + (String) msg.obj,
 						Toast.LENGTH_SHORT).show();
-				Log.e(DEBUG_TAG, "错误" + (String) msg.obj);
+				Log.e(Consts.DEBUG_TAG, "错误" + (String) msg.obj);
 				break;
-			case AUTH_SUCCEED:// 授权成功
+			case Consts.Status.AUTH_SUCCEED:// 授权成功
 				Toast.makeText(Main.this, R.string.auth_succeed,
 						Toast.LENGTH_SHORT).show();
+				break;
+			case Consts.Status.FEEDBACK_SUCCEED:
+				Toast.makeText(Main.this, R.string.feedback_succeed,Toast.LENGTH_LONG).show();
+				break;
+			case Consts.Status.FEEDBACK_FAIL:
+				Toast.makeText(Main.this, R.string.feedback_failed, Toast.LENGTH_LONG).show();
+				SharedPreferences preferences = getApplicationContext()
+						.getSharedPreferences(Consts.Preferences.FEEDBACK, Context.MODE_PRIVATE);
+				preferences.edit().putString("content", (String)msg.obj).commit();
+				//TODO 完善一下这里需要重试
 				break;
 			}
 		}
@@ -521,7 +519,7 @@ public class Main extends ListActivity {
 	private void saveSendStatus(String content, boolean checked,
 			String artworkUrl) {
 		SharedPreferences preferences = getApplicationContext()
-				.getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
+				.getSharedPreferences(Consts.Preferences.SHARE, Context.MODE_PRIVATE);
 		preferences.edit().putString("content", content).commit();
 		preferences.edit().putBoolean("willFollow", checked).commit();
 		preferences.edit().putString("artworkUrl", artworkUrl).commit();
