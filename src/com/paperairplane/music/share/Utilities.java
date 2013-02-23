@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
@@ -78,7 +79,8 @@ class Utilities {
 		String json = getJson(title, artist, handler);
 		String info[] = new String[5];
 		if (json == null) {
-			info[Consts.ArraySubscript.MUSIC] = context.getString(R.string.no_music_url_found);
+			info[Consts.ArraySubscript.MUSIC] = context
+					.getString(R.string.no_music_url_found);
 			Log.v(Consts.DEBUG_TAG, "方法 getMusicAndArtworkUrl获得空的json字符串");
 		} else {
 			try {
@@ -87,14 +89,17 @@ class Utilities {
 				if (count == 1) {
 					JSONArray contentArray = rootObject.getJSONArray("musics");
 					JSONObject item = contentArray.getJSONObject(0);
-					info[Consts.ArraySubscript.MUSIC] = item.getString("mobile_link");
-					info[Consts.ArraySubscript.ARTWORK] = item.getString("image");
-					info[Consts.ArraySubscript.ARTIST] = item.getJSONArray("author").getJSONObject(0)
+					info[Consts.ArraySubscript.MUSIC] = item
+							.getString("mobile_link");
+					info[Consts.ArraySubscript.ARTWORK] = item
+							.getString("image");
+					info[Consts.ArraySubscript.ARTIST] = item
+							.getJSONArray("author").getJSONObject(0)
 							.getString("name");
-					info[Consts.ArraySubscript.ALBUM] = item.getJSONObject("attrs")
-							.getString("title");
-					info[Consts.ArraySubscript.VERSION] = item.getJSONObject("attrs").getString(
-							"version");
+					info[Consts.ArraySubscript.ALBUM] = item.getJSONObject(
+							"attrs").getString("title");
+					info[Consts.ArraySubscript.VERSION] = item.getJSONObject(
+							"attrs").getString("version");
 					// 这里,这里,这样就不会有蛋疼的空白错误了
 				} else {
 					info[Consts.ArraySubscript.MUSIC] = context
@@ -107,7 +112,8 @@ class Utilities {
 			} catch (JSONException e) {
 				Log.e(Consts.DEBUG_TAG, "JSON解析错误");
 				e.printStackTrace();
-				info[Consts.ArraySubscript.MUSIC] = context.getString(R.string.no_music_url_found);
+				info[Consts.ArraySubscript.MUSIC] = context
+						.getString(R.string.no_music_url_found);
 				info[Consts.ArraySubscript.ARTWORK] = null;
 				info[Consts.ArraySubscript.ARTIST] = null;
 				info[Consts.ArraySubscript.ALBUM] = null;
@@ -115,7 +121,8 @@ class Utilities {
 			}
 		}
 		if (info[Consts.ArraySubscript.ALBUM] != null) {
-			info[Consts.ArraySubscript.ALBUM] = info[Consts.ArraySubscript.ALBUM].replace("[\"", "").replace("\"]", "");
+			info[Consts.ArraySubscript.ALBUM] = info[Consts.ArraySubscript.ALBUM]
+					.replace("[\"", "").replace("\"]", "");
 			Log.d(Consts.DEBUG_TAG, info[Consts.ArraySubscript.ALBUM]);
 		}
 		// Log.v(Consts.DEBUG_TAG, info[MUSIC]);
@@ -201,21 +208,27 @@ class Utilities {
 	}
 
 	public static boolean sendFeedback(String content) {
-		HttpPost post=new HttpPost(Consts.FEEDBACK_URL);
-		List<NameValuePair> params=new ArrayList<NameValuePair>();
-		Log.v(Consts.DEBUG_TAG,"content is "+content);
+		StringBuffer feedback = new StringBuffer(content);
+		feedback.append(" Model:" + Build.MODEL);
+		feedback.append(" Manufacturer:" + Build.MANUFACTURER);
+		feedback.append(" Product:" + Build.PRODUCT);
+		feedback.append(" SDK Version" + Build.VERSION.SDK_INT);
+		HttpPost post = new HttpPost(Consts.FEEDBACK_URL);
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		Log.v(Consts.DEBUG_TAG, "content is " + content);
 		try {
-			params.add(new BasicNameValuePair("content", java.net.URLEncoder.encode(content,"UTF-8")));
-			Log.v(Consts.DEBUG_TAG,"param is "+params.toString());
+			params.add(new BasicNameValuePair("content", java.net.URLEncoder
+					.encode(content, "UTF-8")));
+			Log.v(Consts.DEBUG_TAG, "param is " + params.toString());
 			post.setEntity(new UrlEncodedFormEntity(params));
-			HttpResponse response=new DefaultHttpClient().execute(post);
-			if (response.getStatusLine().getStatusCode()==200){
-				Log.v(Consts.DEBUG_TAG,"Feedback succeed");
+			HttpResponse response = new DefaultHttpClient().execute(post);
+			if (response.getStatusLine().getStatusCode() == 200) {
+				Log.v(Consts.DEBUG_TAG, "Feedback succeed");
 				return true;
-			}
-			else throw new RuntimeException();
+			} else
+				throw new RuntimeException();
 		} catch (Exception e) {
-			Log.d(Consts.DEBUG_TAG,"Feedbak failed");
+			Log.d(Consts.DEBUG_TAG, "Feedbak failed");
 			e.printStackTrace();
 			return false;
 		}
