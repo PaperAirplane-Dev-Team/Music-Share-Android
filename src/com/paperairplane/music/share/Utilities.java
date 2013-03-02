@@ -2,6 +2,7 @@ package com.paperairplane.music.share;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,11 +23,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 class Utilities {
@@ -213,6 +218,7 @@ class Utilities {
 		feedback.append(" Manufacturer:" + Build.MANUFACTURER);
 		feedback.append(" Product:" + Build.PRODUCT);
 		feedback.append(" SDK Version" + Build.VERSION.SDK_INT);
+		feedback.append(" System Codename" + Build.VERSION.CODENAME);
 		HttpPost post = new HttpPost(Consts.FEEDBACK_URL);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		Log.v(Consts.DEBUG_TAG, "content is " + content);
@@ -233,5 +239,65 @@ class Utilities {
 			return false;
 		}
 	}
+	
+    public static Bitmap getLocalArtwork(Context context, long album_id, int w, int h) {
+    	//从Music App直接拽出来
+        // NOTE: There is in fact a 1 pixel border on the right side in the ImageView
+        // used to display this drawable. Take it into account now, so we don't have to
+        // scale later.
+        BitmapFactory.Options sBitmapOptionsCache = new BitmapFactory.Options();
+        w -= 1;
+        ContentResolver res = context.getContentResolver();
+        Uri uri = ContentUris.withAppendedId(Consts.ARTWORK_URI, album_id);
+        if (uri != null) {
+            ParcelFileDescriptor fd = null;
+            try {
+                fd = res.openFileDescriptor(uri, "r");
+                int sampleSize = 1;
+                
+                // Compute the closest power-of-two scale factor 
+                // and pass that to sBitmapOptionsCache.inSampleSize, which will
+                // result in faster decoding and better quality
+                sBitmapOptionsCache.inJustDecodeBounds = true;
+                BitmapFactory.decodeFileDescriptor(
+                        fd.getFileDescriptor(), null, sBitmapOptionsCache);
+                int nextWidth = sBitmapOptionsCache.outWidth >> 1;
+                int nextHeight = sBitmapOptionsCache.outHeight >> 1;
+                while (nextWidth>w && nextHeight>h) {
+                    sampleSize <<= 1;
+                    nextWidth >>= 1;
+                    nextHeight >>= 1;
+                }
 
+                sBitmapOptionsCache.inSampleSize = sampleSize;
+                sBitmapOptionsCache.inJustDecodeBounds = false;
+                Bitmap b = BitmapFactory.decodeFileDescriptor(
+                        fd.getFileDescriptor(), null, sBitmapOptionsCache);
+
+                if (b != null) {
+                    // finally rescale to exactly the size we need
+                    if (sBitmapOptionsCache.outWidth != w || sBitmapOptionsCache.outHeight != h) {
+                        Bitmap tmp = Bitmap.createScaledBitmap(b, w, h, true);
+                        // Bitmap.createScaledBitmap() can return the same bitmap
+                        if (tmp != b) b.recycle();
+                        b = tmp;
+                    }
+                }
+                
+                return b;
+            } catch (FileNotFoundException e) {
+            } finally {
+                try {
+                    if (fd != null)
+                        fd.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return null;
+    }
+
+	public Utilities() throws Exception{
+		throw new Exception("What the hell?You cannot do that.");
+	}
 }

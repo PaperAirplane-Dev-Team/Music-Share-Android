@@ -1,5 +1,6 @@
 package com.paperairplane.music.share;
 
+import android.net.Uri;
 import android.provider.MediaStore;
 
 public class Consts {
@@ -7,12 +8,13 @@ public class Consts {
 	public final static String[] MEDIA_INFO = new String[] {
 			MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DURATION,
 			MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.DATA,
-			MediaStore.Audio.Media.ALBUM };
+			MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID };
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String APP_KEY = "1006183120";
 	public final static String API_URL = "http://paperairplane.sinaapp.com/proxy.php?q=";
 	public final static String FEEDBACK_URL="http://paperairplane.sinaapp.com/feedback.php";
 	public final static String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
+	public final static Uri ARTWORK_URI = Uri.parse("content://media/external/audio/albumart");
 	
 	public final class Status{
 		public static final int INTERNET_ERROR = 0;
