@@ -22,7 +22,7 @@
     <string name="refresh_on_process">Refresh On Process</string>
     <string name="menu_about">About</string>
     <string name="about_contact">Contact Us</string>
-    <string name="about_content">Paper Airplane Dev Team\n添乱：@author @HarryChen-SIGKILL-\nhttp://weibo.com/yszzf\n添乱：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2013.3.2 \nVer1.0.4 \n该版本新增：音乐详情</string>
+    <string name="about_content">Paper Airplane Dev Team\n添乱：@author @HarryChen-SIGKILL-\nhttp://weibo.com/yszzf\n添乱：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2013.3.2 \nVer1.0.5 \n该版本新增：音乐详情</string>
     <string name="about_download_info">Download Here:</string>
     <string name="url">http://t.cn/zYyzZOK</string>
     <string name="no_music_url_found">No Url Found</string>

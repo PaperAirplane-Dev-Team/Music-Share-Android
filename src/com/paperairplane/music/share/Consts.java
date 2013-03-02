@@ -12,6 +12,7 @@ public class Consts {
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String APP_KEY = "1006183120";
 	public final static String API_URL = "http://paperairplane.sinaapp.com/proxy.php?q=";
+	public final static String INFO_REDIRECT_URL = "http://paperairplane.sinaapp.com/redirect.php?id=";
 	public final static String FEEDBACK_URL="http://paperairplane.sinaapp.com/feedback.php";
 	public final static String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
 	public final static Uri ARTWORK_URI = Uri.parse("content://media/external/audio/albumart");

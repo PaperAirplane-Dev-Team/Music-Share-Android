@@ -94,8 +94,8 @@ class Utilities {
 				if (count == 1) {
 					JSONArray contentArray = rootObject.getJSONArray("musics");
 					JSONObject item = contentArray.getJSONObject(0);
-					info[Consts.ArraySubscript.MUSIC] = item
-							.getString("mobile_link");
+					info[Consts.ArraySubscript.MUSIC] = Consts.INFO_REDIRECT_URL+item
+							.getString("id");
 					info[Consts.ArraySubscript.ARTWORK] = item
 							.getString("image");
 					info[Consts.ArraySubscript.ARTIST] = item
