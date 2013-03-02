@@ -9,10 +9,10 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <ImageButton
+        <ImageView
             android:id="@+id/image_music"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:background="#000000"
             android:contentDescription="@string/album_art"
             android:onClick="artwork_onClick"

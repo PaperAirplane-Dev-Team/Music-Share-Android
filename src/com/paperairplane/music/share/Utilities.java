@@ -188,7 +188,7 @@ class Utilities {
 		HttpResponse httpResponse;
 		try {
 			String api_url = Consts.API_URL
-					+ java.net.URLEncoder.encode(title + "+" + artist, "UTF-8");
+					+ java.net.URLEncoder.encode((title + "+" + artist).replaceAll(" ", "+"), "UTF-8");
 			Log.v(Consts.DEBUG_TAG, "方法 getJSON将要进行的请求为" + api_url);
 			HttpGet httpGet = new HttpGet(api_url);
 
@@ -213,18 +213,21 @@ class Utilities {
 	}
 
 	public static boolean sendFeedback(String content) {
-		StringBuffer feedback = new StringBuffer(content);
-		feedback.append(" Model:" + Build.MODEL);
-		feedback.append(" Manufacturer:" + Build.MANUFACTURER);
-		feedback.append(" Product:" + Build.PRODUCT);
-		feedback.append(" SDK Version" + Build.VERSION.SDK_INT);
-		feedback.append(" System Codename" + Build.VERSION.CODENAME);
+		StringBuffer device_info = new StringBuffer("===================" + "\r");
+		device_info.append(" Model:" + Build.MODEL + "\r");
+		device_info.append(" Manufacturer:" + Build.MANUFACTURER + "\r");
+		device_info.append(" Product:" + Build.PRODUCT + "\r");
+		device_info.append(" SDK Version:" + Build.VERSION.SDK_INT + "\r");
+		device_info.append(" Release:" + Build.VERSION.RELEASE + "\r");
 		HttpPost post = new HttpPost(Consts.FEEDBACK_URL);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		Log.v(Consts.DEBUG_TAG, "content is " + content);
+		Log.v(Consts.DEBUG_TAG, "content is " + content + "\r"
+				+ "device info is :" + device_info.toString());
 		try {
 			params.add(new BasicNameValuePair("content", java.net.URLEncoder
 					.encode(content, "UTF-8")));
+			params.add(new BasicNameValuePair("device_info",
+					java.net.URLEncoder.encode(device_info.toString(), "UTF-8")));
 			Log.v(Consts.DEBUG_TAG, "param is " + params.toString());
 			post.setEntity(new UrlEncodedFormEntity(params));
 			HttpResponse response = new DefaultHttpClient().execute(post);
@@ -239,65 +242,71 @@ class Utilities {
 			return false;
 		}
 	}
-	
-    public static Bitmap getLocalArtwork(Context context, long album_id, int w, int h) {
-    	//从Music App直接拽出来
-        // NOTE: There is in fact a 1 pixel border on the right side in the ImageView
-        // used to display this drawable. Take it into account now, so we don't have to
-        // scale later.
-        BitmapFactory.Options sBitmapOptionsCache = new BitmapFactory.Options();
-        w -= 1;
-        ContentResolver res = context.getContentResolver();
-        Uri uri = ContentUris.withAppendedId(Consts.ARTWORK_URI, album_id);
-        if (uri != null) {
-            ParcelFileDescriptor fd = null;
-            try {
-                fd = res.openFileDescriptor(uri, "r");
-                int sampleSize = 1;
-                
-                // Compute the closest power-of-two scale factor 
-                // and pass that to sBitmapOptionsCache.inSampleSize, which will
-                // result in faster decoding and better quality
-                sBitmapOptionsCache.inJustDecodeBounds = true;
-                BitmapFactory.decodeFileDescriptor(
-                        fd.getFileDescriptor(), null, sBitmapOptionsCache);
-                int nextWidth = sBitmapOptionsCache.outWidth >> 1;
-                int nextHeight = sBitmapOptionsCache.outHeight >> 1;
-                while (nextWidth>w && nextHeight>h) {
-                    sampleSize <<= 1;
-                    nextWidth >>= 1;
-                    nextHeight >>= 1;
-                }
 
-                sBitmapOptionsCache.inSampleSize = sampleSize;
-                sBitmapOptionsCache.inJustDecodeBounds = false;
-                Bitmap b = BitmapFactory.decodeFileDescriptor(
-                        fd.getFileDescriptor(), null, sBitmapOptionsCache);
+	public static Bitmap getLocalArtwork(Context context, long album_id, int w,
+			int h) {
+		// 从Music App直接拽出来
+		// NOTE: There is in fact a 1 pixel border on the right side in the
+		// ImageView
+		// used to display this drawable. Take it into account now, so we don't
+		// have to
+		// scale later.
+		BitmapFactory.Options sBitmapOptionsCache = new BitmapFactory.Options();
+		w -= 1;
+		ContentResolver res = context.getContentResolver();
+		Uri uri = ContentUris.withAppendedId(Consts.ARTWORK_URI, album_id);
+		if (uri != null) {
+			ParcelFileDescriptor fd = null;
+			try {
+				fd = res.openFileDescriptor(uri, "r");
+				int sampleSize = 1;
 
-                if (b != null) {
-                    // finally rescale to exactly the size we need
-                    if (sBitmapOptionsCache.outWidth != w || sBitmapOptionsCache.outHeight != h) {
-                        Bitmap tmp = Bitmap.createScaledBitmap(b, w, h, true);
-                        // Bitmap.createScaledBitmap() can return the same bitmap
-                        if (tmp != b) b.recycle();
-                        b = tmp;
-                    }
-                }
-                
-                return b;
-            } catch (FileNotFoundException e) {
-            } finally {
-                try {
-                    if (fd != null)
-                        fd.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-        return null;
-    }
+				// Compute the closest power-of-two scale factor
+				// and pass that to sBitmapOptionsCache.inSampleSize, which will
+				// result in faster decoding and better quality
+				sBitmapOptionsCache.inJustDecodeBounds = true;
+				BitmapFactory.decodeFileDescriptor(fd.getFileDescriptor(),
+						null, sBitmapOptionsCache);
+				int nextWidth = sBitmapOptionsCache.outWidth >> 1;
+				int nextHeight = sBitmapOptionsCache.outHeight >> 1;
+				while (nextWidth > w && nextHeight > h) {
+					sampleSize <<= 1;
+					nextWidth >>= 1;
+					nextHeight >>= 1;
+				}
 
-	public Utilities() throws Exception{
+				sBitmapOptionsCache.inSampleSize = sampleSize;
+				sBitmapOptionsCache.inJustDecodeBounds = false;
+				Bitmap b = BitmapFactory.decodeFileDescriptor(
+						fd.getFileDescriptor(), null, sBitmapOptionsCache);
+
+				if (b != null) {
+					// finally rescale to exactly the size we need
+					if (sBitmapOptionsCache.outWidth != w
+							|| sBitmapOptionsCache.outHeight != h) {
+						Bitmap tmp = Bitmap.createScaledBitmap(b, w, h, true);
+						// Bitmap.createScaledBitmap() can return the same
+						// bitmap
+						if (tmp != b)
+							b.recycle();
+						b = tmp;
+					}
+				}
+
+				return b;
+			} catch (FileNotFoundException e) {
+			} finally {
+				try {
+					if (fd != null)
+						fd.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		return null;
+	}
+
+	public Utilities() throws Exception {
 		throw new Exception("What the hell?You cannot do that.");
 	}
 }

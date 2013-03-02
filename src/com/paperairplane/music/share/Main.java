@@ -29,7 +29,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -118,6 +117,7 @@ public class Main extends ListActivity {
 	// ≤Àµ•≈–∂œ
 	public boolean onOptionsItemSelected(MenuItem menu) {
 		super.onOptionsItemSelected(menu);
+		Log.e(Consts.DEBUG_TAG, "id:" + menu.getItemId());
 		switch (menu.getItemId()) {
 		case R.id.menu_exit:
 			finish();
@@ -248,12 +248,15 @@ public class Main extends ListActivity {
 					case DialogInterface.BUTTON_POSITIVE:
 						shareMusic(musics[_id].getTitle(),
 								musics[_id].getArtist(),
-								musics[_id].getAlbum(), Consts.ShareMeans.WEIBO);
+								musics[_id].getAlbum(),
+								musics[_id].getAlbumId(),
+								Consts.ShareMeans.WEIBO);
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
 						shareMusic(musics[_id].getTitle(),
 								musics[_id].getArtist(),
 								musics[_id].getAlbum(),
+								musics[_id].getAlbumId(),
 								Consts.ShareMeans.OTHERS);
 						break;
 					}
@@ -289,7 +292,7 @@ public class Main extends ListActivity {
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
-									.toString(), Consts.ShareMeans.WEIBO);
+									.toString(), (Long) null, Consts.ShareMeans.WEIBO);
 							dialogSearch.cancel();
 						}
 						break;
@@ -298,7 +301,7 @@ public class Main extends ListActivity {
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
-									.toString(), Consts.ShareMeans.OTHERS);
+									.toString(), (Long) null, Consts.ShareMeans.OTHERS);
 							dialogSearch.cancel();
 						}
 						break;
@@ -332,7 +335,7 @@ public class Main extends ListActivity {
 	private View getMusicInfoView(final int _id) {
 		View musicInfo = LayoutInflater.from(this).inflate(R.layout.music_info,
 				null);
-		ImageButton albumArt = (ImageButton) musicInfo
+		ImageView albumArt = (ImageView) musicInfo
 				.findViewById(R.id.image_music);
 		TextView textTitle = (TextView) musicInfo.findViewById(R.id.text_title);
 		TextView textArtist = (TextView) musicInfo
@@ -349,17 +352,17 @@ public class Main extends ListActivity {
 		textDuration.setText(getString(R.string.duration) + ":"
 				+ musics[_id].getDuration());
 		Bitmap bmpAlbum = Utilities.getLocalArtwork(Main.this,
-				musics[_id].getAlbumId(), 100, 100);
+				musics[_id].getAlbumId(), 120, 120);
 		try {
 			Log.d(Consts.DEBUG_TAG, bmpAlbum.toString());
 			albumArt.setImageBitmap(bmpAlbum);
 			Log.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			Log.d(Consts.DEBUG_TAG, "Oh shit, we got null again");
+			Log.d(Consts.DEBUG_TAG, "Oh shit, we got null again °≠°≠ Don't panic");
 		}
 		albumArt.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				playMusic(_id);
@@ -407,9 +410,11 @@ public class Main extends ListActivity {
 	}
 
 	// ∑÷œÌ“Ù¿÷
-	private void shareMusic(String title, String artist, String album, int means) {
+	private void shareMusic(String title, String artist, String album,
+			Long album_id, int means) {
 		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
-				artist, album, means, getApplicationContext(), handler);
+				artist, album, album_id, means, getApplicationContext(),
+				handler);
 		query.start();
 		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG)
 				.show();

@@ -13,6 +13,7 @@ import android.util.Log;
 
 class QueryAndShareMusicInfo extends Thread {
 	private int means;
+	private Long album_id;
 	private String artist, title, album;
 	private Context context;
 	private Handler handler;
@@ -34,13 +35,23 @@ class QueryAndShareMusicInfo extends Thread {
 		bundle.putString("artworkUrl", artworkUrl);
 		switch (means) {
 		case Consts.ShareMeans.OTHERS:
-			if (info[Consts.ArraySubscript.ARTWORK] != null) {
-				artworkUrl = info[Consts.ArraySubscript.ARTWORK].replace("spic", "lpic");
-			}
 			String fileName = null;
 			String type = "text/plain";
-			fileName = ARTWORK_PATH
-					+ Utilities.getArtwork(artworkUrl, title, ARTWORK_PATH);
+			try{
+			if ((album_id !=  null)&&(Utilities.getLocalArtwork(context, album_id, 120,120) != null)){
+				Utilities.saveFile(Utilities.getLocalArtwork(context, album_id, 120,120), title + ".jpg", ARTWORK_PATH);
+				fileName = ARTWORK_PATH + title + ".jpg";
+				Log.d(Consts.DEBUG_TAG,"获取本地封面成功");
+			}else{
+				fileName = ARTWORK_PATH
+						+ Utilities.getArtwork(artworkUrl, title, ARTWORK_PATH);
+			}
+			}catch(Exception e){
+				Log.e(Consts.DEBUG_TAG, "Error Occured");
+				e.printStackTrace();
+				fileName = ARTWORK_PATH
+						+ Utilities.getArtwork(artworkUrl, title, ARTWORK_PATH);
+			}
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			if (fileName != null) {
 				intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(fileName)));
@@ -82,8 +93,9 @@ class QueryAndShareMusicInfo extends Thread {
 		return content;
 	}
 
-	public QueryAndShareMusicInfo(String _title, String _artist, String _album,
+	public QueryAndShareMusicInfo(String _title, String _artist, String _album,Long _album_id,
 			int _means, Context _context, Handler _handler) {
+		album_id = _album_id;
 		title = _title;
 		artist = _artist;
 		album = _album;
