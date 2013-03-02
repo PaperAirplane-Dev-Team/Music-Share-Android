@@ -16,7 +16,7 @@
     <string name="before_url">,详见：</string>
     <string name="menu_refresh">刷新音乐列表</string>
     <string name="refresh_success">刷新音乐列表成功</string>
-    <string name="play">播放</string>
+    <string name="play">←_←点击封面来播放</string>
     <string name="share">分享</string>
     <string name="choose_an_operation">选择一个操作</string>
     <string name="very_long">                                                                              </string>
@@ -43,6 +43,7 @@
     <string name="title">标题</string>
     <string name="artist">表演者</string>
     <string name="album">专辑</string>
+    <string name="duration">时长</string>
     <string name="no_player_found">找不到适合的播放器</string>
     <string name="unauth_confirm">确定要取消授权吗？</string>
     <string name="feedback">发送反馈</string>

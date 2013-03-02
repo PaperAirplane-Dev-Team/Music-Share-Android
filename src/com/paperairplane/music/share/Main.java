@@ -29,6 +29,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -44,7 +45,8 @@ public class Main extends ListActivity {
 	private MusicData[] musics;// 保存音乐数据
 	private ListView listview;// 列表对象
 	public static Oauth2AccessToken accessToken = null;
-	private Weibo weibo = Weibo.getInstance(Consts.APP_KEY, Consts.REDIRECT_URI);
+	private Weibo weibo = Weibo
+			.getInstance(Consts.APP_KEY, Consts.REDIRECT_URI);
 	private Receiver receiver;
 	private AlertDialog dialogMain, dialogAbout, dialogSearch;
 	private SsoHandler ssoHandler;
@@ -182,39 +184,46 @@ public class Main extends ListActivity {
 	private void showCustomDialog(final int _id, int whichDialog) {
 		switch (whichDialog) {
 		case Consts.Dialogs.ABOUT:
-			DialogInterface.OnClickListener listenerAbout=new DialogInterface.OnClickListener() {
+			DialogInterface.OnClickListener listenerAbout = new DialogInterface.OnClickListener() {
 				@Override
-				public void onClick(DialogInterface dialog,
-						int whichButton) {
-					switch (whichButton){
+				public void onClick(DialogInterface dialog, int whichButton) {
+					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
 						dialogAbout.cancel();
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
-						Uri uri = Uri
-						.parse(getString(R.string.url));
-				Intent intent = new Intent(
-						Intent.ACTION_VIEW, uri);
-				startActivity(intent);
+						Uri uri = Uri.parse(getString(R.string.url));
+						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+						startActivity(intent);
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
-						View feedback = LayoutInflater.from(Main.this).inflate(R.layout.feedback, null);
-						final EditText content=(EditText)feedback.findViewById(R.id.et_feedback);
-						new AlertDialog.Builder(Main.this).setView(feedback).setPositiveButton(R.string.feedback,new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(
-									DialogInterface dialog,
-									int which) {
-								String contentString=content.getText().toString().trim();
-								if(contentString.equals("")){
-									showCustomDialog(0, Consts.Dialogs.EMPTY);
-								}
-								else{
-									SendFeedback feedback=new SendFeedback(contentString,handler);
-									feedback.start();
-								}
-							}
-						}).show();
+						View feedback = LayoutInflater.from(Main.this).inflate(
+								R.layout.feedback, null);
+						final EditText content = (EditText) feedback
+								.findViewById(R.id.et_feedback);
+						new AlertDialog.Builder(Main.this)
+								.setView(feedback)
+								.setPositiveButton(R.string.feedback,
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+												String contentString = content
+														.getText().toString()
+														.trim();
+												if (contentString.equals("")) {
+													showCustomDialog(
+															0,
+															Consts.Dialogs.EMPTY);
+												} else {
+													SendFeedback feedback = new SendFeedback(
+															contentString,
+															handler);
+													feedback.start();
+												}
+											}
+										}).show();
 						break;
 					}
 				}
@@ -231,12 +240,11 @@ public class Main extends ListActivity {
 					.setNeutralButton(R.string.feedback, listenerAbout).show();
 			break;
 		case Consts.Dialogs.SHARE:
-			View musicInfoView=getMusicInfoView(_id);
-			DialogInterface.OnClickListener listenerMain=new DialogInterface.OnClickListener(){
+			View musicInfoView = getMusicInfoView(_id);
+			DialogInterface.OnClickListener listenerMain = new DialogInterface.OnClickListener() {
 				@Override
-				public void onClick(DialogInterface dialog,
-						int whichButton) {
-					switch(whichButton){
+				public void onClick(DialogInterface dialog, int whichButton) {
+					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
 						shareMusic(musics[_id].getTitle(),
 								musics[_id].getArtist(),
@@ -245,17 +253,19 @@ public class Main extends ListActivity {
 					case DialogInterface.BUTTON_NEGATIVE:
 						shareMusic(musics[_id].getTitle(),
 								musics[_id].getArtist(),
-								musics[_id].getAlbum(), Consts.ShareMeans.OTHERS);
+								musics[_id].getAlbum(),
+								Consts.ShareMeans.OTHERS);
 						break;
 					}
 				}
-				};
+			};
 			dialogMain = new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.choose_an_operation)
 					.setView(musicInfoView)
 					.setNegativeButton(R.string.share2others, listenerMain)
-					.setPositiveButton(R.string.share2weibo, listenerMain).show();
+					.setPositiveButton(R.string.share2weibo, listenerMain)
+					.show();
 			break;
 		case Consts.Dialogs.SEARCH:
 			Log.v(Consts.DEBUG_TAG, "点击footer");
@@ -269,10 +279,10 @@ public class Main extends ListActivity {
 					.findViewById(R.id.et_album);
 			Button button_weibo = (Button) search
 					.findViewById(R.id.btn_share2weibo);
-			OnClickListener listenerButton=new OnClickListener() {
+			OnClickListener listenerButton = new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					switch (v.getId()){
+					switch (v.getId()) {
 					case R.id.btn_share2weibo:
 						if (et_title.getText().toString().trim().equals("")) {
 							showCustomDialog(0, Consts.Dialogs.EMPTY);
@@ -305,16 +315,14 @@ public class Main extends ListActivity {
 			break;
 		case Consts.Dialogs.EMPTY:
 			new AlertDialog.Builder(Main.this)
-			.setMessage(getString(R.string.empty))
-			.setPositiveButton(
-					getString(android.R.string.ok),
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(
-								DialogInterface dialog,
-								int which) {
-						}
-					}).show();
+					.setMessage(getString(R.string.empty))
+					.setPositiveButton(getString(android.R.string.ok),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+								}
+							}).show();
 			break;
 		default:
 			throw new RuntimeException("What the hell are you doing?");
@@ -322,31 +330,41 @@ public class Main extends ListActivity {
 	}
 
 	private View getMusicInfoView(final int _id) {
-		View musicInfo=LayoutInflater.from(this).inflate(R.layout.music_info, null);
-		ImageView albumArt=(ImageView)musicInfo.findViewById(R.id.image_music);
-		TextView textTitle=(TextView)musicInfo.findViewById(R.id.text_title);
-		TextView textArtist=(TextView)musicInfo.findViewById(R.id.text_artist);
-		TextView textAlbum=(TextView)musicInfo.findViewById(R.id.text_album);
-		Button btnPlay=(Button)musicInfo.findViewById(R.id.btn_play);
-		textTitle.setText(getString(R.string.title)+" : "+musics[_id].getTitle()+" ("+musics[_id].getDuration()+")");
-		textArtist.setText(getString(R.string.artist)+" : "+musics[_id].getArtist());
-		textAlbum.setText(getString(R.string.album)+" : "+musics[_id].getAlbum());
-		Bitmap bmpAlbum=Utilities.getLocalArtwork(Main.this, musics[_id].getAlbumId(), 100, 100);
-		try{
-			Log.d(Consts.DEBUG_TAG,bmpAlbum.toString());
+		View musicInfo = LayoutInflater.from(this).inflate(R.layout.music_info,
+				null);
+		ImageButton albumArt = (ImageButton) musicInfo
+				.findViewById(R.id.image_music);
+		TextView textTitle = (TextView) musicInfo.findViewById(R.id.text_title);
+		TextView textArtist = (TextView) musicInfo
+				.findViewById(R.id.text_artist);
+		TextView textAlbum = (TextView) musicInfo.findViewById(R.id.text_album);
+		TextView textDuration = (TextView) musicInfo
+				.findViewById(R.id.text_duration);
+		textTitle.setText(getString(R.string.title) + " : "
+				+ musics[_id].getTitle());
+		textArtist.setText(getString(R.string.artist) + " : "
+				+ musics[_id].getArtist());
+		textAlbum.setText(getString(R.string.album) + " : "
+				+ musics[_id].getAlbum());
+		textDuration.setText(getString(R.string.duration) + ":"
+				+ musics[_id].getDuration());
+		Bitmap bmpAlbum = Utilities.getLocalArtwork(Main.this,
+				musics[_id].getAlbumId(), 100, 100);
+		try {
+			Log.d(Consts.DEBUG_TAG, bmpAlbum.toString());
 			albumArt.setImageBitmap(bmpAlbum);
-			Log.d(Consts.DEBUG_TAG,"Oh Oh Oh Yeah!!");
-		}catch (NullPointerException e){
+			Log.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
+		} catch (NullPointerException e) {
 			e.printStackTrace();
 			Log.d(Consts.DEBUG_TAG, "Oh shit, we got null again");
 		}
-		btnPlay.setOnClickListener(new OnClickListener(){
+		albumArt.setOnClickListener(new View.OnClickListener() {
+			
 			@Override
-			public void onClick(View v){
+			public void onClick(View arg0) {
 				playMusic(_id);
 			}
 		});
-		
 		return musicInfo;
 	}
 
@@ -523,14 +541,18 @@ public class Main extends ListActivity {
 						Toast.LENGTH_SHORT).show();
 				break;
 			case Consts.Status.FEEDBACK_SUCCEED:
-				Toast.makeText(Main.this, R.string.feedback_succeed,Toast.LENGTH_LONG).show();
+				Toast.makeText(Main.this, R.string.feedback_succeed,
+						Toast.LENGTH_LONG).show();
 				break;
 			case Consts.Status.FEEDBACK_FAIL:
-				Toast.makeText(Main.this, R.string.feedback_failed, Toast.LENGTH_LONG).show();
+				Toast.makeText(Main.this, R.string.feedback_failed,
+						Toast.LENGTH_LONG).show();
 				SharedPreferences preferences = getApplicationContext()
-						.getSharedPreferences(Consts.Preferences.FEEDBACK, Context.MODE_PRIVATE);
-				preferences.edit().putString("content", (String)msg.obj).commit();
-				//TODO 完善一下这里需要重试
+						.getSharedPreferences(Consts.Preferences.FEEDBACK,
+								Context.MODE_PRIVATE);
+				preferences.edit().putString("content", (String) msg.obj)
+						.commit();
+				// TODO 完善一下这里需要重试
 				break;
 			}
 		}
@@ -539,7 +561,8 @@ public class Main extends ListActivity {
 	private void saveSendStatus(String content, boolean checked,
 			String artworkUrl) {
 		SharedPreferences preferences = getApplicationContext()
-				.getSharedPreferences(Consts.Preferences.SHARE, Context.MODE_PRIVATE);
+				.getSharedPreferences(Consts.Preferences.SHARE,
+						Context.MODE_PRIVATE);
 		preferences.edit().putString("content", content).commit();
 		preferences.edit().putBoolean("willFollow", checked).commit();
 		preferences.edit().putString("artworkUrl", artworkUrl).commit();
