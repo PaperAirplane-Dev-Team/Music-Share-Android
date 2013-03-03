@@ -33,6 +33,7 @@
     <string name="not_authorized_error">You Should Authotize First</string>
     <string name="send_error">Send Failed, Error:</string>
     <string name="auth_error">Authorize Failed, Error:</string>
+    <string name="auth">Auth</string>
     <string name="unauth">Unauthorize</string>
     <string name="auth_succeed">Succeeded</string>
     <string name="unauthed">Unauthorized</string>

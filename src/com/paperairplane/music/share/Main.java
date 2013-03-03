@@ -49,6 +49,7 @@ public class Main extends ListActivity {
 	private Receiver receiver;
 	private AlertDialog dialogMain, dialogAbout, dialogSearch;
 	private SsoHandler ssoHandler;
+	private WeiboHelper weiboHelper;
 
 	@Override
 	// 主体
@@ -59,6 +60,7 @@ public class Main extends ListActivity {
 			initListView();
 			showMusicList();
 			ssoHandler = new SsoHandler(Main.this, weibo);
+			weiboHelper = new WeiboHelper(handler, getApplicationContext());
 			Log.v(Consts.DEBUG_TAG, "Push Start");
 			// this.getResources().updateConfiguration(conf, null);
 			// JPushInterface.setAliasAndTags(getApplicationContext(),
@@ -110,6 +112,13 @@ public class Main extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		getMenuInflater().inflate(R.menu.main, menu);
+		if (Main.accessToken == null) {
+			menu.add(Menu.NONE, 0, 2, R.string.unauth).setIcon(
+					android.R.drawable.ic_delete);
+		} else {
+			menu.add(Menu.NONE, 1, 2, R.string.auth).setIcon(
+					android.R.drawable.ic_input_add);
+		}
 		return true;
 	}
 
@@ -126,41 +135,43 @@ public class Main extends ListActivity {
 		case R.id.menu_about:
 			showAbout();
 			break;
-		case R.id.menu_unauth:
-			// 判断是否有已授权
+		case 0:
 			try {
-				if (Main.accessToken == null) {
-					handler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
-				} else {
-					new AlertDialog.Builder(this)
-							.setIcon(android.R.drawable.ic_dialog_alert)
-							.setTitle(R.string.unauth_confirm)
-							.setPositiveButton(android.R.string.ok,
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface arg0, int arg1) {
-											Main.accessToken = null;
-											AccessTokenKeeper
-													.clear(getApplicationContext());
-											Toast.makeText(
-													Main.this,
-													getString(R.string.unauthed),
-													Toast.LENGTH_SHORT).show();
-										}
-									})
-							.setNegativeButton(android.R.string.cancel,
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface arg0, int arg1) {
-										}
-									}).show();
 
-				}
+				new AlertDialog.Builder(this)
+						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setTitle(R.string.unauth_confirm)
+						.setPositiveButton(android.R.string.ok,
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface arg0,
+											int arg1) {
+										Main.accessToken = null;
+										AccessTokenKeeper
+												.clear(getApplicationContext());
+										Toast.makeText(Main.this,
+												getString(R.string.unauthed),
+												Toast.LENGTH_SHORT).show();
+									}
+								})
+						.setNegativeButton(android.R.string.cancel,
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface arg0,
+											int arg1) {
+									}
+								}).show();
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.v(Consts.DEBUG_TAG, e.getMessage());
+			}
+			break;
+		case 1:
+			try {
+				ssoHandler.authorize(weiboHelper.getListener());
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			break;
 		case R.id.menu_refresh:
@@ -372,7 +383,8 @@ public class Main extends ListActivity {
 				playMusic(_id);
 			}
 		});
-//		Log.d(Consts.DEBUG_TAG,"view:"+ albumArt.getHeight()+","+albumArt.getWidth());
+		// Log.d(Consts.DEBUG_TAG,"view:"+
+		// albumArt.getHeight()+","+albumArt.getWidth());
 		return musicInfo;
 	}
 
@@ -494,8 +506,7 @@ public class Main extends ListActivity {
 				String _content = bundle.getString("content");
 				final String artworkUrl = bundle.getString("artworkUrl");
 				// Log.v(Consts.DEBUG_TAG, artworkUrl);
-				final WeiboHelper weiboHelper = new WeiboHelper(handler,
-						getApplicationContext());
+
 				et.setText(_content);
 				et.setSelection(_content.length());
 				new AlertDialog.Builder(Main.this)
@@ -573,6 +584,7 @@ public class Main extends ListActivity {
 		SharedPreferences preferences = getApplicationContext()
 				.getSharedPreferences(Consts.Preferences.SHARE,
 						Context.MODE_PRIVATE);
+		preferences.edit().putBoolean("read", true).commit();
 		preferences.edit().putString("content", content).commit();
 		preferences.edit().putBoolean("willFollow", checked).commit();
 		preferences.edit().putString("artworkUrl", artworkUrl).commit();

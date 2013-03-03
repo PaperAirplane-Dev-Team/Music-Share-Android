@@ -142,12 +142,15 @@ public class WeiboHelper {
 			Log.v(Consts.DEBUG_TAG, "授权成功，\n AccessToken:" + token);
 			SharedPreferences preferences = applicationContext
 					.getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
+			if(preferences.getBoolean("read", false)){
 			String content = preferences.getString("content", null);
 			String artworkUrl = preferences.getString("artworkUrl", null);
 			boolean willFollow = preferences.getBoolean("willFollow", false);
 			Log.v(Consts.DEBUG_TAG, "获取状态\n" + content + "\n" + artworkUrl + "\n"
 					+ willFollow);
 			sendWeibo(content, artworkUrl, willFollow);
+			preferences.edit().putBoolean("read", false).commit();
+			}
 		}
 
 		@Override

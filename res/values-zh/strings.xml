@@ -33,6 +33,7 @@
     <string name="not_authorized_error">请先授权</string>
     <string name="send_error">分享失败，错误：</string>
     <string name="auth_error">授权失败，错误：</string> 
+    <string name="auth">微博授权</string>
     <string name="unauth">取消授权</string>
     <string name="auth_succeed">授权成功</string>
     <string name="unauthed">已取消授权</string>

@@ -3,22 +3,17 @@
     <item
         android:id="@+id/menu_refresh"
         android:icon="@android:drawable/ic_menu_agenda"
-        android:title="@string/menu_refresh">
-    </item>
-    <item
-        android:id="@+id/menu_unauth"
-        android:icon="@android:drawable/ic_menu_delete"
-        android:title="@string/unauth">
+        android:title="@string/menu_refresh" android:orderInCategory="1">
     </item>
     <item
         android:id="@+id/menu_about"
         android:icon="@android:drawable/ic_menu_info_details"
-        android:title="@string/menu_about">
+        android:title="@string/menu_about" android:orderInCategory="3">
     </item>
     <item
         android:id="@+id/menu_exit"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
-        android:title="@string/menu_exit">
+        android:title="@string/menu_exit" android:orderInCategory="4">
     </item>
 
 </menu>
