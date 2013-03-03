@@ -11,8 +11,8 @@
 
         <ImageView
             android:id="@+id/image_music"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/album_art"
             android:onClick="artwork_onClick"
             android:src="@drawable/ic_launcher" />

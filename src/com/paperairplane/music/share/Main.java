@@ -292,7 +292,8 @@ public class Main extends ListActivity {
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
-									.toString(), (Long) null, Consts.ShareMeans.WEIBO);
+									.toString(), (Long) null,
+									Consts.ShareMeans.WEIBO);
 							dialogSearch.cancel();
 						}
 						break;
@@ -301,7 +302,8 @@ public class Main extends ListActivity {
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
-									.toString(), (Long) null, Consts.ShareMeans.OTHERS);
+									.toString(), (Long) null,
+									Consts.ShareMeans.OTHERS);
 							dialogSearch.cancel();
 						}
 						break;
@@ -351,10 +353,12 @@ public class Main extends ListActivity {
 				+ musics[_id].getAlbum());
 		textDuration.setText(getString(R.string.duration) + ":"
 				+ musics[_id].getDuration());
+		int size = DisplayUtil.getAdaptedSize(Main.this);
 		Bitmap bmpAlbum = Utilities.getLocalArtwork(Main.this,
-				musics[_id].getAlbumId(), 120, 120);
+				musics[_id].getAlbumId(), size, size);
 		try {
-			Log.d(Consts.DEBUG_TAG, bmpAlbum.toString());
+			Log.d(Consts.DEBUG_TAG,
+					"width:" + bmpAlbum.getWidth() + bmpAlbum.toString());
 			albumArt.setImageBitmap(bmpAlbum);
 			Log.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
@@ -368,6 +372,7 @@ public class Main extends ListActivity {
 				playMusic(_id);
 			}
 		});
+//		Log.d(Consts.DEBUG_TAG,"view:"+ albumArt.getHeight()+","+albumArt.getWidth());
 		return musicInfo;
 	}
 
