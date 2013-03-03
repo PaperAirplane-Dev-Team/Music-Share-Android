@@ -6,14 +6,14 @@
         android:title="@string/menu_refresh">
     </item>
     <item
-        android:id="@+id/menu_about"
-        android:icon="@android:drawable/ic_menu_info_details"
-        android:title="@string/menu_about">
-    </item>
-    <item
         android:id="@+id/menu_unauth"
         android:icon="@android:drawable/ic_menu_delete"
         android:title="@string/unauth">
+    </item>
+    <item
+        android:id="@+id/menu_about"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="@string/menu_about">
     </item>
     <item
         android:id="@+id/menu_exit"
