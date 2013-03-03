@@ -25,42 +25,42 @@
 
         <TextView
             android:id="@+id/text_title"
-            style="@style/ListItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/to_show_title" >
+            android:text="@string/to_show_title"
+            android:textColor="#FFFFFF" >
         </TextView>
 
         <TextView
             android:id="@+id/text_artist"
-            style="@style/ListItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/to_show_artist" >
+            android:text="@string/to_show_artist"
+            android:textColor="#FFFFFF" >
         </TextView>
 
         <TextView
             android:id="@+id/text_album"
-            style="@style/ListItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/to_show_album" >
+            android:text="@string/to_show_album"
+            android:textColor="#FFFFFF" >
         </TextView>
 
         <TextView
             android:id="@+id/text_duration"
-            style="@style/ListItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/to_show_duration" >
+            android:text="@string/to_show_duration"
+            android:textColor="#FFFFFF" >
         </TextView>
 
         <TextView
             android:id="@+id/text_play"
-            style="@style/ListItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/play" >
+            android:text="@string/play"
+            android:textColor="#FFFFFF" >
         </TextView>
     </LinearLayout>
 
