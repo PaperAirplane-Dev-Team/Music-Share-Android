@@ -91,6 +91,8 @@ public class Main extends ListActivity {
 		}
 	}
 
+
+
 	private void initListView() {
 		indexOverlay = (TextView) View.inflate(Main.this, R.layout.indexer,
 				null);
@@ -694,4 +696,5 @@ public class Main extends ListActivity {
 		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path)));
 		startActivity(intent);
 	}
+
 }
