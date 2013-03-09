@@ -456,6 +456,7 @@ public class Main extends ListActivity {
 				} catch (Exception e) {
 				}
 			}
+			indexOverlay.setVisibility(View.INVISIBLE);
 			showCustomDialog(position, Consts.Dialogs.SHARE);
 		}
 	}
