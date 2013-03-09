@@ -16,7 +16,7 @@
     <string name="before_url">,详见：</string>
     <string name="menu_refresh">刷新音乐列表</string>
     <string name="refresh_success">刷新音乐列表成功</string>
-    <string name="play">←_←点击封面来播放</string>
+    <string name="play">点击专辑封面播放音乐</string>
     <string name="share">分享</string>
     <string name="choose_an_operation">选择一个操作</string>
     <string name="very_long">                                                                              </string>
@@ -52,4 +52,5 @@
     <string name="feedback_hint">请提供尽可能详细的信息，例如您的手机型号、系统版本、问题重现方式等等。我们真的很感谢您的帮助！</string>
     <string name="feedback_succeed">反馈成功，十分感谢！</string>
     <string name="feedback_failed">抱歉，反馈失败，我们会重新尝试的~仍然感谢！</string>
+    <string name="send_file">发送音乐</string>
 </resources>

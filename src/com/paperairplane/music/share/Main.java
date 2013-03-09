@@ -1,7 +1,9 @@
 package com.paperairplane.music.share;
 
 import java.io.File;
+import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ActivityNotFoundException;
@@ -12,6 +14,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,6 +27,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -50,6 +57,7 @@ public class Main extends ListActivity {
 	private AlertDialog dialogMain, dialogAbout, dialogSearch;
 	private SsoHandler ssoHandler;
 	private WeiboHelper weiboHelper;
+	private TextView indexOverlay;
 
 	@Override
 	// 主体
@@ -83,12 +91,52 @@ public class Main extends ListActivity {
 	}
 
 	private void initListView() {
+		indexOverlay = (TextView) View.inflate(Main.this, R.layout.indexer,
+				null);
+		getWindowManager()
+				.addView(
+						indexOverlay,
+						new WindowManager.LayoutParams(
+								LayoutParams.WRAP_CONTENT,
+								LayoutParams.WRAP_CONTENT,
+								WindowManager.LayoutParams.TYPE_APPLICATION,
+								WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+										| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+								PixelFormat.TRANSLUCENT));
 		listview = (ListView) findViewById(android.R.id.list);// 找ListView的ID
 		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
 		// listview.setEmptyView(findViewById(R.id.empty));
 		View footerView = LayoutInflater.from(this).inflate(R.layout.footer,
 				null);
 		listview.addFooterView(footerView);
+		listview.setOnScrollListener(new OnScrollListener() {
+
+			 boolean visible;
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem, 
+		            int visibleItemCount, int totalItemCount) {
+		        if (visible) { 
+		        	String firstChar=musics[firstVisibleItem].getTitle();
+		        	if (firstChar.startsWith("The ")||firstChar.startsWith("the ")){
+		        		firstChar=firstChar.substring(4, 5);
+		        	}
+		        	else{
+		        		firstChar=firstChar.substring(0, 1);
+		        	}
+		            indexOverlay.setText(firstChar.toUpperCase(Locale.getDefault())); 
+		            indexOverlay.setVisibility(View.VISIBLE); 
+		        } 
+			}
+
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+		        visible = true; 
+		        if (scrollState == ListView.OnScrollListener.SCROLL_STATE_IDLE) { 
+		            indexOverlay.setVisibility(View.INVISIBLE); 
+		        } 
+			}
+
+		});
 	}
 
 	@Override
@@ -107,18 +155,22 @@ public class Main extends ListActivity {
 		ssoHandler.authorizeCallBack(requestCode, resultCode, data);
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	// 构建菜单
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		getMenuInflater().inflate(R.menu.main, menu);
 		if (Main.accessToken == null) {
-			menu.add(Menu.NONE, 0, 2, R.string.unauth).setIcon(
-					android.R.drawable.ic_delete);
+			menu.add(Menu.NONE, 0, 2, R.string.auth).setIcon(
+					android.R.drawable.ic_menu_add).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		} else {
-			menu.add(Menu.NONE, 1, 2, R.string.auth).setIcon(
-					android.R.drawable.ic_input_add);
+			menu.add(Menu.NONE, 1, 2, R.string.unauth).setIcon(
+					android.R.drawable.ic_menu_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		}
+		//FIXME 这里必须根据API Version判断,否则低版本上来就FC
+		//见http://blog.csdn.net/dong3560/article/details/7826013
+		//FIXME 还有就是得让ActionBar自动刷新啊否则授权以后它不变啊
 		return true;
 	}
 
@@ -135,7 +187,8 @@ public class Main extends ListActivity {
 		case R.id.menu_about:
 			showAbout();
 			break;
-		case 0:
+		case 1:
+			//我特意把这里反了过来否则没法用啊
 			try {
 
 				new AlertDialog.Builder(this)
@@ -161,13 +214,14 @@ public class Main extends ListActivity {
 											int arg1) {
 									}
 								}).show();
+				
 
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.v(Consts.DEBUG_TAG, e.getMessage());
 			}
 			break;
-		case 1:
+		case 0:
 			try {
 				ssoHandler.authorize(weiboHelper.getListener());
 			} catch (Exception e) {
@@ -270,6 +324,9 @@ public class Main extends ListActivity {
 								musics[_id].getAlbumId(),
 								Consts.ShareMeans.OTHERS);
 						break;
+					case DialogInterface.BUTTON_NEUTRAL:
+						sendFile(musics[_id].getPath());
+						break;
 					}
 				}
 			};
@@ -279,6 +336,7 @@ public class Main extends ListActivity {
 					.setView(musicInfoView)
 					.setNegativeButton(R.string.share2others, listenerMain)
 					.setPositiveButton(R.string.share2weibo, listenerMain)
+					.setNeutralButton(R.string.send_file, listenerMain)
 					.show();
 			break;
 		case Consts.Dialogs.SEARCH:
@@ -362,9 +420,9 @@ public class Main extends ListActivity {
 				+ musics[_id].getArtist());
 		textAlbum.setText(getString(R.string.album) + " : "
 				+ musics[_id].getAlbum());
-		textDuration.setText(getString(R.string.duration) + ":"
+		textDuration.setText(getString(R.string.duration) + " : "
 				+ musics[_id].getDuration());
-		int size = DisplayUtil.getAdaptedSize(Main.this);
+		int size = Utilities.getAdaptedSize(Main.this);
 		Bitmap bmpAlbum = Utilities.getLocalArtwork(Main.this,
 				musics[_id].getAlbumId(), size, size);
 		try {
@@ -374,7 +432,7 @@ public class Main extends ListActivity {
 			Log.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			Log.d(Consts.DEBUG_TAG, "Oh shit, we got null again …… Don't panic");
+			Log.d(Consts.DEBUG_TAG, "Oh shit, we got null again ...... Don't panic");
 		}
 		albumArt.setOnClickListener(new View.OnClickListener() {
 
@@ -414,15 +472,16 @@ public class Main extends ListActivity {
 		musics = new MusicData[cursor.getCount()];
 		for (int i = 0; i < cursor.getCount(); i++) {
 			musics[i] = new MusicData();
-			musics[i].setTitle(cursor.getString(0));
+			musics[i].setTitle(cursor.getString(0).trim());
 			musics[i].setDuration(Utilities.convertDuration(cursor.getInt(1)));
-			musics[i].setArtist(cursor.getString(2));
+			musics[i].setArtist(cursor.getString(2).trim());
 			musics[i].setPath(cursor.getString(3));
-			musics[i].setAlbum(cursor.getString(4));
+			musics[i].setAlbum(cursor.getString(4).trim());
 			musics[i].setAlbumId(cursor.getLong(5));
 			cursor.moveToNext();
 		}
 		listview.setAdapter(new MusicListAdapter(this, musics));
+		cursor.close();
 
 	}
 
@@ -591,10 +650,12 @@ public class Main extends ListActivity {
 
 	}
 
+	private void sendFile(String path){
+		Intent intent=new Intent();
+		intent.setAction(Intent.ACTION_SEND);
+		intent.setType("audio/*");
+		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path)));
+		startActivity(intent);
+	}
 }
-/**
- * Paper Airplane Dev Team 添乱：@author @HarryChen-SIGKILL- http://weibo.com/yszzf
- * 添乱：@author @姚沛然 http://weibo.com/xavieryao 美工：@author @七只小鸡1997
- * http://weibo.com/u/1579617160 Code Version 0030 2013.2.17 RTM
- * P.S.康师傅番茄笋干排骨面味道不错 P.P.S.没吃过……确切的说超市里也没见过…… 还有，我的寒假作业啊！！！！！！
- **/
+

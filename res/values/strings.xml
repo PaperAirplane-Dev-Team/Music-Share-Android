@@ -18,7 +18,6 @@
     <string name="play">Tap the Album Artwork to Play!</string>
     <string name="share">Share</string>
     <string name="choose_an_operation">Choose An Operation</string>
-    <string name="very_long"></string>
     <string name="refresh_on_process">Refresh On Process</string>
     <string name="menu_about">About</string>
     <string name="about_contact">Contact Us</string>
@@ -55,4 +54,5 @@
     <string name="feedback_succeed">Feedback successfully reported, thank you!</string>
     <string name="feedback_failed">Sorry but we met some problem while reporting your feedback. Don\'t worry, we\'ll try again. Still thank you!</string>
     <string name="to_show_duration">To Show Duration Here</string>
+    <string name="send_file">Send File</string>
 </resources>

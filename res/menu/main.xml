@@ -2,18 +2,24 @@
 
     <item
         android:id="@+id/menu_refresh"
-        android:icon="@android:drawable/ic_menu_agenda"
-        android:title="@string/menu_refresh" android:orderInCategory="1">
+        android:icon="@android:drawable/ic_popup_sync"
+        android:title="@string/menu_refresh"
+		android:orderInCategory="1"
+        android:showAsAction="always">
     </item>
     <item
         android:id="@+id/menu_about"
         android:icon="@android:drawable/ic_menu_info_details"
-        android:title="@string/menu_about" android:orderInCategory="3">
+        android:title="@string/menu_about"
+		android:orderInCategory="3"
+		android:showAsAction="ifRoom">
     </item>
     <item
         android:id="@+id/menu_exit"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
-        android:title="@string/menu_exit" android:orderInCategory="4">
+        android:title="@string/menu_exit"
+		android:orderInCategory="4"
+		android:showAsAction="ifRoom">
     </item>
 
 </menu>

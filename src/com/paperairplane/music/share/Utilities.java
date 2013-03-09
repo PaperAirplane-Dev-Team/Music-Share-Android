@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -32,6 +33,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 class Utilities {
@@ -308,5 +310,13 @@ class Utilities {
 
 	public Utilities() throws Exception {
 		throw new Exception("What the hell?You cannot do that.");
+	}
+
+	public static int getAdaptedSize(Activity activity){
+		int size;
+		DisplayMetrics metrics = new DisplayMetrics();
+		activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		size = metrics.widthPixels /10 *6 ;
+		return size;
 	}
 }
