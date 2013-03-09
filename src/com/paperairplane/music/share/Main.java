@@ -16,6 +16,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -111,29 +112,31 @@ public class Main extends ListActivity {
 		listview.addFooterView(footerView);
 		listview.setOnScrollListener(new OnScrollListener() {
 
-			 boolean visible;
+			boolean visible;
+
 			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem, 
-		            int visibleItemCount, int totalItemCount) {
-		        if (visible) { 
-		        	String firstChar=musics[firstVisibleItem].getTitle();
-		        	if (firstChar.startsWith("The ")||firstChar.startsWith("the ")){
-		        		firstChar=firstChar.substring(4, 5);
-		        	}
-		        	else{
-		        		firstChar=firstChar.substring(0, 1);
-		        	}
-		            indexOverlay.setText(firstChar.toUpperCase(Locale.getDefault())); 
-		            indexOverlay.setVisibility(View.VISIBLE); 
-		        } 
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				if (visible) {
+					String firstChar = musics[firstVisibleItem].getTitle();
+					if (firstChar.startsWith("The ")
+							|| firstChar.startsWith("the ")) {
+						firstChar = firstChar.substring(4, 5);
+					} else {
+						firstChar = firstChar.substring(0, 1);
+					}
+					indexOverlay.setText(firstChar.toUpperCase(Locale
+							.getDefault()));
+					indexOverlay.setVisibility(View.VISIBLE);
+				}
 			}
 
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
-		        visible = true; 
-		        if (scrollState == ListView.OnScrollListener.SCROLL_STATE_IDLE) { 
-		            indexOverlay.setVisibility(View.INVISIBLE); 
-		        } 
+				visible = true;
+				if (scrollState == ListView.OnScrollListener.SCROLL_STATE_IDLE) {
+					indexOverlay.setVisibility(View.INVISIBLE);
+				}
 			}
 
 		});
@@ -154,23 +157,53 @@ public class Main extends ListActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		ssoHandler.authorizeCallBack(requestCode, resultCode, data);
 	}
-
+/*
 	@SuppressLint("NewApi")
 	@Override
 	// 构建菜单
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
+		menu.clear();
 		getMenuInflater().inflate(R.menu.main, menu);
-		if (Main.accessToken == null) {
-			menu.add(Menu.NONE, 0, 2, R.string.auth).setIcon(
-					android.R.drawable.ic_menu_add).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		if (Build.VERSION.SDK_INT >= 11) {
+			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
+					R.string.menu_refresh).setIcon(android.R.drawable.ic_popup_sync).setShowAsAction(
+					MenuItem.SHOW_AS_ACTION_ALWAYS);
 		} else {
-			menu.add(Menu.NONE, 1, 2, R.string.unauth).setIcon(
-					android.R.drawable.ic_menu_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
+					R.string.menu_refresh).setIcon(android.R.drawable.ic_menu_recent_history);
 		}
-		//FIXME 这里必须根据API Version判断,否则低版本上来就FC
-		//见http://blog.csdn.net/dong3560/article/details/7826013
-		//FIXME 还有就是得让ActionBar自动刷新啊否则授权以后它不变啊
+		if (Main.accessToken == null) {
+			menu.add(Menu.NONE, Consts.MenuItem.AUTH, 2, R.string.auth)
+					.setIcon(android.R.drawable.ic_menu_add);
+		} else {
+			menu.add(Menu.NONE, Consts.MenuItem.UNAUTH, 2, R.string.unauth)
+					.setIcon(android.R.drawable.ic_menu_delete);
+		}
+
+		return true;
+	}
+*/
+	@SuppressLint("NewApi")
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		getMenuInflater().inflate(R.menu.main, menu);
+		if (Build.VERSION.SDK_INT >= 11) {
+			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
+					R.string.menu_refresh).setIcon(android.R.drawable.ic_popup_sync).setShowAsAction(
+					MenuItem.SHOW_AS_ACTION_ALWAYS);
+		} else {
+			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
+					R.string.menu_refresh).setIcon(android.R.drawable.ic_menu_recent_history);
+		}
+		if (Main.accessToken == null) {
+			menu.add(Menu.NONE, Consts.MenuItem.AUTH, 2, R.string.auth)
+					.setIcon(android.R.drawable.ic_menu_add);
+		} else {
+			menu.add(Menu.NONE, Consts.MenuItem.UNAUTH, 2, R.string.unauth)
+					.setIcon(android.R.drawable.ic_menu_delete);
+		}
 		return true;
 	}
 
@@ -187,8 +220,8 @@ public class Main extends ListActivity {
 		case R.id.menu_about:
 			showAbout();
 			break;
-		case 1:
-			//我特意把这里反了过来否则没法用啊
+		case Consts.MenuItem.UNAUTH:
+			// 我特意把这里反了过来否则没法用啊
 			try {
 
 				new AlertDialog.Builder(this)
@@ -196,12 +229,16 @@ public class Main extends ListActivity {
 						.setTitle(R.string.unauth_confirm)
 						.setPositiveButton(android.R.string.ok,
 								new DialogInterface.OnClickListener() {
+									@SuppressLint("NewApi")
 									@Override
 									public void onClick(DialogInterface arg0,
 											int arg1) {
 										Main.accessToken = null;
 										AccessTokenKeeper
 												.clear(getApplicationContext());
+										if (Build.VERSION.SDK_INT > 10) {
+											invalidateOptionsMenu();
+										}
 										Toast.makeText(Main.this,
 												getString(R.string.unauthed),
 												Toast.LENGTH_SHORT).show();
@@ -214,21 +251,20 @@ public class Main extends ListActivity {
 											int arg1) {
 									}
 								}).show();
-				
 
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.v(Consts.DEBUG_TAG, e.getMessage());
 			}
 			break;
-		case 0:
+		case Consts.MenuItem.AUTH:
 			try {
 				ssoHandler.authorize(weiboHelper.getListener());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			break;
-		case R.id.menu_refresh:
+		case Consts.MenuItem.REFRESH:
 			refreshMusicList();
 			showMusicList();
 			break;
@@ -336,8 +372,7 @@ public class Main extends ListActivity {
 					.setView(musicInfoView)
 					.setNegativeButton(R.string.share2others, listenerMain)
 					.setPositiveButton(R.string.share2weibo, listenerMain)
-					.setNeutralButton(R.string.send_file, listenerMain)
-					.show();
+					.setNeutralButton(R.string.send_file, listenerMain).show();
 			break;
 		case Consts.Dialogs.SEARCH:
 			Log.v(Consts.DEBUG_TAG, "点击footer");
@@ -432,7 +467,8 @@ public class Main extends ListActivity {
 			Log.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			Log.d(Consts.DEBUG_TAG, "Oh shit, we got null again ...... Don't panic");
+			Log.d(Consts.DEBUG_TAG,
+					"Oh shit, we got null again ...... Don't panic");
 		}
 		albumArt.setOnClickListener(new View.OnClickListener() {
 
@@ -651,12 +687,11 @@ public class Main extends ListActivity {
 
 	}
 
-	private void sendFile(String path){
-		Intent intent=new Intent();
+	private void sendFile(String path) {
+		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_SEND);
 		intent.setType("audio/*");
 		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path)));
 		startActivity(intent);
 	}
 }
-
