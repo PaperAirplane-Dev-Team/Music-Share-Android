@@ -48,16 +48,21 @@ public class WeiboHelper {
  * 发送微博
  * @param content 要发送的微博内容
  * @param artworkUrl 要发送的图片
+ * @param fileName 
  * @param willFollow 是否要关注
  */
-	public void sendWeibo(String content, String artworkUrl, boolean willFollow) {
+	public void sendWeibo(String content, String artworkUrl, String fileName, boolean willFollow) {
 		api = new StatusesAPI(Main.accessToken);
 		initRequestListener();
 
 		if (artworkUrl == null) {
 			Log.v(Consts.DEBUG_TAG, "发送无图微博");
 			api.update(content, null, null, requestListener);
-		} else {
+		}else if(fileName!=null){
+			Log.v(Consts.DEBUG_TAG,"发布带本地封面的微博");
+			api.upload(content, fileName, null, null, requestListener);
+		}
+		else {
 			Log.v(Consts.DEBUG_TAG, "发送带图微博，url=" + artworkUrl);
 			String url = "https://api.weibo.com/2/statuses/upload_url_text.json";
 			WeiboParameters params = new WeiboParameters();
@@ -145,10 +150,11 @@ public class WeiboHelper {
 			if(preferences.getBoolean("read", false)){
 			String content = preferences.getString("content", null);
 			String artworkUrl = preferences.getString("artworkUrl", null);
+			String fileName = preferences.getString("fileName", null);
 			boolean willFollow = preferences.getBoolean("willFollow", false);
 			Log.v(Consts.DEBUG_TAG, "获取状态\n" + content + "\n" + artworkUrl + "\n"
 					+ willFollow);
-			sendWeibo(content, artworkUrl, willFollow);
+			sendWeibo(content, artworkUrl, fileName, willFollow);
 			preferences.edit().putBoolean("read", false).commit();
 			}
 		}

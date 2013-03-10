@@ -603,6 +603,7 @@ public class Main extends ListActivity {
 				Bundle bundle = (Bundle) msg.obj;
 				String _content = bundle.getString("content");
 				final String artworkUrl = bundle.getString("artworkUrl");
+				final String fileName = bundle.getString("fileName");
 				// Log.v(Consts.DEBUG_TAG, artworkUrl);
 
 				et.setText(_content);
@@ -622,12 +623,12 @@ public class Main extends ListActivity {
 														.isSessionValid() == false)) {// 检测之前是否授权过
 											handler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
 											saveSendStatus(content,
-													cb.isChecked(), artworkUrl);
+													cb.isChecked(), artworkUrl,fileName);
 											ssoHandler.authorize(weiboHelper
 													.getListener());// 授权
 										} else {
 											weiboHelper.sendWeibo(content,
-													artworkUrl, cb.isChecked());
+													artworkUrl,fileName, cb.isChecked());
 										}
 
 									}
@@ -678,7 +679,7 @@ public class Main extends ListActivity {
 	};
 
 	private void saveSendStatus(String content, boolean checked,
-			String artworkUrl) {
+			String artworkUrl, String fileName) {
 		SharedPreferences preferences = getApplicationContext()
 				.getSharedPreferences(Consts.Preferences.SHARE,
 						Context.MODE_PRIVATE);
@@ -686,6 +687,7 @@ public class Main extends ListActivity {
 		preferences.edit().putString("content", content).commit();
 		preferences.edit().putBoolean("willFollow", checked).commit();
 		preferences.edit().putString("artworkUrl", artworkUrl).commit();
+		preferences.edit().putString("fileName", fileName);
 
 	}
 
