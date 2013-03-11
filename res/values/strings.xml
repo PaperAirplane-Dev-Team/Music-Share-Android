@@ -49,6 +49,7 @@
     <string name="single">[\&quot;单曲\&quot;]</string>
     <string name="unauth_confirm">Are You Sure to Unauth?</string>
     <string name="feedback">Feedback</string>
+    <string name="feedback_weibo">Feedback via Weibo</string>
     <string name="thank_for_feedback">Thank you for your feedback</string>
     <string name="feedback_hint">Please provide us with as much information as you can. E.g., your phone model, your system version, when the problem happens, etc. We are really grateful for your great help!</string>
     <string name="feedback_succeed">Feedback successfully reported, thank you!</string>

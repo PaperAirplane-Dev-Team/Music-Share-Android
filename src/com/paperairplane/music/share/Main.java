@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
@@ -91,8 +92,6 @@ public class Main extends ListActivity {
 		}
 	}
 
-
-
 	private void initListView() {
 		indexOverlay = (TextView) View.inflate(Main.this, R.layout.indexer,
 				null);
@@ -124,7 +123,12 @@ public class Main extends ListActivity {
 					if (firstChar.startsWith("The ")
 							|| firstChar.startsWith("the ")) {
 						firstChar = firstChar.substring(4, 5);
-					} else {
+					}else if(firstChar.startsWith("a ")||firstChar.startsWith("A ")){
+						firstChar = firstChar.substring(2,3);
+					}else if(firstChar.startsWith("an ")||firstChar.startsWith("An ")){
+						firstChar = firstChar.substring(3,4);
+					}
+					else {
 						firstChar = firstChar.substring(0, 1);
 					}
 					indexOverlay.setText(firstChar.toUpperCase(Locale
@@ -159,33 +163,27 @@ public class Main extends ListActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		ssoHandler.authorizeCallBack(requestCode, resultCode, data);
 	}
-/*
-	@SuppressLint("NewApi")
-	@Override
-	// 构建菜单
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		menu.clear();
-		getMenuInflater().inflate(R.menu.main, menu);
-		if (Build.VERSION.SDK_INT >= 11) {
-			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
-					R.string.menu_refresh).setIcon(android.R.drawable.ic_popup_sync).setShowAsAction(
-					MenuItem.SHOW_AS_ACTION_ALWAYS);
-		} else {
-			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
-					R.string.menu_refresh).setIcon(android.R.drawable.ic_menu_recent_history);
-		}
-		if (Main.accessToken == null) {
-			menu.add(Menu.NONE, Consts.MenuItem.AUTH, 2, R.string.auth)
-					.setIcon(android.R.drawable.ic_menu_add);
-		} else {
-			menu.add(Menu.NONE, Consts.MenuItem.UNAUTH, 2, R.string.unauth)
-					.setIcon(android.R.drawable.ic_menu_delete);
-		}
 
-		return true;
-	}
-*/
+	/*
+	 * @SuppressLint("NewApi")
+	 * 
+	 * @Override // 构建菜单 public boolean onCreateOptionsMenu(Menu menu) {
+	 * super.onCreateOptionsMenu(menu); menu.clear();
+	 * getMenuInflater().inflate(R.menu.main, menu); if (Build.VERSION.SDK_INT
+	 * >= 11) { menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
+	 * R.string.menu_refresh
+	 * ).setIcon(android.R.drawable.ic_popup_sync).setShowAsAction(
+	 * MenuItem.SHOW_AS_ACTION_ALWAYS); } else { menu.add(Menu.NONE,
+	 * Consts.MenuItem.REFRESH, 1,
+	 * R.string.menu_refresh).setIcon(android.R.drawable
+	 * .ic_menu_recent_history); } if (Main.accessToken == null) {
+	 * menu.add(Menu.NONE, Consts.MenuItem.AUTH, 2, R.string.auth)
+	 * .setIcon(android.R.drawable.ic_menu_add); } else { menu.add(Menu.NONE,
+	 * Consts.MenuItem.UNAUTH, 2, R.string.unauth)
+	 * .setIcon(android.R.drawable.ic_menu_delete); }
+	 * 
+	 * return true; }
+	 */
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -193,11 +191,13 @@ public class Main extends ListActivity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		if (Build.VERSION.SDK_INT >= 11) {
 			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
-					R.string.menu_refresh).setIcon(android.R.drawable.ic_popup_sync).setShowAsAction(
-					MenuItem.SHOW_AS_ACTION_ALWAYS);
+					R.string.menu_refresh)
+					.setIcon(android.R.drawable.ic_popup_sync)
+					.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		} else {
 			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
-					R.string.menu_refresh).setIcon(android.R.drawable.ic_menu_recent_history);
+					R.string.menu_refresh).setIcon(
+					android.R.drawable.ic_menu_recent_history);
 		}
 		if (Main.accessToken == null) {
 			menu.add(Menu.NONE, Consts.MenuItem.AUTH, 2, R.string.auth)
@@ -320,13 +320,24 @@ public class Main extends ListActivity {
 															0,
 															Consts.Dialogs.EMPTY);
 												} else {
+													String versionCode = "NameNotFoundException";
+													try {
+														versionCode = Integer.toString(Main.this.getPackageManager().getPackageInfo(Main.this.getPackageName(), 0).versionCode);
+													} catch (NameNotFoundException e) {
+														// TODO Auto-generated catch block
+														e.printStackTrace();
+													}
 													SendFeedback feedback = new SendFeedback(
 															contentString,
-															handler);
+															handler,versionCode);
 													feedback.start();
 												}
 											}
 										}).show();
+					
+						
+										
+										//TODO:show()
 						break;
 					}
 				}
@@ -623,12 +634,14 @@ public class Main extends ListActivity {
 														.isSessionValid() == false)) {// 检测之前是否授权过
 											handler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
 											saveSendStatus(content,
-													cb.isChecked(), artworkUrl,fileName);
+													cb.isChecked(), artworkUrl,
+													fileName);
 											ssoHandler.authorize(weiboHelper
 													.getListener());// 授权
 										} else {
 											weiboHelper.sendWeibo(content,
-													artworkUrl,fileName, cb.isChecked());
+													artworkUrl, fileName,
+													cb.isChecked());
 										}
 
 									}

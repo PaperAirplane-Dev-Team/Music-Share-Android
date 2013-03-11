@@ -214,13 +214,17 @@ class Utilities {
 
 	}
 
-	public static boolean sendFeedback(String content) {
-		StringBuffer device_info = new StringBuffer("===================" + "\r");
+	public static boolean sendFeedback(String content, String versionCode) {
+		StringBuffer device_info = new StringBuffer("=============================" + "\r"+"App Version");
+		device_info.append(versionCode);
+		device_info.append("=============================" + "\r" + "Device Info:" + "\r");
 		device_info.append(" Model:" + Build.MODEL + "\r");
 		device_info.append(" Manufacturer:" + Build.MANUFACTURER + "\r");
 		device_info.append(" Product:" + Build.PRODUCT + "\r");
 		device_info.append(" SDK Version:" + Build.VERSION.SDK_INT + "\r");
 		device_info.append(" Release:" + Build.VERSION.RELEASE + "\r");
+		device_info.append(" Incremental:" + Build.VERSION.INCREMENTAL + "\r");
+		device_info.append(" Code Name:" + Build.VERSION.CODENAME + "\r");
 		HttpPost post = new HttpPost(Consts.FEEDBACK_URL);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		Log.v(Consts.DEBUG_TAG, "content is " + content + "\r"

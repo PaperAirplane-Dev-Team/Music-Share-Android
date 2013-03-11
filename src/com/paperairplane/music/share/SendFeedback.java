@@ -6,10 +6,11 @@ import android.os.Message;
 public class SendFeedback extends Thread {
 
 	private String content;
+	private String versionCode;
 	private Handler handler;
 
 	public void run() {
-		if (Utilities.sendFeedback(content)) {
+		if (Utilities.sendFeedback(content,versionCode)) {
 			handler.sendEmptyMessage(Consts.Status.FEEDBACK_SUCCEED);
 		}
 		else {
@@ -18,8 +19,9 @@ public class SendFeedback extends Thread {
 		}
 	}
 
-	public SendFeedback(String _content, Handler _handler) {
+	public SendFeedback(String _content, Handler _handler, String versionCode) {
 		content = _content;
+		this.versionCode = versionCode;
 		handler = _handler;
 	}
 }
