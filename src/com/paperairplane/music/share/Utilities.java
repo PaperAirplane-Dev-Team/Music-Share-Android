@@ -221,7 +221,7 @@ class Utilities {
 		StringBuffer device_info = new StringBuffer(
 				"=============================" + "\r" + "App Version");
 		device_info.append(versionCode);
-		device_info.append("=============================" + "\r"
+		device_info.append("\r=============================" + "\r"
 				+ "Device Info:" + "\r");
 		device_info.append(" Model:" + Build.MODEL + "\r");
 		device_info.append(" Manufacturer:" + Build.MANUFACTURER + "\r");

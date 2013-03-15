@@ -349,8 +349,7 @@ public class Main extends ListActivity {
 							builder.setNegativeButton(R.string.feedback_weibo,
 									listener);
 						}
-						// TODO:show()
-
+						builder.show();
 						break;
 					}
 				}
