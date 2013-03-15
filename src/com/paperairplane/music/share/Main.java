@@ -344,8 +344,8 @@ public class Main extends ListActivity {
 						AlertDialog.Builder builder = new AlertDialog.Builder(
 								Main.this).setView(feedback).setPositiveButton(
 								R.string.feedback, listener);
-						if (Main.accessToken == null
-								|| (Main.accessToken.isSessionValid() == false)) {
+						if (Main.accessToken != null
+								&& (Main.accessToken.isSessionValid() != false)) {
 							builder.setNegativeButton(R.string.feedback_weibo,
 									listener);
 						}
