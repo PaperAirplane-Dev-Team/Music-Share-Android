@@ -96,8 +96,8 @@ class Utilities {
 				if (count == 1) {
 					JSONArray contentArray = rootObject.getJSONArray("musics");
 					JSONObject item = contentArray.getJSONObject(0);
-					info[Consts.ArraySubscript.MUSIC] = Consts.INFO_REDIRECT_URL+item
-							.getString("id");
+					info[Consts.ArraySubscript.MUSIC] = Consts.INFO_REDIRECT_URL
+							+ item.getString("id");
 					info[Consts.ArraySubscript.ARTWORK] = item
 							.getString("image");
 					info[Consts.ArraySubscript.ARTIST] = item
@@ -190,7 +190,9 @@ class Utilities {
 		HttpResponse httpResponse;
 		try {
 			String api_url = Consts.API_URL
-					+ java.net.URLEncoder.encode((title + "+" + artist).replaceAll(" ", "+"), "UTF-8");
+					+ java.net.URLEncoder.encode(
+							(title + "+" + artist).replaceAll(" ", "+"),
+							"UTF-8");
 			Log.v(Consts.DEBUG_TAG, "方法 getJSON将要进行的请求为" + api_url);
 			HttpGet httpGet = new HttpGet(api_url);
 
@@ -214,10 +216,13 @@ class Utilities {
 
 	}
 
-	public static boolean sendFeedback(String content, String versionCode) {
-		StringBuffer device_info = new StringBuffer("=============================" + "\r"+"App Version");
+	public static boolean sendFeedback(String content, String versionCode,
+			int means, String accessToken) {
+		StringBuffer device_info = new StringBuffer(
+				"=============================" + "\r" + "App Version");
 		device_info.append(versionCode);
-		device_info.append("=============================" + "\r" + "Device Info:" + "\r");
+		device_info.append("=============================" + "\r"
+				+ "Device Info:" + "\r");
 		device_info.append(" Model:" + Build.MODEL + "\r");
 		device_info.append(" Manufacturer:" + Build.MANUFACTURER + "\r");
 		device_info.append(" Product:" + Build.PRODUCT + "\r");
@@ -225,23 +230,35 @@ class Utilities {
 		device_info.append(" Release:" + Build.VERSION.RELEASE + "\r");
 		device_info.append(" Incremental:" + Build.VERSION.INCREMENTAL + "\r");
 		device_info.append(" Code Name:" + Build.VERSION.CODENAME + "\r");
-		HttpPost post = new HttpPost(Consts.FEEDBACK_URL);
+		HttpPost post = null ;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		Log.v(Consts.DEBUG_TAG, "content is " + content + "\r"
 				+ "device info is :" + device_info.toString());
 		try {
-			params.add(new BasicNameValuePair("content", java.net.URLEncoder
-					.encode(content, "UTF-8")));
-			params.add(new BasicNameValuePair("device_info",
-					java.net.URLEncoder.encode(device_info.toString(), "UTF-8")));
-			Log.v(Consts.DEBUG_TAG, "param is " + params.toString());
-			post.setEntity(new UrlEncodedFormEntity(params));
-			HttpResponse response = new DefaultHttpClient().execute(post);
-			if (response.getStatusLine().getStatusCode() == 200) {
-				Log.v(Consts.DEBUG_TAG, "Feedback succeed");
-				return true;
-			} else
-				throw new RuntimeException();
+			switch (means) {
+			case Consts.ShareMeans.OTHERS:
+				post = new HttpPost(Consts.FEEDBACK_URL);
+				params.add(new BasicNameValuePair("content",
+						java.net.URLEncoder.encode(content, "UTF-8")));
+				params.add(new BasicNameValuePair("device_info",
+						java.net.URLEncoder.encode(device_info.toString(),
+								"UTF-8")));
+				break;
+			case Consts.ShareMeans.WEIBO:
+				post = new HttpPost(Consts.WEIBO_STATUSES_UPDATE);
+				params.add(new BasicNameValuePair("access_token",accessToken));
+				params.add(new BasicNameValuePair("status",content+device_info.toString()+Consts.FEEDBACK));
+				break;
+			}
+				Log.v(Consts.DEBUG_TAG, "param is " + params.toString());
+				post.setEntity(new UrlEncodedFormEntity(params));
+				HttpResponse response = new DefaultHttpClient().execute(post);
+				if (response.getStatusLine().getStatusCode() == 200) {
+					Log.v(Consts.DEBUG_TAG, "Feedback succeed");
+					return true;
+				} else
+					throw new RuntimeException();
+			
 		} catch (Exception e) {
 			Log.d(Consts.DEBUG_TAG, "Feedbak failed");
 			e.printStackTrace();
@@ -316,11 +333,11 @@ class Utilities {
 		throw new Exception("What the hell?You cannot do that.");
 	}
 
-	public static int getAdaptedSize(Activity activity){
+	public static int getAdaptedSize(Activity activity) {
 		int size;
 		DisplayMetrics metrics = new DisplayMetrics();
 		activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		size = metrics.widthPixels /10 *6 ;
+		size = metrics.widthPixels / 10 * 6;
 		return size;
 	}
 }

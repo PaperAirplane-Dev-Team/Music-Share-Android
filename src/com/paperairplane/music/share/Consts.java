@@ -15,6 +15,8 @@ public class Consts {
 	public final static String INFO_REDIRECT_URL = "http://paperairplane.sinaapp.com/redirect.php?id=";
 	public final static String FEEDBACK_URL = "http://paperairplane.sinaapp.com/feedback.php";
 	public final static String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
+	public final static String WEIBO_STATUSES_UPDATE = "https://api.weibo.com/2/statuses/update.json";
+	public final static String FEEDBACK = " @“¶≈Ê»ª @HarryChen-SIGKILL #÷Ω∑…ª˙“Ù¿÷∑÷œÌ∑¥¿°#";
 	public final static String VERY_LONG = "                                                         ";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");

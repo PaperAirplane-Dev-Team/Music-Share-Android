@@ -123,12 +123,13 @@ public class Main extends ListActivity {
 					if (firstChar.startsWith("The ")
 							|| firstChar.startsWith("the ")) {
 						firstChar = firstChar.substring(4, 5);
-					}else if(firstChar.startsWith("a ")||firstChar.startsWith("A ")){
-						firstChar = firstChar.substring(2,3);
-					}else if(firstChar.startsWith("an ")||firstChar.startsWith("An ")){
-						firstChar = firstChar.substring(3,4);
-					}
-					else {
+					} else if (firstChar.startsWith("a ")
+							|| firstChar.startsWith("A ")) {
+						firstChar = firstChar.substring(2, 3);
+					} else if (firstChar.startsWith("an ")
+							|| firstChar.startsWith("An ")) {
+						firstChar = firstChar.substring(3, 4);
+					} else {
 						firstChar = firstChar.substring(0, 1);
 					}
 					indexOverlay.setText(firstChar.toUpperCase(Locale
@@ -304,40 +305,52 @@ public class Main extends ListActivity {
 								R.layout.feedback, null);
 						final EditText content = (EditText) feedback
 								.findViewById(R.id.et_feedback);
-						new AlertDialog.Builder(Main.this)
-								.setView(feedback)
-								.setPositiveButton(R.string.feedback,
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int which) {
-												String contentString = content
-														.getText().toString()
-														.trim();
-												if (contentString.equals("")) {
-													showCustomDialog(
-															0,
-															Consts.Dialogs.EMPTY);
-												} else {
-													String versionCode = "NameNotFoundException";
-													try {
-														versionCode = Integer.toString(Main.this.getPackageManager().getPackageInfo(Main.this.getPackageName(), 0).versionCode);
-													} catch (NameNotFoundException e) {
-														// TODO Auto-generated catch block
-														e.printStackTrace();
-													}
-													SendFeedback feedback = new SendFeedback(
-															contentString,
-															handler,versionCode);
-													feedback.start();
-												}
-											}
-										}).show();
-					
-						
-										
-										//TODO:show()
+						DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								String contentString = content.getText()
+										.toString().trim();
+								if (contentString.equals("")) {
+									showCustomDialog(0, Consts.Dialogs.EMPTY);
+								} else {
+									String versionCode = "NameNotFoundException";
+									try {
+										versionCode = Integer
+												.toString(Main.this
+														.getPackageManager()
+														.getPackageInfo(
+																Main.this
+																		.getPackageName(),
+																0).versionCode);
+									} catch (NameNotFoundException e) {
+										e.printStackTrace();
+									}
+									SendFeedback feedback = new SendFeedback(
+											contentString, handler, versionCode);
+									switch (which) {
+									case DialogInterface.BUTTON_POSITIVE:
+										feedback.setMeansAndAccessToken(Consts.ShareMeans.OTHERS,null);
+										feedback.start();
+										break;
+									case DialogInterface.BUTTON_NEGATIVE:
+										feedback.setMeansAndAccessToken(Consts.ShareMeans.WEIBO,Main.accessToken.getToken());
+										feedback.start();
+										break;
+									}
+								}
+							}
+						};
+						AlertDialog.Builder builder = new AlertDialog.Builder(
+								Main.this).setView(feedback).setPositiveButton(
+								R.string.feedback, listener);
+						if (Main.accessToken == null
+								|| (Main.accessToken.isSessionValid() == false)) {
+							builder.setNegativeButton(R.string.feedback_weibo,
+									listener);
+						}
+						// TODO:show()
+
 						break;
 					}
 				}
