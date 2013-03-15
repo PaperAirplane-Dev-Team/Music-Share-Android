@@ -11,17 +11,20 @@ public class Consts {
 			MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID };
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String APP_KEY = "1006183120";
-	public final static String API_URL = "http://paperairplane.sinaapp.com/proxy.php?q=";
-	public final static String INFO_REDIRECT_URL = "http://paperairplane.sinaapp.com/redirect.php?id=";
-	public final static String FEEDBACK_URL = "http://paperairplane.sinaapp.com/feedback.php";
-	public final static String REDIRECT_URI = "https://api.weibo.com/oauth2/default.html";
-	public final static String WEIBO_STATUSES_UPDATE = "https://api.weibo.com/2/statuses/update.json";
-	public final static String FEEDBACK = " @“¶≈Ê»ª @HarryChen-SIGKILL #÷Ω∑…ª˙“Ù¿÷∑÷œÌ∑¥¿°#";
+	public final static String FEEDBACK = "#÷Ω∑…ª˙“Ù¿÷∑÷œÌ∑¥¿°# @“¶≈Ê»ª @HarryChen-SIGKILL- ";
 	public final static String VERY_LONG = "                                                         ";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
 	public final static int NULL = -1;
 
+	public final class Url {
+		public final static String API_QUERY = "http://paperairplane.sinaapp.com/proxy.php?q=";
+		public final static String INFO_REDIRECT = "http://paperairplane.sinaapp.com/redirect.php?id=";
+		public final static String FEEDBACK = "http://paperairplane.sinaapp.com/feedback.php";
+		public final static String CHECK_UPDATE = "http://paperairplane.sinaapp.com/update.php?version=";
+		public final static String AUTH_REDIRECT = "https://api.weibo.com/oauth2/default.html";
+		public final static String WEIBO_STATUSES_UPDATE = "https://api.weibo.com/2/statuses/update.json";
+	}
 	public final class Status {
 		public static final int INTERNET_ERROR = 0;
 		public static final int SEND_WEIBO = 1;
@@ -32,6 +35,8 @@ public class Consts {
 		public static final int AUTH_SUCCEED = 6;
 		public static final int FEEDBACK_SUCCEED = 7;
 		public static final int FEEDBACK_FAIL = 8;
+		public static final int NO_UPDATE = 9;
+		public static final int HAS_UPDATE = 10;
 	}
 
 	public final class WeiboUid {
@@ -46,6 +51,11 @@ public class Consts {
 		public static final int ARTIST = 2;
 		public static final int ALBUM = 3;
 		public static final int VERSION = 4;
+		
+		public static final int VERSION_CODE = 0;
+		public static final int VERSION_NAME = 1;
+		public static final int WHATS_NEW = 2;
+		public static final int RELEASE_DATE = 3;
 	}
 
 	public final class ShareMeans {

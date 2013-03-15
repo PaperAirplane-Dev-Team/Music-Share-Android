@@ -27,14 +27,17 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
 import android.util.Log;
+
 
 class Utilities {
 
@@ -96,7 +99,7 @@ class Utilities {
 				if (count == 1) {
 					JSONArray contentArray = rootObject.getJSONArray("musics");
 					JSONObject item = contentArray.getJSONObject(0);
-					info[Consts.ArraySubscript.MUSIC] = Consts.INFO_REDIRECT_URL
+					info[Consts.ArraySubscript.MUSIC] = Consts.Url.INFO_REDIRECT
 							+ item.getString("id");
 					info[Consts.ArraySubscript.ARTWORK] = item
 							.getString("image");
@@ -189,7 +192,7 @@ class Utilities {
 		String json = null;
 		HttpResponse httpResponse;
 		try {
-			String api_url = Consts.API_URL
+			String api_url = Consts.Url.API_QUERY
 					+ java.net.URLEncoder.encode(
 							(title + "+" + artist).replaceAll(" ", "+"),
 							"UTF-8");
@@ -217,19 +220,22 @@ class Utilities {
 	}
 
 	public static boolean sendFeedback(String content, String versionCode,
-			int means, String accessToken) {
+			int means, Context _context, Handler _handler) {
 		StringBuffer device_info = new StringBuffer(
-				"=============================" + "\r" + "App Version");
+				 "\r" + "App Version:");
 		device_info.append(versionCode);
-		device_info.append("\r=============================" + "\r"
+		if(means==Consts.ShareMeans.OTHERS)device_info.append( "\r"
 				+ "Device Info:" + "\r");
 		device_info.append(" Model:" + Build.MODEL + "\r");
+		if(means==Consts.ShareMeans.OTHERS){
 		device_info.append(" Manufacturer:" + Build.MANUFACTURER + "\r");
 		device_info.append(" Product:" + Build.PRODUCT + "\r");
 		device_info.append(" SDK Version:" + Build.VERSION.SDK_INT + "\r");
+		//device_info.append(" Incremental:" + Build.VERSION.INCREMENTAL + "\r");
+		device_info.append(" Build ID:" + Build.DISPLAY+ "\r");
+		//device_info.append(" Code Name:" + Build.VERSION.CODENAME + "\r");
+		}
 		device_info.append(" Release:" + Build.VERSION.RELEASE + "\r");
-		device_info.append(" Incremental:" + Build.VERSION.INCREMENTAL + "\r");
-		device_info.append(" Code Name:" + Build.VERSION.CODENAME + "\r");
 		HttpPost post = null ;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		Log.v(Consts.DEBUG_TAG, "content is " + content + "\r"
@@ -237,7 +243,7 @@ class Utilities {
 		try {
 			switch (means) {
 			case Consts.ShareMeans.OTHERS:
-				post = new HttpPost(Consts.FEEDBACK_URL);
+				post = new HttpPost(Consts.Url.FEEDBACK);
 				params.add(new BasicNameValuePair("content",
 						java.net.URLEncoder.encode(content, "UTF-8")));
 				params.add(new BasicNameValuePair("device_info",
@@ -245,10 +251,12 @@ class Utilities {
 								"UTF-8")));
 				break;
 			case Consts.ShareMeans.WEIBO:
-				post = new HttpPost(Consts.WEIBO_STATUSES_UPDATE);
-				params.add(new BasicNameValuePair("access_token",accessToken));
-				params.add(new BasicNameValuePair("status",content+device_info.toString()+Consts.FEEDBACK));
-				break;
+				//post = new HttpPost(Consts.WEIBO_STATUSES_UPDATE);
+				//params.add(new BasicNameValuePair("access_token" ,accessToken));
+				//params.add(new BasicNameValuePair("status" ,java.net.URLEncoder.encode(content + device_info.toString() + Consts.FEEDBACK, "UTF-8")));
+				WeiboHelper helper=new WeiboHelper(_handler, _context);
+				helper.sendWeibo(Consts.FEEDBACK + content + "|||" +device_info.toString() , null, null, false);
+				return true;
 			}
 				Log.v(Consts.DEBUG_TAG, "param is " + params.toString());
 				post.setEntity(new UrlEncodedFormEntity(params));
@@ -339,5 +347,60 @@ class Utilities {
 		activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		size = metrics.widthPixels / 10 * 6;
 		return size;
+	}
+	
+	public static void checkForUpdate(Context _context, Handler handler){
+		int versionCode=0;
+		try {
+			versionCode=_context.getPackageManager().getPackageInfo(_context.getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+		Log.v(Consts.DEBUG_TAG, "方法checkForUpdate被调用");
+		String json = null;
+		HttpResponse httpResponse;
+		//FIXME 我又在主线程干坏事了,管不了了,睡了,我对不起王轶颉……
+		try {
+			Log.v(Consts.DEBUG_TAG, "方法 checkForUpdate将要进行的请求为" + Consts.Url.CHECK_UPDATE);
+			HttpGet httpGet = new HttpGet(Consts.Url.CHECK_UPDATE);
+			httpResponse = new DefaultHttpClient().execute(httpGet);
+			Log.v(Consts.DEBUG_TAG, "进行的HTTP GET返回状态为"
+					+ httpResponse.getStatusLine().getStatusCode());
+			if (httpResponse.getStatusLine().getStatusCode() == 200) {
+				json = EntityUtils.toString(httpResponse.getEntity());
+				Log.v(Consts.DEBUG_TAG, "返回结果为" + json);
+			} else {
+				json = null;
+				handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
+				return;
+			}
+		} catch (Exception e) {
+			Log.v(Consts.DEBUG_TAG, "抛出错误" + e.getMessage());
+			handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
+			e.printStackTrace();
+			json = null;
+			return;
+		}
+		try {
+			JSONObject rootObject = new JSONObject(json);
+			int remoteVersion=rootObject.getInt("versionCode");
+			if (remoteVersion<=versionCode){
+				handler.sendEmptyMessage(Consts.Status.NO_UPDATE);
+			}
+			else if(remoteVersion>versionCode){
+				String[] info=new String[4];
+				info[Consts.ArraySubscript.VERSION_CODE]=Integer.toString(remoteVersion);
+				info[Consts.ArraySubscript.VERSION_NAME]=rootObject.getString("versionName");
+				info[Consts.ArraySubscript.WHATS_NEW]=rootObject.getString("whatsNew");
+				info[Consts.ArraySubscript.RELEASE_DATE]=rootObject.getString("releaseDate");
+				Message m=handler.obtainMessage(Consts.Status.HAS_UPDATE, info);
+				handler.sendMessage(m);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+			handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
+		}
+		
 	}
 }

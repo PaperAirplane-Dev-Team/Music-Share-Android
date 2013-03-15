@@ -54,7 +54,7 @@ public class Main extends ListActivity {
 	private ListView listview;// 列表对象
 	public static Oauth2AccessToken accessToken = null;
 	private Weibo weibo = Weibo
-			.getInstance(Consts.APP_KEY, Consts.REDIRECT_URI);
+			.getInstance(Consts.APP_KEY, Consts.Url.AUTH_REDIRECT);
 	private Receiver receiver;
 	private AlertDialog dialogMain, dialogAbout, dialogSearch;
 	private SsoHandler ssoHandler;
@@ -90,6 +90,8 @@ public class Main extends ListActivity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		//TODO检查一下更新
+		Utilities.checkForUpdate(Main.this, handler);
 	}
 
 	private void initListView() {
@@ -271,6 +273,9 @@ public class Main extends ListActivity {
 			refreshMusicList();
 			showMusicList();
 			break;
+		case R.id.menu_update:
+			Utilities.checkForUpdate(Main.this, handler);
+			break;
 		}
 		return true;
 	}
@@ -327,14 +332,14 @@ public class Main extends ListActivity {
 										e.printStackTrace();
 									}
 									SendFeedback feedback = new SendFeedback(
-											contentString, handler, versionCode);
+											contentString, handler, versionCode, Main.this);
 									switch (which) {
 									case DialogInterface.BUTTON_POSITIVE:
-										feedback.setMeansAndAccessToken(Consts.ShareMeans.OTHERS,null);
+										feedback.setMeans(Consts.ShareMeans.OTHERS);
 										feedback.start();
 										break;
 									case DialogInterface.BUTTON_NEGATIVE:
-										feedback.setMeansAndAccessToken(Consts.ShareMeans.WEIBO,Main.accessToken.getToken());
+										feedback.setMeans(Consts.ShareMeans.WEIBO);
 										feedback.start();
 										break;
 									}
@@ -343,7 +348,7 @@ public class Main extends ListActivity {
 						};
 						AlertDialog.Builder builder = new AlertDialog.Builder(
 								Main.this).setView(feedback).setPositiveButton(
-								R.string.feedback, listener);
+								R.string.send_feedback, listener);
 						if (Main.accessToken != null
 								&& (Main.accessToken.isSessionValid() != false)) {
 							builder.setNegativeButton(R.string.feedback_weibo,
@@ -363,7 +368,7 @@ public class Main extends ListActivity {
 					.setMessage(getString(R.string.about_content))
 					.setPositiveButton(android.R.string.ok, listenerAbout)
 					.setNegativeButton(R.string.about_contact, listenerAbout)
-					.setNeutralButton(R.string.feedback, listenerAbout).show();
+					.setNeutralButton(R.string.send_feedback, listenerAbout).show();
 			break;
 		case Consts.Dialogs.SHARE:
 			View musicInfoView = getMusicInfoView(_id);
@@ -699,6 +704,14 @@ public class Main extends ListActivity {
 						.commit();
 				// TODO 完善一下这里需要重试
 				break;
+			case Consts.Status.NO_UPDATE:
+				Toast.makeText(Main.this, R.string.no_update,
+						Toast.LENGTH_LONG).show();
+				break;
+			case Consts.Status.HAS_UPDATE:
+				updateApp((String[])msg.obj);
+				//TODO 你来吧
+				break;
 			}
 		}
 	};
@@ -722,6 +735,11 @@ public class Main extends ListActivity {
 		intent.setType("audio/*");
 		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path)));
 		startActivity(intent);
+	}
+	
+	private void updateApp(String[] info){
+		//TODO 弹一个框
+		
 	}
 
 }
