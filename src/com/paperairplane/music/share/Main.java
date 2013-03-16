@@ -43,7 +43,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.jpush.android.api.JPushInterface;
 
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
@@ -73,12 +72,9 @@ public class Main extends ListActivity {
 			showMusicList();
 			ssoHandler = new SsoHandler(Main.this, weibo);
 			weiboHelper = new WeiboHelper(handler, getApplicationContext());
-			Log.v(Consts.DEBUG_TAG, "Push Start");
-			JPushInterface.init(getApplicationContext());
 			Main.versionCode = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionCode;
 		} catch (Exception e) {
-			// Log.e(Consts.DEBUG_TAG, e.getMessage());
 			e.printStackTrace();
 			setContentView(R.layout.empty);
 		}

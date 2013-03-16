@@ -4,22 +4,13 @@
     android:versionCode="0051"
     android:versionName="1.0.5" >
 
-    <permission
-        android:name="com.paperairplane.music.share.permission.JPUSH_MESSAGE"
-        android:protectionLevel="signature" />
-
     <uses-sdk
         android:minSdkVersion="7"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.paperairplane.music.share.permission.JPUSH_MESSAGE" />
-    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -39,78 +30,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name="cn.jpush.android.service.PushService"
-            android:enabled="true"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="cn.jpush.android.intent.REGISTER" />
-                <action android:name="cn.jpush.android.intent.REPORT" />
-                <action android:name="cn.jpush.android.intent.PushService" />
-                <action android:name="cn.jpush.android.intent.PUSH_TIME" />
-            </intent-filter>
-        </service>
-
-        <receiver android:name="cn.jpush.android.service.AlarmReceiver" />
-        <receiver
-            android:name="cn.jpush.android.service.PushReceiver"
-            android:enabled="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.USER_PRESENT" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
-
-                <data android:scheme="package" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.paperairplane.music.share.Receiver"
-            android:enabled="true" >
-            <intent-filter>
-                <action android:name="cn.jpush.android.intent.REGISTRATION" />
-                <!-- Required  用户注册SDK的权限 -->
-                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" />
-                <!-- Required  用户接收SDK消息的权限 -->
-                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" />
-                <!-- Required  用户接收SDK通知栏信息的权限 -->
-                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" />
-                <!-- Required  用户打开自定义通知栏的权限 -->
-                <action android:name="android.intent.action.ACTION_MEDIA_SCANNER_STARTED" />
-                <action android:name="android.intent.action.ACTION_MEDIA_SCANNER_FINISHED" />
-                <!-- NOTE: replace the package name "cn.jpush.android" to your app package name -->
-                <category android:name="com.paperairplane.music.share" />
-            </intent-filter>
-        </receiver>
-
-        <activity
-            android:name="cn.jpush.android.ui.PushActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-            <intent-filter>
-                <action android:name="cn.jpush.android.ui.PushActivity" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="com.paperairplane.music.share." />
-            </intent-filter>
-        </activity>
-
-        <service
-            android:name="cn.jpush.android.service.DownloadService"
-            android:enabled="true"
-            android:exported="false" >
-        </service>
-
-        <meta-data
-            android:name="JPUSH_CHANNEL"
-            android:value="developer-default" />
-        <!-- Required. AppKey copied from Portal -->
-        <meta-data
-            android:name="JPUSH_APPKEY"
-            android:value="08ee6139f1e75d278e34d65d" />
-    </application>
+       </application>
 
 </manifest>
