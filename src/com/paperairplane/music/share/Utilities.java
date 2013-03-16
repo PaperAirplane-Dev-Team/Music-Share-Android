@@ -27,7 +27,6 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -37,7 +36,6 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
 import android.util.Log;
-
 
 class Utilities {
 
@@ -168,9 +166,9 @@ class Utilities {
 
 	}
 
-	public static String getArtwork(String artwork_url, String title,
+	public static String getArtwork(String artwork_url, String title,String artist,
 			String artwork_path) {
-		String fileName = title + ".jpg";
+		String fileName = title+"_"+artist + ".jpg";
 		if (new File(artwork_path + fileName).exists())
 			return fileName;
 		try {
@@ -221,22 +219,23 @@ class Utilities {
 
 	public static boolean sendFeedback(String content, String versionCode,
 			int means, Context _context, Handler _handler) {
-		StringBuffer device_info = new StringBuffer(
-				 "\r" + "App Version:");
+		StringBuffer device_info = new StringBuffer("\r" + "App Version:");
 		device_info.append(versionCode);
-		if(means==Consts.ShareMeans.OTHERS)device_info.append( "\r"
-				+ "Device Info:" + "\r");
+		if (means == Consts.ShareMeans.OTHERS)
+			device_info.append("\r" + "Device Info:" + "\r");
 		device_info.append(" Model:" + Build.MODEL + "\r");
-		if(means==Consts.ShareMeans.OTHERS){
-		device_info.append(" Manufacturer:" + Build.MANUFACTURER + "\r");
-		device_info.append(" Product:" + Build.PRODUCT + "\r");
-		device_info.append(" SDK Version:" + Build.VERSION.SDK_INT + "\r");
-		//device_info.append(" Incremental:" + Build.VERSION.INCREMENTAL + "\r");
-		device_info.append(" Build ID:" + Build.DISPLAY+ "\r");
-		//device_info.append(" Code Name:" + Build.VERSION.CODENAME + "\r");
+		if (means == Consts.ShareMeans.OTHERS) {
+			device_info.append(" Manufacturer:" + Build.MANUFACTURER + "\r");
+			device_info.append(" Product:" + Build.PRODUCT + "\r");
+			device_info.append(" SDK Version:" + Build.VERSION.SDK_INT + "\r");
+			// device_info.append(" Incremental:" + Build.VERSION.INCREMENTAL +
+			// "\r");
+			device_info.append(" Build ID:" + Build.DISPLAY + "\r");
+			// device_info.append(" Code Name:" + Build.VERSION.CODENAME +
+			// "\r");
 		}
 		device_info.append(" Release:" + Build.VERSION.RELEASE + "\r");
-		HttpPost post = null ;
+		HttpPost post = null;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		Log.v(Consts.DEBUG_TAG, "content is " + content + "\r"
 				+ "device info is :" + device_info.toString());
@@ -251,22 +250,26 @@ class Utilities {
 								"UTF-8")));
 				break;
 			case Consts.ShareMeans.WEIBO:
-				//post = new HttpPost(Consts.WEIBO_STATUSES_UPDATE);
-				//params.add(new BasicNameValuePair("access_token" ,accessToken));
-				//params.add(new BasicNameValuePair("status" ,java.net.URLEncoder.encode(content + device_info.toString() + Consts.FEEDBACK, "UTF-8")));
-				WeiboHelper helper=new WeiboHelper(_handler, _context);
-				helper.sendWeibo(Consts.FEEDBACK + content + "|||" +device_info.toString() , null, null, false);
+				// post = new HttpPost(Consts.WEIBO_STATUSES_UPDATE);
+				// params.add(new BasicNameValuePair("access_token"
+				// ,accessToken));
+				// params.add(new BasicNameValuePair("status"
+				// ,java.net.URLEncoder.encode(content + device_info.toString()
+				// + Consts.FEEDBACK, "UTF-8")));
+				WeiboHelper helper = new WeiboHelper(_handler, _context);
+				helper.sendWeibo(Consts.FEEDBACK + content + "|||"
+						+ device_info.toString(), null, null, false);
 				return true;
 			}
-				Log.v(Consts.DEBUG_TAG, "param is " + params.toString());
-				post.setEntity(new UrlEncodedFormEntity(params));
-				HttpResponse response = new DefaultHttpClient().execute(post);
-				if (response.getStatusLine().getStatusCode() == 200) {
-					Log.v(Consts.DEBUG_TAG, "Feedback succeed");
-					return true;
-				} else
-					throw new RuntimeException();
-			
+			Log.v(Consts.DEBUG_TAG, "param is " + params.toString());
+			post.setEntity(new UrlEncodedFormEntity(params));
+			HttpResponse response = new DefaultHttpClient().execute(post);
+			if (response.getStatusLine().getStatusCode() == 200) {
+				Log.v(Consts.DEBUG_TAG, "Feedback succeed");
+				return true;
+			} else
+				throw new RuntimeException();
+
 		} catch (Exception e) {
 			Log.d(Consts.DEBUG_TAG, "Feedbak failed");
 			e.printStackTrace();
@@ -348,21 +351,25 @@ class Utilities {
 		size = metrics.widthPixels / 10 * 6;
 		return size;
 	}
-	
-	public static void checkForUpdate(Context _context, Handler handler){
-		int versionCode=0;
-		try {
-			versionCode=_context.getPackageManager().getPackageInfo(_context.getPackageName(), 0).versionCode;
-		} catch (NameNotFoundException e) {
-			e.printStackTrace();
-			return;
-		}
+
+	public static void checkForUpdate(final int versionCode,
+			final Handler handler, final Context context) {
 		Log.v(Consts.DEBUG_TAG, "方法checkForUpdate被调用");
+		Thread updateThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				update(handler, versionCode, context);
+			}
+		});
+		updateThread.start();
+	}
+
+	private static void update(Handler handler, int versionCode, Context context) {
 		String json = null;
 		HttpResponse httpResponse;
-		//FIXME 我又在主线程干坏事了,管不了了,睡了,我对不起王轶颉……
 		try {
-			Log.v(Consts.DEBUG_TAG, "方法 checkForUpdate将要进行的请求为" + Consts.Url.CHECK_UPDATE);
+			Log.v(Consts.DEBUG_TAG, "方法 checkForUpdate将要进行的请求为"
+					+ Consts.Url.CHECK_UPDATE);
 			HttpGet httpGet = new HttpGet(Consts.Url.CHECK_UPDATE);
 			httpResponse = new DefaultHttpClient().execute(httpGet);
 			Log.v(Consts.DEBUG_TAG, "进行的HTTP GET返回状态为"
@@ -384,23 +391,31 @@ class Utilities {
 		}
 		try {
 			JSONObject rootObject = new JSONObject(json);
-			int remoteVersion=rootObject.getInt("versionCode");
-			if (remoteVersion<=versionCode){
+			int remoteVersion = rootObject.getInt("versionCode");
+			if (remoteVersion <= versionCode) {
 				handler.sendEmptyMessage(Consts.Status.NO_UPDATE);
-			}
-			else if(remoteVersion>versionCode){
-				String[] info=new String[4];
-				info[Consts.ArraySubscript.VERSION_CODE]=Integer.toString(remoteVersion);
-				info[Consts.ArraySubscript.VERSION_NAME]=rootObject.getString("versionName");
-				info[Consts.ArraySubscript.WHATS_NEW]=rootObject.getString("whatsNew");
-				info[Consts.ArraySubscript.RELEASE_DATE]=rootObject.getString("releaseDate");
-				Message m=handler.obtainMessage(Consts.Status.HAS_UPDATE, info);
+			} else if (remoteVersion > versionCode) {
+				StringBuffer sb = new StringBuffer(
+						context.getString(R.string.update_remote_version));
+				sb.append(rootObject
+						.getString("versionName") + "\n");
+				sb.append(context.getString(R.string.update_whats_new));
+				sb.append(rootObject
+						.getString("whatsNew")+"\n");
+				sb.append(context.getString(R.string.update_release_date));
+				sb.append(rootObject
+						.getString("releaseDate"));
+				String[] info = new String[2];
+				info[Consts.ArraySubscript.UPDATE_INFO] = sb.toString();
+				info[Consts.ArraySubscript.DOWNLOAD_URL] = rootObject
+						.getString("downloadUrl");
+				Message m = handler.obtainMessage(Consts.Status.HAS_UPDATE,
+						info);
 				handler.sendMessage(m);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 			handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
 		}
-		
 	}
 }

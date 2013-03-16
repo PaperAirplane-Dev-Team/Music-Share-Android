@@ -21,7 +21,7 @@ public class Consts {
 		public final static String API_QUERY = "http://paperairplane.sinaapp.com/proxy.php?q=";
 		public final static String INFO_REDIRECT = "http://paperairplane.sinaapp.com/redirect.php?id=";
 		public final static String FEEDBACK = "http://paperairplane.sinaapp.com/feedback.php";
-		public final static String CHECK_UPDATE = "http://paperairplane.sinaapp.com/update.php?version=";
+		public final static String CHECK_UPDATE = "http://paperairplane.sinaapp.com/update.php";
 		public final static String AUTH_REDIRECT = "https://api.weibo.com/oauth2/default.html";
 		public final static String WEIBO_STATUSES_UPDATE = "https://api.weibo.com/2/statuses/update.json";
 	}
@@ -52,10 +52,8 @@ public class Consts {
 		public static final int ALBUM = 3;
 		public static final int VERSION = 4;
 		
-		public static final int VERSION_CODE = 0;
-		public static final int VERSION_NAME = 1;
-		public static final int WHATS_NEW = 2;
-		public static final int RELEASE_DATE = 3;
+		public static final int UPDATE_INFO = 0;
+		public static final int DOWNLOAD_URL = 1;
 	}
 
 	public final class ShareMeans {

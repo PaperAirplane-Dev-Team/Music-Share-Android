@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -17,8 +16,7 @@ class QueryAndShareMusicInfo extends Thread {
 	private String artist, title, album;
 	private Context context;
 	private Handler handler;
-	private final String ARTWORK_PATH = Environment
-			.getExternalStorageDirectory() + "/music_share/";
+	private String ARTWORK_PATH ;
 
 	public void run() {
 		String[] info = Utilities.getMusicAndArtworkUrl(title, artist, context,
@@ -34,15 +32,16 @@ class QueryAndShareMusicInfo extends Thread {
 		}
 		try {
 			if ((album_id != null)
-					&& (Utilities.getLocalArtwork(context, album_id,10,10) != null)) {
+					&& (Utilities.getLocalArtwork(context, album_id, 10, 10) != null)) {
 				Utilities.saveFile(
 						Utilities.getLocalArtwork(context, album_id, 300, 300),
-						title + ".jpg", ARTWORK_PATH);
-				fileName = ARTWORK_PATH + title + ".jpg";
+						title + "_" + artist + ".jpg", ARTWORK_PATH);
+				fileName = ARTWORK_PATH + title + "_" + artist + ".jpg";
 				Log.d(Consts.DEBUG_TAG, "获取本地封面成功");
 			} else {
 				fileName = ARTWORK_PATH
-						+ Utilities.getArtwork(artworkUrl, title, ARTWORK_PATH);
+						+ Utilities.getArtwork(artworkUrl, title, artist,
+								ARTWORK_PATH);
 			}
 		} catch (Exception e) {
 			Log.e(Consts.DEBUG_TAG, "Error Occured");
@@ -114,6 +113,8 @@ class QueryAndShareMusicInfo extends Thread {
 		means = _means;
 		context = _context;
 		handler = _handler;
+		 this.ARTWORK_PATH = _context.getCacheDir().getAbsolutePath() +
+		 "/.artworkCache/";
 	}
 
 }

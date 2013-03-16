@@ -7,6 +7,9 @@
         android:id="@id/android:list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/listview_background"
+        android:fadingEdge="none"  
+        android:scrollingCache="false"
         android:fastScrollEnabled="true" >
     </ListView>
 

@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
@@ -23,6 +22,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -53,13 +54,14 @@ public class Main extends ListActivity {
 	private MusicData[] musics;// 保存音乐数据
 	private ListView listview;// 列表对象
 	public static Oauth2AccessToken accessToken = null;
-	private Weibo weibo = Weibo
-			.getInstance(Consts.APP_KEY, Consts.Url.AUTH_REDIRECT);
+	private Weibo weibo = Weibo.getInstance(Consts.APP_KEY,
+			Consts.Url.AUTH_REDIRECT);
 	private Receiver receiver;
 	private AlertDialog dialogMain, dialogAbout, dialogSearch;
 	private SsoHandler ssoHandler;
 	private WeiboHelper weiboHelper;
 	private TextView indexOverlay;
+	private static int versionCode,checkForUpdateCount = 0;
 
 	@Override
 	// 主体
@@ -72,12 +74,9 @@ public class Main extends ListActivity {
 			ssoHandler = new SsoHandler(Main.this, weibo);
 			weiboHelper = new WeiboHelper(handler, getApplicationContext());
 			Log.v(Consts.DEBUG_TAG, "Push Start");
-			// this.getResources().updateConfiguration(conf, null);
-			// JPushInterface.setAliasAndTags(getApplicationContext(),
-			// "XavierYao",
-			// null);
-			// 这是JPush的Debug标签
 			JPushInterface.init(getApplicationContext());
+			Main.versionCode = getPackageManager().getPackageInfo(
+					getPackageName(), 0).versionCode;
 		} catch (Exception e) {
 			// Log.e(Consts.DEBUG_TAG, e.getMessage());
 			e.printStackTrace();
@@ -90,8 +89,8 @@ public class Main extends ListActivity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		//TODO检查一下更新
-		Utilities.checkForUpdate(Main.this, handler);
+
+		Utilities.checkForUpdate(Main.versionCode, handler,Main.this);
 	}
 
 	private void initListView() {
@@ -109,7 +108,6 @@ public class Main extends ListActivity {
 								PixelFormat.TRANSLUCENT));
 		listview = (ListView) findViewById(android.R.id.list);// 找ListView的ID
 		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
-		// listview.setEmptyView(findViewById(R.id.empty));
 		View footerView = LayoutInflater.from(this).inflate(R.layout.footer,
 				null);
 		listview.addFooterView(footerView);
@@ -167,26 +165,6 @@ public class Main extends ListActivity {
 		ssoHandler.authorizeCallBack(requestCode, resultCode, data);
 	}
 
-	/*
-	 * @SuppressLint("NewApi")
-	 * 
-	 * @Override // 构建菜单 public boolean onCreateOptionsMenu(Menu menu) {
-	 * super.onCreateOptionsMenu(menu); menu.clear();
-	 * getMenuInflater().inflate(R.menu.main, menu); if (Build.VERSION.SDK_INT
-	 * >= 11) { menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
-	 * R.string.menu_refresh
-	 * ).setIcon(android.R.drawable.ic_popup_sync).setShowAsAction(
-	 * MenuItem.SHOW_AS_ACTION_ALWAYS); } else { menu.add(Menu.NONE,
-	 * Consts.MenuItem.REFRESH, 1,
-	 * R.string.menu_refresh).setIcon(android.R.drawable
-	 * .ic_menu_recent_history); } if (Main.accessToken == null) {
-	 * menu.add(Menu.NONE, Consts.MenuItem.AUTH, 2, R.string.auth)
-	 * .setIcon(android.R.drawable.ic_menu_add); } else { menu.add(Menu.NONE,
-	 * Consts.MenuItem.UNAUTH, 2, R.string.unauth)
-	 * .setIcon(android.R.drawable.ic_menu_delete); }
-	 * 
-	 * return true; }
-	 */
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -274,7 +252,8 @@ public class Main extends ListActivity {
 			showMusicList();
 			break;
 		case R.id.menu_update:
-			Utilities.checkForUpdate(Main.this, handler);
+			Main.checkForUpdateCount ++;
+			Utilities.checkForUpdate(Main.versionCode, handler,Main.this);
 			break;
 		}
 		return true;
@@ -320,19 +299,11 @@ public class Main extends ListActivity {
 									showCustomDialog(0, Consts.Dialogs.EMPTY);
 								} else {
 									String versionCode = "NameNotFoundException";
-									try {
-										versionCode = Integer
-												.toString(Main.this
-														.getPackageManager()
-														.getPackageInfo(
-																Main.this
-																		.getPackageName(),
-																0).versionCode);
-									} catch (NameNotFoundException e) {
-										e.printStackTrace();
-									}
+									versionCode = Integer
+											.toString(Main.versionCode);
 									SendFeedback feedback = new SendFeedback(
-											contentString, handler, versionCode, Main.this);
+											contentString, handler,
+											versionCode, Main.this);
 									switch (which) {
 									case DialogInterface.BUTTON_POSITIVE:
 										feedback.setMeans(Consts.ShareMeans.OTHERS);
@@ -368,7 +339,8 @@ public class Main extends ListActivity {
 					.setMessage(getString(R.string.about_content))
 					.setPositiveButton(android.R.string.ok, listenerAbout)
 					.setNegativeButton(R.string.about_contact, listenerAbout)
-					.setNeutralButton(R.string.send_feedback, listenerAbout).show();
+					.setNeutralButton(R.string.send_feedback, listenerAbout)
+					.show();
 			break;
 		case Consts.Dialogs.SHARE:
 			View musicInfoView = getMusicInfoView(_id);
@@ -463,6 +435,7 @@ public class Main extends ListActivity {
 								}
 							}).show();
 			break;
+
 		default:
 			throw new RuntimeException("What the hell are you doing?");
 		}
@@ -636,6 +609,20 @@ public class Main extends ListActivity {
 
 				et.setText(_content);
 				et.setSelection(_content.length());
+				et.addTextChangedListener(new TextWatcher() {           
+					@Override
+					public void afterTextChanged(Editable arg0) {	
+					}
+					@Override
+					public void beforeTextChanged(CharSequence s, int start,
+							int count, int after) {						
+					}
+					@Override
+					public void onTextChanged(CharSequence s, int start,
+							int before, int count) {
+						//TODO:at提醒
+					}
+				});
 				new AlertDialog.Builder(Main.this)
 						.setView(sendweibo)
 						.setPositiveButton(getString(R.string.share),
@@ -705,12 +692,13 @@ public class Main extends ListActivity {
 				// TODO 完善一下这里需要重试
 				break;
 			case Consts.Status.NO_UPDATE:
-				Toast.makeText(Main.this, R.string.no_update,
-						Toast.LENGTH_LONG).show();
+				Toast toast = Toast.makeText(Main.this, R.string.no_update, Toast.LENGTH_LONG);
+				if (Main.checkForUpdateCount != 0){
+					toast.show();
+				}
 				break;
 			case Consts.Status.HAS_UPDATE:
-				updateApp((String[])msg.obj);
-				//TODO 你来吧
+				updateApp((String[]) msg.obj);
 				break;
 			}
 		}
@@ -736,10 +724,35 @@ public class Main extends ListActivity {
 		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path)));
 		startActivity(intent);
 	}
-	
-	private void updateApp(String[] info){
-		//TODO 弹一个框
-		
+
+	private void updateApp(final String[] info) {
+		new AlertDialog.Builder(Main.this)
+				.setIcon(android.R.drawable.ic_dialog_info)
+				.setTitle(R.string.update_found)
+				.setMessage(info[Consts.ArraySubscript.UPDATE_INFO])
+				.setPositiveButton(R.string.update_download, new DialogInterface.OnClickListener() {				
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						Uri uri = Uri.parse(info[Consts.ArraySubscript.DOWNLOAD_URL]);
+						Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+						startActivity(intent);
+					}
+				})
+				.setNegativeButton(R.string.update_view, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Uri uri = Uri.parse("market://details?id=com.paperairplane.music.share");
+						Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+						try{
+						startActivity(intent);
+						}catch(ActivityNotFoundException e){
+							e.printStackTrace();
+							Toast.makeText(getApplicationContext(), getString(R.string.update_no_market_found), Toast.LENGTH_SHORT).show();
+						}
+					}
+				})
+				.show();
+
 	}
 
 }

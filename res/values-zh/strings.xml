@@ -56,4 +56,11 @@
     <string name="menu_update">检查更新</string>
     <string name="send_feedback">发送反馈</string>
     <string name="no_update">暂时木有可用更新哦~感谢支持~</string>
+    <string name="update_found">有新更新</string>
+    <string name="update_download">立即下载</string>
+    <string name="update_view">在市场查看</string>
+    <string name="update_remote_version">最新版本:</string>
+    <string name="update_whats_new">What\'s New:</string>
+    <string name="update_release_date">发布日期:</string>
+    <string name="update_no_market_found">我真没用没找到市场</string>
 </resources>

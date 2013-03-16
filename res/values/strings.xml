@@ -21,7 +21,7 @@
     <string name="refresh_on_process">Refresh On Process</string>
     <string name="menu_about">About</string>
     <string name="about_contact">Contact Us</string>
-    <string name="about_content">Paper Airplane Dev Team\n添乱：@author @HarryChen-SIGKILL-\nhttp://weibo.com/yszzf\n添乱：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2013.3.15 \nVer1.0.6 r2 \n该版本测试：自动更新、微博反馈</string>
+    <string name="about_content">Paper Airplane Dev Team\n添乱：@author @HarryChen-SIGKILL-\nhttp://weibo.com/yszzf\n添乱：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160\n2013.3.16 \nVer1.0.5 r6 \n该版本测试：自动更新、微博反馈、背景</string>
     <string name="about_download_info">Download Here:</string>
     <string name="url">http://t.cn/zYyzZOK</string>
     <string name="no_music_url_found">No Url Found</string>
@@ -59,4 +59,11 @@
     <string name="menu_update">Check For Update</string>
     <string name="send_feedback">Send Feedback</string>
     <string name="no_update">No Available Update Now</string>
+    <string name="update_found">An Update is Available</string>
+    <string name="update_download">Download Now</string>
+    <string name="update_view">View in Market</string>
+    <string name="update_remote_version">Latest Version:</string>
+    <string name="update_whats_new">What\'s New:</string>
+    <string name="update_release_date">Release Date:</string>
+    <string name="update_no_market_found">No Market Found</string>
 </resources>
