@@ -18,7 +18,8 @@ public class Consts {
 	public final static int NULL = -1;
 
 	public final class Url {
-		public final static String API_QUERY = "http://paperairplane.sinaapp.com/proxy.php?q=";
+//		public final static String API_QUERY = "http://paperairplane.sinaapp.com/proxy.php?q=";
+		public final static String API_QUERY = "https://api.douban.com/v2/music/search?appkey=039b0d83358026730ad12889a0807359&count=1&q=";
 		public final static String INFO_REDIRECT = "http://paperairplane.sinaapp.com/redirect.php?id=";
 		public final static String FEEDBACK = "http://paperairplane.sinaapp.com/feedback.php";
 		public final static String CHECK_UPDATE = "http://paperairplane.sinaapp.com/update.php";

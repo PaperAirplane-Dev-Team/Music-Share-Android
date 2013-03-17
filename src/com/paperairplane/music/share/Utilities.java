@@ -13,9 +13,11 @@ import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -47,17 +49,7 @@ class Utilities {
 	 * @return 格式化好的时长字符串
 	 */
 	public static String convertDuration(long _duration) {
-		/*
-		 * _duration /= 1000; String min, hour, sec; if (_duration / 3600 > 0) {
-		 * return (((hour = ((Integer) (_duration / 3600)).toString()) .length()
-		 * == 1) ? "0" + hour : hour) + ":" + (((min = ((Integer) (_duration /
-		 * 60)).toString()) .length() == 1) ? "0" + min : min) + ":" + (((sec =
-		 * ((Integer) (_duration % 60)).toString()) .length() == 1) ? "0" + sec
-		 * : sec); } else { return (((min = ((Integer) (_duration /
-		 * 60)).toString()).length() == 1) ? "0" + min : min) + ":" + (((sec =
-		 * ((Integer) (_duration % 60)).toString()) .length() == 1) ? "0" + sec
-		 * : sec); }
-		 */
+
 		StringBuffer sb = new StringBuffer();
 		long m = _duration / (60 * 1000);
 		sb.append(m < 10 ? "0" + m : m);
@@ -195,12 +187,14 @@ class Utilities {
 							(title + "+" + artist).replaceAll(" ", "+"),
 							"UTF-8");
 			Log.v(Consts.DEBUG_TAG, "方法 getJSON将要进行的请求为" + api_url);
-			HttpGet httpGet = new HttpGet(api_url);
-
-			httpResponse = new DefaultHttpClient().execute(httpGet);
+			HttpUriRequest httpGet = new HttpGet(api_url);
+			httpGet.addHeader("User-Agent", "Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))");
+			HttpClient client = new DefaultHttpClient();			
+			httpResponse = client.execute(httpGet);
 			Log.v(Consts.DEBUG_TAG, "进行的HTTP GET返回状态为"
 					+ httpResponse.getStatusLine().getStatusCode());
 			if (httpResponse.getStatusLine().getStatusCode() == 200) {
+				
 				json = EntityUtils.toString(httpResponse.getEntity());
 				Log.v(Consts.DEBUG_TAG, "返回结果为" + json);
 			} else {
