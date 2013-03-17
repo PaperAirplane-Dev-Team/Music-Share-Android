@@ -8,7 +8,8 @@
         android:layout_width="fill_parent"
         android:layout_height="200dip"
         android:ems="10"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine"
+       />
 
     <CheckBox
         android:id="@+id/cb_follow"
@@ -16,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/et_content"
         android:checked="true"
-        android:text="@string/followauthor" />
+        android:text="@string/followauthor"
+        />
 
 </RelativeLayout>
