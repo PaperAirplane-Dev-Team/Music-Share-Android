@@ -31,10 +31,11 @@ class QueryAndShareMusicInfo extends Thread {
 					"lpic");
 		}
 		try {
-			if ((album_id != null)
-					&& (Utilities.getLocalArtwork(context, album_id, 10, 10) != null)) {
+			if ((album_id != Consts.NULL)
+					&& (Utilities.getLocalArtwork(context, album_id, 1, 1) != null)) {
+				//你丫不能省省?1X1就够了判断啊
 				Utilities.saveFile(
-						Utilities.getLocalArtwork(context, album_id, 300, 300),
+						Utilities.getLocalArtwork(context, album_id, 300, 30),
 						title + "_" + artist + ".jpg", ARTWORK_PATH);
 				fileName = ARTWORK_PATH + title + "_" + artist + ".jpg";
 				Log.d(Consts.DEBUG_TAG, "获取本地封面成功");
@@ -105,7 +106,7 @@ class QueryAndShareMusicInfo extends Thread {
 	}
 
 	public QueryAndShareMusicInfo(String _title, String _artist, String _album,
-			Long _album_id, int _means, Context _context, Handler _handler) {
+			long _album_id, int _means, Context _context, Handler _handler) {
 		album_id = _album_id;
 		title = _title;
 		artist = _artist;

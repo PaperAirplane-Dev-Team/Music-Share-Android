@@ -56,7 +56,7 @@ public class Main extends ListActivity {
 	private Weibo weibo = Weibo.getInstance(Consts.APP_KEY,
 			Consts.Url.AUTH_REDIRECT);
 	private Receiver receiver;
-	private AlertDialog dialogMain, dialogAbout, dialogSearch;
+	private AlertDialog dialogMain, dialogAbout, dialogSearch, dialogThank;
 	private SsoHandler ssoHandler;
 	private WeiboHelper weiboHelper;
 	private TextView indexOverlay;
@@ -273,7 +273,20 @@ public class Main extends ListActivity {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
-						dialogAbout.cancel();
+						dialogThank = new AlertDialog.Builder(
+								Main.this)
+								.setTitle(R.string.thank_title)
+								.setIcon(android.R.drawable.ic_dialog_info)
+								.setMessage(R.string.thank_content)
+								.setPositiveButton(android.R.string.ok,
+										new DialogInterface.OnClickListener() {
+									@Override
+											public void onClick(DialogInterface dialog,
+													int whichButton) {
+										dialogThank.cancel();
+											}
+										}).create();
+						dialogThank.show();
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
 						Uri uri = Uri.parse(getString(R.string.url));
@@ -333,7 +346,7 @@ public class Main extends ListActivity {
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.menu_about))
 					.setMessage(getString(R.string.about_content))
-					.setPositiveButton(android.R.string.ok, listenerAbout)
+					.setPositiveButton(R.string.thank_list, listenerAbout)
 					.setNegativeButton(R.string.about_contact, listenerAbout)
 					.setNeutralButton(R.string.send_feedback, listenerAbout)
 					.show();
@@ -394,7 +407,7 @@ public class Main extends ListActivity {
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
-									.toString(), (Long) null,
+									.toString(), Consts.NULL,
 									Consts.ShareMeans.WEIBO);
 							dialogSearch.cancel();
 						}
@@ -404,7 +417,7 @@ public class Main extends ListActivity {
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
-									.toString(), (Long) null,
+									.toString(), Consts.NULL,
 									Consts.ShareMeans.OTHERS);
 							dialogSearch.cancel();
 						}
@@ -523,7 +536,7 @@ public class Main extends ListActivity {
 
 	// ∑÷œÌ“Ù¿÷
 	private void shareMusic(String title, String artist, String album,
-			Long album_id, int means) {
+			long album_id, int means) {
 		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
 				artist, album, album_id, means, getApplicationContext(),
 				handler);
