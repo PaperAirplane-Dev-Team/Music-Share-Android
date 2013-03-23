@@ -56,7 +56,7 @@ public class Main extends ListActivity {
 	private Weibo weibo = Weibo.getInstance(Consts.APP_KEY,
 			Consts.Url.AUTH_REDIRECT);
 	private Receiver receiver;
-	private AlertDialog dialogMain, dialogAbout, dialogSearch, dialogThank;
+	private AlertDialog dialogMain, dialogAbout, dialogSearch, dialogThank, dialogWelcome;
 	private SsoHandler ssoHandler;
 	private WeiboHelper weiboHelper;
 	private TextView indexOverlay;
@@ -70,6 +70,7 @@ public class Main extends ListActivity {
 			setContentView(R.layout.main);
 			initListView();
 			showMusicList();
+			firstShow();
 			ssoHandler = new SsoHandler(Main.this, weibo);
 			weiboHelper = new WeiboHelper(handler, getApplicationContext());
 			Main.versionCode = getPackageManager().getPackageInfo(
@@ -87,6 +88,7 @@ public class Main extends ListActivity {
 		}
 
 		Utilities.checkForUpdate(Main.versionCode, handler,Main.this);
+		listview.setBackgroundResource(R.drawable.listview_background);
 	}
 
 	private void initListView() {
@@ -116,14 +118,11 @@ public class Main extends ListActivity {
 					int visibleItemCount, int totalItemCount) {
 				if (visible) {
 					String firstChar = musics[firstVisibleItem].getTitle();
-					if (firstChar.startsWith("The ")
-							|| firstChar.startsWith("the ")) {
+					if (firstChar.toLowerCase(Locale.getDefault()).startsWith("the ")) {
 						firstChar = firstChar.substring(4, 5);
-					} else if (firstChar.startsWith("a ")
-							|| firstChar.startsWith("A ")) {
+					} else if (firstChar.toLowerCase(Locale.getDefault()).startsWith("a ")) {
 						firstChar = firstChar.substring(2, 3);
-					} else if (firstChar.startsWith("an ")
-							|| firstChar.startsWith("An ")) {
+					} else if (firstChar.toLowerCase(Locale.getDefault()).startsWith("an ")) {
 						firstChar = firstChar.substring(3, 4);
 					} else {
 						firstChar = firstChar.substring(0, 1);
@@ -131,6 +130,9 @@ public class Main extends ListActivity {
 					indexOverlay.setText(firstChar.toUpperCase(Locale
 							.getDefault()));
 					indexOverlay.setVisibility(View.VISIBLE);
+				}
+				if(firstVisibleItem==0 || (firstVisibleItem+visibleItemCount)==totalItemCount){
+					indexOverlay.setVisibility(View.INVISIBLE);
 				}
 			}
 
@@ -150,6 +152,7 @@ public class Main extends ListActivity {
 		super.onStop();
 		try {
 			unregisterReceiver(receiver);
+			indexOverlay = null;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -514,7 +517,10 @@ public class Main extends ListActivity {
 
 		Cursor cursor = getContentResolver().query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Consts.MEDIA_INFO,
-				MediaStore.Audio.Media.DURATION + ">='" + 30000 + "'", null,
+				MediaStore.Audio.Media.DURATION + ">='" + 30000 + "' AND "
+						+ MediaStore.Audio.Media.MIME_TYPE + "<>'audio/amr'",
+						//妈妈再也不用担心我的录音!
+				null,
 				MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 		// 过滤小于30s的音乐
 		cursor.moveToFirst();
@@ -763,5 +769,33 @@ public class Main extends ListActivity {
 				.show();
 
 	}
+	
+	private void firstShow(){
+		SharedPreferences preferences = getApplicationContext()
+				.getSharedPreferences(Consts.Preferences.GENERAL,
+						Context.MODE_PRIVATE);
+		//if(!preferences.getBoolean("hasFirstStarted", false)){
+			Log.d(Consts.DEBUG_TAG, "首次启动");
+			dialogWelcome = new AlertDialog.Builder(Main.this)
+					.setIcon(android.R.drawable.ic_dialog_info)
+					.setTitle(R.string.welcome_title)
+					.setMessage(R.string.welcome_content)
+					.setPositiveButton(R.string.welcome_button,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									dialogWelcome.cancel();
+								}
+							}).create();
+			Log.v(Consts.DEBUG_TAG, "首次启动对话框已初始化");
+			dialogWelcome.show();
+			Log.v(Consts.DEBUG_TAG, "首次启动对话框已显示");
+			preferences.edit().putBoolean("hasFirstStarted", true).commit();
+		//}
+		//else Log.d(Consts.DEBUG_TAG, "非首次启动");
+			//发布的时候去掉这些注释就行，我是为了每次都显示
+	}
+	
 
 }

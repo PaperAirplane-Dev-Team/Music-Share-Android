@@ -73,6 +73,7 @@ public class Consts {
 		public final static String WEIBO = "com_weibo_sdk_android";
 		public final static String SHARE = "ShareStatus";
 		public final static String FEEDBACK = "FeedbackStatus";
+		public final static String GENERAL = "General";
 	}
 
 	public final class MenuItem {

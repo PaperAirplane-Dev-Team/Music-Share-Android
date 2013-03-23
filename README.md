@@ -1,3 +1,3 @@
-﻿Music-Share
+Music-Share
 =============
-Android App,Music Share,音乐分享,Android
+本程序是一个Android下的音乐分享小工具, 由Xavier Yao( http://www.weibo.com/xavieryao )以及Harry Chen( http://www.weibo.com/yszzf )共同开发

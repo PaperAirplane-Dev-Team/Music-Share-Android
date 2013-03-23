@@ -65,4 +65,6 @@
     <string name="update_no_market_found">我真没用没找到市场</string>
     <string name="thank_list">感谢名单</string>
     <string name="thank_title">感谢你们！</string>
+    <string name="welcome_title">欢迎使用纸飞机音乐分享！</string>
+    <string name="welcome_button">希望您喜欢我们的App~</string>
 </resources>
