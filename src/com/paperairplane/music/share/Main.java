@@ -87,7 +87,7 @@ public class Main extends ListActivity {
 			e.printStackTrace();
 		}
 
-		Utilities.checkForUpdate(Main.versionCode, handler,Main.this);
+		Utilities.checkForUpdate(Main.versionCode, handler, Main.this, getResources().getConfiguration().locale);
 		listview.setBackgroundResource(R.drawable.listview_background);
 	}
 
@@ -252,7 +252,7 @@ public class Main extends ListActivity {
 			break;
 		case R.id.menu_update:
 			Main.checkForUpdateCount ++;
-			Utilities.checkForUpdate(Main.versionCode, handler,Main.this);
+			Utilities.checkForUpdate(Main.versionCode, handler, Main.this, getResources().getConfiguration().locale);
 			break;
 		}
 		return true;
@@ -635,7 +635,8 @@ public class Main extends ListActivity {
 					@Override
 					public void onTextChanged(CharSequence s, int start,
 							int before, int count) {
-						//TODO:at提醒
+						if((s.toString()+" ").charAt(start)=='@') Log.d(Consts.DEBUG_TAG, "@ CATCHED!"); //TODO @提醒
+						//XXX 为什么要这么做,因为不这么的话一上来就FC
 					}
 				});
 				new AlertDialog.Builder(Main.this)

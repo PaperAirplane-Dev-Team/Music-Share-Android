@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -347,18 +348,18 @@ class Utilities {
 	}
 
 	public static void checkForUpdate(final int versionCode,
-			final Handler handler, final Context context) {
+			final Handler handler, final Context context, final Locale currentLocale) {
 		Log.v(Consts.DEBUG_TAG, "方法checkForUpdate被调用");
 		Thread updateThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				update(handler, versionCode, context);
+				update(handler, versionCode, context, currentLocale);
 			}
 		});
 		updateThread.start();
 	}
 
-	private static void update(Handler handler, int versionCode, Context context) {
+	private static void update(Handler handler, int versionCode, Context context, Locale currentLocale) {
 		String json = null;
 		HttpResponse httpResponse;
 		try {
@@ -394,8 +395,11 @@ class Utilities {
 				sb.append(rootObject
 						.getString("versionName") + "\n");
 				sb.append(context.getString(R.string.update_whats_new));
-				sb.append(rootObject
-						.getString("whatsNew")+"\n");
+				if (currentLocale.equals(Locale.SIMPLIFIED_CHINESE)) {
+					sb.append(rootObject.getString("whatsNewZh") + "\n");
+				} else {
+					sb.append(rootObject.getString("whatsNew") + "\n");
+				}
 				sb.append(context.getString(R.string.update_release_date));
 				sb.append(rootObject
 						.getString("releaseDate"));
