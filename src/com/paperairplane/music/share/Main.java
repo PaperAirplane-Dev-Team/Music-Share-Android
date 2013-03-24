@@ -56,11 +56,13 @@ public class Main extends ListActivity {
 	private Weibo weibo = Weibo.getInstance(Consts.APP_KEY,
 			Consts.Url.AUTH_REDIRECT);
 	private Receiver receiver;
-	private AlertDialog dialogMain, dialogAbout, dialogSearch, dialogThank, dialogWelcome;
+	private AlertDialog dialogMain, dialogAbout, dialogSearch, dialogThank,
+			dialogWelcome;
 	private SsoHandler ssoHandler;
 	private WeiboHelper weiboHelper;
 	private TextView indexOverlay;
-	private static int versionCode,checkForUpdateCount = 0;
+	private static int versionCode, checkForUpdateCount = 0;
+	private String versionName;
 
 	@Override
 	// 主体
@@ -75,6 +77,8 @@ public class Main extends ListActivity {
 			weiboHelper = new WeiboHelper(handler, getApplicationContext());
 			Main.versionCode = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionCode;
+			this.versionName = getPackageManager().getPackageInfo(
+					getPackageName(), 0).versionName;
 		} catch (Exception e) {
 			e.printStackTrace();
 			setContentView(R.layout.empty);
@@ -87,7 +91,8 @@ public class Main extends ListActivity {
 			e.printStackTrace();
 		}
 
-		Utilities.checkForUpdate(Main.versionCode, handler, Main.this, getResources().getConfiguration().locale);
+		Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
+				getResources().getConfiguration().locale);
 		listview.setBackgroundResource(R.drawable.listview_background);
 	}
 
@@ -118,11 +123,14 @@ public class Main extends ListActivity {
 					int visibleItemCount, int totalItemCount) {
 				if (visible) {
 					String firstChar = musics[firstVisibleItem].getTitle();
-					if (firstChar.toLowerCase(Locale.getDefault()).startsWith("the ")) {
+					if (firstChar.toLowerCase(Locale.getDefault()).startsWith(
+							"the ")) {
 						firstChar = firstChar.substring(4, 5);
-					} else if (firstChar.toLowerCase(Locale.getDefault()).startsWith("a ")) {
+					} else if (firstChar.toLowerCase(Locale.getDefault())
+							.startsWith("a ")) {
 						firstChar = firstChar.substring(2, 3);
-					} else if (firstChar.toLowerCase(Locale.getDefault()).startsWith("an ")) {
+					} else if (firstChar.toLowerCase(Locale.getDefault())
+							.startsWith("an ")) {
 						firstChar = firstChar.substring(3, 4);
 					} else {
 						firstChar = firstChar.substring(0, 1);
@@ -131,7 +139,8 @@ public class Main extends ListActivity {
 							.getDefault()));
 					indexOverlay.setVisibility(View.VISIBLE);
 				}
-				if(firstVisibleItem==0 || (firstVisibleItem+visibleItemCount)==totalItemCount){
+				if (firstVisibleItem == 0
+						|| (firstVisibleItem + visibleItemCount) == totalItemCount) {
 					indexOverlay.setVisibility(View.INVISIBLE);
 				}
 			}
@@ -173,7 +182,7 @@ public class Main extends ListActivity {
 			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
 					R.string.menu_refresh)
 					.setIcon(android.R.drawable.ic_popup_sync)
-					.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+					.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		} else {
 			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
 					R.string.menu_refresh).setIcon(
@@ -251,8 +260,9 @@ public class Main extends ListActivity {
 			showMusicList();
 			break;
 		case R.id.menu_update:
-			Main.checkForUpdateCount ++;
-			Utilities.checkForUpdate(Main.versionCode, handler, Main.this, getResources().getConfiguration().locale);
+			Main.checkForUpdateCount++;
+			Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
+					getResources().getConfiguration().locale);
 			break;
 		}
 		return true;
@@ -276,17 +286,17 @@ public class Main extends ListActivity {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
-						dialogThank = new AlertDialog.Builder(
-								Main.this)
+						dialogThank = new AlertDialog.Builder(Main.this)
 								.setTitle(R.string.thank_title)
 								.setIcon(android.R.drawable.ic_dialog_info)
 								.setMessage(R.string.thank_content)
 								.setPositiveButton(android.R.string.ok,
 										new DialogInterface.OnClickListener() {
-									@Override
-											public void onClick(DialogInterface dialog,
+											@Override
+											public void onClick(
+													DialogInterface dialog,
 													int whichButton) {
-										dialogThank.cancel();
+												dialogThank.cancel();
 											}
 										}).create();
 						dialogThank.show();
@@ -348,11 +358,17 @@ public class Main extends ListActivity {
 			dialogAbout = new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.menu_about))
-					.setMessage(getString(R.string.about_content))
+					.setMessage(
+							getString(R.string.about_content) + "\nn"
+									+ Consts.RELEASE_DATE + "\nVer "
+									+ versionName + " / " + versionCode + "\n"
+									+ getString(R.string.update_whats_new)
+									+ Consts.WHATSNEW)
 					.setPositiveButton(R.string.thank_list, listenerAbout)
 					.setNegativeButton(R.string.about_contact, listenerAbout)
 					.setNeutralButton(R.string.send_feedback, listenerAbout)
-					.show();
+					.create();
+			dialogAbout.show();
 			break;
 		case Consts.Dialogs.SHARE:
 			View musicInfoView = getMusicInfoView(_id);
@@ -516,12 +532,12 @@ public class Main extends ListActivity {
 	private void showMusicList() {
 
 		Cursor cursor = getContentResolver().query(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Consts.MEDIA_INFO,
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				Consts.MEDIA_INFO,
 				MediaStore.Audio.Media.DURATION + ">='" + 30000 + "' AND "
 						+ MediaStore.Audio.Media.MIME_TYPE + "<>'audio/amr'",
-						//妈妈再也不用担心我的录音!
-				null,
-				MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+				// 妈妈再也不用担心我的录音!
+				null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 		// 过滤小于30s的音乐
 		cursor.moveToFirst();
 		musics = new MusicData[cursor.getCount()];
@@ -562,7 +578,7 @@ public class Main extends ListActivity {
 			startActivity(musicIntent);
 		} catch (ActivityNotFoundException e) {
 			new AlertDialog.Builder(Main.this)
-					.setMessage(getString(R.string.no_player_found))
+					.setMessage(getString(R.string.no_app_found))
 					.setPositiveButton(getString(android.R.string.ok),
 							new DialogInterface.OnClickListener() {
 								@Override
@@ -624,19 +640,22 @@ public class Main extends ListActivity {
 
 				et.setText(_content);
 				et.setSelection(_content.length());
-				et.addTextChangedListener(new TextWatcher() {           
+				et.addTextChangedListener(new TextWatcher() {
 					@Override
-					public void afterTextChanged(Editable arg0) {	
+					public void afterTextChanged(Editable arg0) {
 					}
+
 					@Override
 					public void beforeTextChanged(CharSequence s, int start,
-							int count, int after) {						
+							int count, int after) {
 					}
+
 					@Override
 					public void onTextChanged(CharSequence s, int start,
 							int before, int count) {
-						if((s.toString()+" ").charAt(start)=='@') Log.d(Consts.DEBUG_TAG, "@ CATCHED!"); //TODO @提醒
-						//XXX 为什么要这么做,因为不这么的话一上来就FC
+						if ((s.toString() + " ").charAt(start) == '@')
+							Log.d(Consts.DEBUG_TAG, "@ CATCHED!"); // TODO @提醒
+						// XXX 为什么要这么做,因为不这么的话一上来就FC
 					}
 				});
 				new AlertDialog.Builder(Main.this)
@@ -708,8 +727,9 @@ public class Main extends ListActivity {
 				// TODO 完善一下这里需要重试
 				break;
 			case Consts.Status.NO_UPDATE:
-				Toast toast = Toast.makeText(Main.this, R.string.no_update, Toast.LENGTH_LONG);
-				if (Main.checkForUpdateCount != 0){
+				Toast toast = Toast.makeText(Main.this, R.string.no_update,
+						Toast.LENGTH_LONG);
+				if (Main.checkForUpdateCount != 0) {
 					toast.show();
 				}
 				break;
@@ -736,9 +756,22 @@ public class Main extends ListActivity {
 	private void sendFile(String path) {
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_SEND);
-		intent.setType("audio/*");
+		intent.setType("*/*");
+		//果然是个好东西，不过多出来不少无关的，我在考虑要不要改回去呢
 		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path)));
-		startActivity(intent);
+		try {
+			startActivity(intent);
+		} catch (ActivityNotFoundException e) {
+			new AlertDialog.Builder(Main.this)
+					.setMessage(getString(R.string.no_app_found))
+					.setPositiveButton(getString(android.R.string.ok),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+								}
+							}).show();
+		}
 	}
 
 	private void updateApp(final String[] info) {
@@ -746,57 +779,68 @@ public class Main extends ListActivity {
 				.setIcon(android.R.drawable.ic_dialog_info)
 				.setTitle(R.string.update_found)
 				.setMessage(info[Consts.ArraySubscript.UPDATE_INFO])
-				.setPositiveButton(R.string.update_download, new DialogInterface.OnClickListener() {				
-					@Override
-					public void onClick(DialogInterface arg0, int arg1) {
-						Uri uri = Uri.parse(info[Consts.ArraySubscript.DOWNLOAD_URL]);
-						Intent intent = new Intent(Intent.ACTION_VIEW,uri);
-						startActivity(intent);
-					}
-				})
-				.setNegativeButton(R.string.update_view, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Uri uri = Uri.parse("market://details?id=com.paperairplane.music.share");
-						Intent intent = new Intent(Intent.ACTION_VIEW,uri);
-						try{
-						startActivity(intent);
-						}catch(ActivityNotFoundException e){
-							e.printStackTrace();
-							Toast.makeText(getApplicationContext(), getString(R.string.update_no_market_found), Toast.LENGTH_SHORT).show();
-						}
-					}
-				})
-				.show();
+				.setPositiveButton(R.string.update_download,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								Uri uri = Uri
+										.parse(info[Consts.ArraySubscript.DOWNLOAD_URL]);
+								Intent intent = new Intent(Intent.ACTION_VIEW,
+										uri);
+								startActivity(intent);
+							}
+						})
+				.setNegativeButton(R.string.update_view,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								Uri uri = Uri
+										.parse("market://details?id=com.paperairplane.music.share");
+								Intent intent = new Intent(Intent.ACTION_VIEW,
+										uri);
+								try {
+									startActivity(intent);
+								} catch (ActivityNotFoundException e) {
+									e.printStackTrace();
+									Toast.makeText(
+											getApplicationContext(),
+											getString(R.string.update_no_market_found),
+											Toast.LENGTH_SHORT).show();
+								}
+							}
+						}).show();
 
 	}
-	
-	private void firstShow(){
+
+	private void firstShow() {
 		SharedPreferences preferences = getApplicationContext()
 				.getSharedPreferences(Consts.Preferences.GENERAL,
 						Context.MODE_PRIVATE);
-		//if(!preferences.getBoolean("hasFirstStarted", false)){
-			Log.d(Consts.DEBUG_TAG, "首次启动");
-			dialogWelcome = new AlertDialog.Builder(Main.this)
-					.setIcon(android.R.drawable.ic_dialog_info)
-					.setTitle(R.string.welcome_title)
-					.setMessage(R.string.welcome_content)
-					.setPositiveButton(R.string.welcome_button,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									dialogWelcome.cancel();
-								}
-							}).create();
-			Log.v(Consts.DEBUG_TAG, "首次启动对话框已初始化");
-			dialogWelcome.show();
-			Log.v(Consts.DEBUG_TAG, "首次启动对话框已显示");
-			preferences.edit().putBoolean("hasFirstStarted", true).commit();
-		//}
-		//else Log.d(Consts.DEBUG_TAG, "非首次启动");
-			//发布的时候去掉这些注释就行，我是为了每次都显示
+		// if(!preferences.getBoolean("hasFirstStarted", false)){
+		Log.d(Consts.DEBUG_TAG, "首次启动");
+		dialogWelcome = new AlertDialog.Builder(Main.this)
+				.setIcon(android.R.drawable.ic_dialog_info)
+				.setTitle(R.string.welcome_title)
+				.setMessage(
+						getString(R.string.welcome_content)
+								+ getString(R.string.update_whats_new)
+								+ Consts.WHATSNEW + "\n\nP.S.测试版，所以每次都显示")
+				.setPositiveButton(R.string.welcome_button,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+								dialogWelcome.cancel();
+							}
+						}).create();
+		Log.v(Consts.DEBUG_TAG, "首次启动对话框已初始化");
+		dialogWelcome.show();
+		Log.v(Consts.DEBUG_TAG, "首次启动对话框已显示");
+		preferences.edit().putBoolean("hasFirstStarted", true).commit();
+		// }
+		// else Log.d(Consts.DEBUG_TAG, "非首次启动");
+		// FIXME 发布的时候去掉这些注释就行，我是为了每次都显示
 	}
-	
 
 }

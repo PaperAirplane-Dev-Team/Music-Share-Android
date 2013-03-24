@@ -13,7 +13,8 @@
         android:layout_gravity="center_vertical"
         android:text="@string/to_show_title"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginLeft="7dip" />
 
     <TextView
         android:id="@+id/singer"
@@ -23,6 +24,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginTop="5dip"
         android:text="@string/to_show_artist"
-        android:textSize="13sp" />
+        android:textSize="13sp"
+        android:layout_marginLeft="7dip" />
 
 </LinearLayout>

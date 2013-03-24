@@ -13,6 +13,8 @@ public class Consts {
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
 	public final static String VERY_LONG = "                                                         ";
+	public final static String RELEASE_DATE = "2013.3.24";
+	public final static String WHATSNEW = "首次启动对话框，音频过滤，Overlay微调，感谢名单，左边留白";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
 	public final static int NULL = -1;

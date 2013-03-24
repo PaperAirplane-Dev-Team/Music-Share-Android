@@ -22,16 +22,16 @@
     <string name="refresh_on_process">刷新播放列表中</string>
     <string name="menu_about">关于</string>
     <string name="about_contact">联系我们</string>
-	<string name="about_download_info">戳我下载：</string>
+    <string name="about_download_info">戳我下载：</string>
     <string name="no_music_url_found">我真没用没找到详情地址……</string>
-    <string name="error_internet">请检查您的网络连接</string>  
-    <string name="querying">查询中………请稍候</string> 
+    <string name="error_internet">请检查您的网络连接</string>
+    <string name="querying">查询中………请稍候</string>
     <string name="too_long">超出字数限制</string>
     <string name="url">http://t.cn/zYyzZOK</string>
     <string name="send_succeed">分享成功</string>
     <string name="not_authorized_error">请先授权</string>
     <string name="send_error">分享失败，错误：</string>
-    <string name="auth_error">授权失败，错误：</string> 
+    <string name="auth_error">授权失败，错误：</string>
     <string name="auth">微博授权</string>
     <string name="unauth">取消授权</string>
     <string name="auth_succeed">授权成功</string>
@@ -44,12 +44,12 @@
     <string name="artist">表演者</string>
     <string name="album">专辑</string>
     <string name="duration">时长</string>
-    <string name="no_player_found">找不到适合的播放器</string>
+    <string name="no_app_found">找不到适合的应用程序处理请求哦~不如去安装几个再来？</string>
     <string name="unauth_confirm">确定要取消授权吗？</string>
     <string name="feedback_mail">(自动)邮件反馈</string>
     <string name="feedback_weibo">微博反馈</string>
     <string name="thank_for_feedback">感谢您的反馈！</string>
-    <string name="feedback_hint">请提供尽可能详细的信息，例如您的手机型号、系统版本、问题重现方式等等。我们真的很感谢您的帮助！</string>
+    <string name="feedback_hint">请提供尽可能详细关于问题的信息或者您的宝贵建议。别忘了留下您的联系方式(Email/微博/QQ/手机等)。我们真的很感谢您的帮助！</string>
     <string name="feedback_succeed">反馈成功，十分感谢！</string>
     <string name="feedback_failed">抱歉，反馈失败，我们会重新尝试的~仍然感谢！</string>
     <string name="send_file">发送音乐</string>
@@ -67,4 +67,5 @@
     <string name="thank_title">感谢你们！</string>
     <string name="welcome_title">欢迎使用纸飞机音乐分享！</string>
     <string name="welcome_button">希望您喜欢我们的App~</string>
+
 </resources>
