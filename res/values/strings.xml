@@ -72,4 +72,11 @@
     <string name="welcome_title">Welcome To Our App</string>
     <string name="welcome_content">//TODO 这是个首次启动的框框。写点啥,实在不行用View做个布局? P.S.这个没有i10n\n\n</string>
     <string name="welcome_button">Let\'s enjoy this app~</string>
+    <string name="change_overlay_color">Change the background color of text overlay</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="to_show_color">The color will appear here</string>
+    <string name="menu_change_color">Change Overlay Color</string>
+    <string name="reset">Reset</string>
 </resources>

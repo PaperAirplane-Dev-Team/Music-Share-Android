@@ -13,8 +13,9 @@ public class Consts {
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
 	public final static String VERY_LONG = "                                                         ";
-	public final static String RELEASE_DATE = "2013.3.24";
-	public final static String WHATSNEW = "首次启动对话框，音频过滤，Overlay微调，感谢名单，左边留白";
+	public final static String RELEASE_DATE = "2013.3.29";
+	public final static String WHATSNEW = "遮罩颜色更改,搜索按钮叠加层";
+	public final static String ORIGIN_COLOR = "#99000088";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
 	public final static int NULL = -1;
@@ -69,6 +70,7 @@ public class Consts {
 		public static final int ABOUT = 1;
 		public static final int SEARCH = 2;
 		public static final int EMPTY = 3;
+		public static final int CHANGE_COLOR = 4;
 	}
 
 	public final class Preferences {
@@ -76,11 +78,18 @@ public class Consts {
 		public final static String SHARE = "ShareStatus";
 		public final static String FEEDBACK = "FeedbackStatus";
 		public final static String GENERAL = "General";
+		public final static String BG_COLOR = "overlay_bg_color";
 	}
 
 	public final class MenuItem {
 		public final static int REFRESH = 0;
 		public final static int AUTH = 1;
 		public final static int UNAUTH = 2;
+	}
+	
+	public final class Color {
+		public final static int RED = 0;
+		public final static int GREEN = 1;
+		public final static int BLUE = 2;
 	}
 }

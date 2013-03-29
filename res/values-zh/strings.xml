@@ -67,5 +67,12 @@
     <string name="thank_title">感谢你们！</string>
     <string name="welcome_title">欢迎使用纸飞机音乐分享！</string>
     <string name="welcome_button">希望您喜欢我们的App~</string>
+    <string name="change_overlay_color">更改文字遮罩层背景颜色</string>
+    <string name="red">红</string>
+    <string name="green">绿</string>
+    <string name="blue">蓝</string>
+    <string name="to_show_color">这里显示您选择的颜色</string>
+    <string name="menu_change_color">更改遮罩层颜色</string>
+    <string name="reset">重置</string>
 
 </resources>

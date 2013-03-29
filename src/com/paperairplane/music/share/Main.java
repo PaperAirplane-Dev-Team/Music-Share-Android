@@ -41,6 +41,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,10 +59,11 @@ public class Main extends ListActivity {
 			Consts.Url.AUTH_REDIRECT);
 	private Receiver receiver;
 	private AlertDialog dialogMain, dialogAbout, dialogSearch, dialogThank,
-			dialogWelcome;
+			dialogWelcome, dialogChangeColor;
 	private SsoHandler ssoHandler;
 	private WeiboHelper weiboHelper;
 	private TextView indexOverlay;
+	private View footerButton;
 	private static int versionCode, checkForUpdateCount = 0;
 	private String versionName;
 
@@ -109,18 +112,22 @@ public class Main extends ListActivity {
 								WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
 										| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
 								PixelFormat.TRANSLUCENT));
-		listview = (ListView) findViewById(android.R.id.list);// 找ListView的ID
+		SharedPreferences preference=getSharedPreferences(Consts.Preferences.GENERAL, MODE_PRIVATE);
+		if (preference.contains(Consts.Preferences.BG_COLOR)){
+			indexOverlay.setBackgroundColor(android.graphics.Color.parseColor(preference.getString(Consts.Preferences.BG_COLOR, "")));
+		}
+		listview = (ListView) findViewById(android.R.id.list);// 找LisView的ID
+		footerButton = findViewById(R.id.foot_button);
 		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
-		View footerView = LayoutInflater.from(this).inflate(R.layout.footer,
-				null);
-		listview.addFooterView(footerView);
 		listview.setOnScrollListener(new OnScrollListener() {
 
 			boolean visible;
 
+			@SuppressLint("NewApi")
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem,
 					int visibleItemCount, int totalItemCount) {
+				footerButton.setVisibility(View.VISIBLE);
 				if (visible) {
 					String firstChar = musics[firstVisibleItem].getTitle();
 					if (firstChar.toLowerCase(Locale.getDefault()).startsWith(
@@ -142,6 +149,16 @@ public class Main extends ListActivity {
 				if (firstVisibleItem == 0
 						|| (firstVisibleItem + visibleItemCount) == totalItemCount) {
 					indexOverlay.setVisibility(View.INVISIBLE);
+					// footerButton.setVisibility(View.GONE);
+				}
+				if ((firstVisibleItem + visibleItemCount) >= (totalItemCount - 3)
+						&& visibleItemCount < totalItemCount) {
+					footerButton.setVisibility(View.GONE);
+				}
+				if (visibleItemCount >= totalItemCount) {
+					footerButton.setVisibility(View.VISIBLE);
+					footerButton.setTop(android.R.id.list);
+					// FIXME 如果歌曲不够一屏幕……仍然叠加就难看死了，这个方法只有API 11以上才可用，求解。
 				}
 			}
 
@@ -150,6 +167,10 @@ public class Main extends ListActivity {
 				visible = true;
 				if (scrollState == ListView.OnScrollListener.SCROLL_STATE_IDLE) {
 					indexOverlay.setVisibility(View.INVISIBLE);
+					// footerButton.setVisibility(View.VISIBLE);
+				}
+				if (scrollState == ListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+					// footerButton.setVisibility(View.GONE);
 				}
 			}
 
@@ -161,7 +182,7 @@ public class Main extends ListActivity {
 		super.onStop();
 		try {
 			unregisterReceiver(receiver);
-			indexOverlay = null;
+			getWindowManager().removeView(indexOverlay);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -210,6 +231,9 @@ public class Main extends ListActivity {
 			break;
 		case R.id.menu_about:
 			showAbout();
+			break;
+		case R.id.menu_change_color:
+			showCustomDialog(0, Consts.Dialogs.CHANGE_COLOR);
 			break;
 		case Consts.MenuItem.UNAUTH:
 			// 我特意把这里反了过来否则没法用啊
@@ -462,6 +486,128 @@ public class Main extends ListActivity {
 										int which) {
 								}
 							}).show();
+			break;
+
+		case Consts.Dialogs.CHANGE_COLOR:
+			View changeColor = View.inflate(Main.this, R.layout.color_chooser,
+					null);
+			final SeekBar seekColor[] = new SeekBar[3];
+			final TextView textColor[] = new TextView[3];
+			final TextView textColorCode = (TextView) changeColor
+					.findViewById(R.id.text_color);
+			final TextView textShowColor = (TextView) changeColor
+					.findViewById(R.id.text_show_color);
+			seekColor[Consts.Color.RED] = (SeekBar) changeColor
+					.findViewById(R.id.seek_red);
+			seekColor[Consts.Color.GREEN] = (SeekBar) changeColor
+					.findViewById(R.id.seek_green);
+			seekColor[Consts.Color.BLUE] = (SeekBar) changeColor
+					.findViewById(R.id.seek_blue);
+			textColor[Consts.Color.RED] = (TextView) changeColor
+					.findViewById(R.id.text_red);
+			textColor[Consts.Color.GREEN] = (TextView) changeColor
+					.findViewById(R.id.text_green);
+			textColor[Consts.Color.BLUE] = (TextView) changeColor
+					.findViewById(R.id.text_blue);
+			OnSeekBarChangeListener seekListener = new OnSeekBarChangeListener() {
+
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) {
+				}
+
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) {
+				}
+
+				@Override
+				public void onProgressChanged(SeekBar seekBar, int progress,
+						boolean fromUser) {
+					switch (seekBar.getId()) {
+					case R.id.seek_red:
+						textColor[Consts.Color.RED]
+								.setText(getString(R.string.red) + ":"
+										+ progress);
+						break;
+					case R.id.seek_green:
+						textColor[Consts.Color.GREEN]
+								.setText(getString(R.string.green) + ":"
+										+ progress);
+						break;
+					case R.id.seek_blue:
+						textColor[Consts.Color.BLUE]
+								.setText(getString(R.string.blue) + ":"
+										+ progress);
+						break;
+					}
+					changeColor();
+
+				}
+
+				private void changeColor() {
+					String color[] = new String[3];
+					color[Consts.Color.RED] = Integer
+							.toHexString(seekColor[Consts.Color.RED]
+									.getProgress());
+					color[Consts.Color.GREEN] = Integer
+							.toHexString(seekColor[Consts.Color.GREEN]
+									.getProgress());
+					color[Consts.Color.BLUE] = Integer
+							.toHexString(seekColor[Consts.Color.BLUE]
+									.getProgress());
+					for (int i = 0; i < 3; i++) {
+						if (color[i].length() == 1)
+							color[i] = "0" + color[i];
+					}
+					String hexColor = ("#" + color[0] + color[1] + color[2]).toUpperCase(Locale.getDefault());
+					//Log.d(Consts.DEBUG_TAG, "Color: "+hexColor);
+					textColorCode.setText(hexColor);
+					textShowColor.setBackgroundColor(android.graphics.Color
+							.parseColor(hexColor));
+				}
+			};
+			for (int i = 0; i < 3; i++) {
+				seekColor[i].setOnSeekBarChangeListener(seekListener);
+			}
+			DialogInterface.OnClickListener listenerColor = new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int whichButton) {
+					switch (whichButton) {
+					case DialogInterface.BUTTON_POSITIVE:
+						SharedPreferences preferences = getApplicationContext()
+						.getSharedPreferences(Consts.Preferences.GENERAL,
+								Context.MODE_PRIVATE);
+						String color=textColorCode.getText().toString();
+				preferences.edit().putString(Consts.Preferences.BG_COLOR, color)
+						.commit();
+				indexOverlay.setBackgroundColor(android.graphics.Color
+							.parseColor(color));
+				Log.d(Consts.DEBUG_TAG, "自定义颜色:"+color);
+						break;
+					case DialogInterface.BUTTON_NEGATIVE:
+						dialogChangeColor.cancel();
+						break;
+					case DialogInterface.BUTTON_NEUTRAL:
+						SharedPreferences prefer = getApplicationContext()
+						.getSharedPreferences(Consts.Preferences.GENERAL,
+								Context.MODE_PRIVATE);
+				prefer.edit().putString(Consts.Preferences.BG_COLOR, Consts.ORIGIN_COLOR)
+						.commit();
+						indexOverlay.setBackgroundColor(android.graphics.Color
+								.parseColor(Consts.ORIGIN_COLOR));
+						dialogChangeColor.cancel();
+						break;
+					}
+				}
+			};
+			dialogChangeColor = new AlertDialog.Builder(Main.this)
+					.setView(changeColor)
+					.setIcon(android.R.drawable.ic_dialog_info).setTitle(R.string.change_overlay_color)
+					.setPositiveButton(android.R.string.ok, listenerColor)
+					.setNegativeButton(android.R.string.cancel, listenerColor)
+					.setNeutralButton(R.string.reset, listenerColor)
+					.create();
+			dialogChangeColor.show();
 			break;
 
 		default:
@@ -757,7 +903,7 @@ public class Main extends ListActivity {
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_SEND);
 		intent.setType("*/*");
-		//果然是个好东西，不过多出来不少无关的，我在考虑要不要改回去呢
+		// 果然是个好东西，不过多出来不少无关的，我在考虑要不要改回去呢
 		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path)));
 		try {
 			startActivity(intent);
