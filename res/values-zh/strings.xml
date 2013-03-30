@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
 
     <string name="app_name">纸飞机音乐分享</string>
     <string name="title_activity_main">音乐分享</string>
@@ -74,5 +74,5 @@
     <string name="to_show_color">这里显示您选择的颜色</string>
     <string name="menu_change_color">更改遮罩层颜色</string>
     <string name="reset">重置</string>
-
+    <string name="opacity">不透明度</string>
 </resources>

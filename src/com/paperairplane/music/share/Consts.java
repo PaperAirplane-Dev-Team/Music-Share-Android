@@ -13,8 +13,8 @@ public class Consts {
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
 	public final static String VERY_LONG = "                                                         ";
-	public final static String RELEASE_DATE = "2013.3.29";
-	public final static String WHATSNEW = "遮罩颜色更改,搜索按钮叠加层";
+	public final static String RELEASE_DATE = "2013.3.30";
+	public final static String WHATSNEW = "遮罩颜色透明度更改,搜索按钮叠加层（待完善）";
 	public final static String ORIGIN_COLOR = "#99000088";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
@@ -91,5 +91,6 @@ public class Consts {
 		public final static int RED = 0;
 		public final static int GREEN = 1;
 		public final static int BLUE = 2;
+		public final static int OPACITY = 3;
 	}
 }

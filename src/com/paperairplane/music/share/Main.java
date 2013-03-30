@@ -112,9 +112,12 @@ public class Main extends ListActivity {
 								WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
 										| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
 								PixelFormat.TRANSLUCENT));
-		SharedPreferences preference=getSharedPreferences(Consts.Preferences.GENERAL, MODE_PRIVATE);
-		if (preference.contains(Consts.Preferences.BG_COLOR)){
-			indexOverlay.setBackgroundColor(android.graphics.Color.parseColor(preference.getString(Consts.Preferences.BG_COLOR, "")));
+		SharedPreferences preference = getSharedPreferences(
+				Consts.Preferences.GENERAL, MODE_PRIVATE);
+		if (preference.contains(Consts.Preferences.BG_COLOR)) {
+			indexOverlay.setBackgroundColor(android.graphics.Color
+					.parseColor(preference.getString(
+							Consts.Preferences.BG_COLOR, "")));
 		}
 		listview = (ListView) findViewById(android.R.id.list);// 找LisView的ID
 		footerButton = findViewById(R.id.foot_button);
@@ -157,7 +160,13 @@ public class Main extends ListActivity {
 				}
 				if (visibleItemCount >= totalItemCount) {
 					footerButton.setVisibility(View.VISIBLE);
-					footerButton.setTop(android.R.id.list);
+					/*try {
+						footerButton.setTop(android.R.id.list);
+					} catch (Exception e) {
+						// TODO 自动生成的 catch 块
+						e.printStackTrace();
+					}*/
+					//FIXME 避免2.x崩溃
 					// FIXME 如果歌曲不够一屏幕……仍然叠加就难看死了，这个方法只有API 11以上才可用，求解。
 				}
 			}
@@ -179,12 +188,36 @@ public class Main extends ListActivity {
 
 	@Override
 	protected void onStop() {
-		super.onStop();
+		Log.d(Consts.DEBUG_TAG, "onStop()");
 		try {
-			unregisterReceiver(receiver);
 			getWindowManager().removeView(indexOverlay);
+			//XXX 我还得在onResume加回来
+			unregisterReceiver(receiver);
+			//我说,这是嘛回事。这里有Exception！
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(Consts.DEBUG_TAG,"你的Receiver又完了");
+		}
+		super.onStop();
+	}
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		try {
+			getWindowManager()
+			.addView(
+					indexOverlay,
+					new WindowManager.LayoutParams(
+							LayoutParams.WRAP_CONTENT,
+							LayoutParams.WRAP_CONTENT,
+							WindowManager.LayoutParams.TYPE_APPLICATION,
+							WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+									| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+							PixelFormat.TRANSLUCENT));
+		} catch (Exception e) {
+			//首次启动会执行onCreate和它，直接抛出异常
+			Log.d(Consts.DEBUG_TAG,"所以这个Exception没法解决了？");
 		}
 	}
 
@@ -223,7 +256,8 @@ public class Main extends ListActivity {
 	// 菜单判断
 	public boolean onOptionsItemSelected(MenuItem menu) {
 		super.onOptionsItemSelected(menu);
-		Log.e(Consts.DEBUG_TAG, "id:" + menu.getItemId());
+		Log.d(Consts.DEBUG_TAG, "menu id:" + menu.getItemId());
+		//E什么啊！我还以为出错了
 		switch (menu.getItemId()) {
 		case R.id.menu_exit:
 			finish();
@@ -491,8 +525,8 @@ public class Main extends ListActivity {
 		case Consts.Dialogs.CHANGE_COLOR:
 			View changeColor = View.inflate(Main.this, R.layout.color_chooser,
 					null);
-			final SeekBar seekColor[] = new SeekBar[3];
-			final TextView textColor[] = new TextView[3];
+			final SeekBar seekColor[] = new SeekBar[4];
+			final TextView textColor[] = new TextView[4];
 			final TextView textColorCode = (TextView) changeColor
 					.findViewById(R.id.text_color);
 			final TextView textShowColor = (TextView) changeColor
@@ -503,12 +537,19 @@ public class Main extends ListActivity {
 					.findViewById(R.id.seek_green);
 			seekColor[Consts.Color.BLUE] = (SeekBar) changeColor
 					.findViewById(R.id.seek_blue);
+			seekColor[Consts.Color.OPACITY] = (SeekBar) changeColor
+					.findViewById(R.id.seek_trans);
 			textColor[Consts.Color.RED] = (TextView) changeColor
 					.findViewById(R.id.text_red);
 			textColor[Consts.Color.GREEN] = (TextView) changeColor
 					.findViewById(R.id.text_green);
 			textColor[Consts.Color.BLUE] = (TextView) changeColor
 					.findViewById(R.id.text_blue);
+			textColor[Consts.Color.OPACITY] = (TextView) changeColor
+					.findViewById(R.id.text_trans);
+			final SharedPreferences preferences = getApplicationContext()
+					.getSharedPreferences(Consts.Preferences.GENERAL,
+							Context.MODE_PRIVATE);
 			OnSeekBarChangeListener seekListener = new OnSeekBarChangeListener() {
 
 				@Override
@@ -538,13 +579,18 @@ public class Main extends ListActivity {
 								.setText(getString(R.string.blue) + ":"
 										+ progress);
 						break;
+					case R.id.seek_trans:
+						textColor[Consts.Color.OPACITY]
+								.setText(getString(R.string.opacity) + ":"
+										+ progress*100/255 + "%");
+						break;
 					}
 					changeColor();
 
 				}
 
 				private void changeColor() {
-					String color[] = new String[3];
+					String color[] = new String[4];
 					color[Consts.Color.RED] = Integer
 							.toHexString(seekColor[Consts.Color.RED]
 									.getProgress());
@@ -554,19 +600,43 @@ public class Main extends ListActivity {
 					color[Consts.Color.BLUE] = Integer
 							.toHexString(seekColor[Consts.Color.BLUE]
 									.getProgress());
-					for (int i = 0; i < 3; i++) {
+					color[Consts.Color.OPACITY] = Integer
+							.toHexString(seekColor[Consts.Color.OPACITY]
+									.getProgress());
+					for (int i = 0; i < 4; i++) {
 						if (color[i].length() == 1)
 							color[i] = "0" + color[i];
 					}
-					String hexColor = ("#" + color[0] + color[1] + color[2]).toUpperCase(Locale.getDefault());
-					//Log.d(Consts.DEBUG_TAG, "Color: "+hexColor);
+					String hexColor = ("#" + color[Consts.Color.OPACITY]
+							+ color[Consts.Color.RED]
+							+ color[Consts.Color.GREEN] + color[Consts.Color.BLUE])
+							.toUpperCase(Locale.getDefault());
+					// Log.d(Consts.DEBUG_TAG, "Color: "+hexColor);
 					textColorCode.setText(hexColor);
 					textShowColor.setBackgroundColor(android.graphics.Color
 							.parseColor(hexColor));
 				}
 			};
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 4; i++) {
 				seekColor[i].setOnSeekBarChangeListener(seekListener);
+			}
+			if (preferences.contains(Consts.Preferences.BG_COLOR)) {
+				String nowColor = preferences.getString(
+						Consts.Preferences.BG_COLOR, "");
+				Log.d(Consts.DEBUG_TAG, "Got origin color");
+				int colorInt[] = new int[4];
+				colorInt[Consts.Color.RED] = Integer.valueOf(
+						nowColor.substring(3, 5), 16);
+				colorInt[Consts.Color.GREEN] = Integer.valueOf(
+						nowColor.substring(5, 7), 16);
+				colorInt[Consts.Color.BLUE] = Integer.valueOf(
+						nowColor.substring(7, 9), 16);
+				colorInt[Consts.Color.OPACITY] = Integer.valueOf(
+						nowColor.substring(1, 3), 16);
+				Log.d(Consts.DEBUG_TAG,"Integers are: "+colorInt[0]+" "+colorInt[1]+" "+colorInt[2]+" "+colorInt[3]);
+				for (int i = 0; i < 4; i++) {
+					seekColor[i].setProgress(colorInt[i]);
+				}
 			}
 			DialogInterface.OnClickListener listenerColor = new DialogInterface.OnClickListener() {
 
@@ -574,25 +644,26 @@ public class Main extends ListActivity {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
-						SharedPreferences preferences = getApplicationContext()
-						.getSharedPreferences(Consts.Preferences.GENERAL,
-								Context.MODE_PRIVATE);
-						String color=textColorCode.getText().toString();
-				preferences.edit().putString(Consts.Preferences.BG_COLOR, color)
-						.commit();
-				indexOverlay.setBackgroundColor(android.graphics.Color
-							.parseColor(color));
-				Log.d(Consts.DEBUG_TAG, "自定义颜色:"+color);
+						String color = textColorCode.getText().toString();
+						if (color.contains("#")) {
+							preferences
+									.edit()
+									.putString(Consts.Preferences.BG_COLOR,
+											color).commit();
+							indexOverlay
+									.setBackgroundColor(android.graphics.Color
+											.parseColor(color));
+							Log.d(Consts.DEBUG_TAG, "自定义颜色:" + color);
+						}
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
 						dialogChangeColor.cancel();
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
-						SharedPreferences prefer = getApplicationContext()
-						.getSharedPreferences(Consts.Preferences.GENERAL,
-								Context.MODE_PRIVATE);
-				prefer.edit().putString(Consts.Preferences.BG_COLOR, Consts.ORIGIN_COLOR)
-						.commit();
+						preferences
+								.edit()
+								.putString(Consts.Preferences.BG_COLOR,
+										Consts.ORIGIN_COLOR).commit();
 						indexOverlay.setBackgroundColor(android.graphics.Color
 								.parseColor(Consts.ORIGIN_COLOR));
 						dialogChangeColor.cancel();
@@ -602,11 +673,11 @@ public class Main extends ListActivity {
 			};
 			dialogChangeColor = new AlertDialog.Builder(Main.this)
 					.setView(changeColor)
-					.setIcon(android.R.drawable.ic_dialog_info).setTitle(R.string.change_overlay_color)
+					.setIcon(android.R.drawable.ic_dialog_info)
+					.setTitle(R.string.change_overlay_color)
 					.setPositiveButton(android.R.string.ok, listenerColor)
 					.setNegativeButton(android.R.string.cancel, listenerColor)
-					.setNeutralButton(R.string.reset, listenerColor)
-					.create();
+					.setNeutralButton(R.string.reset, listenerColor).create();
 			dialogChangeColor.show();
 			break;
 
