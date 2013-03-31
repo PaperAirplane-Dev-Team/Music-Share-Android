@@ -1,6 +1,6 @@
 package com.paperairplane.music.share;
 
-class MusicData{
+public class MusicData{
 	private String title,artist,duration,path,album;
 	private long albumId;
 	public void setPath(String _path){

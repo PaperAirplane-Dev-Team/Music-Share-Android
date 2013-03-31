@@ -40,7 +40,7 @@ import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
-class Utilities {
+public class Utilities {
 
 	/**
 	 * 将integer类型的时间长度格式化

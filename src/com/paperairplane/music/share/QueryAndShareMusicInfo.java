@@ -12,7 +12,7 @@ import android.util.Log;
 
 class QueryAndShareMusicInfo extends Thread {
 	private int means;
-	private Long album_id;
+	private long album_id;
 	private String artist, title, album;
 	private Context context;
 	private Handler handler;

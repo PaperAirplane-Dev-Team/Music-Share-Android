@@ -99,6 +99,13 @@ public class Main extends ListActivity {
 		listview.setBackgroundResource(R.drawable.listview_background);
 	}
 
+	/**
+	 * @param void
+	 * @return void
+	 * @author Xavier Yao
+	 * 初始化主界面ListView相关属性，初始化文字遮罩
+	 * 
+	 */
 	private void initListView() {
 		indexOverlay = (TextView) View.inflate(Main.this, R.layout.indexer,
 				null);
@@ -326,16 +333,37 @@ public class Main extends ListActivity {
 		return true;
 	}
 
+	/**
+	 * @param View v
+	 * @return void
+	 * 主界面显示为空时按钮点击处理
+	 * 
+	 */
 	public void btn_empty(View v) {
 		refreshMusicList();
 	}
 
+	/**
+	 * @param View v
+	 * @return void
+	 * 搜索互联网按钮点击处理
+	 * 
+	 */
 	public void footer(View v) {
 		showCustomDialog(0, Consts.Dialogs.SEARCH);
 	}
 
 	// 对话框处理
 
+	/**
+	 * @param int _id 如果是音乐则传入所在id，否则为0
+	 * @param int whichDialog 根据Consts.Dialog下面的编号判断是什么对话框
+	 * @return void
+	 * @author Harry Chen
+	 * 显示程序的各种自定义对话框，包括dialogMain, dialogAbout, dialogSearch, dialogThank,
+	 *	dialogWelcome, dialogChangeColor
+	 * 
+	 */
 	private void showCustomDialog(final int _id, int whichDialog) {
 		switch (whichDialog) {
 		case Consts.Dialogs.ABOUT:
@@ -686,6 +714,13 @@ public class Main extends ListActivity {
 		}
 	}
 
+	/**
+	 * @param int _id 传入音乐所在数组的位置id
+	 * @return View 用于初始化对话框的View
+	 * @author Harry Chen
+	 * 用于dialogMain，显示音乐信息
+	 * 
+	 */
 	private View getMusicInfoView(final int _id) {
 		View musicInfo = LayoutInflater.from(this).inflate(R.layout.music_info,
 				null);
@@ -730,7 +765,11 @@ public class Main extends ListActivity {
 		return musicInfo;
 	}
 
-	// 列表点击监听类
+	/**
+	 * @author Xavier Yao
+	 * 列表点击监听类
+	 * 
+	 */
 	private class MusicListOnClickListener implements OnItemClickListener {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long id) {
@@ -745,7 +784,14 @@ public class Main extends ListActivity {
 		}
 	}
 
-	// 音乐列表
+	
+	/**
+	 * @param void
+	 * @return void
+	 * @author Xavier Yao
+	 * 初始化用到的音乐信息数组，填充进主界面ListView
+	 * 
+	 */
 	private void showMusicList() {
 
 		Cursor cursor = getContentResolver().query(
@@ -773,7 +819,17 @@ public class Main extends ListActivity {
 
 	}
 
-	// 分享音乐
+	/**
+	 * @param String title 音乐标题
+	 * @param String artist音乐艺术家
+	 * @param String album 音乐专辑名
+	 * @param long album_id 音乐专辑封面ID
+	 * @param int means 分享意图，源自Consts.ShareMeans
+	 * @return void
+	 * @author Xavier Yao
+	 * 分享音乐的主调方法，将调用QueryAndShareMusicInfo类
+	 * 
+	 */
 	private void shareMusic(String title, String artist, String album,
 			long album_id, int means) {
 		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
@@ -784,7 +840,13 @@ public class Main extends ListActivity {
 				.show();
 	}
 
-	// 播放音乐
+	/**
+	 * @param int position 音乐在信息数组中的位置
+	 * @return void
+	 * @author Xavier Yao
+	 * 播放音乐的主调方法
+	 * 
+	 */
 	private void playMusic(int position) {
 		Intent musicIntent = new Intent();
 		musicIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -807,7 +869,13 @@ public class Main extends ListActivity {
 
 	}
 
-	// 刷新音乐列表
+	/**
+	 * @param void
+	 * @return void
+	 * @author Xavier Yao
+	 * 刷新音乐列表
+	 * 
+	 */
 	private void refreshMusicList() {
 		try {
 			IntentFilter filter = new IntentFilter(
@@ -828,11 +896,22 @@ public class Main extends ListActivity {
 		}
 	}
 
-	private void showAbout() { // 显示关于窗口
+	/**
+	 * @param void
+	 * @return void
+	 * @author Harry Chen
+	 * 显示关于窗口
+	 * 
+	 */
+	private void showAbout() { 
 		showCustomDialog(0, Consts.Dialogs.ABOUT);
 	}
 
-	// 这是消息处理
+	/**
+	 * @author Xavier Yao
+	 * 处理各种线程信息
+	 * 
+	 */
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -957,6 +1036,16 @@ public class Main extends ListActivity {
 		}
 	};
 
+	
+	/**
+	 * @author Xavier Yao
+	 * @param String content 微博内容
+	 * @param boolean checked 是否关注开发者
+	 * @param String artworkUrl 微博图片地址
+	 * @param String fileName 图片文件名
+	 * @return void
+	 * 保存微博以及发送状态，备用
+	 */
 	private void saveSendStatus(String content, boolean checked,
 			String artworkUrl, String fileName) {
 		SharedPreferences preferences = getApplicationContext()
@@ -970,6 +1059,12 @@ public class Main extends ListActivity {
 
 	}
 
+	/**
+	 * @author Harry Chen
+	 * @param String path 音乐路径
+	 * @return void
+	 * 发送音乐文件，通过其他App
+	 */
 	private void sendFile(String path) {
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_SEND);
@@ -991,6 +1086,12 @@ public class Main extends ListActivity {
 		}
 	}
 
+	/**
+	 * @author Xavier Yao
+	 * @return void
+	 * @param String[] info传回的各种更新信息
+	 * 通过返回的更新信息显示对话框让用户决定是否更新程序
+	 */
 	private void updateApp(final String[] info) {
 		new AlertDialog.Builder(Main.this)
 				.setIcon(android.R.drawable.ic_dialog_info)
@@ -1030,6 +1131,12 @@ public class Main extends ListActivity {
 
 	}
 
+	/**
+	 * @author Harry Chen
+	 * @param void
+	 * @return void
+	 * 判断是否首次启动并显示欢迎对话框
+	 */
 	private void firstShow() {
 		SharedPreferences preferences = getApplicationContext()
 				.getSharedPreferences(Consts.Preferences.GENERAL,
