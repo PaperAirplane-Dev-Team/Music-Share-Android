@@ -41,6 +41,7 @@ public class Consts {
 		public static final int FEEDBACK_FAIL = 8;
 		public static final int NO_UPDATE = 9;
 		public static final int HAS_UPDATE = 10;
+		public static final int REFRESH_LIST_FINISHED = 11;
 	}
 
 	public final class WeiboUid {

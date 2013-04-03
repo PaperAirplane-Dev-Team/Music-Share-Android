@@ -63,7 +63,6 @@ public class Main extends ListActivity {
 	private SsoHandler ssoHandler;
 	private WeiboHelper weiboHelper;
 	private TextView indexOverlay;
-	private View footerButton;
 	private static int versionCode, checkForUpdateCount = 0;
 	private String versionName;
 
@@ -96,7 +95,7 @@ public class Main extends ListActivity {
 
 		Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
 				getResources().getConfiguration().locale);
-		listview.setBackgroundResource(R.drawable.listview_background);
+		findViewById(R.id.main_linearLayout).setBackgroundResource(R.drawable.listview_background);
 	}
 
 	/**
@@ -127,7 +126,6 @@ public class Main extends ListActivity {
 							Consts.Preferences.BG_COLOR, "")));
 		}
 		listview = (ListView) findViewById(android.R.id.list);// 找LisView的ID
-		footerButton = findViewById(R.id.foot_button);
 		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
 		listview.setOnScrollListener(new OnScrollListener() {
 
@@ -137,7 +135,6 @@ public class Main extends ListActivity {
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem,
 					int visibleItemCount, int totalItemCount) {
-				footerButton.setVisibility(View.VISIBLE);
 				if (visible) {
 					String firstChar = musics[firstVisibleItem].getTitle();
 					if (firstChar.toLowerCase(Locale.getDefault()).startsWith(
@@ -159,23 +156,10 @@ public class Main extends ListActivity {
 				if (firstVisibleItem == 0
 						|| (firstVisibleItem + visibleItemCount) == totalItemCount) {
 					indexOverlay.setVisibility(View.INVISIBLE);
-					// footerButton.setVisibility(View.GONE);
 				}
 				if ((firstVisibleItem + visibleItemCount) >= (totalItemCount - 3)
 						&& visibleItemCount < totalItemCount) {
-					footerButton.setVisibility(View.GONE);
-				}
-				if (visibleItemCount >= totalItemCount) {
-					footerButton.setVisibility(View.VISIBLE);
-					/*try {
-						footerButton.setTop(android.R.id.list);
-					} catch (Exception e) {
-						// TODO 自动生成的 catch 块
-						e.printStackTrace();
-					}*/
-					//FIXME 避免2.x崩溃
-					// FIXME 如果歌曲不够一屏幕……仍然叠加就难看死了，这个方法只有API 11以上才可用，求解。
-				}
+				}			
 			}
 
 			@Override
@@ -183,10 +167,6 @@ public class Main extends ListActivity {
 				visible = true;
 				if (scrollState == ListView.OnScrollListener.SCROLL_STATE_IDLE) {
 					indexOverlay.setVisibility(View.INVISIBLE);
-					// footerButton.setVisibility(View.VISIBLE);
-				}
-				if (scrollState == ListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-					// footerButton.setVisibility(View.GONE);
 				}
 			}
 
@@ -199,10 +179,7 @@ public class Main extends ListActivity {
 		try {
 			getWindowManager().removeView(indexOverlay);
 			//XXX 我还得在onResume加回来
-			unregisterReceiver(receiver);
-			//我说,这是嘛回事。这里有Exception！
 		} catch (Exception e) {
-			Log.e(Consts.DEBUG_TAG,"你的Receiver又完了");
 		}
 		super.onStop();
 	}
@@ -882,7 +859,7 @@ public class Main extends ListActivity {
 					Intent.ACTION_MEDIA_SCANNER_STARTED);
 			filter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
 			filter.addDataScheme("file");
-			receiver = new Receiver();
+			receiver = new Receiver(handler);
 			registerReceiver(receiver, filter);
 			sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
 					Uri.parse("file://"
@@ -1032,7 +1009,15 @@ public class Main extends ListActivity {
 			case Consts.Status.HAS_UPDATE:
 				updateApp((String[]) msg.obj);
 				break;
+			case Consts.Status.REFRESH_LIST_FINISHED:
+				try{
+					unregisterReceiver(receiver);
+				}catch(Throwable t){
+					
+				}
+				break;
 			}
+			
 		}
 	};
 
