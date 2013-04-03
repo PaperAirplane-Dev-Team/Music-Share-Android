@@ -13,22 +13,25 @@ public class Consts {
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
 	public final static String VERY_LONG = "                                                         ";
-	public final static String RELEASE_DATE = "2013.3.30";
-	public final static String WHATSNEW = "遮罩颜色透明度更改,搜索按钮叠加层（待完善）";
+	public final static String RELEASE_DATE = "2013.4.4";
+	public final static String WHATSNEW = "遮罩颜色透明度更改,编辑微博时的at提醒";
 	public final static String ORIGIN_COLOR = "#99000088";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
 	public final static int NULL = -1;
+	public final static boolean DEBUG_ON = true;
 
 	public final class Url {
-//		public final static String API_QUERY = "http://paperairplane.sinaapp.com/proxy.php?q=";
+		public final static String API_SUGGESTION = "https://api.weibo.com/2/search/suggestions/at_users.json";
 		public final static String API_QUERY = "https://api.douban.com/v2/music/search?appkey=039b0d83358026730ad12889a0807359&count=1&q=";
 		public final static String INFO_REDIRECT = "http://paperairplane.sinaapp.com/redirect.php?id=";
 		public final static String FEEDBACK = "http://paperairplane.sinaapp.com/feedback.php";
-		public final static String CHECK_UPDATE = "http://paperairplane.sinaapp.com/update.php";
+		public final static String CHECK_UPDATE = "http://paperairplane.sinaapp.com/music-share/update.php";
+		public final static String CHECK_TEST_UPDATE = "http://paperairplane.sinaapp.com/music-share/test_version_update.php";
 		public final static String AUTH_REDIRECT = "https://api.weibo.com/oauth2/default.html";
 		public final static String WEIBO_STATUSES_UPDATE = "https://api.weibo.com/2/statuses/update.json";
 	}
+
 	public final class Status {
 		public static final int INTERNET_ERROR = 0;
 		public static final int SEND_WEIBO = 1;
@@ -42,6 +45,7 @@ public class Consts {
 		public static final int NO_UPDATE = 9;
 		public static final int HAS_UPDATE = 10;
 		public static final int REFRESH_LIST_FINISHED = 11;
+		public static final int DATA_CHANGED = 12;
 	}
 
 	public final class WeiboUid {
@@ -56,7 +60,7 @@ public class Consts {
 		public static final int ARTIST = 2;
 		public static final int ALBUM = 3;
 		public static final int VERSION = 4;
-		
+
 		public static final int UPDATE_INFO = 0;
 		public static final int DOWNLOAD_URL = 1;
 	}
@@ -87,7 +91,7 @@ public class Consts {
 		public final static int AUTH = 1;
 		public final static int UNAUTH = 2;
 	}
-	
+
 	public final class Color {
 		public final static int RED = 0;
 		public final static int GREEN = 1;

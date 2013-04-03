@@ -365,7 +365,12 @@ public class Utilities {
 		try {
 			Log.v(Consts.DEBUG_TAG, "方法 checkForUpdate将要进行的请求为"
 					+ Consts.Url.CHECK_UPDATE);
-			HttpGet httpGet = new HttpGet(Consts.Url.CHECK_UPDATE);
+			HttpGet httpGet;
+			if(!Consts.DEBUG_ON){
+			httpGet = new HttpGet(Consts.Url.CHECK_UPDATE);
+			}else{
+				httpGet = new HttpGet(Consts.Url.CHECK_TEST_UPDATE);
+			}
 			httpResponse = new DefaultHttpClient().execute(httpGet);
 			Log.v(Consts.DEBUG_TAG, "进行的HTTP GET返回状态为"
 					+ httpResponse.getStatusLine().getStatusCode());

@@ -17,6 +17,7 @@ class QueryAndShareMusicInfo extends Thread {
 	private Context context;
 	private Handler handler;
 	private String ARTWORK_PATH ;
+	
 
 	public void run() {
 		String[] info = Utilities.getMusicAndArtworkUrl(title, artist, context,

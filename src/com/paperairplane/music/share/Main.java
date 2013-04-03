@@ -96,6 +96,13 @@ public class Main extends ListActivity {
 		Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
 				getResources().getConfiguration().locale);
 		findViewById(R.id.main_linearLayout).setBackgroundResource(R.drawable.listview_background);
+		if(getIntent().getAction().equals("com.paperairplane.music.share.share2weibo")){
+			Log.d(Consts.DEBUG_TAG,"返回");
+			Message m = handler.obtainMessage(Consts.Status.SEND_WEIBO);
+			m.obj=getIntent().getExtras();
+			m.sendToTarget();
+		}
+		
 	}
 
 	/**
@@ -741,6 +748,158 @@ public class Main extends ListActivity {
 		// albumArt.getHeight()+","+albumArt.getWidth());
 		return musicInfo;
 	}
+	/**
+	 * @author Xavier Yao
+	 * 处理各种线程信息
+	 * 
+	 */
+	private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case Consts.Status.INTERNET_ERROR:// 网络错误
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.error_internet), Toast.LENGTH_SHORT)
+						.show();
+				break;
+			case Consts.Status.SEND_WEIBO:// 发送微博
+				View sendweibo = LayoutInflater.from(getApplicationContext())
+						.inflate(R.layout.sendweibo, null);
+				final EditText et = (EditText) sendweibo.getRootView()
+						.findViewById(R.id.et_content);
+				final CheckBox cb = (CheckBox) sendweibo
+						.findViewById(R.id.cb_follow);
+				final Bundle bundle = (Bundle) msg.obj;
+				String _content = bundle.getString("content");
+				final String artworkUrl = bundle.getString("artworkUrl");
+				final String fileName = bundle.getString("fileName");
+				int selection = bundle.getInt("selection", _content.length());
+				// Log.v(Consts.DEBUG_TAG, artworkUrl);
+				cb.setChecked(bundle.getBoolean("isChecked",true));
+				et.setText(_content);
+				et.setSelection(selection);
+				et.addTextChangedListener(new TextWatcher() {
+					@Override
+					public void afterTextChanged(Editable arg0) {
+					}
+
+					@Override
+					public void beforeTextChanged(CharSequence s, int start,
+							int count, int after) {
+					}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start,
+							int before, int count) {
+						try{
+						if (((s.toString()).charAt(start) == '@')&&(Main.accessToken != null
+												&& (Main.accessToken
+														.isSessionValid() == true))){
+							Log.d(Consts.DEBUG_TAG, "@ CATCHED!"); // TODO @提醒
+						Intent i = new Intent(Main.this,AtSuggestionActivity.class);
+						bundle.putString("content",s.toString());
+						bundle.putBoolean("isChecked", cb.isChecked());
+						bundle.putInt("start", start);
+						i.putExtras(bundle);
+						startActivity(i);
+						// XXX 为什么要这么做,因为不这么的话一上来就FC
+						}
+					}
+					catch(Exception e){
+						
+					}
+					}
+				});
+				new AlertDialog.Builder(Main.this)
+						.setView(sendweibo)
+						.setPositiveButton(getString(R.string.share),
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										String content = et.getText()
+												.toString();
+
+										if (Main.accessToken == null
+												|| (Main.accessToken
+														.isSessionValid() == false)) {// 检测之前是否授权过
+											handler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
+											saveSendStatus(content,
+													cb.isChecked(), artworkUrl,
+													fileName);
+											ssoHandler.authorize(weiboHelper
+													.getListener());// 授权
+										} else {
+											weiboHelper.sendWeibo(content,
+													artworkUrl, fileName,
+													cb.isChecked());
+										}
+
+									}
+
+								}).show();
+				Log.v(Consts.DEBUG_TAG, "弹出对话框");
+				break;
+			case Consts.Status.SEND_SUCCEED:// 发送成功
+				Toast.makeText(Main.this, R.string.send_succeed,
+						Toast.LENGTH_SHORT).show();
+				break;
+			case Consts.Status.NOT_AUTHORIZED_ERROR:// 尚未授权
+				Toast.makeText(Main.this, R.string.not_authorized_error,
+						Toast.LENGTH_SHORT).show();
+				break;
+			case Consts.Status.AUTH_ERROR:// 授权错误
+				Toast.makeText(Main.this,
+						R.string.auth_error + (String) msg.obj,
+						Toast.LENGTH_SHORT).show();
+				Log.e(Consts.DEBUG_TAG, "错误" + (String) msg.obj);
+				break;
+			case Consts.Status.SEND_ERROR:// 发送错误
+				Toast.makeText(Main.this,
+						R.string.send_error + (String) msg.obj,
+						Toast.LENGTH_SHORT).show();
+				Log.e(Consts.DEBUG_TAG, "错误" + (String) msg.obj);
+				break;
+			case Consts.Status.AUTH_SUCCEED:// 授权成功
+				Toast.makeText(Main.this, R.string.auth_succeed,
+						Toast.LENGTH_SHORT).show();
+				break;
+			case Consts.Status.FEEDBACK_SUCCEED:
+				Toast.makeText(Main.this, R.string.feedback_succeed,
+						Toast.LENGTH_LONG).show();
+				break;
+			case Consts.Status.FEEDBACK_FAIL:
+				Toast.makeText(Main.this, R.string.feedback_failed,
+						Toast.LENGTH_LONG).show();
+				SharedPreferences preferences = getApplicationContext()
+						.getSharedPreferences(Consts.Preferences.FEEDBACK,
+								Context.MODE_PRIVATE);
+				preferences.edit().putString("content", (String) msg.obj)
+						.commit();
+				// TODO 完善一下这里需要重试
+				break;
+			case Consts.Status.NO_UPDATE:
+				Toast toast = Toast.makeText(Main.this, R.string.no_update,
+						Toast.LENGTH_LONG);
+				if (Main.checkForUpdateCount != 0) {
+					toast.show();
+				}
+				break;
+			case Consts.Status.HAS_UPDATE:
+				updateApp((String[]) msg.obj);
+				break;
+			case Consts.Status.REFRESH_LIST_FINISHED:
+				try{
+					unregisterReceiver(receiver);
+				}catch(Throwable t){
+					
+				}
+				break;
+			}
+			
+		}
+	};
+
 
 	/**
 	 * @author Xavier Yao
@@ -884,142 +1043,6 @@ public class Main extends ListActivity {
 		showCustomDialog(0, Consts.Dialogs.ABOUT);
 	}
 
-	/**
-	 * @author Xavier Yao
-	 * 处理各种线程信息
-	 * 
-	 */
-	private Handler handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case Consts.Status.INTERNET_ERROR:// 网络错误
-				Toast.makeText(getApplicationContext(),
-						getString(R.string.error_internet), Toast.LENGTH_SHORT)
-						.show();
-				break;
-			case Consts.Status.SEND_WEIBO:// 发送微博
-				View sendweibo = LayoutInflater.from(getApplicationContext())
-						.inflate(R.layout.sendweibo, null);
-				final EditText et = (EditText) sendweibo.getRootView()
-						.findViewById(R.id.et_content);
-				final CheckBox cb = (CheckBox) sendweibo
-						.findViewById(R.id.cb_follow);
-				Bundle bundle = (Bundle) msg.obj;
-				String _content = bundle.getString("content");
-				final String artworkUrl = bundle.getString("artworkUrl");
-				final String fileName = bundle.getString("fileName");
-				// Log.v(Consts.DEBUG_TAG, artworkUrl);
-
-				et.setText(_content);
-				et.setSelection(_content.length());
-				et.addTextChangedListener(new TextWatcher() {
-					@Override
-					public void afterTextChanged(Editable arg0) {
-					}
-
-					@Override
-					public void beforeTextChanged(CharSequence s, int start,
-							int count, int after) {
-					}
-
-					@Override
-					public void onTextChanged(CharSequence s, int start,
-							int before, int count) {
-						if ((s.toString() + " ").charAt(start) == '@')
-							Log.d(Consts.DEBUG_TAG, "@ CATCHED!"); // TODO @提醒
-						// XXX 为什么要这么做,因为不这么的话一上来就FC
-					}
-				});
-				new AlertDialog.Builder(Main.this)
-						.setView(sendweibo)
-						.setPositiveButton(getString(R.string.share),
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										String content = et.getText()
-												.toString();
-
-										if (Main.accessToken == null
-												|| (Main.accessToken
-														.isSessionValid() == false)) {// 检测之前是否授权过
-											handler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
-											saveSendStatus(content,
-													cb.isChecked(), artworkUrl,
-													fileName);
-											ssoHandler.authorize(weiboHelper
-													.getListener());// 授权
-										} else {
-											weiboHelper.sendWeibo(content,
-													artworkUrl, fileName,
-													cb.isChecked());
-										}
-
-									}
-
-								}).show();
-				Log.v(Consts.DEBUG_TAG, "弹出对话框");
-				break;
-			case Consts.Status.SEND_SUCCEED:// 发送成功
-				Toast.makeText(Main.this, R.string.send_succeed,
-						Toast.LENGTH_SHORT).show();
-				break;
-			case Consts.Status.NOT_AUTHORIZED_ERROR:// 尚未授权
-				Toast.makeText(Main.this, R.string.not_authorized_error,
-						Toast.LENGTH_SHORT).show();
-				break;
-			case Consts.Status.AUTH_ERROR:// 授权错误
-				Toast.makeText(Main.this,
-						R.string.auth_error + (String) msg.obj,
-						Toast.LENGTH_SHORT).show();
-				Log.e(Consts.DEBUG_TAG, "错误" + (String) msg.obj);
-				break;
-			case Consts.Status.SEND_ERROR:// 发送错误
-				Toast.makeText(Main.this,
-						R.string.send_error + (String) msg.obj,
-						Toast.LENGTH_SHORT).show();
-				Log.e(Consts.DEBUG_TAG, "错误" + (String) msg.obj);
-				break;
-			case Consts.Status.AUTH_SUCCEED:// 授权成功
-				Toast.makeText(Main.this, R.string.auth_succeed,
-						Toast.LENGTH_SHORT).show();
-				break;
-			case Consts.Status.FEEDBACK_SUCCEED:
-				Toast.makeText(Main.this, R.string.feedback_succeed,
-						Toast.LENGTH_LONG).show();
-				break;
-			case Consts.Status.FEEDBACK_FAIL:
-				Toast.makeText(Main.this, R.string.feedback_failed,
-						Toast.LENGTH_LONG).show();
-				SharedPreferences preferences = getApplicationContext()
-						.getSharedPreferences(Consts.Preferences.FEEDBACK,
-								Context.MODE_PRIVATE);
-				preferences.edit().putString("content", (String) msg.obj)
-						.commit();
-				// TODO 完善一下这里需要重试
-				break;
-			case Consts.Status.NO_UPDATE:
-				Toast toast = Toast.makeText(Main.this, R.string.no_update,
-						Toast.LENGTH_LONG);
-				if (Main.checkForUpdateCount != 0) {
-					toast.show();
-				}
-				break;
-			case Consts.Status.HAS_UPDATE:
-				updateApp((String[]) msg.obj);
-				break;
-			case Consts.Status.REFRESH_LIST_FINISHED:
-				try{
-					unregisterReceiver(receiver);
-				}catch(Throwable t){
-					
-				}
-				break;
-			}
-			
-		}
-	};
 
 	
 	/**
@@ -1126,7 +1149,7 @@ public class Main extends ListActivity {
 		SharedPreferences preferences = getApplicationContext()
 				.getSharedPreferences(Consts.Preferences.GENERAL,
 						Context.MODE_PRIVATE);
-		// if(!preferences.getBoolean("hasFirstStarted", false)){
+		 if(!preferences.getBoolean("hasFirstStarted", false)){
 		Log.d(Consts.DEBUG_TAG, "首次启动");
 		dialogWelcome = new AlertDialog.Builder(Main.this)
 				.setIcon(android.R.drawable.ic_dialog_info)
@@ -1147,8 +1170,8 @@ public class Main extends ListActivity {
 		dialogWelcome.show();
 		Log.v(Consts.DEBUG_TAG, "首次启动对话框已显示");
 		preferences.edit().putBoolean("hasFirstStarted", true).commit();
-		// }
-		// else Log.d(Consts.DEBUG_TAG, "非首次启动");
+		 }
+		 else Log.d(Consts.DEBUG_TAG, "非首次启动");
 		// FIXME 发布的时候去掉这些注释就行，我是为了每次都显示
 	}
 

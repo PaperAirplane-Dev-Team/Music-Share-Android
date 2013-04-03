@@ -36,7 +36,7 @@
         android:contentDescription="@string/search"
         android:onClick="footer"
         android:padding="5dip"
-        android:src="@drawable/android:ic_menu_search" >
+        android:src="@drawable/search" >
     </ImageView>
 
 </FrameLayout>
