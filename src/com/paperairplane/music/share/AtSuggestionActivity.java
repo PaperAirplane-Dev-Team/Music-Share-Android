@@ -134,7 +134,7 @@ public class AtSuggestionActivity extends Activity {
 							new RequestListener() {
 								@Override
 								public void onComplete(String result) {
-									Log.v("Music Share DUBUG", "获取到结果："
+									Log.v(Consts.DEBUG_TAG, "获取到结果："
 											+ result);
 									final List<String> fetched_data = new ArrayList<String>();
 									fetched_data.add(0, et.getText().toString());
@@ -160,7 +160,7 @@ public class AtSuggestionActivity extends Activity {
 								@Override
 								public void onError(WeiboException e) {
 									e.printStackTrace();
-									Log.e("Music Share DUBUG", "获取错误"+e.getStatusCode()+e.getMessage());
+									Log.e(Consts.DEBUG_TAG, "获取错误"+e.getStatusCode()+e.getMessage());
 								}
 
 								@Override

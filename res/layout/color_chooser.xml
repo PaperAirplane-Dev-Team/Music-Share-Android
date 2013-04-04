@@ -1,91 +1,98 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/text_red"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dip"
-        android:text="@string/red"
-        android:textSize="28sp" />
+        android:orientation="vertical" >
 
-    <SeekBar
-        android:id="@+id/seek_red"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:max="255"
-        android:progress="0" />
+        <TextView
+            android:id="@+id/text_red"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dip"
+            android:text="@string/red"
+            android:textSize="28sp" />
 
-    <TextView
-        android:id="@+id/text_green"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/green"
-        android:textSize="28sp" />
+        <SeekBar
+            android:id="@+id/seek_red"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:max="255"
+            android:progress="0" />
 
-    <SeekBar
-        android:id="@+id/seek_green"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:max="255"
-        android:progress="0" />
+        <TextView
+            android:id="@+id/text_green"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/green"
+            android:textSize="28sp" />
 
-    <TextView
-        android:id="@+id/text_blue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/blue"
-        android:textSize="28sp" />
+        <SeekBar
+            android:id="@+id/seek_green"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:max="255"
+            android:progress="0" />
 
-    <SeekBar
-        android:id="@+id/seek_blue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:max="255"
-        android:progress="0" />
+        <TextView
+            android:id="@+id/text_blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/blue"
+            android:textSize="28sp" />
 
-    <TextView
-        android:id="@+id/text_trans"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/opacity"
-        android:textSize="28sp" />
+        <SeekBar
+            android:id="@+id/seek_blue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:max="255"
+            android:progress="0" />
 
-    <SeekBar
-        android:id="@+id/seek_trans"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:max="255"
-        android:progress="0" />
+        <TextView
+            android:id="@+id/text_trans"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/opacity"
+            android:textSize="28sp" />
 
-    <TextView
-        android:id="@+id/text_color"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/to_show_color"
-        android:textSize="25sp" />
+        <SeekBar
+            android:id="@+id/seek_trans"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:max="255"
+            android:progress="0" />
 
-    <TextView
-        android:id="@+id/text_show_color"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textIsSelectable="false" />
+        <TextView
+            android:id="@+id/text_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/to_show_color"
+            android:textSize="25sp" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/text_show_color"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textIsSelectable="false" />
+    </LinearLayout>
+
+</ScrollView>

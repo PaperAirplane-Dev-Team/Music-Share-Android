@@ -115,10 +115,6 @@ public class Utilities {
 				e.printStackTrace();
 				info[Consts.ArraySubscript.MUSIC] = context
 						.getString(R.string.no_music_url_found);
-				info[Consts.ArraySubscript.ARTWORK] = null;
-				info[Consts.ArraySubscript.ARTIST] = null;
-				info[Consts.ArraySubscript.ALBUM] = null;
-				info[Consts.ArraySubscript.VERSION] = null;
 			}
 		}
 		if (info[Consts.ArraySubscript.ALBUM] != null) {
@@ -321,7 +317,7 @@ public class Utilities {
 						b = tmp;
 					}
 				}
-
+				Log.v(Consts.DEBUG_TAG,"·½·¨Utilities.getLocalArtwork·µ»ØBitmap");
 				return b;
 			} catch (FileNotFoundException e) {
 			} finally {

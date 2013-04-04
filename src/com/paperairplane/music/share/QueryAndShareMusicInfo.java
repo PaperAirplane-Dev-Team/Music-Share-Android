@@ -32,11 +32,13 @@ class QueryAndShareMusicInfo extends Thread {
 					"lpic");
 		}
 		try {
-			if ((album_id != Consts.NULL)
-					&& (Utilities.getLocalArtwork(context, album_id, 1, 1) != null)) {
+			boolean flag = (album_id != Consts.NULL)&& (Utilities.getLocalArtwork(context, album_id, 10, 10) != null);
+			Log.d(Consts.DEBUG_TAG,"是否有本地插图："+flag);
+			if (flag) {
 				//你丫不能省省?1X1就够了判断啊
+				//有问题啊！！！问题是！
 				Utilities.saveFile(
-						Utilities.getLocalArtwork(context, album_id, 300, 30),
+						Utilities.getLocalArtwork(context, album_id, 300, 300),
 						title + "_" + artist + ".jpg", ARTWORK_PATH);
 				fileName = ARTWORK_PATH + title + "_" + artist + ".jpg";
 				Log.d(Consts.DEBUG_TAG, "获取本地封面成功");

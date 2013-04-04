@@ -85,6 +85,7 @@ public class Consts {
 		public final static String FEEDBACK = "FeedbackStatus";
 		public final static String GENERAL = "General";
 		public final static String BG_COLOR = "overlay_bg_color";
+		public final static String OVERLAY = "overlay";
 	}
 
 	public final class MenuItem {

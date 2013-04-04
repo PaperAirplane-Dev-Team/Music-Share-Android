@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
@@ -90,21 +91,14 @@ public class Main extends ListActivity {
 		}
 		// 读取已存储的授权信息
 		try {
-			Main.accessToken = AccessTokenKeeper
-					.readAccessToken(getApplicationContext());
+			Main.accessToken = weiboHelper.readAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
 				getResources().getConfiguration().locale);
 		findViewById(R.id.main_linearLayout).setBackgroundResource(
 				R.drawable.background_holo_dark);
-		if (getIntent().getAction().equals(
-				"com.paperairplane.music.share.share2weibo")) {
-
-		}
-
 	}
 
 	/**
@@ -128,16 +122,7 @@ public class Main extends ListActivity {
 		});
 		indexOverlay = (TextView) View.inflate(Main.this, R.layout.indexer,
 				null);
-		getWindowManager()
-				.addView(
-						indexOverlay,
-						new WindowManager.LayoutParams(
-								LayoutParams.WRAP_CONTENT,
-								LayoutParams.WRAP_CONTENT,
-								WindowManager.LayoutParams.TYPE_APPLICATION,
-								WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-										| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-								PixelFormat.TRANSLUCENT));
+		showOverlay();
 		SharedPreferences preference = getSharedPreferences(
 				Consts.Preferences.GENERAL, MODE_PRIVATE);
 		if (preference.contains(Consts.Preferences.BG_COLOR)) {
@@ -148,7 +133,6 @@ public class Main extends ListActivity {
 		listview = (ListView) findViewById(android.R.id.list);// 找LisView的ID
 		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
 		listview.setOnScrollListener(new OnScrollListener() {
-
 			boolean visible;
 
 			@SuppressLint("NewApi")
@@ -192,13 +176,32 @@ public class Main extends ListActivity {
 
 		});
 	}
+/**
+ * 显示首字母
+ */
+	private void showOverlay() {
+		getWindowManager()
+				.addView(
+						indexOverlay,
+						new WindowManager.LayoutParams(
+								LayoutParams.WRAP_CONTENT,
+								LayoutParams.WRAP_CONTENT,
+								WindowManager.LayoutParams.TYPE_APPLICATION,
+								WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+										| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+								PixelFormat.TRANSLUCENT));
+	}
 
 	@Override
 	protected void onStop() {
 		Log.d(Consts.DEBUG_TAG, "onStop()");
 		try {
 			getWindowManager().removeView(indexOverlay);
-			// XXX 我还得在onResume加回来
+			SharedPreferences pref = getSharedPreferences(
+					Consts.Preferences.OVERLAY, MODE_PRIVATE);
+			Editor edit = pref.edit();
+			edit.putBoolean("resume", true);
+			edit.commit();
 		} catch (Exception e) {
 		}
 		super.onStop();
@@ -208,19 +211,13 @@ public class Main extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		try {
-			getWindowManager()
-					.addView(
-							indexOverlay,
-							new WindowManager.LayoutParams(
-									LayoutParams.WRAP_CONTENT,
-									LayoutParams.WRAP_CONTENT,
-									WindowManager.LayoutParams.TYPE_APPLICATION,
-									WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-											| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-									PixelFormat.TRANSLUCENT));
+			SharedPreferences pref = getSharedPreferences(
+					Consts.Preferences.OVERLAY, MODE_PRIVATE);
+			boolean resume = pref.getBoolean("resume", false);
+			if (resume) {
+				showOverlay();
+			}
 		} catch (Exception e) {
-			// 首次启动会执行onCreate和它，直接抛出异常
-			Log.d(Consts.DEBUG_TAG, "所以这个Exception没法解决了？");
 		}
 	}
 
@@ -295,8 +292,7 @@ public class Main extends ListActivity {
 									public void onClick(DialogInterface arg0,
 											int arg1) {
 										Main.accessToken = null;
-										AccessTokenKeeper
-												.clear(getApplicationContext());
+										weiboHelper.clear();
 										if (Build.VERSION.SDK_INT > 10) {
 											invalidateOptionsMenu();
 										}
@@ -347,16 +343,18 @@ public class Main extends ListActivity {
 	public void btn_empty(View v) {
 		refreshMusicList();
 	}
-/**
- * 
- * @return 检查AccessToken的存在及合法性
- */
+
+	/**
+	 * 
+	 * @return 检查AccessToken的存在及合法性
+	 */
 	private boolean isAccessTokenExistAndValid() {
 		boolean flag = true;
 		if (Main.accessToken == null
 				|| (Main.accessToken.isSessionValid() == false)) {
 			flag = false;
 		}
+		Log.d(Consts.DEBUG_TAG, "方法isAccessTokenExistAndValid()被调用,结果" + flag);
 		return flag;
 	}
 
@@ -413,6 +411,11 @@ public class Main extends ListActivity {
 								R.layout.feedback, null);
 						final EditText content = (EditText) feedback
 								.findViewById(R.id.et_feedback);
+						SharedPreferences pref = getSharedPreferences(
+								Consts.Preferences.FEEDBACK, MODE_PRIVATE);
+						String text = pref.getString("content", "");
+						content.setText(text);
+						pref.edit().clear().commit();
 						DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
@@ -760,12 +763,12 @@ public class Main extends ListActivity {
 				musics[_id].getAlbumId(), size, size);
 		try {
 			Log.d(Consts.DEBUG_TAG,
-					"width:" + bmpAlbum.getWidth() + bmpAlbum.toString());
+					"width:" + bmpAlbum.getWidth());
 			albumArt.setImageBitmap(bmpAlbum);
 			Log.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			Log.d(Consts.DEBUG_TAG,
+			Log.v(Consts.DEBUG_TAG,
 					"Oh shit, we got null again ...... Don't panic");
 		}
 		albumArt.setOnClickListener(new View.OnClickListener() {
@@ -849,7 +852,7 @@ public class Main extends ListActivity {
 										String content = et.getText()
 												.toString();
 
-										if (isAccessTokenExistAndValid()) {// 检测之前是否授权过
+										if (!isAccessTokenExistAndValid()) {// 检测之前是否授权过
 											handler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
 											saveSendStatus(content,
 													cb.isChecked(), artworkUrl,
@@ -865,8 +868,7 @@ public class Main extends ListActivity {
 									}
 
 								}).show();
-				Log.v(Consts.DEBUG_TAG, "弹出对话框");
-				// XXX
+				Log.v(Consts.DEBUG_TAG, "弹出微博编辑对话框");
 				break;
 			case Consts.Status.SEND_SUCCEED:// 发送成功
 				Toast.makeText(Main.this, R.string.send_succeed,
@@ -879,14 +881,14 @@ public class Main extends ListActivity {
 			case Consts.Status.AUTH_ERROR:// 授权错误
 				Toast.makeText(Main.this,
 						R.string.auth_error + (String) msg.obj,
-						Toast.LENGTH_SHORT).show();
-				Log.e(Consts.DEBUG_TAG, "错误" + (String) msg.obj);
+						Toast.LENGTH_LONG).show();
+				Log.e(Consts.DEBUG_TAG, "授权错误" + (String) msg.obj);
 				break;
 			case Consts.Status.SEND_ERROR:// 发送错误
 				Toast.makeText(Main.this,
 						R.string.send_error + (String) msg.obj,
-						Toast.LENGTH_SHORT).show();
-				Log.e(Consts.DEBUG_TAG, "错误" + (String) msg.obj);
+						Toast.LENGTH_LONG).show();
+				Log.e(Consts.DEBUG_TAG, "发送错误" + (String) msg.obj);
 				break;
 			case Consts.Status.AUTH_SUCCEED:// 授权成功
 				Toast.makeText(Main.this, R.string.auth_succeed,
@@ -904,7 +906,6 @@ public class Main extends ListActivity {
 								Context.MODE_PRIVATE);
 				preferences.edit().putString("content", (String) msg.obj)
 						.commit();
-				// TODO 完善一下这里需要重试
 				break;
 			case Consts.Status.NO_UPDATE:
 				Toast toast = Toast.makeText(Main.this, R.string.no_update,
@@ -1194,7 +1195,6 @@ public class Main extends ListActivity {
 			preferences.edit().putBoolean("hasFirstStarted", true).commit();
 		} else
 			Log.d(Consts.DEBUG_TAG, "非首次启动");
-		// FIXME 发布的时候去掉这些注释就行，我是为了每次都显示
 	}
 
 }
