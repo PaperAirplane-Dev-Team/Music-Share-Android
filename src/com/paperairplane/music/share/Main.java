@@ -28,8 +28,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.AbsListView;
@@ -59,12 +61,13 @@ public class Main extends ListActivity {
 			Consts.Url.AUTH_REDIRECT);
 	private Receiver receiver;
 	private AlertDialog dialogMain, dialogAbout, dialogSearch, dialogThank,
-			dialogWelcome, dialogChangeColor ,dialogSendWeibo;
+			dialogWelcome, dialogChangeColor, dialogSendWeibo;
 	private SsoHandler ssoHandler;
 	private WeiboHelper weiboHelper;
 	private TextView indexOverlay;
 	private static int versionCode, checkForUpdateCount = 0;
 	private String versionName;
+	private ImageView iv;
 
 	@Override
 	// 主体
@@ -96,7 +99,7 @@ public class Main extends ListActivity {
 		Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
 				getResources().getConfiguration().locale);
 		findViewById(R.id.main_linearLayout).setBackgroundResource(
-				R.drawable.listview_background);
+				R.drawable.background_holo_dark);
 		if (getIntent().getAction().equals(
 				"com.paperairplane.music.share.share2weibo")) {
 
@@ -111,6 +114,18 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void initListView() {
+		iv = (ImageView) findViewById(R.id.float_search_button);
+		iv.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View arg0, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					iv.setImageResource(R.drawable.search_button_pressed);
+				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+					iv.setImageResource(R.drawable.search_button_normal);
+				}
+				return false;
+			}
+		});
 		indexOverlay = (TextView) View.inflate(Main.this, R.layout.indexer,
 				null);
 		getWindowManager()
@@ -238,7 +253,7 @@ public class Main extends ListActivity {
 					R.string.menu_refresh).setIcon(
 					android.R.drawable.ic_menu_recent_history);
 		}
-		if (Main.accessToken == null) {
+		if (!isAccessTokenExistAndValid()) {
 			menu.add(Menu.NONE, Consts.MenuItem.AUTH, 2, R.string.auth)
 					.setIcon(android.R.drawable.ic_menu_add);
 		} else {
@@ -271,7 +286,8 @@ public class Main extends ListActivity {
 
 				new AlertDialog.Builder(this)
 						.setIcon(android.R.drawable.ic_dialog_alert)
-						.setTitle(R.string.unauth_confirm)
+						.setMessage(R.string.unauth_confirm)
+						.setTitle(R.string.unauth)
 						.setPositiveButton(android.R.string.ok,
 								new DialogInterface.OnClickListener() {
 									@SuppressLint("NewApi")
@@ -330,6 +346,18 @@ public class Main extends ListActivity {
 	 */
 	public void btn_empty(View v) {
 		refreshMusicList();
+	}
+/**
+ * 
+ * @return 检查AccessToken的存在及合法性
+ */
+	private boolean isAccessTokenExistAndValid() {
+		boolean flag = true;
+		if (Main.accessToken == null
+				|| (Main.accessToken.isSessionValid() == false)) {
+			flag = false;
+		}
+		return flag;
 	}
 
 	/**
@@ -416,8 +444,7 @@ public class Main extends ListActivity {
 						AlertDialog.Builder builder = new AlertDialog.Builder(
 								Main.this).setView(feedback).setPositiveButton(
 								R.string.send_feedback, listener);
-						if (Main.accessToken != null
-								&& (Main.accessToken.isSessionValid() != false)) {
+						if (isAccessTokenExistAndValid()) {
 							builder.setNegativeButton(R.string.feedback_weibo,
 									listener);
 						}
@@ -797,14 +824,15 @@ public class Main extends ListActivity {
 							int before, int count) {
 						try {
 							if (s.toString().charAt(start) == '@') {
-								Log.d(Consts.DEBUG_TAG, "@ CATCHED!"); 	// @提醒
+								Log.d(Consts.DEBUG_TAG, "@ CATCHED!"); // @提醒
 								Intent i = new Intent(Main.this,
 										AtSuggestionActivity.class);
 								bundle.putString("content", s.toString());
 								bundle.putBoolean("isChecked", cb.isChecked());
 								bundle.putInt("start", start);
 								i.putExtras(bundle);
-								startActivityForResult(i,Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE);
+								startActivityForResult(i,
+										Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE);
 							}
 						} catch (Exception e) {
 
@@ -821,9 +849,7 @@ public class Main extends ListActivity {
 										String content = et.getText()
 												.toString();
 
-										if (Main.accessToken == null
-												|| (Main.accessToken
-														.isSessionValid() == false)) {// 检测之前是否授权过
+										if (isAccessTokenExistAndValid()) {// 检测之前是否授权过
 											handler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
 											saveSendStatus(content,
 													cb.isChecked(), artworkUrl,
@@ -840,7 +866,7 @@ public class Main extends ListActivity {
 
 								}).show();
 				Log.v(Consts.DEBUG_TAG, "弹出对话框");
-				//XXX
+				// XXX
 				break;
 			case Consts.Status.SEND_SUCCEED:// 发送成功
 				Toast.makeText(Main.this, R.string.send_succeed,
