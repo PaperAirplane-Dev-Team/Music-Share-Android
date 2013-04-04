@@ -59,7 +59,7 @@ public class Main extends ListActivity {
 			Consts.Url.AUTH_REDIRECT);
 	private Receiver receiver;
 	private AlertDialog dialogMain, dialogAbout, dialogSearch, dialogThank,
-			dialogWelcome, dialogChangeColor;
+			dialogWelcome, dialogChangeColor ,dialogSendWeibo;
 	private SsoHandler ssoHandler;
 	private WeiboHelper weiboHelper;
 	private TextView indexOverlay;
@@ -95,21 +95,19 @@ public class Main extends ListActivity {
 
 		Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
 				getResources().getConfiguration().locale);
-		findViewById(R.id.main_linearLayout).setBackgroundResource(R.drawable.listview_background);
-		if(getIntent().getAction().equals("com.paperairplane.music.share.share2weibo")){
-			Log.d(Consts.DEBUG_TAG,"返回");
-			Message m = handler.obtainMessage(Consts.Status.SEND_WEIBO);
-			m.obj=getIntent().getExtras();
-			m.sendToTarget();
+		findViewById(R.id.main_linearLayout).setBackgroundResource(
+				R.drawable.listview_background);
+		if (getIntent().getAction().equals(
+				"com.paperairplane.music.share.share2weibo")) {
+
 		}
-		
+
 	}
 
 	/**
 	 * @param void
 	 * @return void
-	 * @author Xavier Yao
-	 * 初始化主界面ListView相关属性，初始化文字遮罩
+	 * @author Xavier Yao 初始化主界面ListView相关属性，初始化文字遮罩
 	 * 
 	 */
 	private void initListView() {
@@ -166,7 +164,7 @@ public class Main extends ListActivity {
 				}
 				if ((firstVisibleItem + visibleItemCount) >= (totalItemCount - 3)
 						&& visibleItemCount < totalItemCount) {
-				}			
+				}
 			}
 
 			@Override
@@ -185,37 +183,44 @@ public class Main extends ListActivity {
 		Log.d(Consts.DEBUG_TAG, "onStop()");
 		try {
 			getWindowManager().removeView(indexOverlay);
-			//XXX 我还得在onResume加回来
+			// XXX 我还得在onResume加回来
 		} catch (Exception e) {
 		}
 		super.onStop();
 	}
-
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		try {
 			getWindowManager()
-			.addView(
-					indexOverlay,
-					new WindowManager.LayoutParams(
-							LayoutParams.WRAP_CONTENT,
-							LayoutParams.WRAP_CONTENT,
-							WindowManager.LayoutParams.TYPE_APPLICATION,
-							WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-									| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-							PixelFormat.TRANSLUCENT));
+					.addView(
+							indexOverlay,
+							new WindowManager.LayoutParams(
+									LayoutParams.WRAP_CONTENT,
+									LayoutParams.WRAP_CONTENT,
+									WindowManager.LayoutParams.TYPE_APPLICATION,
+									WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+											| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+									PixelFormat.TRANSLUCENT));
 		} catch (Exception e) {
-			//首次启动会执行onCreate和它，直接抛出异常
-			Log.d(Consts.DEBUG_TAG,"所以这个Exception没法解决了？");
+			// 首次启动会执行onCreate和它，直接抛出异常
+			Log.d(Consts.DEBUG_TAG, "所以这个Exception没法解决了？");
 		}
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+		if (requestCode == Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE) {
+			Log.d(Consts.DEBUG_TAG, "返回");
+			dialogSendWeibo.dismiss();
+			Message m = handler.obtainMessage(Consts.Status.SEND_WEIBO);
+			m.obj = data.getExtras();
+			m.sendToTarget();
+		} else {
+			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+		}
 	}
 
 	@SuppressLint("NewApi")
@@ -248,7 +253,7 @@ public class Main extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem menu) {
 		super.onOptionsItemSelected(menu);
 		Log.d(Consts.DEBUG_TAG, "menu id:" + menu.getItemId());
-		//E什么啊！我还以为出错了
+		// E什么啊！我还以为出错了
 		switch (menu.getItemId()) {
 		case R.id.menu_exit:
 			finish();
@@ -318,9 +323,9 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param View v
-	 * @return void
-	 * 主界面显示为空时按钮点击处理
+	 * @param View
+	 *            v
+	 * @return void 主界面显示为空时按钮点击处理
 	 * 
 	 */
 	public void btn_empty(View v) {
@@ -328,9 +333,9 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param View v
-	 * @return void
-	 * 搜索互联网按钮点击处理
+	 * @param View
+	 *            v
+	 * @return void 搜索互联网按钮点击处理
 	 * 
 	 */
 	public void footer(View v) {
@@ -343,9 +348,8 @@ public class Main extends ListActivity {
 	 * @param int _id 如果是音乐则传入所在id，否则为0
 	 * @param int whichDialog 根据Consts.Dialog下面的编号判断是什么对话框
 	 * @return void
-	 * @author Harry Chen
-	 * 显示程序的各种自定义对话框，包括dialogMain, dialogAbout, dialogSearch, dialogThank,
-	 *	dialogWelcome, dialogChangeColor
+	 * @author Harry Chen 显示程序的各种自定义对话框，包括dialogMain, dialogAbout, dialogSearch,
+	 *         dialogThank, dialogWelcome, dialogChangeColor
 	 * 
 	 */
 	private void showCustomDialog(final int _id, int whichDialog) {
@@ -594,7 +598,7 @@ public class Main extends ListActivity {
 					case R.id.seek_trans:
 						textColor[Consts.Color.OPACITY]
 								.setText(getString(R.string.opacity) + ":"
-										+ progress*100/255 + "%");
+										+ progress * 100 / 255 + "%");
 						break;
 					}
 					changeColor();
@@ -645,7 +649,8 @@ public class Main extends ListActivity {
 						nowColor.substring(7, 9), 16);
 				colorInt[Consts.Color.OPACITY] = Integer.valueOf(
 						nowColor.substring(1, 3), 16);
-				Log.d(Consts.DEBUG_TAG,"Integers are: "+colorInt[0]+" "+colorInt[1]+" "+colorInt[2]+" "+colorInt[3]);
+				Log.d(Consts.DEBUG_TAG, "Integers are: " + colorInt[0] + " "
+						+ colorInt[1] + " " + colorInt[2] + " " + colorInt[3]);
 				for (int i = 0; i < 4; i++) {
 					seekColor[i].setProgress(colorInt[i]);
 				}
@@ -701,8 +706,7 @@ public class Main extends ListActivity {
 	/**
 	 * @param int _id 传入音乐所在数组的位置id
 	 * @return View 用于初始化对话框的View
-	 * @author Harry Chen
-	 * 用于dialogMain，显示音乐信息
+	 * @author Harry Chen 用于dialogMain，显示音乐信息
 	 * 
 	 */
 	private View getMusicInfoView(final int _id) {
@@ -748,9 +752,9 @@ public class Main extends ListActivity {
 		// albumArt.getHeight()+","+albumArt.getWidth());
 		return musicInfo;
 	}
+
 	/**
-	 * @author Xavier Yao
-	 * 处理各种线程信息
+	 * @author Xavier Yao 处理各种线程信息
 	 * 
 	 */
 	private Handler handler = new Handler() {
@@ -775,7 +779,7 @@ public class Main extends ListActivity {
 				final String fileName = bundle.getString("fileName");
 				int selection = bundle.getInt("selection", _content.length());
 				// Log.v(Consts.DEBUG_TAG, artworkUrl);
-				cb.setChecked(bundle.getBoolean("isChecked",true));
+				cb.setChecked(bundle.getBoolean("isChecked", true));
 				et.setText(_content);
 				et.setSelection(selection);
 				et.addTextChangedListener(new TextWatcher() {
@@ -791,26 +795,23 @@ public class Main extends ListActivity {
 					@Override
 					public void onTextChanged(CharSequence s, int start,
 							int before, int count) {
-						try{
-						if (((s.toString()).charAt(start) == '@')&&(Main.accessToken != null
-												&& (Main.accessToken
-														.isSessionValid() == true))){
-							Log.d(Consts.DEBUG_TAG, "@ CATCHED!"); // TODO @提醒
-						Intent i = new Intent(Main.this,AtSuggestionActivity.class);
-						bundle.putString("content",s.toString());
-						bundle.putBoolean("isChecked", cb.isChecked());
-						bundle.putInt("start", start);
-						i.putExtras(bundle);
-						startActivity(i);
-						// XXX 为什么要这么做,因为不这么的话一上来就FC
+						try {
+							if (s.toString().charAt(start) == '@') {
+								Log.d(Consts.DEBUG_TAG, "@ CATCHED!"); 	// @提醒
+								Intent i = new Intent(Main.this,
+										AtSuggestionActivity.class);
+								bundle.putString("content", s.toString());
+								bundle.putBoolean("isChecked", cb.isChecked());
+								bundle.putInt("start", start);
+								i.putExtras(bundle);
+								startActivityForResult(i,Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE);
+							}
+						} catch (Exception e) {
+
 						}
 					}
-					catch(Exception e){
-						
-					}
-					}
 				});
-				new AlertDialog.Builder(Main.this)
+				dialogSendWeibo = new AlertDialog.Builder(Main.this)
 						.setView(sendweibo)
 						.setPositiveButton(getString(R.string.share),
 								new DialogInterface.OnClickListener() {
@@ -839,6 +840,7 @@ public class Main extends ListActivity {
 
 								}).show();
 				Log.v(Consts.DEBUG_TAG, "弹出对话框");
+				//XXX
 				break;
 			case Consts.Status.SEND_SUCCEED:// 发送成功
 				Toast.makeText(Main.this, R.string.send_succeed,
@@ -889,21 +891,19 @@ public class Main extends ListActivity {
 				updateApp((String[]) msg.obj);
 				break;
 			case Consts.Status.REFRESH_LIST_FINISHED:
-				try{
+				try {
 					unregisterReceiver(receiver);
-				}catch(Throwable t){
-					
+				} catch (Throwable t) {
+
 				}
 				break;
 			}
-			
+
 		}
 	};
 
-
 	/**
-	 * @author Xavier Yao
-	 * 列表点击监听类
+	 * @author Xavier Yao 列表点击监听类
 	 * 
 	 */
 	private class MusicListOnClickListener implements OnItemClickListener {
@@ -920,12 +920,10 @@ public class Main extends ListActivity {
 		}
 	}
 
-	
 	/**
 	 * @param void
 	 * @return void
-	 * @author Xavier Yao
-	 * 初始化用到的音乐信息数组，填充进主界面ListView
+	 * @author Xavier Yao 初始化用到的音乐信息数组，填充进主界面ListView
 	 * 
 	 */
 	private void showMusicList() {
@@ -956,14 +954,16 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param String title 音乐标题
-	 * @param String artist音乐艺术家
-	 * @param String album 音乐专辑名
+	 * @param String
+	 *            title 音乐标题
+	 * @param String
+	 *            artist音乐艺术家
+	 * @param String
+	 *            album 音乐专辑名
 	 * @param long album_id 音乐专辑封面ID
 	 * @param int means 分享意图，源自Consts.ShareMeans
 	 * @return void
-	 * @author Xavier Yao
-	 * 分享音乐的主调方法，将调用QueryAndShareMusicInfo类
+	 * @author Xavier Yao 分享音乐的主调方法，将调用QueryAndShareMusicInfo类
 	 * 
 	 */
 	private void shareMusic(String title, String artist, String album,
@@ -979,8 +979,7 @@ public class Main extends ListActivity {
 	/**
 	 * @param int position 音乐在信息数组中的位置
 	 * @return void
-	 * @author Xavier Yao
-	 * 播放音乐的主调方法
+	 * @author Xavier Yao 播放音乐的主调方法
 	 * 
 	 */
 	private void playMusic(int position) {
@@ -1008,8 +1007,7 @@ public class Main extends ListActivity {
 	/**
 	 * @param void
 	 * @return void
-	 * @author Xavier Yao
-	 * 刷新音乐列表
+	 * @author Xavier Yao 刷新音乐列表
 	 * 
 	 */
 	private void refreshMusicList() {
@@ -1035,24 +1033,23 @@ public class Main extends ListActivity {
 	/**
 	 * @param void
 	 * @return void
-	 * @author Harry Chen
-	 * 显示关于窗口
+	 * @author Harry Chen 显示关于窗口
 	 * 
 	 */
-	private void showAbout() { 
+	private void showAbout() {
 		showCustomDialog(0, Consts.Dialogs.ABOUT);
 	}
 
-
-	
 	/**
 	 * @author Xavier Yao
-	 * @param String content 微博内容
+	 * @param String
+	 *            content 微博内容
 	 * @param boolean checked 是否关注开发者
-	 * @param String artworkUrl 微博图片地址
-	 * @param String fileName 图片文件名
-	 * @return void
-	 * 保存微博以及发送状态，备用
+	 * @param String
+	 *            artworkUrl 微博图片地址
+	 * @param String
+	 *            fileName 图片文件名
+	 * @return void 保存微博以及发送状态，备用
 	 */
 	private void saveSendStatus(String content, boolean checked,
 			String artworkUrl, String fileName) {
@@ -1069,9 +1066,9 @@ public class Main extends ListActivity {
 
 	/**
 	 * @author Harry Chen
-	 * @param String path 音乐路径
-	 * @return void
-	 * 发送音乐文件，通过其他App
+	 * @param String
+	 *            path 音乐路径
+	 * @return void 发送音乐文件，通过其他App
 	 */
 	private void sendFile(String path) {
 		Intent intent = new Intent();
@@ -1097,8 +1094,8 @@ public class Main extends ListActivity {
 	/**
 	 * @author Xavier Yao
 	 * @return void
-	 * @param String[] info传回的各种更新信息
-	 * 通过返回的更新信息显示对话框让用户决定是否更新程序
+	 * @param String
+	 *            [] info传回的各种更新信息 通过返回的更新信息显示对话框让用户决定是否更新程序
 	 */
 	private void updateApp(final String[] info) {
 		new AlertDialog.Builder(Main.this)
@@ -1142,36 +1139,35 @@ public class Main extends ListActivity {
 	/**
 	 * @author Harry Chen
 	 * @param void
-	 * @return void
-	 * 判断是否首次启动并显示欢迎对话框
+	 * @return void 判断是否首次启动并显示欢迎对话框
 	 */
 	private void firstShow() {
 		SharedPreferences preferences = getApplicationContext()
 				.getSharedPreferences(Consts.Preferences.GENERAL,
 						Context.MODE_PRIVATE);
-		 if(!preferences.getBoolean("hasFirstStarted", false)){
-		Log.d(Consts.DEBUG_TAG, "首次启动");
-		dialogWelcome = new AlertDialog.Builder(Main.this)
-				.setIcon(android.R.drawable.ic_dialog_info)
-				.setTitle(R.string.welcome_title)
-				.setMessage(
-						getString(R.string.welcome_content)
-								+ getString(R.string.update_whats_new)
-								+ Consts.WHATSNEW + "\n\nP.S.测试版，所以每次都显示")
-				.setPositiveButton(R.string.welcome_button,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
-								dialogWelcome.cancel();
-							}
-						}).create();
-		Log.v(Consts.DEBUG_TAG, "首次启动对话框已初始化");
-		dialogWelcome.show();
-		Log.v(Consts.DEBUG_TAG, "首次启动对话框已显示");
-		preferences.edit().putBoolean("hasFirstStarted", true).commit();
-		 }
-		 else Log.d(Consts.DEBUG_TAG, "非首次启动");
+		if (!preferences.getBoolean("hasFirstStarted", false)) {
+			Log.d(Consts.DEBUG_TAG, "首次启动");
+			dialogWelcome = new AlertDialog.Builder(Main.this)
+					.setIcon(android.R.drawable.ic_dialog_info)
+					.setTitle(R.string.welcome_title)
+					.setMessage(
+							getString(R.string.welcome_content)
+									+ getString(R.string.update_whats_new)
+									+ Consts.WHATSNEW + "\n\nP.S.测试版，所以每次都显示")
+					.setPositiveButton(R.string.welcome_button,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									dialogWelcome.cancel();
+								}
+							}).create();
+			Log.v(Consts.DEBUG_TAG, "首次启动对话框已初始化");
+			dialogWelcome.show();
+			Log.v(Consts.DEBUG_TAG, "首次启动对话框已显示");
+			preferences.edit().putBoolean("hasFirstStarted", true).commit();
+		} else
+			Log.d(Consts.DEBUG_TAG, "非首次启动");
 		// FIXME 发布的时候去掉这些注释就行，我是为了每次都显示
 	}
 

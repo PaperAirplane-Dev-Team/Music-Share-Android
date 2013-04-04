@@ -20,6 +20,7 @@ public class Consts {
 			.parse("content://media/external/audio/albumart");
 	public final static int NULL = -1;
 	public final static boolean DEBUG_ON = true;
+	public final static int LOOK_FOR_SUGGESTION_REQUEST_CODE = 233;
 
 	public final class Url {
 		public final static String API_SUGGESTION = "https://api.weibo.com/2/search/suggestions/at_users.json";

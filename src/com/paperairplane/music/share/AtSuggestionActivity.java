@@ -34,12 +34,18 @@ public class AtSuggestionActivity extends Activity {
 	private Handler handler;
 	private ArrayAdapter<String> adapter;
 	private Thread refreshThread;
+	private Intent i;
+	private Bundle extras;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.at_suggestion);
-
+		i =new Intent(AtSuggestionActivity.this,Main.class);
+		extras = new Bundle();
+		extras.putAll(getIntent().getExtras());
+		i.putExtras(extras);
+		setResult(RESULT_CANCELED,i);
 		handler = new Handler() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -73,6 +79,7 @@ public class AtSuggestionActivity extends Activity {
 				} catch (Exception e1) {
 				}
 				data.add(0, e.toString());
+				adapter.notifyDataSetChanged();
 				lookForSuggestions();
 			}
 
@@ -101,14 +108,11 @@ public class AtSuggestionActivity extends Activity {
 				result.replace(start, start+1, adapter.getItem(position));
 				selection = start + adapter.getItem(position).length();
 				Log.d(Consts.DEBUG_TAG,result.toString());
-				Intent i =new Intent(AtSuggestionActivity.this,Main.class);
-				Bundle extras = new Bundle();
-				extras.putAll(getIntent().getExtras());
 				extras.putString("content", result.toString());
 				extras.putInt("selection", selection);
 				i.putExtras(extras);
-				i.setAction("com.paperairplane.music.share.share2weibo");
-				startActivity(i);
+				setResult(RESULT_OK,i);
+				finish();
 			}
 			
 		});
@@ -123,8 +127,6 @@ public class AtSuggestionActivity extends Activity {
 				params.add("access_token", Main.accessToken.getToken());
 				params.add("q", et.getText().toString().replace("@", ""));
 				String url = Consts.Url.API_SUGGESTION;
-				final List<String> fetched_data = new ArrayList<String>();
-				fetched_data.add(0, et.getText().toString());
 				final Message m = handler
 						.obtainMessage(Consts.Status.DATA_CHANGED);
 				try {
@@ -134,6 +136,8 @@ public class AtSuggestionActivity extends Activity {
 								public void onComplete(String result) {
 									Log.v("Music Share DUBUG", "获取到结果："
 											+ result);
+									final List<String> fetched_data = new ArrayList<String>();
+									fetched_data.add(0, et.getText().toString());
 									try {
 										JSONArray array = new JSONArray(result);
 										for (int i = 0; i < array.length(); i++) {
@@ -145,7 +149,6 @@ public class AtSuggestionActivity extends Activity {
 											Log.v(Consts.DEBUG_TAG, "添加数据"
 													+ nickname);
 										}
-
 										m.obj = fetched_data;
 										m.sendToTarget();
 									} catch (JSONException e) {
@@ -157,7 +160,7 @@ public class AtSuggestionActivity extends Activity {
 								@Override
 								public void onError(WeiboException e) {
 									e.printStackTrace();
-									Log.e("Music Share DUBUG", "获取错误");
+									Log.e("Music Share DUBUG", "获取错误"+e.getStatusCode()+e.getMessage());
 								}
 
 								@Override
@@ -172,5 +175,6 @@ public class AtSuggestionActivity extends Activity {
 		});
 		refreshThread.start();
 	}
+
 
 }
