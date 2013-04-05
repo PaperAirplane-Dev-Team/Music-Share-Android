@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/at_notice"
+        android:layout_marginLeft="5dip"
+        android:textSize="25sp" />
+
     <EditText
         android:id="@+id/editText_at"
         android:layout_width="match_parent"

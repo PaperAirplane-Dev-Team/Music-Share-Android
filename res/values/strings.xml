@@ -70,7 +70,7 @@
     <string name="thank_title">Thank You!</string>
     <string name="thank_content">技术指导:\n@但丁不淡定\n================\n众测试以及Bug Hunter:\n@七只小鸡1997 @Sudo- @Frank-vomit @无良风筝Fly @伪清醒的Maple\n================\n特别感谢:\n@风抚过了-南河之南（小白鼠你好） @-captain湉- @-假想敌- @落洛-红蓝独角兽巴萨是信仰（女神泥嚎）等众妹子支持~</string>
     <string name="welcome_title">Welcome To Our App</string>
-    <string name="welcome_content">//TODO 这是个首次启动的框框。写点啥,实在不行用View做个布局? P.S.这个没有i10n\n\n</string>
+    <string name="welcome_content">//TODO 姚沛然你不写啊！ \n\n</string>
     <string name="welcome_button">Let\'s enjoy this app~</string>
     <string name="change_overlay_color">Change the background color of text overlay</string>
     <string name="red">Red</string>
@@ -80,4 +80,9 @@
     <string name="menu_change_color">Change Overlay Color</string>
     <string name="reset">Reset</string>
     <string name="opacity">Opacity</string>
+    <string name="at_notice">Who do you want to @?</string>
+    <string name="menu_clean_cache">Clean Cache</string>
+    <string name="clean_cache_done">Successfully cleaned cache files!</string>
+    <string name="shake_random">I\'m feeling good~</string>
+    <string name="delete_file_count">Delete file count:</string>
 </resources>

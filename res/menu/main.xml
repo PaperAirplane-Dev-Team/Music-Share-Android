@@ -13,15 +13,21 @@
         android:title="@string/menu_update">
     </item>
     <item
+        android:id="@+id/menu_clean_cache"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:orderInCategory="5"
+        android:title="@string/menu_clean_cache">
+    </item>
+    <item
         android:id="@+id/menu_about"
         android:icon="@android:drawable/ic_menu_info_details"
-        android:orderInCategory="5"
+        android:orderInCategory="9"
         android:title="@string/menu_about">
     </item>
     <item
         android:id="@+id/menu_exit"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
-        android:orderInCategory="6"
+        android:orderInCategory="10"
         android:title="@string/menu_exit">
     </item>
 

@@ -75,4 +75,9 @@
     <string name="menu_change_color">更改遮罩层颜色</string>
     <string name="reset">重置</string>
     <string name="opacity">不透明度</string>
+    <string name="at_notice">想圈谁？</string>
+    <string name="menu_clean_cache">清理缓存</string>
+    <string name="clean_cache_done">喵,清理缓存成功~</string>
+    <string name="shake_random">主人主人不要晃我~好头晕啊~</string>
+    <string name="delete_file_count">删除的文件个数:</string>
 </resources>

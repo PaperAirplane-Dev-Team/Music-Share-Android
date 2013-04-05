@@ -381,7 +381,7 @@ public class Utilities {
 		} catch (Exception e) {
 			Log.v(Consts.DEBUG_TAG, "Å×³ö´íÎó" + e.getMessage());
 			handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
-			e.printStackTrace();
+			//e.printStackTrace();
 			json = null;
 			return;
 		}

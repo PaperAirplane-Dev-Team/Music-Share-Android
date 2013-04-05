@@ -115,6 +115,7 @@ public class Main extends ListActivity {
 				position = r.nextInt(listview.getAdapter().getCount());
 				Log.d(Consts.DEBUG_TAG, "生成随机数" + position);
 				indexOverlay.setVisibility(View.INVISIBLE);
+				Toast.makeText(Main.this, R.string.shake_random, Toast.LENGTH_LONG).show();
 				showCustomDialog(position, Consts.Dialogs.SHARE);
 			}
 		});
@@ -211,16 +212,20 @@ public class Main extends ListActivity {
 	 * 显示Overlay的方法。添加indexOverlay这个View
 	 */
 	private void showOverlay() {
-		getWindowManager()
-				.addView(
-						indexOverlay,
-						new WindowManager.LayoutParams(
-								LayoutParams.WRAP_CONTENT,
-								LayoutParams.WRAP_CONTENT,
-								WindowManager.LayoutParams.TYPE_APPLICATION,
-								WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-										| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-								PixelFormat.TRANSLUCENT));
+		try {
+			getWindowManager()
+					.addView(
+							indexOverlay,
+							new WindowManager.LayoutParams(
+									LayoutParams.WRAP_CONTENT,
+									LayoutParams.WRAP_CONTENT,
+									WindowManager.LayoutParams.TYPE_APPLICATION,
+									WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+											| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+									PixelFormat.TRANSLUCENT));
+		} catch (IllegalStateException e) {
+			Log.e(Consts.DEBUG_TAG, "Overlay Exception");
+		}
 	}
 
 	@Override
@@ -310,6 +315,25 @@ public class Main extends ListActivity {
 			break;
 		case R.id.menu_change_color:
 			showCustomDialog(0, Consts.Dialogs.CHANGE_COLOR);
+			break;
+		case R.id.menu_clean_cache:
+			String ARTWORK_PATH = getCacheDir().getAbsolutePath() + "/.artworkCache/";
+			int fileCount=0;
+			try {
+				File[] files=new File(ARTWORK_PATH).listFiles();
+				fileCount=files.length;
+				for(File f:files){
+					f.delete();
+					Log.v(Consts.DEBUG_TAG, f.getName()+" deleted.");
+					//虽然比起来常规for可能性能差……不过不过不过！好歹我发现了for-each!
+				}
+			} catch (Exception e) {
+				//e.printStackTrace();
+				Log.e(Consts.DEBUG_TAG, "Exception: NO FILE deleted.");
+				//仁慈一点，红色。不报错，不报错，不报错
+			}
+			String toastText=getString(R.string.clean_cache_done)+"\n"+getString(R.string.delete_file_count)+fileCount;
+			Toast.makeText(Main.this, toastText, Toast.LENGTH_LONG).show();
 			break;
 		case Consts.MenuItem.UNAUTH:
 			try {

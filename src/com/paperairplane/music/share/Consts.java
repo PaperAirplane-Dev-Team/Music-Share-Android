@@ -13,8 +13,8 @@ public class Consts {
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
 	public final static String VERY_LONG = "                                                         ";
-	public final static String RELEASE_DATE = "2013.4.4";
-	public final static String WHATSNEW = "遮罩颜色透明度更改,编辑微博时的at提醒";
+	public final static String RELEASE_DATE = "2013.4.5";
+	public final static String WHATSNEW = "摇一摇随机选歌，清理缓存";
 	public final static String ORIGIN_COLOR = "#99000088";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
