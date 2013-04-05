@@ -2,6 +2,7 @@ package com.paperairplane.music.share;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.Random;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -49,6 +50,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.paperairplane.music.share.ShakeDetector.OnShakeListener;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.sso.SsoHandler;
@@ -69,6 +71,7 @@ public class Main extends ListActivity {
 	private static int versionCode, checkForUpdateCount = 0;
 	private String versionName;
 	private ImageView iv;
+	private ShakeDetector shakeDetector;
 
 	@Override
 	// 主体
@@ -99,6 +102,27 @@ public class Main extends ListActivity {
 				getResources().getConfiguration().locale);
 		findViewById(R.id.main_linearLayout).setBackgroundResource(
 				R.drawable.background_holo_dark);
+		initShakeDetector();
+	}
+/**
+ * 一个脑残的功能==
+ */
+	private void initShakeDetector() {
+		shakeDetector = new ShakeDetector(Main.this);
+		shakeDetector.shakeThreshold = 2000;
+		shakeDetector.registerOnShakeListener(new OnShakeListener() {
+			@Override
+			public void onShake() {
+				Log.d(Consts.DEBUG_TAG, "检测到摇动");
+				int position = 0;
+				Random r = new Random();
+				position = r.nextInt(listview.getAdapter().getCount());
+				Log.d(Consts.DEBUG_TAG, "生成随机数" + position);
+				indexOverlay.setVisibility(View.INVISIBLE);
+				showCustomDialog(position, Consts.Dialogs.SHARE);
+			}
+		});
+		shakeDetector.start();
 	}
 
 	/**
@@ -176,9 +200,10 @@ public class Main extends ListActivity {
 
 		});
 	}
-/**
- * 显示首字母
- */
+
+	/**
+	 * 显示首字母
+	 */
 	private void showOverlay() {
 		getWindowManager()
 				.addView(
@@ -202,6 +227,7 @@ public class Main extends ListActivity {
 			Editor edit = pref.edit();
 			edit.putBoolean("resume", true);
 			edit.commit();
+			shakeDetector.stop();
 		} catch (Exception e) {
 		}
 		super.onStop();
@@ -211,6 +237,7 @@ public class Main extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		try {
+			shakeDetector.start();
 			SharedPreferences pref = getSharedPreferences(
 					Consts.Preferences.OVERLAY, MODE_PRIVATE);
 			boolean resume = pref.getBoolean("resume", false);
@@ -280,7 +307,6 @@ public class Main extends ListActivity {
 		case Consts.MenuItem.UNAUTH:
 			// 我特意把这里反了过来否则没法用啊
 			try {
-
 				new AlertDialog.Builder(this)
 						.setIcon(android.R.drawable.ic_dialog_alert)
 						.setMessage(R.string.unauth_confirm)
@@ -379,6 +405,17 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void showCustomDialog(final int _id, int whichDialog) {
+		shakeDetector.stop();
+		final DialogInterface.OnCancelListener onCancelListener = new DialogInterface.OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				try {
+					shakeDetector.start();
+				} catch (Throwable t) {
+
+				}
+			}
+		};
 		switch (whichDialog) {
 		case Consts.Dialogs.ABOUT:
 			DialogInterface.OnClickListener listenerAbout = new DialogInterface.OnClickListener() {
@@ -387,6 +424,7 @@ public class Main extends ListActivity {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
 						dialogThank = new AlertDialog.Builder(Main.this)
+								.setOnCancelListener(onCancelListener)
 								.setTitle(R.string.thank_title)
 								.setIcon(android.R.drawable.ic_dialog_info)
 								.setMessage(R.string.thank_content)
@@ -445,8 +483,11 @@ public class Main extends ListActivity {
 							}
 						};
 						AlertDialog.Builder builder = new AlertDialog.Builder(
-								Main.this).setView(feedback).setPositiveButton(
-								R.string.send_feedback, listener);
+								Main.this)
+								.setView(feedback)
+								.setPositiveButton(R.string.send_feedback,
+										listener)
+								.setOnCancelListener(onCancelListener);
 						if (isAccessTokenExistAndValid()) {
 							builder.setNegativeButton(R.string.feedback_weibo,
 									listener);
@@ -462,6 +503,7 @@ public class Main extends ListActivity {
 			dialogAbout = new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.menu_about))
+					.setOnCancelListener(onCancelListener)
 					.setMessage(
 							getString(R.string.about_content) + "\nn"
 									+ Consts.RELEASE_DATE + "\nVer "
@@ -501,6 +543,7 @@ public class Main extends ListActivity {
 				}
 			};
 			dialogMain = new AlertDialog.Builder(this)
+					.setOnCancelListener(onCancelListener)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.choose_an_operation)
 					.setView(musicInfoView)
@@ -553,7 +596,8 @@ public class Main extends ListActivity {
 					.findViewById(R.id.btn_share2others);
 			button_others.setOnClickListener(listenerButton);
 			dialogSearch = new AlertDialog.Builder(this).setView(search)
-					.setCancelable(true).create();
+					.setCancelable(true).setOnCancelListener(onCancelListener)
+					.create();
 			dialogSearch.show();
 			break;
 		case Consts.Dialogs.EMPTY:
@@ -719,7 +763,7 @@ public class Main extends ListActivity {
 				}
 			};
 			dialogChangeColor = new AlertDialog.Builder(Main.this)
-					.setView(changeColor)
+					.setOnCancelListener(onCancelListener).setView(changeColor)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.change_overlay_color)
 					.setPositiveButton(android.R.string.ok, listenerColor)
@@ -762,8 +806,7 @@ public class Main extends ListActivity {
 		Bitmap bmpAlbum = Utilities.getLocalArtwork(Main.this,
 				musics[_id].getAlbumId(), size, size);
 		try {
-			Log.d(Consts.DEBUG_TAG,
-					"width:" + bmpAlbum.getWidth());
+			Log.d(Consts.DEBUG_TAG, "width:" + bmpAlbum.getWidth());
 			albumArt.setImageBitmap(bmpAlbum);
 			Log.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
@@ -797,6 +840,7 @@ public class Main extends ListActivity {
 						.show();
 				break;
 			case Consts.Status.SEND_WEIBO:// 发送微博
+				shakeDetector.stop();
 				View sendweibo = LayoutInflater.from(getApplicationContext())
 						.inflate(R.layout.sendweibo, null);
 				final EditText et = (EditText) sendweibo.getRootView()
@@ -844,6 +888,12 @@ public class Main extends ListActivity {
 				});
 				dialogSendWeibo = new AlertDialog.Builder(Main.this)
 						.setView(sendweibo)
+						.setOnCancelListener(new DialogInterface.OnCancelListener(){
+							@Override
+							public void onCancel(DialogInterface dialog) {
+								shakeDetector.start();
+							}					
+						})
 						.setPositiveButton(getString(R.string.share),
 								new DialogInterface.OnClickListener() {
 									@Override
@@ -936,12 +986,12 @@ public class Main extends ListActivity {
 	private class MusicListOnClickListener implements OnItemClickListener {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long id) {
-			if (position != listview.getCount()) {
+//			if (position != listview.getCount()) {
 				try {
 					dialogMain.cancel();
 				} catch (Exception e) {
 				}
-			}
+//			}  注释掉的代码好象是以前给footer用的
 			indexOverlay.setVisibility(View.INVISIBLE);
 			showCustomDialog(position, Consts.Dialogs.SHARE);
 		}
