@@ -77,39 +77,35 @@ public class Main extends ListActivity {
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		initListView();
+		showMusicList();
+		firstShow();
+		ssoHandler = new SsoHandler(Main.this, weibo);
+		weiboHelper = new WeiboHelper(handler, getApplicationContext());
 		try {
-			setContentView(R.layout.main);
-			initListView();
-			showMusicList();
-			firstShow();
-			ssoHandler = new SsoHandler(Main.this, weibo);
-			weiboHelper = new WeiboHelper(handler, getApplicationContext());
 			Main.versionCode = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionCode;
 			this.versionName = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionName;
 		} catch (Exception e) {
 			e.printStackTrace();
-			setContentView(R.layout.empty);
 		}
 		// 读取已存储的授权信息
-		try {
-			Main.accessToken = weiboHelper.readAccessToken();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Main.accessToken = weiboHelper.readAccessToken();
 		Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
 				getResources().getConfiguration().locale);
 		findViewById(R.id.main_linearLayout).setBackgroundResource(
 				R.drawable.background_holo_dark);
 		initShakeDetector();
 	}
-/**
- * 一个脑残的功能==
- */
+
+	/**
+	 * 一个脑残的功能==
+	 */
 	private void initShakeDetector() {
 		shakeDetector = new ShakeDetector(Main.this);
-		shakeDetector.shakeThreshold = 2000;
+		shakeDetector.shakeThreshold = 2000;// 这里设置振幅
 		shakeDetector.registerOnShakeListener(new OnShakeListener() {
 			@Override
 			public void onShake() {
@@ -132,6 +128,9 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void initListView() {
+		/*
+		 * 设置按钮按下时的效果
+		 */
 		iv = (ImageView) findViewById(R.id.float_search_button);
 		iv.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -144,6 +143,9 @@ public class Main extends ListActivity {
 				return false;
 			}
 		});
+		/*
+		 * 初始化Overlay，从SharedPreferences里读取Overlay的背景色
+		 */
 		indexOverlay = (TextView) View.inflate(Main.this, R.layout.indexer,
 				null);
 		showOverlay();
@@ -154,6 +156,9 @@ public class Main extends ListActivity {
 					.parseColor(preference.getString(
 							Consts.Preferences.BG_COLOR, "")));
 		}
+		/*
+		 * 初始化ListView
+		 */
 		listview = (ListView) findViewById(android.R.id.list);// 找LisView的ID
 		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
 		listview.setOnScrollListener(new OnScrollListener() {
@@ -164,6 +169,7 @@ public class Main extends ListActivity {
 			public void onScroll(AbsListView view, int firstVisibleItem,
 					int visibleItemCount, int totalItemCount) {
 				if (visible) {
+					// 这里为Overlay设置文字。识别冠词the,a,an
 					String firstChar = musics[firstVisibleItem].getTitle();
 					if (firstChar.toLowerCase(Locale.getDefault()).startsWith(
 							"the ")) {
@@ -202,7 +208,7 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * 显示首字母
+	 * 显示Overlay的方法。添加indexOverlay这个View
 	 */
 	private void showOverlay() {
 		getWindowManager()
@@ -220,39 +226,42 @@ public class Main extends ListActivity {
 	@Override
 	protected void onStop() {
 		Log.d(Consts.DEBUG_TAG, "onStop()");
-		try {
+		// 将当前Overlay的显示状态保存到SharedPreferences
+		if (indexOverlay.getVisibility() == View.VISIBLE) {
 			getWindowManager().removeView(indexOverlay);
 			SharedPreferences pref = getSharedPreferences(
 					Consts.Preferences.OVERLAY, MODE_PRIVATE);
 			Editor edit = pref.edit();
 			edit.putBoolean("resume", true);
 			edit.commit();
-			shakeDetector.stop();
-		} catch (Exception e) {
 		}
+		// 关闭摇动检查
+		shakeDetector.stop();
 		super.onStop();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		try {
-			shakeDetector.start();
-			SharedPreferences pref = getSharedPreferences(
-					Consts.Preferences.OVERLAY, MODE_PRIVATE);
-			boolean resume = pref.getBoolean("resume", false);
-			if (resume) {
-				showOverlay();
-			}
-		} catch (Exception e) {
+		// 恢复摇动检测
+		shakeDetector.start();
+		// 读取并恢复Overlay的可见性
+		SharedPreferences pref = getSharedPreferences(
+				Consts.Preferences.OVERLAY, MODE_PRIVATE);
+		boolean resume = pref.getBoolean("resume", false);
+		if (resume) {
+			showOverlay();
 		}
+
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		//这里判断接收到的Intent是来自AtSuggestion还是微博SSO授权
 		if (requestCode == Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE) {
 			Log.d(Consts.DEBUG_TAG, "返回");
+			//这里根据bundle的数据重启dialogSendWeibo
 			dialogSendWeibo.dismiss();
 			Message m = handler.obtainMessage(Consts.Status.SEND_WEIBO);
 			m.obj = data.getExtras();
@@ -291,8 +300,6 @@ public class Main extends ListActivity {
 	// 菜单判断
 	public boolean onOptionsItemSelected(MenuItem menu) {
 		super.onOptionsItemSelected(menu);
-		Log.d(Consts.DEBUG_TAG, "menu id:" + menu.getItemId());
-		// E什么啊！我还以为出错了
 		switch (menu.getItemId()) {
 		case R.id.menu_exit:
 			finish();
@@ -305,7 +312,6 @@ public class Main extends ListActivity {
 			showCustomDialog(0, Consts.Dialogs.CHANGE_COLOR);
 			break;
 		case Consts.MenuItem.UNAUTH:
-			// 我特意把这里反了过来否则没法用啊
 			try {
 				new AlertDialog.Builder(this)
 						.setIcon(android.R.drawable.ic_dialog_alert)
@@ -376,8 +382,7 @@ public class Main extends ListActivity {
 	 */
 	private boolean isAccessTokenExistAndValid() {
 		boolean flag = true;
-		if (Main.accessToken == null
-				|| (Main.accessToken.isSessionValid() == false)) {
+		if (Main.accessToken.isSessionValid() == false) {
 			flag = false;
 		}
 		Log.d(Consts.DEBUG_TAG, "方法isAccessTokenExistAndValid()被调用,结果" + flag);
@@ -497,9 +502,6 @@ public class Main extends ListActivity {
 					}
 				}
 			};
-			// 既然你说它奇葩,嗯,那这样子就不奇葩了
-			// 不过在显示关于窗口是方法第一个传入参数没啥用
-			// ……我只能说奇葩那个注释是你加上去的……还有你是不是忘加内容了？
 			dialogAbout = new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.menu_about))
@@ -888,12 +890,13 @@ public class Main extends ListActivity {
 				});
 				dialogSendWeibo = new AlertDialog.Builder(Main.this)
 						.setView(sendweibo)
-						.setOnCancelListener(new DialogInterface.OnCancelListener(){
-							@Override
-							public void onCancel(DialogInterface dialog) {
-								shakeDetector.start();
-							}					
-						})
+						.setOnCancelListener(
+								new DialogInterface.OnCancelListener() {
+									@Override
+									public void onCancel(DialogInterface dialog) {
+										shakeDetector.start();
+									}
+								})
 						.setPositiveButton(getString(R.string.share),
 								new DialogInterface.OnClickListener() {
 									@Override
@@ -986,12 +989,12 @@ public class Main extends ListActivity {
 	private class MusicListOnClickListener implements OnItemClickListener {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long id) {
-//			if (position != listview.getCount()) {
-				try {
-					dialogMain.cancel();
-				} catch (Exception e) {
-				}
-//			}  注释掉的代码好象是以前给footer用的
+			// if (position != listview.getCount()) {
+			try {
+				dialogMain.cancel();
+			} catch (Exception e) {
+			}
+			// } 注释掉的代码好象是以前给footer用的
 			indexOverlay.setVisibility(View.INVISIBLE);
 			showCustomDialog(position, Consts.Dialogs.SHARE);
 		}

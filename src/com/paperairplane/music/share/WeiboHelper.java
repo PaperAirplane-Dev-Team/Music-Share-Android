@@ -150,7 +150,7 @@ public class WeiboHelper {
 		// 既然关注就悄悄地进行不报错了
 	}
 
-	public class AuthDialogListener implements WeiboAuthListener {
+	private class AuthDialogListener implements WeiboAuthListener {
 		Message m = handler.obtainMessage();
 
 		@Override
