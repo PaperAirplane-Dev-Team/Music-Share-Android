@@ -59,7 +59,7 @@
     <string name="menu_update">Check For Update</string>
     <string name="send_feedback">Send Feedback</string>
     <string name="no_update">No Available Update Now</string>
-    <string name="update_found">An Update is Avilable</string>
+    <string name="update_found">An Update is Available</string>
     <string name="update_download">Download Now</string>
     <string name="update_view">View in Market</string>
     <string name="update_remote_version">Latest Version:</string>
@@ -78,10 +78,14 @@
     <string name="blue">Blue</string>
     <string name="to_show_color">The color will appear here</string>
     <string name="menu_change_color">Change Overlay Color</string>
+    <string name="menu_change_background">Change Background</string>
+    <string name="menu_customize">Customize</string>
     <string name="reset">Reset</string>
     <string name="opacity">Opacity</string>
     <string name="at_notice">Who do you want to @?</string>
     <string name="menu_clean_cache">Clean Cache</string>
+    <string name="choose_picture">Choose</string>
+    <string name="choose_default">Default</string>
     <string name="clean_cache_done">Successfully cleaned cache files!</string>
     <string name="shake_random">I\'m feeling good~</string>
     <string name="delete_file_count">Delete file count:</string>

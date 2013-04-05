@@ -14,13 +14,14 @@ public class Consts {
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
 	public final static String VERY_LONG = "                                                         ";
 	public final static String RELEASE_DATE = "2013.4.5";
-	public final static String WHATSNEW = "摇一摇随机选歌，清理缓存";
+	public final static String WHATSNEW = "摇一摇随机选歌，清理缓存，更换背景";
 	public final static String ORIGIN_COLOR = "#99000088";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
 	public final static int NULL = -1;
 	public final static boolean DEBUG_ON = true;
 	public final static int LOOK_FOR_SUGGESTION_REQUEST_CODE = 233;
+	public final static int PICK_BACKGROUND_REQUEST_CODE = 234;
 
 	public final class Url {
 		public final static String API_SUGGESTION = "https://api.weibo.com/2/search/suggestions/at_users.json";
@@ -77,6 +78,7 @@ public class Consts {
 		public static final int SEARCH = 2;
 		public static final int EMPTY = 3;
 		public static final int CHANGE_COLOR = 4;
+		public static final int CHANGE_BACKGROUND = 5;
 	}
 
 	public final class Preferences {
@@ -85,11 +87,12 @@ public class Consts {
 		public final static String FEEDBACK = "FeedbackStatus";
 		public final static String GENERAL = "General";
 		public final static String BG_COLOR = "overlay_bg_color";
+		public final static String BG_PATH = "background_path";
 		public final static String OVERLAY = "overlay";
 	}
 
 	public final class MenuItem {
-		public final static int REFRESH = 0;
+		public final static int REFRESH = 3;
 		public final static int AUTH = 1;
 		public final static int UNAUTH = 2;
 	}

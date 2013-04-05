@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/imageView_background"
+        android:layout_width="256dip"
+        android:layout_height="256dip"
+        android:scaleType="fitCenter"
+        android:src="@drawable/background_holo_dark" />
+
+</LinearLayout>

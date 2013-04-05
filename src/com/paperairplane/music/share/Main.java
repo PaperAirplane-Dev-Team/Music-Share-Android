@@ -17,6 +17,8 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
@@ -64,7 +67,8 @@ public class Main extends ListActivity {
 			Consts.Url.AUTH_REDIRECT);
 	private Receiver receiver;
 	private AlertDialog dialogMain, dialogAbout, dialogSearch, dialogThank,
-			dialogWelcome, dialogChangeColor, dialogSendWeibo;
+			dialogWelcome, dialogChangeColor, dialogSendWeibo,
+			dialogBackgroundChooser;
 	private SsoHandler ssoHandler;
 	private WeiboHelper weiboHelper;
 	private TextView indexOverlay;
@@ -72,12 +76,16 @@ public class Main extends ListActivity {
 	private String versionName;
 	private ImageView iv;
 	private ShakeDetector shakeDetector;
+	private String background_path = null;
+	private SharedPreferences theme_preferences;
 
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		theme_preferences = getApplicationContext().getSharedPreferences(
+				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
 		initListView();
 		showMusicList();
 		firstShow();
@@ -95,8 +103,7 @@ public class Main extends ListActivity {
 		Main.accessToken = weiboHelper.readAccessToken();
 		Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
 				getResources().getConfiguration().locale);
-		findViewById(R.id.main_linearLayout).setBackgroundResource(
-				R.drawable.background_holo_dark);
+		setBackground();
 		initShakeDetector();
 	}
 
@@ -115,7 +122,8 @@ public class Main extends ListActivity {
 				position = r.nextInt(listview.getAdapter().getCount());
 				Log.d(Consts.DEBUG_TAG, "生成随机数" + position);
 				indexOverlay.setVisibility(View.INVISIBLE);
-				Toast.makeText(Main.this, R.string.shake_random, Toast.LENGTH_LONG).show();
+				Toast.makeText(Main.this, R.string.shake_random,
+						Toast.LENGTH_LONG).show();
 				showCustomDialog(position, Consts.Dialogs.SHARE);
 			}
 		});
@@ -206,6 +214,21 @@ public class Main extends ListActivity {
 			}
 
 		});
+
+	}
+	@SuppressWarnings("deprecation")
+	private void setBackground(){
+		background_path = theme_preferences.getString(Consts.Preferences.BG_PATH, null);
+		Log.d(Consts.DEBUG_TAG,"读取到的地址"+background_path);
+		View main_layout = findViewById(R.id.main_linearLayout);
+		if (background_path == null){
+		main_layout.setBackgroundResource(
+				R.drawable.background_holo_dark);
+		Log.d(Consts.DEBUG_TAG,"设置为默认壁纸");
+		}else{
+			main_layout.setBackgroundDrawable(Drawable.createFromPath(background_path));
+			Log.d(Consts.DEBUG_TAG, "设置为自定壁纸"+background_path);
+		}
 	}
 
 	/**
@@ -263,14 +286,28 @@ public class Main extends ListActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		//这里判断接收到的Intent是来自AtSuggestion还是微博SSO授权
+		// 这里判断接收到的Intent是来自AtSuggestion还是微博SSO授权
 		if (requestCode == Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE) {
 			Log.d(Consts.DEBUG_TAG, "返回");
-			//这里根据bundle的数据重启dialogSendWeibo
+			// 这里根据bundle的数据重启dialogSendWeibo
 			dialogSendWeibo.dismiss();
 			Message m = handler.obtainMessage(Consts.Status.SEND_WEIBO);
 			m.obj = data.getExtras();
 			m.sendToTarget();
+		} else if (requestCode == Consts.PICK_BACKGROUND_REQUEST_CODE
+				&& resultCode == RESULT_OK && null != data) {
+			Uri selectedImage = data.getData();
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+			Cursor cursor = getContentResolver().query(selectedImage,
+					filePathColumn, null, null, null);
+			cursor.moveToFirst();
+
+			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+			background_path = cursor.getString(columnIndex);
+			cursor.close();
+			Log.d(Consts.DEBUG_TAG, "取到的背景地址：" + background_path);
+			showCustomDialog(0, Consts.Dialogs.CHANGE_BACKGROUND);
+
 		} else {
 			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
 		}
@@ -281,6 +318,10 @@ public class Main extends ListActivity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		getMenuInflater().inflate(R.menu.main, menu);
+		SubMenu submenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3,
+				R.string.menu_customize).setIcon(
+				android.R.drawable.ic_menu_manage);
+		getMenuInflater().inflate(R.menu.customize, submenu);
 		if (Build.VERSION.SDK_INT >= 11) {
 			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
 					R.string.menu_refresh)
@@ -317,22 +358,25 @@ public class Main extends ListActivity {
 			showCustomDialog(0, Consts.Dialogs.CHANGE_COLOR);
 			break;
 		case R.id.menu_clean_cache:
-			String ARTWORK_PATH = getCacheDir().getAbsolutePath() + "/.artworkCache/";
-			int fileCount=0;
+			String ARTWORK_PATH = getCacheDir().getAbsolutePath()
+					+ "/.artworkCache/";
+			int fileCount = 0;
 			try {
-				File[] files=new File(ARTWORK_PATH).listFiles();
-				fileCount=files.length;
-				for(File f:files){
+				File[] files = new File(ARTWORK_PATH).listFiles();
+				fileCount = files.length;
+				for (File f : files) {
 					f.delete();
-					Log.v(Consts.DEBUG_TAG, f.getName()+" deleted.");
-					//虽然比起来常规for可能性能差……不过不过不过！好歹我发现了for-each!
+					Log.v(Consts.DEBUG_TAG, f.getName() + " deleted.");
+					// 虽然比起来常规for可能性能差……不过不过不过！好歹我发现了for-each!
+					// Effective Java建议多用for-each……
 				}
 			} catch (Exception e) {
-				//e.printStackTrace();
+				// e.printStackTrace();
 				Log.e(Consts.DEBUG_TAG, "Exception: NO FILE deleted.");
-				//仁慈一点，红色。不报错，不报错，不报错
+				// 仁慈一点，红色。不报错，不报错，不报错
 			}
-			String toastText=getString(R.string.clean_cache_done)+"\n"+getString(R.string.delete_file_count)+fileCount;
+			String toastText = getString(R.string.clean_cache_done) + "\n"
+					+ getString(R.string.delete_file_count) + fileCount;
 			Toast.makeText(Main.this, toastText, Toast.LENGTH_LONG).show();
 			break;
 		case Consts.MenuItem.UNAUTH:
@@ -385,6 +429,9 @@ public class Main extends ListActivity {
 			Main.checkForUpdateCount++;
 			Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
 					getResources().getConfiguration().locale);
+			break;
+		case R.id.menu_change_background:
+			showCustomDialog(0, Consts.Dialogs.CHANGE_BACKGROUND);
 			break;
 		}
 		return true;
@@ -663,9 +710,7 @@ public class Main extends ListActivity {
 					.findViewById(R.id.text_blue);
 			textColor[Consts.Color.OPACITY] = (TextView) changeColor
 					.findViewById(R.id.text_trans);
-			final SharedPreferences preferences = getApplicationContext()
-					.getSharedPreferences(Consts.Preferences.GENERAL,
-							Context.MODE_PRIVATE);
+
 			OnSeekBarChangeListener seekListener = new OnSeekBarChangeListener() {
 
 				@Override
@@ -736,8 +781,8 @@ public class Main extends ListActivity {
 			for (int i = 0; i < 4; i++) {
 				seekColor[i].setOnSeekBarChangeListener(seekListener);
 			}
-			if (preferences.contains(Consts.Preferences.BG_COLOR)) {
-				String nowColor = preferences.getString(
+			if (theme_preferences.contains(Consts.Preferences.BG_COLOR)) {
+				String nowColor = theme_preferences.getString(
 						Consts.Preferences.BG_COLOR, "");
 				Log.d(Consts.DEBUG_TAG, "Got origin color");
 				int colorInt[] = new int[4];
@@ -763,7 +808,7 @@ public class Main extends ListActivity {
 					case DialogInterface.BUTTON_POSITIVE:
 						String color = textColorCode.getText().toString();
 						if (color.contains("#")) {
-							preferences
+							theme_preferences
 									.edit()
 									.putString(Consts.Preferences.BG_COLOR,
 											color).commit();
@@ -777,7 +822,7 @@ public class Main extends ListActivity {
 						dialogChangeColor.cancel();
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
-						preferences
+						theme_preferences
 								.edit()
 								.putString(Consts.Preferences.BG_COLOR,
 										Consts.ORIGIN_COLOR).commit();
@@ -797,7 +842,59 @@ public class Main extends ListActivity {
 					.setNeutralButton(R.string.reset, listenerColor).create();
 			dialogChangeColor.show();
 			break;
+		case Consts.Dialogs.CHANGE_BACKGROUND:
+			View v = View.inflate(Main.this, R.layout.background_chooser, null);
+			final ImageView iv_background = (ImageView) v
+					.findViewById(R.id.imageView_background);
+			if (background_path != null) {
+				Drawable background = Drawable.createFromPath(background_path);
+				BitmapDrawable bd = (BitmapDrawable) background;
+				Bitmap bm = bd.getBitmap();
+				iv_background.setImageBitmap(bm);
+			}
+			DialogInterface.OnClickListener listenerBackground = new DialogInterface.OnClickListener() {
 
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which) {
+					case DialogInterface.BUTTON_POSITIVE:
+						if (background_path != null) {
+							theme_preferences.edit()
+									.putString(Consts.Preferences.BG_PATH,
+											background_path).commit();
+						}
+						setBackground();
+						break;
+					case DialogInterface.BUTTON_NEGATIVE:
+						Intent i = new Intent(
+								Intent.ACTION_PICK,
+								android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+						startActivityForResult(i,
+								Consts.PICK_BACKGROUND_REQUEST_CODE);
+						break;
+					case DialogInterface.BUTTON_NEUTRAL:
+						background_path = null;
+						iv_background
+								.setImageResource(R.drawable.background_holo_dark);
+						theme_preferences.edit().remove(Consts.Preferences.BG_PATH).commit();
+						setBackground();
+						break;
+					}
+
+				}
+			};
+			dialogBackgroundChooser = new AlertDialog.Builder(Main.this)
+					.setOnCancelListener(onCancelListener)
+					.setView(v)
+					.setIcon(android.R.drawable.ic_dialog_info)
+					.setTitle(R.string.menu_change_background)
+					.setPositiveButton(android.R.string.ok, listenerBackground)
+					.setNegativeButton(R.string.choose_picture,
+							listenerBackground)
+					.setNeutralButton(R.string.choose_default,
+							listenerBackground).create();
+			dialogBackgroundChooser.show();
+			break;
 		default:
 			throw new RuntimeException("What the hell are you doing?");
 		}
