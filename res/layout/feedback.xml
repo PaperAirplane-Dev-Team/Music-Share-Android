@@ -4,13 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/tv_feedback"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/thank_for_feedback" />
+
 
     <EditText
         android:id="@+id/et_feedback"

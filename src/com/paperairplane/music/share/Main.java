@@ -35,7 +35,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
@@ -43,7 +42,6 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -511,6 +509,7 @@ public class Main extends ListActivity {
 													DialogInterface dialog,
 													int whichButton) {
 												dialogThank.cancel();
+												dialogAbout.show();
 											}
 										}).create();
 						dialogThank.show();
@@ -530,10 +529,19 @@ public class Main extends ListActivity {
 						String text = pref.getString("content", "");
 						content.setText(text);
 						pref.edit().clear().commit();
+						final AlertDialog.Builder builder = new AlertDialog.Builder(
+								Main.this);
 						DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
-									int which) {
+									int whichButton) {
+								if (whichButton==DialogInterface.BUTTON_NEUTRAL){
+									//dialog.cancel();
+									//builder.create().show();
+									//不然它就跑了...
+									//FIXME 卧槽……Exception抛得慌，怎么才能让它不消失！
+									return;
+								}
 								String contentString = content.getText()
 										.toString().trim();
 								if (contentString.equals("")) {
@@ -545,7 +553,7 @@ public class Main extends ListActivity {
 									SendFeedback feedback = new SendFeedback(
 											contentString, handler,
 											versionCode, Main.this);
-									switch (which) {
+									switch (whichButton) {
 									case DialogInterface.BUTTON_POSITIVE:
 										feedback.setMeans(Consts.ShareMeans.OTHERS);
 										feedback.start();
@@ -558,11 +566,13 @@ public class Main extends ListActivity {
 								}
 							}
 						};
-						AlertDialog.Builder builder = new AlertDialog.Builder(
-								Main.this)
-								.setView(feedback)
+
+						builder.setView(feedback)
 								.setPositiveButton(R.string.send_feedback,
 										listener)
+								.setNeutralButton(R.string.reset, listener)
+								.setTitle(R.string.thank_for_feedback)
+								.setIcon(android.R.drawable.ic_dialog_info)
 								.setOnCancelListener(onCancelListener);
 						if (isAccessTokenExistAndValid()) {
 							builder.setNegativeButton(R.string.feedback_weibo,
@@ -578,7 +588,7 @@ public class Main extends ListActivity {
 					.setTitle(getString(R.string.menu_about))
 					.setOnCancelListener(onCancelListener)
 					.setMessage(
-							getString(R.string.about_content) + "\nn"
+							getString(R.string.about_content) + "\n\n"
 									+ Consts.RELEASE_DATE + "\nVer "
 									+ versionName + " / " + versionCode + "\n"
 									+ getString(R.string.update_whats_new)
@@ -634,15 +644,14 @@ public class Main extends ListActivity {
 					.findViewById(R.id.et_artist);
 			final EditText et_album = (EditText) search
 					.findViewById(R.id.et_album);
-			Button button_weibo = (Button) search
-					.findViewById(R.id.btn_share2weibo);
-			OnClickListener listenerButton = new OnClickListener() {
+			DialogInterface.OnClickListener listenerSearch = new DialogInterface.OnClickListener() {
 				@Override
-				public void onClick(View v) {
-					switch (v.getId()) {
-					case R.id.btn_share2weibo:
+				public void onClick(DialogInterface dialog, int whichButton) {
+					switch (whichButton) {
+					case DialogInterface.BUTTON_POSITIVE:
 						if (et_title.getText().toString().trim().equals("")) {
 							showCustomDialog(0, Consts.Dialogs.EMPTY);
+							
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
@@ -651,8 +660,9 @@ public class Main extends ListActivity {
 							dialogSearch.cancel();
 						}
 						break;
-					case R.id.btn_share2others:
+					case DialogInterface.BUTTON_NEGATIVE:
 						if (et_title.getText().toString().trim().equals("")) {
+							showCustomDialog(0, Consts.Dialogs.EMPTY);
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
@@ -664,12 +674,12 @@ public class Main extends ListActivity {
 					}
 				}
 			};
-			button_weibo.setOnClickListener(listenerButton);
-			Button button_others = (Button) search
-					.findViewById(R.id.btn_share2others);
-			button_others.setOnClickListener(listenerButton);
 			dialogSearch = new AlertDialog.Builder(this).setView(search)
 					.setCancelable(true).setOnCancelListener(onCancelListener)
+					.setPositiveButton(R.string.share2weibo, listenerSearch)
+					.setNegativeButton(R.string.share2others, listenerSearch)
+					.setTitle(R.string.search)
+					.setIcon(android.R.drawable.ic_dialog_info)
 					.create();
 			dialogSearch.show();
 			break;
@@ -781,10 +791,15 @@ public class Main extends ListActivity {
 			for (int i = 0; i < 4; i++) {
 				seekColor[i].setOnSeekBarChangeListener(seekListener);
 			}
+			String nowColor;
 			if (theme_preferences.contains(Consts.Preferences.BG_COLOR)) {
-				String nowColor = theme_preferences.getString(
+				nowColor = theme_preferences.getString(
 						Consts.Preferences.BG_COLOR, "");
 				Log.d(Consts.DEBUG_TAG, "Got origin color");
+			}
+			else{
+				nowColor=Consts.ORIGIN_COLOR;
+			}
 				int colorInt[] = new int[4];
 				colorInt[Consts.Color.RED] = Integer.valueOf(
 						nowColor.substring(3, 5), 16);
@@ -799,7 +814,7 @@ public class Main extends ListActivity {
 				for (int i = 0; i < 4; i++) {
 					seekColor[i].setProgress(colorInt[i]);
 				}
-			}
+
 			DialogInterface.OnClickListener listenerColor = new DialogInterface.OnClickListener() {
 
 				@Override
