@@ -80,6 +80,7 @@ public class Main extends ListActivity {
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
+		Log.i(Consts.DEBUG_TAG, "调试模式:"+Consts.DEBUG_ON);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		theme_preferences = getApplicationContext().getSharedPreferences(
@@ -219,10 +220,10 @@ public class Main extends ListActivity {
 		background_path = theme_preferences.getString(Consts.Preferences.BG_PATH, null);
 		Log.d(Consts.DEBUG_TAG,"读取到的地址"+background_path);
 		View main_layout = findViewById(R.id.main_linearLayout);
-		if (background_path == null){
-		main_layout.setBackgroundResource(
-				R.drawable.background_holo_dark);
-		Log.d(Consts.DEBUG_TAG,"设置为默认壁纸");
+		if (background_path == null || !new File(background_path).exists()){
+			//原来可以不用catch...
+			main_layout.setBackgroundResource(R.drawable.background_holo_dark);
+			Log.d(Consts.DEBUG_TAG,"设置为默认壁纸");
 		}else{
 			main_layout.setBackgroundDrawable(Drawable.createFromPath(background_path));
 			Log.d(Consts.DEBUG_TAG, "设置为自定壁纸"+background_path);
@@ -277,6 +278,8 @@ public class Main extends ListActivity {
 		boolean resume = pref.getBoolean("resume", false);
 		if (resume) {
 			showOverlay();
+			indexOverlay.setVisibility(View.INVISIBLE);
+			//我说了得这样……
 		}
 
 	}
@@ -285,6 +288,7 @@ public class Main extends ListActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		// 这里判断接收到的Intent是来自AtSuggestion还是微博SSO授权
+		// 还有可爱的背景
 		if (requestCode == Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE) {
 			Log.d(Consts.DEBUG_TAG, "返回");
 			// 这里根据bundle的数据重启dialogSendWeibo
@@ -304,7 +308,7 @@ public class Main extends ListActivity {
 			background_path = cursor.getString(columnIndex);
 			cursor.close();
 			Log.d(Consts.DEBUG_TAG, "取到的背景地址：" + background_path);
-			showCustomDialog(0, Consts.Dialogs.CHANGE_BACKGROUND);
+			showCustomDialog(Consts.NULL, Consts.Dialogs.CHANGE_BACKGROUND);
 
 		} else {
 			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
@@ -353,7 +357,7 @@ public class Main extends ListActivity {
 			showAbout();
 			break;
 		case R.id.menu_change_color:
-			showCustomDialog(0, Consts.Dialogs.CHANGE_COLOR);
+			showCustomDialog(Consts.NULL, Consts.Dialogs.CHANGE_COLOR);
 			break;
 		case R.id.menu_clean_cache:
 			String ARTWORK_PATH = getCacheDir().getAbsolutePath()
@@ -429,7 +433,7 @@ public class Main extends ListActivity {
 					getResources().getConfiguration().locale);
 			break;
 		case R.id.menu_change_background:
-			showCustomDialog(0, Consts.Dialogs.CHANGE_BACKGROUND);
+			showCustomDialog(Consts.NULL, Consts.Dialogs.CHANGE_BACKGROUND);
 			break;
 		}
 		return true;
@@ -465,7 +469,7 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	public void footer(View v) {
-		showCustomDialog(0, Consts.Dialogs.SEARCH);
+		showCustomDialog(Consts.NULL, Consts.Dialogs.SEARCH);
 	}
 
 	// 对话框处理
@@ -545,7 +549,7 @@ public class Main extends ListActivity {
 								String contentString = content.getText()
 										.toString().trim();
 								if (contentString.equals("")) {
-									showCustomDialog(0, Consts.Dialogs.EMPTY);
+									showCustomDialog(Consts.NULL, Consts.Dialogs.EMPTY);
 								} else {
 									String versionCode = "NameNotFoundException";
 									versionCode = Integer
@@ -650,7 +654,7 @@ public class Main extends ListActivity {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
 						if (et_title.getText().toString().trim().equals("")) {
-							showCustomDialog(0, Consts.Dialogs.EMPTY);
+							showCustomDialog(Consts.NULL, Consts.Dialogs.EMPTY);
 							
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
@@ -662,7 +666,7 @@ public class Main extends ListActivity {
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
 						if (et_title.getText().toString().trim().equals("")) {
-							showCustomDialog(0, Consts.Dialogs.EMPTY);
+							showCustomDialog(Consts.NULL, Consts.Dialogs.EMPTY);
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
@@ -1009,7 +1013,8 @@ public class Main extends ListActivity {
 							int before, int count) {
 						try {
 							if (s.toString().charAt(start) == '@') {
-								Log.d(Consts.DEBUG_TAG, "@ CATCHED!"); // @提醒
+								Log.d(Consts.DEBUG_TAG, "@ CAUGHT!"); // @提醒
+								//我有错，我悔过
 								Intent i = new Intent(Main.this,
 										AtSuggestionActivity.class);
 								bundle.putString("content", s.toString());
@@ -1254,7 +1259,7 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void showAbout() {
-		showCustomDialog(0, Consts.Dialogs.ABOUT);
+		showCustomDialog(Consts.NULL, Consts.Dialogs.ABOUT);
 	}
 
 	/**
