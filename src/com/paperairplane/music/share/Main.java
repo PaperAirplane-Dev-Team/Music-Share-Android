@@ -620,7 +620,7 @@ public class Main extends ListActivity {
 								Consts.ShareMeans.OTHERS);
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
-						sendFile(musics[_id].getPath());
+						sendFile(musics[_id]);
 						break;
 					}
 				}
@@ -1162,6 +1162,7 @@ public class Main extends ListActivity {
 			musics[i].setPath(cursor.getString(3));
 			musics[i].setAlbum(cursor.getString(4).trim());
 			musics[i].setAlbumId(cursor.getLong(5));
+			musics[i].setType(cursor.getString(6));
 			cursor.moveToNext();
 		}
 		listview.setAdapter(new MusicListAdapter(this, musics));
@@ -1286,12 +1287,12 @@ public class Main extends ListActivity {
 	 *            path 音乐路径
 	 * @return void 发送音乐文件，通过其他App
 	 */
-	private void sendFile(String path) {
+	private void sendFile(MusicData music) {
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_SEND);
-		intent.setType("*/*");
+		intent.setType(music.getType());
 		// 果然是个好东西，不过多出来不少无关的，我在考虑要不要改回去呢
-		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(path)));
+		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(music.getPath())));
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException e) {

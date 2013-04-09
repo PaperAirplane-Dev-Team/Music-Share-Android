@@ -8,7 +8,7 @@ public class Consts {
 	public final static String[] MEDIA_INFO = new String[] {
 			MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DURATION,
 			MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.DATA,
-			MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID };
+			MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID ,MediaStore.Audio.Media.MIME_TYPE};
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#÷Ω∑…ª˙“Ù¿÷∑÷œÌ∑¥¿°# @“¶≈Ê»ª @HarryChen-SIGKILL- ";
