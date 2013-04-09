@@ -3,21 +3,36 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" >
 
-    <EditText
-        android:id="@+id/et_content"
+    <FrameLayout
+        android:id="@+id/frameLayout_sendWeibo"
         android:layout_width="fill_parent"
-        android:layout_height="200dip"
-        android:ems="10"
-        android:inputType="textMultiLine"
-       />
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/et_content"
+            android:layout_width="fill_parent"
+            android:layout_height="200dip"
+            android:ems="10"
+            android:inputType="textMultiLine" />
+
+        <ImageView
+            android:id="@+id/clear_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_margin="5dip"
+            android:contentDescription="@string/reset"
+            android:padding="5dip"
+            android:src="@drawable/android:ic_input_delete" >
+        </ImageView>
+    </FrameLayout>
 
     <CheckBox
         android:id="@+id/cb_follow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/et_content"
+        android:layout_below="@+id/frameLayout_sendWeibo"
         android:checked="true"
-        android:text="@string/followauthor"
-        />
+        android:text="@string/followauthor" />
 
 </RelativeLayout>

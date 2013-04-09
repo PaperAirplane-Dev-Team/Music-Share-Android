@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
@@ -80,7 +81,7 @@ public class Main extends ListActivity {
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
-		Log.i(Consts.DEBUG_TAG, "调试模式:"+Consts.DEBUG_ON);
+		Log.i(Consts.DEBUG_TAG, "调试模式:" + Consts.DEBUG_ON);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		theme_preferences = getApplicationContext().getSharedPreferences(
@@ -215,18 +216,21 @@ public class Main extends ListActivity {
 		});
 
 	}
+
 	@SuppressWarnings("deprecation")
-	private void setBackground(){
-		background_path = theme_preferences.getString(Consts.Preferences.BG_PATH, null);
-		Log.d(Consts.DEBUG_TAG,"读取到的地址"+background_path);
+	private void setBackground() {
+		background_path = theme_preferences.getString(
+				Consts.Preferences.BG_PATH, null);
+		Log.d(Consts.DEBUG_TAG, "读取到的地址" + background_path);
 		View main_layout = findViewById(R.id.main_linearLayout);
-		if (background_path == null || !new File(background_path).exists()){
-			//原来可以不用catch...
+		if (background_path == null || !new File(background_path).exists()) {
+			// 原来可以不用catch...
 			main_layout.setBackgroundResource(R.drawable.background_holo_dark);
-			Log.d(Consts.DEBUG_TAG,"设置为默认壁纸");
-		}else{
-			main_layout.setBackgroundDrawable(Drawable.createFromPath(background_path));
-			Log.d(Consts.DEBUG_TAG, "设置为自定壁纸"+background_path);
+			Log.d(Consts.DEBUG_TAG, "设置为默认壁纸");
+		} else {
+			main_layout.setBackgroundDrawable(Drawable
+					.createFromPath(background_path));
+			Log.d(Consts.DEBUG_TAG, "设置为自定壁纸" + background_path);
 		}
 	}
 
@@ -279,7 +283,7 @@ public class Main extends ListActivity {
 		if (resume) {
 			showOverlay();
 			indexOverlay.setVisibility(View.INVISIBLE);
-			//我说了得这样……
+			// 我说了得这样……
 		}
 
 	}
@@ -528,6 +532,14 @@ public class Main extends ListActivity {
 								R.layout.feedback, null);
 						final EditText content = (EditText) feedback
 								.findViewById(R.id.et_feedback);
+						final ImageView iv_clear = (ImageView) feedback
+								.findViewById(R.id.clear_button);
+						iv_clear.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View arg0) {
+								content.setText("");
+							}
+						});
 						SharedPreferences pref = getSharedPreferences(
 								Consts.Preferences.FEEDBACK, MODE_PRIVATE);
 						String text = pref.getString("content", "");
@@ -539,17 +551,12 @@ public class Main extends ListActivity {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int whichButton) {
-								if (whichButton==DialogInterface.BUTTON_NEUTRAL){
-									//dialog.cancel();
-									//builder.create().show();
-									//不然它就跑了...
-									//FIXME 卧槽……Exception抛得慌，怎么才能让它不消失！
-									return;
-								}
+
 								String contentString = content.getText()
 										.toString().trim();
 								if (contentString.equals("")) {
-									showCustomDialog(Consts.NULL, Consts.Dialogs.EMPTY);
+									showCustomDialog(Consts.NULL,
+											Consts.Dialogs.EMPTY);
 								} else {
 									String versionCode = "NameNotFoundException";
 									versionCode = Integer
@@ -574,7 +581,6 @@ public class Main extends ListActivity {
 						builder.setView(feedback)
 								.setPositiveButton(R.string.send_feedback,
 										listener)
-								.setNeutralButton(R.string.reset, listener)
 								.setTitle(R.string.thank_for_feedback)
 								.setIcon(android.R.drawable.ic_dialog_info)
 								.setOnCancelListener(onCancelListener);
@@ -655,7 +661,7 @@ public class Main extends ListActivity {
 					case DialogInterface.BUTTON_POSITIVE:
 						if (et_title.getText().toString().trim().equals("")) {
 							showCustomDialog(Consts.NULL, Consts.Dialogs.EMPTY);
-							
+
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
@@ -683,8 +689,7 @@ public class Main extends ListActivity {
 					.setPositiveButton(R.string.share2weibo, listenerSearch)
 					.setNegativeButton(R.string.share2others, listenerSearch)
 					.setTitle(R.string.search)
-					.setIcon(android.R.drawable.ic_dialog_info)
-					.create();
+					.setIcon(android.R.drawable.ic_dialog_info).create();
 			dialogSearch.show();
 			break;
 		case Consts.Dialogs.EMPTY:
@@ -800,24 +805,23 @@ public class Main extends ListActivity {
 				nowColor = theme_preferences.getString(
 						Consts.Preferences.BG_COLOR, "");
 				Log.d(Consts.DEBUG_TAG, "Got origin color");
+			} else {
+				nowColor = Consts.ORIGIN_COLOR;
 			}
-			else{
-				nowColor=Consts.ORIGIN_COLOR;
+			int colorInt[] = new int[4];
+			colorInt[Consts.Color.RED] = Integer.valueOf(
+					nowColor.substring(3, 5), 16);
+			colorInt[Consts.Color.GREEN] = Integer.valueOf(
+					nowColor.substring(5, 7), 16);
+			colorInt[Consts.Color.BLUE] = Integer.valueOf(
+					nowColor.substring(7, 9), 16);
+			colorInt[Consts.Color.OPACITY] = Integer.valueOf(
+					nowColor.substring(1, 3), 16);
+			Log.d(Consts.DEBUG_TAG, "Integers are: " + colorInt[0] + " "
+					+ colorInt[1] + " " + colorInt[2] + " " + colorInt[3]);
+			for (int i = 0; i < 4; i++) {
+				seekColor[i].setProgress(colorInt[i]);
 			}
-				int colorInt[] = new int[4];
-				colorInt[Consts.Color.RED] = Integer.valueOf(
-						nowColor.substring(3, 5), 16);
-				colorInt[Consts.Color.GREEN] = Integer.valueOf(
-						nowColor.substring(5, 7), 16);
-				colorInt[Consts.Color.BLUE] = Integer.valueOf(
-						nowColor.substring(7, 9), 16);
-				colorInt[Consts.Color.OPACITY] = Integer.valueOf(
-						nowColor.substring(1, 3), 16);
-				Log.d(Consts.DEBUG_TAG, "Integers are: " + colorInt[0] + " "
-						+ colorInt[1] + " " + colorInt[2] + " " + colorInt[3]);
-				for (int i = 0; i < 4; i++) {
-					seekColor[i].setProgress(colorInt[i]);
-				}
 
 			DialogInterface.OnClickListener listenerColor = new DialogInterface.OnClickListener() {
 
@@ -878,7 +882,8 @@ public class Main extends ListActivity {
 					switch (which) {
 					case DialogInterface.BUTTON_POSITIVE:
 						if (background_path != null) {
-							theme_preferences.edit()
+							theme_preferences
+									.edit()
 									.putString(Consts.Preferences.BG_PATH,
 											background_path).commit();
 						}
@@ -895,7 +900,8 @@ public class Main extends ListActivity {
 						background_path = null;
 						iv_background
 								.setImageResource(R.drawable.background_holo_dark);
-						theme_preferences.edit().remove(Consts.Preferences.BG_PATH).commit();
+						theme_preferences.edit()
+								.remove(Consts.Preferences.BG_PATH).commit();
 						setBackground();
 						break;
 					}
@@ -989,6 +995,14 @@ public class Main extends ListActivity {
 						.findViewById(R.id.et_content);
 				final CheckBox cb = (CheckBox) sendweibo
 						.findViewById(R.id.cb_follow);
+				final ImageView iv_clear = (ImageView) sendweibo
+						.findViewById(R.id.clear_button);
+				iv_clear.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						et.setText("");
+					}
+				});
 				final Bundle bundle = (Bundle) msg.obj;
 				String _content = bundle.getString("content");
 				final String artworkUrl = bundle.getString("artworkUrl");
@@ -1014,7 +1028,7 @@ public class Main extends ListActivity {
 						try {
 							if (s.toString().charAt(start) == '@') {
 								Log.d(Consts.DEBUG_TAG, "@ CAUGHT!"); // @提醒
-								//我有错，我悔过
+								// 我有错，我悔过
 								Intent i = new Intent(Main.this,
 										AtSuggestionActivity.class);
 								bundle.putString("content", s.toString());
@@ -1297,7 +1311,8 @@ public class Main extends ListActivity {
 		intent.setAction(Intent.ACTION_SEND);
 		intent.setType(music.getType());
 		// 果然是个好东西，不过多出来不少无关的，我在考虑要不要改回去呢
-		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(music.getPath())));
+		intent.putExtra(Intent.EXTRA_STREAM,
+				Uri.fromFile(new File(music.getPath())));
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException e) {

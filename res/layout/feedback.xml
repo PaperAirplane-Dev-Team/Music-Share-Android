@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
-
-
+    android:layout_height="wrap_content" >
 
     <EditText
         android:id="@+id/et_feedback"
         android:layout_width="fill_parent"
         android:layout_height="200dip"
         android:ems="10"
-        android:inputType="textMultiLine"
-        android:hint="@string/feedback_hint" />
+        android:hint="@string/feedback_hint"
+        android:inputType="textMultiLine" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/clear_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:layout_margin="5dip"
+        android:contentDescription="@string/reset"
+        android:padding="5dip"
+        android:src="@drawable/android:ic_input_delete" >
+    </ImageView>
+
+</FrameLayout>
