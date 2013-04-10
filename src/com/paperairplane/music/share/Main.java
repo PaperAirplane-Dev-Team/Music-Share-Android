@@ -364,7 +364,7 @@ public class Main extends ListActivity {
 			showCustomDialog(Consts.NULL, Consts.Dialogs.CHANGE_COLOR);
 			break;
 		case R.id.menu_clean_cache:
-			String ARTWORK_PATH = getCacheDir().getAbsolutePath()
+			String ARTWORK_PATH = getExternalCacheDir().getAbsolutePath()
 					+ "/.artworkCache/";
 			int fileCount = 0;
 			try {
@@ -459,7 +459,8 @@ public class Main extends ListActivity {
 	 */
 	private boolean isAccessTokenExistAndValid() {
 		boolean flag = true;
-		if (Main.accessToken.isSessionValid() == false) {
+		if (Main.accessToken == null
+				|| Main.accessToken.isSessionValid() == false) {
 			flag = false;
 		}
 		Log.d(Consts.DEBUG_TAG, "方法isAccessTokenExistAndValid()被调用,结果" + flag);
@@ -1065,6 +1066,10 @@ public class Main extends ListActivity {
 											saveSendStatus(content,
 													cb.isChecked(), artworkUrl,
 													fileName);
+											Log.d(Consts.DEBUG_TAG,
+													"null?"
+															+ (weiboHelper
+																	.getListener() == null));
 											ssoHandler.authorize(weiboHelper
 													.getListener());// 授权
 										} else {

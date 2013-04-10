@@ -13,8 +13,8 @@ public class Consts {
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#÷Ω∑…ª˙“Ù¿÷∑÷œÌ∑¥¿°# @“¶≈Ê»ª @HarryChen-SIGKILL- ";
 	public final static String VERY_LONG = "                                                         ";
-	public final static String RELEASE_DATE = "2013.4.9";
-	public final static String WHATSNEW = "Some Bug Fix";
+	public final static String RELEASE_DATE = "2013.4.10";
+	public final static String WHATSNEW = "Bug Fixes";
 	public final static String ORIGIN_COLOR = "#99000088";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");

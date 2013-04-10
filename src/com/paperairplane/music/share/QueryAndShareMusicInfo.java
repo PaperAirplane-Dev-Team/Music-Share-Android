@@ -39,12 +39,12 @@ class QueryAndShareMusicInfo extends Thread {
 				//有问题啊！！！问题是！
 				Utilities.saveFile(
 						Utilities.getLocalArtwork(context, album_id, 300, 300),
-						title + "_" + artist + ".jpg", ARTWORK_PATH);
-				fileName = ARTWORK_PATH + title + "_" + artist + ".jpg";
+						album + "_" + artist + ".jpg", ARTWORK_PATH);
+				fileName = ARTWORK_PATH + album + "_" + artist + ".jpg";
 				Log.d(Consts.DEBUG_TAG, "获取本地封面成功");
 			} else {
 				fileName = ARTWORK_PATH
-						+ Utilities.getArtwork(artworkUrl, title, artist,
+						+ Utilities.getArtwork(artworkUrl, album, artist,
 								ARTWORK_PATH);
 			}
 		} catch (Exception e) {
@@ -117,7 +117,7 @@ class QueryAndShareMusicInfo extends Thread {
 		means = _means;
 		context = _context;
 		handler = _handler;
-		 this.ARTWORK_PATH = _context.getCacheDir().getAbsolutePath() +
+		 this.ARTWORK_PATH = _context.getExternalCacheDir().getAbsolutePath() +
 		 "/.artworkCache/";
 	}
 

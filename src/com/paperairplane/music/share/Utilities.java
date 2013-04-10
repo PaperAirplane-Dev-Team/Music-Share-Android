@@ -155,9 +155,9 @@ public class Utilities {
 
 	}
 
-	public static String getArtwork(String artwork_url, String title,String artist,
+	public static String getArtwork(String artwork_url, String album,String artist,
 			String artwork_path) {
-		String fileName = title+"_"+artist + ".jpg";
+		String fileName = album+"_"+artist + ".jpg";
 		if (new File(artwork_path + fileName).exists())
 			return fileName;
 		try {

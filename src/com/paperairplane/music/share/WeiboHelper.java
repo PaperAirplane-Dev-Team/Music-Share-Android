@@ -53,7 +53,10 @@ public class WeiboHelper {
 	 * @return 微博授权监听器
 	 */
 	public AuthDialogListener getListener() {
-		listener = new AuthDialogListener();
+		if (listener == null) {
+			listener = new AuthDialogListener();
+		}
+		Log.v(Consts.DEBUG_TAG,"方法WeiboHelper::getListener()被调用");
 		return listener;
 	}
 
@@ -199,7 +202,7 @@ public class WeiboHelper {
 		}
 	}
 
-	public void keepAccessToken(Oauth2AccessToken token) {
+	private void keepAccessToken(Oauth2AccessToken token) {
 		editor.putString("token", token.getToken());
 		editor.putLong("expiresTime", token.getExpiresTime());
 		editor.commit();
@@ -214,6 +217,7 @@ public class WeiboHelper {
 		Oauth2AccessToken token = new Oauth2AccessToken();
 		token.setToken(pref.getString("token", ""));
 		token.setExpiresTime(pref.getLong("expiresTime", 0));
+		Log.d(Consts.DEBUG_TAG,"Read Token:"+token.getToken());
 		return token;
 	}
 
