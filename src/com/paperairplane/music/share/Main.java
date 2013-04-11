@@ -77,6 +77,7 @@ public class Main extends ListActivity {
 	private ShakeDetector shakeDetector;
 	private String background_path = null;
 	private SharedPreferences theme_preferences;
+	private MusicListAdapter adapter = new MusicListAdapter(null, null);
 
 	@Override
 	// 主体
@@ -87,7 +88,12 @@ public class Main extends ListActivity {
 		theme_preferences = getApplicationContext().getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
 		initListView();
-		showMusicList();
+		try {
+			generateMusicList();
+		} catch (NullPointerException e) {
+		}
+		adapter = new MusicListAdapter(this, musics);
+		listview.setAdapter(adapter);
 		firstShow();
 		ssoHandler = new SsoHandler(Main.this, weibo);
 		weiboHelper = new WeiboHelper(handler, getApplicationContext());
@@ -118,13 +124,15 @@ public class Main extends ListActivity {
 			public void onShake() {
 				Log.d(Consts.DEBUG_TAG, "检测到摇动");
 				int position = 0;
-				Random r = new Random();
-				position = r.nextInt(listview.getAdapter().getCount());
-				Log.d(Consts.DEBUG_TAG, "生成随机数" + position);
-				indexOverlay.setVisibility(View.INVISIBLE);
-				Toast.makeText(Main.this, R.string.shake_random,
-						Toast.LENGTH_LONG).show();
-				showCustomDialog(position, Consts.Dialogs.SHARE);
+				if (adapter.getCount() != 0) {
+					Random r = new Random();
+					position = r.nextInt(listview.getAdapter().getCount());
+					Log.d(Consts.DEBUG_TAG, "生成随机数" + position);
+					indexOverlay.setVisibility(View.INVISIBLE);
+					Toast.makeText(Main.this, R.string.shake_random,
+							Toast.LENGTH_LONG).show();
+					showCustomDialog(position, Consts.Dialogs.SHARE);
+				}
 			}
 		});
 		shakeDetector.start();
@@ -429,7 +437,6 @@ public class Main extends ListActivity {
 			break;
 		case Consts.MenuItem.REFRESH:
 			refreshMusicList();
-			showMusicList();
 			break;
 		case R.id.menu_update:
 			Main.checkForUpdateCount++;
@@ -1132,6 +1139,8 @@ public class Main extends ListActivity {
 				break;
 			case Consts.Status.REFRESH_LIST_FINISHED:
 				try {
+					generateMusicList();
+					adapter.notifyDataSetChanged();
 					unregisterReceiver(receiver);
 				} catch (Throwable t) {
 
@@ -1166,7 +1175,7 @@ public class Main extends ListActivity {
 	 * @author Xavier Yao 初始化用到的音乐信息数组，填充进主界面ListView
 	 * 
 	 */
-	private void showMusicList() {
+	private void generateMusicList() throws NullPointerException {
 
 		Cursor cursor = getContentResolver().query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -1176,21 +1185,24 @@ public class Main extends ListActivity {
 				// 妈妈再也不用担心我的录音!
 				null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 		// 过滤小于30s的音乐
-		cursor.moveToFirst();
-		musics = new MusicData[cursor.getCount()];
-		for (int i = 0; i < cursor.getCount(); i++) {
-			musics[i] = new MusicData();
-			musics[i].setTitle(cursor.getString(0).trim());
-			musics[i].setDuration(Utilities.convertDuration(cursor.getInt(1)));
-			musics[i].setArtist(cursor.getString(2).trim());
-			musics[i].setPath(cursor.getString(3));
-			musics[i].setAlbum(cursor.getString(4).trim());
-			musics[i].setAlbumId(cursor.getLong(5));
-			musics[i].setType(cursor.getString(6));
-			cursor.moveToNext();
+		if (cursor != null) {
+			cursor.moveToFirst();
+			musics = new MusicData[cursor.getCount()];
+			for (int i = 0; i < cursor.getCount(); i++) {
+				musics[i] = new MusicData();
+				musics[i].setTitle(cursor.getString(0).trim());
+				musics[i].setDuration(Utilities.convertDuration(cursor
+						.getInt(1)));
+				musics[i].setArtist(cursor.getString(2).trim());
+				musics[i].setPath(cursor.getString(3));
+				musics[i].setAlbum(cursor.getString(4).trim());
+				musics[i].setAlbumId(cursor.getLong(5));
+				musics[i].setType(cursor.getString(6));
+				cursor.moveToNext();
+			}
+			// listview.setAdapter(new MusicListAdapter(this, musics));
+			cursor.close();
 		}
-		listview.setAdapter(new MusicListAdapter(this, musics));
-		cursor.close();
 
 	}
 
@@ -1263,8 +1275,7 @@ public class Main extends ListActivity {
 					Uri.parse("file://"
 							+ Environment.getExternalStorageDirectory()
 									.getAbsolutePath())));
-			showMusicList();// 我、我肯定是哪次改的时候脑残把这句删了
-			// 然后它就没没效果?
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			setContentView(R.layout.empty);

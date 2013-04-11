@@ -19,7 +19,10 @@ public class MusicListAdapter extends BaseAdapter {
 	}
 
 	public int getCount() {
-		return musicdata.length;
+		if (musicdata != null) {
+			return musicdata.length;
+		}
+		return 0;
 	}
 
 	public Object getItem(int position) {
@@ -33,9 +36,11 @@ public class MusicListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		convertView = LayoutInflater.from(mcontext).inflate(
 				R.layout.musiclist_item, null);
-		TextView music_title = (TextView) convertView.findViewById(R.id.musicname);
-		TextView music_singer = (TextView) convertView.findViewById(R.id.singer);
-		music_title.setText(musicdata[position].getTitle()+Consts.VERY_LONG); //+"("+musicdata[position].getDuration()+")"+VERY_LONG);
+		TextView music_title = (TextView) convertView
+				.findViewById(R.id.musicname);
+		TextView music_singer = (TextView) convertView
+				.findViewById(R.id.singer);
+		music_title.setText(musicdata[position].getTitle() + Consts.VERY_LONG); // +"("+musicdata[position].getDuration()+")"+VERY_LONG);
 		music_singer.setText(musicdata[position].getArtist());
 		return convertView;
 	}
