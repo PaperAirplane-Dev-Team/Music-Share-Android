@@ -3,9 +3,6 @@
     <string name="app_name">纸飞机音乐分享</string>
     <string name="title_activity_main">音乐分享</string>
     <string name="empty">重要字段是空的…才不会崩溃给你看,一边凉快去…</string>
-    <string name="to_show_title">将在这里显示音乐名</string>
-    <string name="to_show_artist">将在这里显示歌手</string>
-    <string name="to_show_album">将在这里显示专辑名</string>
     <string name="menu_exit">退出</string>
     <string name="share_by">我用@纸飞机音乐分享 (http://t.cn/zYyzZOK )分享了</string>
     <string name="how_to_share">选择分享方式</string>

@@ -122,7 +122,8 @@ public class Main extends ListActivity {
 			public void onShake() {
 				Log.d(Consts.DEBUG_TAG, "检测到摇动");
 				int position = 0;
-				if (adapter.getCount() != 0) {
+				//if (adapter.getCount() != 0) {
+				//我发现只要有你的这个If在这个功能就没法用
 					Random r = new Random();
 					position = r.nextInt(listview.getAdapter().getCount());
 					Log.d(Consts.DEBUG_TAG, "生成随机数" + position);
@@ -130,7 +131,7 @@ public class Main extends ListActivity {
 					Toast.makeText(Main.this, R.string.shake_random,
 							Toast.LENGTH_LONG).show();
 					showCustomDialog(position, Consts.Dialogs.SHARE);
-				}
+				//}
 			}
 		});
 		shakeDetector.start();
@@ -600,7 +601,7 @@ public class Main extends ListActivity {
 				}
 			};
 			dialogAbout = new AlertDialog.Builder(this)
-					.setIcon(android.R.drawable.ic_dialog_info)
+					.setIcon(R.drawable.ic_launcher)
 					.setTitle(getString(R.string.menu_about))
 					.setOnCancelListener(onCancelListener)
 					.setMessage(

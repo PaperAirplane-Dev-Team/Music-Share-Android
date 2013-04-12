@@ -3,9 +3,6 @@
     <string name="app_name">Music Share</string>
     <string name="title_activity_main">Music Share</string>
     <string name="empty">Type Something First</string>
-    <string name="to_show_title">To Show Music Title Here</string>
-    <string name="to_show_artist">To Show Artist Here</string>
-    <string name="to_show_album">To Show Album Here</string>
     <string name="menu_exit">Exit</string>
     <string name="share_by">I used Paper Airplane\'s Music Share (http://t.cn/zYyzZOK )to share</string>
     <string name="how_to_share">Choose an App to Share</string>
@@ -54,7 +51,6 @@
     <string name="feedback_hint">Please tell us when and how the problem happens OR what you wanna say. Don\'t forget to tell us how to CONTACT you. We are really grateful for your great help!</string>
     <string name="feedback_succeed">Feedback successfully reported, thank you!</string>
     <string name="feedback_failed">Sorry but we met some problem while reporting your feedback. Don\'t worry, we\'ll try again. Still thank you!</string>
-    <string name="to_show_duration">To Show Duration Here</string>
     <string name="send_file">Send File</string>
     <string name="menu_update">Check For Update</string>
     <string name="send_feedback">Send Feedback</string>

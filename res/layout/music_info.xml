@@ -31,26 +31,22 @@
 
             <TextView
                 android:id="@+id/text_title"
-                style="@style/MainTextViewStyle"
-                android:text="@string/to_show_title" >
+                style="@style/MainTextViewStyle" >
             </TextView>
 
             <TextView
                 android:id="@+id/text_artist"
-                style="@style/MainTextViewStyle"
-                android:text="@string/to_show_artist" >
+                style="@style/MainTextViewStyle" >
             </TextView>
 
             <TextView
                 android:id="@+id/text_album"
-                style="@style/MainTextViewStyle"
-                android:text="@string/to_show_album" >
+                style="@style/MainTextViewStyle" >
             </TextView>
 
             <TextView
                 android:id="@+id/text_duration"
-                style="@style/MainTextViewStyle"
-                android:text="@string/to_show_duration" >
+                style="@style/MainTextViewStyle" >
             </TextView>
 
             <TextView
