@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 public class Receiver extends BroadcastReceiver {
@@ -12,21 +13,18 @@ public class Receiver extends BroadcastReceiver {
 
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
-		boolean started=false,finished=false;
-		if (Intent.ACTION_MEDIA_SCANNER_STARTED.equals(action)&&!started) {
+		if (Intent.ACTION_MEDIA_SCANNER_STARTED.equals(action)) {
+			Log.d(Consts.DEBUG_TAG, "Receiver接收到ACTION_MEDIA_SCANNER_STARTED");
 			toast = Toast.makeText(context, R.string.refresh_on_process,
 					Toast.LENGTH_SHORT);
 			toast.show();
-			started = true;
-		} else if (Intent.ACTION_MEDIA_SCANNER_FINISHED.equals(action)&&!finished) {
-			toast = Toast.makeText(context, R.string.refresh_success,
-					Toast.LENGTH_SHORT);
-			toast.show();
+		} else if (Intent.ACTION_MEDIA_SCANNER_FINISHED.equals(action)) {
+			Log.d(Consts.DEBUG_TAG, "Receiver接收到ACTION_MEDIA_SCANNER_FINISHED");
 			handler.sendEmptyMessage(Consts.Status.REFRESH_LIST_FINISHED);
-			finished = true;
 		}
 	}
-	Receiver(Handler handler){
+
+	Receiver(Handler handler) {
 		this.handler = handler;
 	}
 }

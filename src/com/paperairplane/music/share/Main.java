@@ -92,8 +92,6 @@ public class Main extends ListActivity {
 			generateMusicList();
 		} catch (NullPointerException e) {
 		}
-		adapter = new MusicListAdapter(this, musics);
-		listview.setAdapter(adapter);
 		firstShow();
 		ssoHandler = new SsoHandler(Main.this, weibo);
 		weiboHelper = new WeiboHelper(handler, getApplicationContext());
@@ -1138,9 +1136,10 @@ public class Main extends ListActivity {
 				updateApp((String[]) msg.obj);
 				break;
 			case Consts.Status.REFRESH_LIST_FINISHED:
+				Toast.makeText(Main.this, R.string.refresh_success,
+						Toast.LENGTH_SHORT).show();
 				try {
 					generateMusicList();
-					adapter.notifyDataSetChanged();
 					unregisterReceiver(receiver);
 				} catch (Throwable t) {
 
@@ -1176,7 +1175,7 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void generateMusicList() throws NullPointerException {
-
+		Log.d(Consts.DEBUG_TAG,"方法generateMusicList被调用");
 		Cursor cursor = getContentResolver().query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				Consts.MEDIA_INFO,
@@ -1200,7 +1199,7 @@ public class Main extends ListActivity {
 				musics[i].setType(cursor.getString(6));
 				cursor.moveToNext();
 			}
-			// listview.setAdapter(new MusicListAdapter(this, musics));
+			listview.setAdapter(new MusicListAdapter(this, musics));
 			cursor.close();
 		}
 

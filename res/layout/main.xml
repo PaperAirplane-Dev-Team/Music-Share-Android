@@ -19,12 +19,6 @@
             android:scrollingCache="false" >
         </ListView>
 
-        <ViewStub
-            android:id="@id/android:empty"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout="@layout/empty" >
-        </ViewStub>
     </LinearLayout>
 
     <ImageView
