@@ -75,6 +75,8 @@ public class Main extends ListActivity {
 	private String versionName;
 	private ImageView iv;
 	private ShakeDetector shakeDetector;
+	private boolean canDecectShake = true;
+	// 求更好的办法
 	private String background_path = null;
 	private SharedPreferences theme_preferences;
 	private MusicListAdapter adapter = new MusicListAdapter(null, null);
@@ -105,25 +107,47 @@ public class Main extends ListActivity {
 		}
 		// 读取已存储的授权信息
 		Main.accessToken = weiboHelper.readAccessToken();
-		Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
-				getResources().getConfiguration().locale);
+		Thread updateThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				handler.postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						Utilities.checkForUpdate(Main.versionCode, handler,
+								Main.this,
+								getResources().getConfiguration().locale);
+
+					}
+				}, 5000);
+				Log.i(Consts.DEBUG_TAG, "休息休息");
+				// 如果用Thread.sleep会让整个程序ANR..
+			}
+		});
+		updateThread.start();
 		setBackground();
 		initShakeDetector();
+		System.loadLibrary("utilities");
+		Log.w(Consts.DEBUG_TAG, doNothing());
+		// 吃饱了……
 	}
 
 	/**
 	 * 一个脑残的功能==
 	 */
+	private native String doNothing();
+
 	private void initShakeDetector() {
-		shakeDetector = new ShakeDetector(Main.this);
-		shakeDetector.shakeThreshold = 2000;// 这里设置振幅
-		shakeDetector.registerOnShakeListener(new OnShakeListener() {
-			@Override
-			public void onShake() {
-				Log.d(Consts.DEBUG_TAG, "检测到摇动");
-				int position = 0;
-				//if (adapter.getCount() != 0) {
-				//我发现只要有你的这个If在这个功能就没法用
+		try {
+			shakeDetector = new ShakeDetector(Main.this);
+			shakeDetector.shakeThreshold = 2000;// 这里设置振幅
+			shakeDetector.registerOnShakeListener(new OnShakeListener() {
+				@Override
+				public void onShake() {
+					Log.d(Consts.DEBUG_TAG, "检测到摇动");
+					int position = 0;
+					// if (adapter.getCount() != 0) {
+					// 我发现只要有你的这个If在这个功能就没法用
 					Random r = new Random();
 					position = r.nextInt(listview.getAdapter().getCount());
 					Log.d(Consts.DEBUG_TAG, "生成随机数" + position);
@@ -131,10 +155,14 @@ public class Main extends ListActivity {
 					Toast.makeText(Main.this, R.string.shake_random,
 							Toast.LENGTH_LONG).show();
 					showCustomDialog(position, Consts.Dialogs.SHARE);
-				//}
-			}
-		});
-		shakeDetector.start();
+					// }
+				}
+			});
+			shakeDetector.start();
+		} catch (Exception e) {
+			Log.e(Consts.DEBUG_TAG, "ShakeDetector初始化失败，禁用");
+			canDecectShake = false;
+		}
 	}
 
 	/**
@@ -274,7 +302,8 @@ public class Main extends ListActivity {
 			edit.commit();
 		}
 		// 关闭摇动检查
-		shakeDetector.stop();
+		if (canDecectShake)
+			shakeDetector.stop();
 		super.onStop();
 	}
 
@@ -282,7 +311,8 @@ public class Main extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		// 恢复摇动检测
-		shakeDetector.start();
+		if (canDecectShake)
+			shakeDetector.start();
 		// 读取并恢复Overlay的可见性
 		SharedPreferences pref = getSharedPreferences(
 				Consts.Preferences.OVERLAY, MODE_PRIVATE);
@@ -494,12 +524,14 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void showCustomDialog(final int _id, int whichDialog) {
-		shakeDetector.stop();
+		if (canDecectShake)
+			shakeDetector.stop();
 		final DialogInterface.OnCancelListener onCancelListener = new DialogInterface.OnCancelListener() {
 			@Override
 			public void onCancel(DialogInterface dialog) {
 				try {
-					shakeDetector.start();
+					if (canDecectShake)
+						shakeDetector.start();
 				} catch (Throwable t) {
 
 				}
@@ -995,7 +1027,8 @@ public class Main extends ListActivity {
 						.show();
 				break;
 			case Consts.Status.SEND_WEIBO:// 发送微博
-				shakeDetector.stop();
+				if (canDecectShake)
+					shakeDetector.stop();
 				View sendweibo = LayoutInflater.from(getApplicationContext())
 						.inflate(R.layout.sendweibo, null);
 				final EditText et = (EditText) sendweibo.getRootView()
@@ -1056,7 +1089,8 @@ public class Main extends ListActivity {
 								new DialogInterface.OnCancelListener() {
 									@Override
 									public void onCancel(DialogInterface dialog) {
-										shakeDetector.start();
+										if (canDecectShake)
+											shakeDetector.start();
 									}
 								})
 						.setPositiveButton(getString(R.string.share),
@@ -1176,7 +1210,7 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void generateMusicList() throws NullPointerException {
-		Log.d(Consts.DEBUG_TAG,"方法generateMusicList被调用");
+		Log.d(Consts.DEBUG_TAG, "方法generateMusicList被调用");
 		Cursor cursor = getContentResolver().query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				Consts.MEDIA_INFO,
