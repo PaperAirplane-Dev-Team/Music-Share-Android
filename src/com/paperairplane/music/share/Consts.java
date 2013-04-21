@@ -13,7 +13,7 @@ public class Consts {
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
 	public final static String RELEASE_DATE = "2013.4.12";
-	public final static String WHATSNEW = "更新逻辑改进、代码重构";
+	public final static String WHATSNEW = "界面修复";
 	public final static String ORIGIN_COLOR = "#99000088";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
@@ -66,6 +66,7 @@ public class Consts {
 		public static final int DOWNLOAD_URL = 1;
 	}
 
+	
 	public final class ShareMeans {
 		public static final int WEIBO = 0;
 		public static final int OTHERS = 1;

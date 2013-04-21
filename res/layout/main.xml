@@ -22,7 +22,6 @@
     </LinearLayout>
 
     <ImageView
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/float_search_button"
         android:layout_width="50dip"
         android:layout_height="50dip"

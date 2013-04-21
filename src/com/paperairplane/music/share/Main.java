@@ -1437,7 +1437,7 @@ public class Main extends ListActivity {
 					.setMessage(
 							getString(R.string.welcome_content)
 									+ getString(R.string.update_whats_new)
-									+ Consts.WHATSNEW + "\n\nP.S.测试版，所以每次都显示")
+									+ Consts.WHATSNEW)
 					.setPositiveButton(R.string.welcome_button,
 							new DialogInterface.OnClickListener() {
 								@Override

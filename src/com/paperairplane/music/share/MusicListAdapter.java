@@ -38,13 +38,10 @@ public class MusicListAdapter extends BaseAdapter {
 				R.layout.musiclist_item, null);
 		TextView tvTitle = (TextView) convertView
 				.findViewById(R.id.musicname);
-		TextView tvSingerAndAlbum = (TextView) convertView
-				.findViewById(R.id.singer_and_album);
-		TextView tvDuration = (TextView) convertView
-				.findViewById(R.id.duration);
+		TextView tvSinger = (TextView) convertView
+				.findViewById(R.id.singer);
 		tvTitle.setText(mMusicDatas[position].getTitle());
-		tvSingerAndAlbum.setText(mMusicDatas[position].getArtist()+"\n"+mMusicDatas[position].getAlbum());
-		tvDuration.setText(mMusicDatas[position].getDuration());
+		tvSinger.setText(mMusicDatas[position].getArtist());
 		return convertView;
 	}
 
