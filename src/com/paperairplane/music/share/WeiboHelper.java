@@ -22,29 +22,29 @@ import com.weibo.sdk.android.net.RequestListener;
 import com.paperairplane.music.share.Consts;
 
 public class WeiboHelper {
-	private StatusesAPI api = null;
-	private Handler handler = null;
-	private Context applicationContext;
-	private AuthDialogListener listener;
-	private RequestListener requestListener;
-	private SharedPreferences pref;
-	private Editor editor;
+	private StatusesAPI mApi = null;
+	private Handler mHandler = null;
+	private Context mContext;
+	private AuthDialogListener mAuthListener;
+	private RequestListener mRequestListener;
+	private SharedPreferences mPreferences;
+	private Editor mEditor;
 
 	/**
 	 * WeiboHelper构造函数
 	 * 
-	 * @param _handler
+	 * @param handler
 	 *            用于控制UI线程的Handler
-	 * @param _applicationContext
+	 * @param context
 	 *            用于暂存微博内容和其它信息的（Application）Context
 	 */
 	// 那么请问……你的第二个Activity的Context要来做什么?似乎你没用到……
-	public WeiboHelper(Handler _handler, Context _applicationContext) {
-		handler = _handler;
-		applicationContext = _applicationContext;
-		this.pref = applicationContext.getSharedPreferences(
+	public WeiboHelper(Handler handler, Context context) {
+		mHandler = handler;
+		mContext = context;
+		mPreferences = mContext.getSharedPreferences(
 				Consts.Preferences.WEIBO, Context.MODE_APPEND);
-		this.editor = pref.edit();
+		mEditor = mPreferences.edit();
 	}
 
 	/**
@@ -53,11 +53,11 @@ public class WeiboHelper {
 	 * @return 微博授权监听器
 	 */
 	public AuthDialogListener getListener() {
-		if (listener == null) {
-			listener = new AuthDialogListener();
+		if (mAuthListener == null) {
+			mAuthListener = new AuthDialogListener();
 		}
 		Log.v(Consts.DEBUG_TAG,"方法WeiboHelper::getListener()被调用");
-		return listener;
+		return mAuthListener;
 	}
 
 	/**
@@ -73,23 +73,23 @@ public class WeiboHelper {
 	 */
 	public void sendWeibo(String content, String artworkUrl, String fileName,
 			boolean willFollow) {
-		api = new StatusesAPI(Main.accessToken);
+		mApi = new StatusesAPI(Main.sAccessToken);
 		initRequestListener();
 
 		if (artworkUrl == null) {
 			Log.v(Consts.DEBUG_TAG, "发送无图微博");
-			api.update(content, null, null, requestListener);
+			mApi.update(content, null, null, mRequestListener);
 		} else if (fileName != null) {
 			Log.v(Consts.DEBUG_TAG, "发布带本地封面的微博");
-			api.upload(content, fileName, null, null, requestListener);
+			mApi.upload(content, fileName, null, null, mRequestListener);
 		} else {
 			Log.v(Consts.DEBUG_TAG, "发送带图微博，url=" + artworkUrl);
-			String url = "https://api.weibo.com/2/statuses/upload_url_text.json";
+			String url = "https://mApi.weibo.com/2/statuses/upload_url_text.json";
 			WeiboParameters params = new WeiboParameters();
-			params.add("access_token", Main.accessToken.getToken());
+			params.add("access_token", Main.sAccessToken.getToken());
 			params.add("status", content);
 			params.add("url", artworkUrl);
-			AsyncWeiboRunner.request(url, params, "POST", requestListener);
+			AsyncWeiboRunner.request(url, params, "POST", mRequestListener);
 		}
 		if (willFollow == true) {// 判断是否要关注开发者
 			follow(Consts.WeiboUid.HARRY_UID);// 关注Harry Chen
@@ -99,12 +99,12 @@ public class WeiboHelper {
 	}
 
 	private void initRequestListener() {
-		requestListener = new RequestListener() {
-			Message m = handler.obtainMessage();
+		mRequestListener = new RequestListener() {
+			Message m = mHandler.obtainMessage();
 
 			@Override
 			public void onComplete(String arg0) {
-				handler.sendEmptyMessage(Consts.Status.SEND_SUCCEED);
+				mHandler.sendEmptyMessage(Consts.Status.SEND_SUCCEED);
 			}
 
 			@Override
@@ -112,7 +112,7 @@ public class WeiboHelper {
 				String error = e.getMessage();
 				m.what = Consts.Status.SEND_ERROR;
 				m.obj = error;
-				handler.sendMessage(m);
+				mHandler.sendMessage(m);
 			}
 
 			@Override
@@ -120,7 +120,7 @@ public class WeiboHelper {
 				String error = arg0.getMessage();
 				m.what = Consts.Status.SEND_ERROR;
 				m.obj = error;
-				handler.sendMessage(m);
+				mHandler.sendMessage(m);
 			}
 
 		};
@@ -129,9 +129,9 @@ public class WeiboHelper {
 	// 关注某人
 	private void follow(int uid) {
 		WeiboParameters params = new WeiboParameters();
-		params.add("access_token", Main.accessToken.getToken());
+		params.add("access_token", Main.sAccessToken.getToken());
 		params.add("uid", uid);
-		String url = "https://api.weibo.com/2/friendships/create.json";
+		String url = "https://mApi.weibo.com/2/friendships/create.json";
 		try {
 			AsyncWeiboRunner.request(url, params, "POST",
 					new RequestListener() {
@@ -154,18 +154,18 @@ public class WeiboHelper {
 	}
 
 	private class AuthDialogListener implements WeiboAuthListener {
-		Message m = handler.obtainMessage();
+		Message m = mHandler.obtainMessage();
 
 		@Override
 		public void onComplete(Bundle values) {
 			Log.d(Consts.DEBUG_TAG, "接收到授权信息");
 			String token = values.getString("access_token");
 			String expires_in = values.getString("expires_in");
-			Main.accessToken = new Oauth2AccessToken(token, expires_in);
-			keepAccessToken(Main.accessToken);
-			handler.sendEmptyMessage(Consts.Status.AUTH_SUCCEED);
+			Main.sAccessToken = new Oauth2AccessToken(token, expires_in);
+			keepAccessToken(Main.sAccessToken);
+			mHandler.sendEmptyMessage(Consts.Status.AUTH_SUCCEED);
 			Log.v(Consts.DEBUG_TAG, "授权成功，\n AccessToken:" + token);
-			SharedPreferences preferences = applicationContext
+			SharedPreferences preferences = mContext
 					.getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
 			if (preferences.getBoolean("read", false)) {
 				String content = preferences.getString("content", null);
@@ -190,7 +190,7 @@ public class WeiboHelper {
 			String error = e.getMessage();
 			m.what = Consts.Status.AUTH_ERROR;
 			m.obj = error;
-			handler.sendMessage(m);
+			mHandler.sendMessage(m);
 		}
 
 		@Override
@@ -198,25 +198,25 @@ public class WeiboHelper {
 			String error = e.getMessage();
 			m.what = Consts.Status.AUTH_ERROR;
 			m.obj = error;
-			handler.sendMessage(m);
+			mHandler.sendMessage(m);
 		}
 	}
 
 	private void keepAccessToken(Oauth2AccessToken token) {
-		editor.putString("token", token.getToken());
-		editor.putLong("expiresTime", token.getExpiresTime());
-		editor.commit();
+		mEditor.putString("token", token.getToken());
+		mEditor.putLong("expiresTime", token.getExpiresTime());
+		mEditor.commit();
 	}
 
 	public void clear() {
-		editor.clear();
-		editor.commit();
+		mEditor.clear();
+		mEditor.commit();
 	}
 
 	public Oauth2AccessToken readAccessToken() {
 		Oauth2AccessToken token = new Oauth2AccessToken();
-		token.setToken(pref.getString("token", ""));
-		token.setExpiresTime(pref.getLong("expiresTime", 0));
+		token.setToken(mPreferences.getString("token", ""));
+		token.setExpiresTime(mPreferences.getLong("expiresTime", 0));
 		Log.d(Consts.DEBUG_TAG,"Read Token:"+token.getToken());
 		return token;
 	}

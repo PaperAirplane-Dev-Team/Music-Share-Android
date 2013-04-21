@@ -1,62 +1,62 @@
 package com.paperairplane.music.share;
 
 public class MusicData {
-	private String title, artist, duration, path, album, type;
-	private long albumId;
+	private String mTitle, mArtist, mDuration, mPath, mAlbum, mType;
+	private long mAlbumId;
 
-	public void setPath(String _path) {
-		path = _path;
+	public void setPath(String path) {
+		mPath = path;
 	}
 
-	public void setTitle(String _title) {
-		title = _title;
+	public void setTitle(String title) {
+		mTitle = title;
 	}
 
-	public void setArtist(String _artist) {
-		artist = _artist;
+	public void setArtist(String artist) {
+		mArtist = artist;
 	}
 
-	public void setAlbum(String _album) {
-		album = _album;
+	public void setAlbum(String album) {
+		mAlbum = album;
 	}
 
-	public void setDuration(String _duration) {
-		duration = _duration;
+	public void setDuration(String duration) {
+		mDuration = duration;
 	}
 
-	public void setAlbumId(long _albumId) {
-		albumId = _albumId;
+	public void setAlbumId(long albumId) {
+		mAlbumId = albumId;
 	}
 
-	public void setType(String _type) {
-		type = _type;
+	public void setType(String type) {
+		mType = type;
 	}
 
 	public String getPath() {
-		return path;
+		return mPath;
 	}
 
 	public String getTitle() {
-		return title;
+		return mTitle;
 	}
 
 	public String getArtist() {
-		return artist;
+		return mArtist;
 	}
 
 	public String getDuration() {
-		return duration;
+		return mDuration;
 	}
 
 	public String getAlbum() {
-		return album;
+		return mAlbum;
 	}
 
 	public long getAlbumId() {
-		return albumId;
+		return mAlbumId;
 	}
 	public String getType(){
-		return type;
+		return mType;
 	}
 
 }

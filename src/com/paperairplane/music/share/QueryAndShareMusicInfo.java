@@ -11,17 +11,17 @@ import android.os.Message;
 import android.util.Log;
 
 class QueryAndShareMusicInfo extends Thread {
-	private int means;
-	private long album_id;
-	private String artist, title, album;
-	private Context context;
-	private Handler handler;
-	private String ARTWORK_PATH ;
+	private int mShareMean;
+	private long mAlbumId;
+	private String mArtist, mTitle, mAlbum;
+	private Context mContext;
+	private Handler mHandler;
+	private String mArtworkPath ;
 	
 
 	public void run() {
-		String[] info = Utilities.getMusicAndArtworkUrl(title, artist, context,
-				handler);
+		String[] info = Utilities.getMusicAndArtworkUrl(mTitle, mArtist, mContext,
+				mHandler);
 		String content;
 		String fileName = null;
 		content = genContent(info);
@@ -32,29 +32,29 @@ class QueryAndShareMusicInfo extends Thread {
 					"lpic");
 		}
 		try {
-			boolean flag = (album_id != Consts.NULL)&& (Utilities.getLocalArtwork(context, album_id, 10, 10) != null);
+			boolean flag = (mAlbumId != Consts.NULL)&& (Utilities.getLocalArtwork(mContext, mAlbumId, 10, 10) != null);
 			Log.d(Consts.DEBUG_TAG,"是否有本地插图："+flag);
 			if (flag) {
 				//你丫不能省省?1X1就够了判断啊
 				//有问题啊！！！问题是！
 				Utilities.saveFile(
-						Utilities.getLocalArtwork(context, album_id, 300, 300),
-						album + "_" + artist + ".jpg", ARTWORK_PATH);
-				fileName = ARTWORK_PATH + album + "_" + artist + ".jpg";
+						Utilities.getLocalArtwork(mContext, mAlbumId, 300, 300),
+						mAlbum + "_" + mArtist + ".jpg", mArtworkPath);
+				fileName = mArtworkPath + mAlbum + "_" + mArtist + ".jpg";
 				Log.d(Consts.DEBUG_TAG, "获取本地封面成功");
 			} else {
-				fileName = ARTWORK_PATH
-						+ Utilities.getArtwork(artworkUrl, album, artist,
-								ARTWORK_PATH);
+				fileName = mArtworkPath
+						+ Utilities.getArtwork(artworkUrl, mAlbum, mArtist,
+								mArtworkPath);
 			}
 		} catch (Exception e) {
 			Log.e(Consts.DEBUG_TAG, "Error Occured");
 			e.printStackTrace();
-			// fileName = ARTWORK_PATH + Utilities.getArtwork(artworkUrl, title,
-			// ARTWORK_PATH);
+			// fileName = mArtworkPath + Utilities.getArtwork(artworkUrl, mTitle,
+			// mArtworkPath);
 			// 咦上面那句是什么情况……
 		}
-		switch (means) {
+		switch (mShareMean) {
 		case Consts.ShareMeans.OTHERS:
 			String type = "text/plain";
 
@@ -67,10 +67,10 @@ class QueryAndShareMusicInfo extends Thread {
 			}
 			intent.setType(type);
 			intent.putExtra(Intent.EXTRA_SUBJECT,
-					context.getString(R.string.app_name));
+					mContext.getString(R.string.app_name));
 			intent.putExtra(Intent.EXTRA_TEXT, content);
-			context.startActivity(Intent.createChooser(intent,
-					context.getString(R.string.how_to_share)).addFlags(
+			mContext.startActivity(Intent.createChooser(intent,
+					mContext.getString(R.string.how_to_share)).addFlags(
 					Intent.FLAG_ACTIVITY_NEW_TASK));
 			break;
 		case Consts.ShareMeans.WEIBO:
@@ -78,8 +78,8 @@ class QueryAndShareMusicInfo extends Thread {
 			bundle.putString("content", content);
 			bundle.putString("artworkUrl", artworkUrl);
 			bundle.putString("fileName", fileName);
-			Message m = handler.obtainMessage(Consts.Status.SEND_WEIBO, bundle);
-			handler.sendMessage(m);
+			Message m = mHandler.obtainMessage(Consts.Status.SEND_WEIBO, bundle);
+			mHandler.sendMessage(m);
 			break;
 		}
 
@@ -87,37 +87,37 @@ class QueryAndShareMusicInfo extends Thread {
 
 	private String genContent(String[] info) {
 		boolean isSingle = ((info[Consts.ArraySubscript.VERSION] != null) && info[Consts.ArraySubscript.VERSION]
-				.equals(context.getString(R.string.single)));
-		String content = context.getString(R.string.share_by)
+				.equals(mContext.getString(R.string.single)));
+		String content = mContext.getString(R.string.share_by)
 				+ " "
-				+ ((artist.equals("")) ? info[Consts.ArraySubscript.ARTIST]
-						: artist)
+				+ ((mArtist.equals("")) ? info[Consts.ArraySubscript.ARTIST]
+						: mArtist)
 				+ " "
-				+ (isSingle ? context.getString(R.string.music_single)
-						: context.getString(R.string.music_artist))
+				+ (isSingle ? mContext.getString(R.string.music_single)
+						: mContext.getString(R.string.music_artist))
 				+ " "
-				+ title
+				+ mTitle
 				+ " "
 				+ (isSingle ? ""
-						: context.getString(R.string.music_album)
+						: mContext.getString(R.string.music_album)
 								+ " "
-								+ ((album.equals("")) ? info[Consts.ArraySubscript.ALBUM]
-										: album) + " ")
-				+ context.getString(R.string.before_url)
+								+ ((mAlbum.equals("")) ? info[Consts.ArraySubscript.ALBUM]
+										: mAlbum) + " ")
+				+ mContext.getString(R.string.before_url)
 				+ info[Consts.ArraySubscript.MUSIC] + " ";
 		return content;
 	}
 
-	public QueryAndShareMusicInfo(String _title, String _artist, String _album,
-			long _album_id, int _means, Context _context, Handler _handler) {
-		album_id = _album_id;
-		title = _title;
-		artist = _artist;
-		album = _album;
-		means = _means;
-		context = _context;
-		handler = _handler;
-		 this.ARTWORK_PATH = _context.getExternalCacheDir().getAbsolutePath() +
+	public QueryAndShareMusicInfo(String title, String artist, String album,
+			long albumId, int shareMean, Context context, Handler handler) {
+		mAlbumId = albumId;
+		mTitle = title;
+		mArtist = artist;
+		mAlbum = album;
+		mShareMean = shareMean;
+		mContext = context;
+		mHandler = handler;
+		mArtworkPath = context.getExternalCacheDir().getAbsolutePath() +
 		 "/.artworkCache/";
 	}
 

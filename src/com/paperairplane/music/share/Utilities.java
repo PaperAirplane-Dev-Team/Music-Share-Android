@@ -45,17 +45,17 @@ public class Utilities {
 	/**
 	 * 将integer类型的时间长度格式化
 	 * 
-	 * @param _duration
+	 * @param duration
 	 *            int类型的时间长度（ms）
 	 * @return 格式化好的时长字符串
 	 */
-	public static String convertDuration(long _duration) {
+	public static String convertDuration(long duration) {
 
 		StringBuffer sb = new StringBuffer();
-		long m = _duration / (60 * 1000);
+		long m = duration / (60 * 1000);
 		sb.append(m < 10 ? "0" + m : m);
 		sb.append(":");
-		long s = (_duration % (60 * 1000)) / 1000;
+		long s = (duration % (60 * 1000)) / 1000;
 		sb.append(s < 10 ? "0" + s : s);
 		return sb.toString();
 		// 嗯,直接用人家的方法了,嘿
@@ -128,9 +128,9 @@ public class Utilities {
 		return info;
 	}
 
-	public static InputStream getImageStream(String artwork_url)
+	public static InputStream getImageStream(String artworkUrl)
 			throws Exception {
-		URL url = new URL(artwork_url);
+		URL url = new URL(artworkUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setConnectTimeout(5 * 1000);
 		conn.setRequestMethod("GET");
@@ -141,12 +141,12 @@ public class Utilities {
 	}
 
 	public static void saveFile(Bitmap bitmap, String fileName,
-			String artwork_path) throws IOException {
-		File dirFile = new File(artwork_path);
+			String artworkPath) throws IOException {
+		File dirFile = new File(artworkPath);
 		if (!dirFile.exists()) {
 			dirFile.mkdir();
 		}
-		File artwork = new File(artwork_path + fileName);
+		File artwork = new File(artworkPath + fileName);
 		BufferedOutputStream bos = new BufferedOutputStream(
 				new FileOutputStream(artwork));
 		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
@@ -155,14 +155,14 @@ public class Utilities {
 
 	}
 
-	public static String getArtwork(String artwork_url, String album,String artist,
+	public static String getArtwork(String artworkUrl, String album,String artist,
 			String artwork_path) {
 		String fileName = album+"_"+artist + ".jpg";
 		if (new File(artwork_path + fileName).exists())
 			return fileName;
 		try {
 			Bitmap bitmap = BitmapFactory.decodeStream(Utilities
-					.getImageStream(artwork_url));
+					.getImageStream(artworkUrl));
 			Utilities.saveFile(bitmap, fileName, artwork_path);
 			Log.v(Consts.DEBUG_TAG, "获取专辑封面成功");
 			return fileName;
@@ -208,14 +208,14 @@ public class Utilities {
 
 	}
 
-	public static boolean sendFeedback(String content, String versionCode,
-			int means, Context _context, Handler _handler) {
+	public static boolean sendFeedback(String content, int versionCode,
+			int feedbackMean, Context context, Handler handler) {
 		StringBuffer device_info = new StringBuffer("\r" + "App Version:");
 		device_info.append(versionCode);
-		if (means == Consts.ShareMeans.OTHERS)
+		if (feedbackMean == Consts.ShareMeans.OTHERS)
 			device_info.append("\r" + "Device Info:" + "\r");
 		device_info.append(" Model:" + Build.MODEL + "\r");
-		if (means == Consts.ShareMeans.OTHERS) {
+		if (feedbackMean == Consts.ShareMeans.OTHERS) {
 			device_info.append(" Manufacturer:" + Build.MANUFACTURER + "\r");
 			device_info.append(" Product:" + Build.PRODUCT + "\r");
 			device_info.append(" SDK Version:" + Build.VERSION.SDK_INT + "\r");
@@ -231,7 +231,7 @@ public class Utilities {
 		Log.v(Consts.DEBUG_TAG, "content is " + content + "\r"
 				+ "device info is :" + device_info.toString());
 		try {
-			switch (means) {
+			switch (feedbackMean) {
 			case Consts.ShareMeans.OTHERS:
 				post = new HttpPost(Consts.Url.FEEDBACK);
 				params.add(new BasicNameValuePair("content",
@@ -243,11 +243,11 @@ public class Utilities {
 			case Consts.ShareMeans.WEIBO:
 				// post = new HttpPost(Consts.WEIBO_STATUSES_UPDATE);
 				// params.add(new BasicNameValuePair("access_token"
-				// ,accessToken));
+				// ,sAccessToken));
 				// params.add(new BasicNameValuePair("status"
 				// ,java.net.URLEncoder.encode(content + device_info.toString()
 				// + Consts.FEEDBACK, "UTF-8")));
-				WeiboHelper helper = new WeiboHelper(_handler, _context);
+				WeiboHelper helper = new WeiboHelper(handler, context);
 				helper.sendWeibo(Consts.FEEDBACK + content + "|||"
 						+ device_info.toString(), null, null, false);
 				return true;

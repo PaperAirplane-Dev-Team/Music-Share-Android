@@ -59,27 +59,27 @@ import com.weibo.sdk.android.sso.SsoHandler;
 
 public class Main extends ListActivity {
 	// 存储音乐信息
-	private MusicData[] musics;// 保存音乐数据
-	private ListView listview;// 列表对象
-	public static Oauth2AccessToken accessToken = null;
-	private Weibo weibo = Weibo.getInstance(Consts.APP_KEY,
+	private MusicData[] mMusicDatas;// 保存音乐数据
+	private ListView mLvMain;// 列表对象
+	public static Oauth2AccessToken sAccessToken = null;
+	private Weibo mWeibo = Weibo.getInstance(Consts.APP_KEY,
 			Consts.Url.AUTH_REDIRECT);
-	private Receiver receiver;
-	private AlertDialog dialogMain, dialogAbout, dialogSearch, dialogThank,
-			dialogWelcome, dialogChangeColor, dialogSendWeibo,
-			dialogBackgroundChooser;
-	private SsoHandler ssoHandler;
-	private WeiboHelper weiboHelper;
-	private TextView indexOverlay;
-	private static int versionCode, checkForUpdateCount = 0;
-	private String versionName;
-	private ImageView iv;
-	private ShakeDetector shakeDetector;
-	private boolean canDecectShake = true;
+	private Receiver mReceiver;
+	private AlertDialog mDialogMain, mDialogAbout, mDialogSearch, mDialogThank,
+			mDialogWelcome, mDialogChangeColor, mDialogSendWeibo,
+			mDialogBackgroundChooser;
+	private SsoHandler mSsoHandler;
+	private WeiboHelper mWeiboHelper;
+	private TextView mTvIndexOverlay;
+	private static int sVersionCode, sCheckForUpdateCount = 0;
+	private String mVersionName;
+	private ImageView mIvFloatSearchButton;
+	private ShakeDetector mShakeDetector;
+	private boolean mCanDetectShake = true;
 	// 求更好的办法
-	private String background_path = null;
-	private SharedPreferences theme_preferences;
-	private MusicListAdapter adapter = new MusicListAdapter(null, null);
+	private String mBackgroundPath = null;
+	private SharedPreferences mPreferencesTheme;
+	private MusicListAdapter mMusicListAdapter = new MusicListAdapter(null, null);
 
 	@Override
 	// 主体
@@ -87,7 +87,7 @@ public class Main extends ListActivity {
 		Log.i(Consts.DEBUG_TAG, "调试模式:" + Consts.DEBUG_ON);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		theme_preferences = getApplicationContext().getSharedPreferences(
+		mPreferencesTheme = getApplicationContext().getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
 		initListView();
 		try {
@@ -95,26 +95,26 @@ public class Main extends ListActivity {
 		} catch (NullPointerException e) {
 		}
 		firstShow();
-		ssoHandler = new SsoHandler(Main.this, weibo);
-		weiboHelper = new WeiboHelper(handler, getApplicationContext());
+		mSsoHandler = new SsoHandler(Main.this, mWeibo);
+		mWeiboHelper = new WeiboHelper(mHandler, getApplicationContext());
 		try {
-			Main.versionCode = getPackageManager().getPackageInfo(
+			Main.sVersionCode = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionCode;
-			this.versionName = getPackageManager().getPackageInfo(
+			this.mVersionName = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionName;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		// 读取已存储的授权信息
-		Main.accessToken = weiboHelper.readAccessToken();
+		Main.sAccessToken = mWeiboHelper.readAccessToken();
 		Thread updateThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				handler.postDelayed(new Runnable() {
+				mHandler.postDelayed(new Runnable() {
 
 					@Override
 					public void run() {
-						Utilities.checkForUpdate(Main.versionCode, handler,
+						Utilities.checkForUpdate(Main.sVersionCode, mHandler,
 								Main.this,
 								getResources().getConfiguration().locale);
 
@@ -129,6 +129,7 @@ public class Main extends ListActivity {
 		initShakeDetector();
 		System.loadLibrary("utilities");
 		Log.w(Consts.DEBUG_TAG, doNothing());
+		Log.i(Consts.DEBUG_TAG, "versionCode:"+Main.sVersionCode+"\nversionName:"+mVersionName);
 		// 吃饱了……
 	}
 
@@ -139,29 +140,29 @@ public class Main extends ListActivity {
 
 	private void initShakeDetector() {
 		try {
-			shakeDetector = new ShakeDetector(Main.this);
-			shakeDetector.shakeThreshold = 2000;// 这里设置振幅
-			shakeDetector.registerOnShakeListener(new OnShakeListener() {
+			mShakeDetector = new ShakeDetector(Main.this);
+			mShakeDetector.mShakeThreshold = 2000;// 这里设置振幅
+			mShakeDetector.registerOnShakeListener(new OnShakeListener() {
 				@Override
 				public void onShake() {
 					Log.d(Consts.DEBUG_TAG, "检测到摇动");
 					int position = 0;
-					// if (adapter.getCount() != 0) {
+					// if (mMusicListAdapter.getCount() != 0) {
 					// 我发现只要有你的这个If在这个功能就没法用
 					Random r = new Random();
-					position = r.nextInt(listview.getAdapter().getCount());
+					position = r.nextInt(mLvMain.getAdapter().getCount());
 					Log.d(Consts.DEBUG_TAG, "生成随机数" + position);
-					indexOverlay.setVisibility(View.INVISIBLE);
+					mTvIndexOverlay.setVisibility(View.INVISIBLE);
 					Toast.makeText(Main.this, R.string.shake_random,
 							Toast.LENGTH_LONG).show();
 					showCustomDialog(position, Consts.Dialogs.SHARE);
 					// }
 				}
 			});
-			shakeDetector.start();
+			mShakeDetector.start();
 		} catch (Exception e) {
 			Log.e(Consts.DEBUG_TAG, "ShakeDetector初始化失败，禁用");
-			canDecectShake = false;
+			mCanDetectShake = false;
 		}
 	}
 
@@ -175,14 +176,14 @@ public class Main extends ListActivity {
 		/*
 		 * 设置按钮按下时的效果
 		 */
-		iv = (ImageView) findViewById(R.id.float_search_button);
-		iv.setOnTouchListener(new OnTouchListener() {
+		mIvFloatSearchButton = (ImageView) findViewById(R.id.float_search_button);
+		mIvFloatSearchButton.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View arg0, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					iv.setImageResource(R.drawable.search_button_pressed);
+					mIvFloatSearchButton.setImageResource(R.drawable.search_button_pressed);
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					iv.setImageResource(R.drawable.search_button_normal);
+					mIvFloatSearchButton.setImageResource(R.drawable.search_button_normal);
 				}
 				return false;
 			}
@@ -190,22 +191,22 @@ public class Main extends ListActivity {
 		/*
 		 * 初始化Overlay，从SharedPreferences里读取Overlay的背景色
 		 */
-		indexOverlay = (TextView) View.inflate(Main.this, R.layout.indexer,
+		mTvIndexOverlay = (TextView) View.inflate(Main.this, R.layout.indexer,
 				null);
 		showOverlay();
 		SharedPreferences preference = getSharedPreferences(
 				Consts.Preferences.GENERAL, MODE_PRIVATE);
 		if (preference.contains(Consts.Preferences.BG_COLOR)) {
-			indexOverlay.setBackgroundColor(android.graphics.Color
+			mTvIndexOverlay.setBackgroundColor(android.graphics.Color
 					.parseColor(preference.getString(
 							Consts.Preferences.BG_COLOR, "")));
 		}
 		/*
 		 * 初始化ListView
 		 */
-		listview = (ListView) findViewById(android.R.id.list);// 找LisView的ID
-		listview.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
-		listview.setOnScrollListener(new OnScrollListener() {
+		mLvMain = (ListView) findViewById(android.R.id.list);// 找LisView的ID
+		mLvMain.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
+		mLvMain.setOnScrollListener(new OnScrollListener() {
 			boolean visible;
 
 			@SuppressLint("NewApi")
@@ -214,7 +215,7 @@ public class Main extends ListActivity {
 					int visibleItemCount, int totalItemCount) {
 				if (visible) {
 					// 这里为Overlay设置文字。识别冠词the,a,an
-					String firstChar = musics[firstVisibleItem].getTitle();
+					String firstChar = mMusicDatas[firstVisibleItem].getTitle();
 					if (firstChar.toLowerCase(Locale.getDefault()).startsWith(
 							"the ")) {
 						firstChar = firstChar.substring(4, 5);
@@ -227,13 +228,13 @@ public class Main extends ListActivity {
 					} else {
 						firstChar = firstChar.substring(0, 1);
 					}
-					indexOverlay.setText(firstChar.toUpperCase(Locale
+					mTvIndexOverlay.setText(firstChar.toUpperCase(Locale
 							.getDefault()));
-					indexOverlay.setVisibility(View.VISIBLE);
+					mTvIndexOverlay.setVisibility(View.VISIBLE);
 				}
 				if (firstVisibleItem == 0
 						|| (firstVisibleItem + visibleItemCount) == totalItemCount) {
-					indexOverlay.setVisibility(View.INVISIBLE);
+					mTvIndexOverlay.setVisibility(View.INVISIBLE);
 				}
 				if ((firstVisibleItem + visibleItemCount) >= (totalItemCount - 3)
 						&& visibleItemCount < totalItemCount) {
@@ -244,7 +245,7 @@ public class Main extends ListActivity {
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
 				visible = true;
 				if (scrollState == ListView.OnScrollListener.SCROLL_STATE_IDLE) {
-					indexOverlay.setVisibility(View.INVISIBLE);
+					mTvIndexOverlay.setVisibility(View.INVISIBLE);
 				}
 			}
 
@@ -254,18 +255,18 @@ public class Main extends ListActivity {
 
 	@SuppressWarnings("deprecation")
 	private void setBackground() {
-		background_path = theme_preferences.getString(
+		mBackgroundPath = mPreferencesTheme.getString(
 				Consts.Preferences.BG_PATH, null);
-		Log.d(Consts.DEBUG_TAG, "读取到的地址" + background_path);
+		Log.d(Consts.DEBUG_TAG, "读取到的地址" + mBackgroundPath);
 		View main_layout = findViewById(R.id.main_linearLayout);
-		if (background_path == null || !new File(background_path).exists()) {
+		if (mBackgroundPath == null || !new File(mBackgroundPath).exists()) {
 			// 原来可以不用catch...
 			main_layout.setBackgroundResource(R.drawable.background_holo_dark);
 			Log.d(Consts.DEBUG_TAG, "设置为默认壁纸");
 		} else {
 			main_layout.setBackgroundDrawable(Drawable
-					.createFromPath(background_path));
-			Log.d(Consts.DEBUG_TAG, "设置为自定壁纸" + background_path);
+					.createFromPath(mBackgroundPath));
+			Log.d(Consts.DEBUG_TAG, "设置为自定壁纸" + mBackgroundPath);
 		}
 	}
 
@@ -276,7 +277,7 @@ public class Main extends ListActivity {
 		try {
 			getWindowManager()
 					.addView(
-							indexOverlay,
+							mTvIndexOverlay,
 							new WindowManager.LayoutParams(
 									LayoutParams.WRAP_CONTENT,
 									LayoutParams.WRAP_CONTENT,
@@ -293,8 +294,8 @@ public class Main extends ListActivity {
 	protected void onStop() {
 		Log.d(Consts.DEBUG_TAG, "onStop()");
 		// 将当前Overlay的显示状态保存到SharedPreferences
-		if (indexOverlay.getVisibility() == View.VISIBLE) {
-			getWindowManager().removeView(indexOverlay);
+		if (mTvIndexOverlay.getVisibility() == View.VISIBLE) {
+			getWindowManager().removeView(mTvIndexOverlay);
 			SharedPreferences pref = getSharedPreferences(
 					Consts.Preferences.OVERLAY, MODE_PRIVATE);
 			Editor edit = pref.edit();
@@ -302,8 +303,8 @@ public class Main extends ListActivity {
 			edit.commit();
 		}
 		// 关闭摇动检查
-		if (canDecectShake)
-			shakeDetector.stop();
+		if (mCanDetectShake)
+			mShakeDetector.stop();
 		super.onStop();
 	}
 
@@ -311,15 +312,15 @@ public class Main extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		// 恢复摇动检测
-		if (canDecectShake)
-			shakeDetector.start();
+		if (mCanDetectShake)
+			mShakeDetector.start();
 		// 读取并恢复Overlay的可见性
 		SharedPreferences pref = getSharedPreferences(
 				Consts.Preferences.OVERLAY, MODE_PRIVATE);
 		boolean resume = pref.getBoolean("resume", false);
 		if (resume) {
 			showOverlay();
-			indexOverlay.setVisibility(View.INVISIBLE);
+			mTvIndexOverlay.setVisibility(View.INVISIBLE);
 			// 我说了得这样……
 		}
 
@@ -333,8 +334,8 @@ public class Main extends ListActivity {
 		if (requestCode == Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE) {
 			Log.d(Consts.DEBUG_TAG, "返回");
 			// 这里根据bundle的数据重启dialogSendWeibo
-			dialogSendWeibo.dismiss();
-			Message m = handler.obtainMessage(Consts.Status.SEND_WEIBO);
+			mDialogSendWeibo.dismiss();
+			Message m = mHandler.obtainMessage(Consts.Status.SEND_WEIBO);
 			m.obj = data.getExtras();
 			m.sendToTarget();
 		} else if (requestCode == Consts.PICK_BACKGROUND_REQUEST_CODE
@@ -346,13 +347,13 @@ public class Main extends ListActivity {
 			cursor.moveToFirst();
 
 			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-			background_path = cursor.getString(columnIndex);
+			mBackgroundPath = cursor.getString(columnIndex);
 			cursor.close();
-			Log.d(Consts.DEBUG_TAG, "取到的背景地址：" + background_path);
+			Log.d(Consts.DEBUG_TAG, "取到的背景地址：" + mBackgroundPath);
 			showCustomDialog(Consts.NULL, Consts.Dialogs.CHANGE_BACKGROUND);
 
 		} else {
-			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+			mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
 		}
 	}
 
@@ -434,8 +435,8 @@ public class Main extends ListActivity {
 									@Override
 									public void onClick(DialogInterface arg0,
 											int arg1) {
-										Main.accessToken = null;
-										weiboHelper.clear();
+										Main.sAccessToken = null;
+										mWeiboHelper.clear();
 										if (Build.VERSION.SDK_INT > 10) {
 											invalidateOptionsMenu();
 										}
@@ -459,7 +460,7 @@ public class Main extends ListActivity {
 			break;
 		case Consts.MenuItem.AUTH:
 			try {
-				ssoHandler.authorize(weiboHelper.getListener());
+				mSsoHandler.authorize(mWeiboHelper.getListener());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -468,8 +469,8 @@ public class Main extends ListActivity {
 			refreshMusicList();
 			break;
 		case R.id.menu_update:
-			Main.checkForUpdateCount++;
-			Utilities.checkForUpdate(Main.versionCode, handler, Main.this,
+			Main.sCheckForUpdateCount++;
+			Utilities.checkForUpdate(Main.sVersionCode, mHandler, Main.this,
 					getResources().getConfiguration().locale);
 			break;
 		case R.id.menu_change_background:
@@ -495,8 +496,8 @@ public class Main extends ListActivity {
 	 */
 	private boolean isAccessTokenExistAndValid() {
 		boolean flag = true;
-		if (Main.accessToken == null
-				|| Main.accessToken.isSessionValid() == false) {
+		if (Main.sAccessToken == null
+				|| Main.sAccessToken.isSessionValid() == false) {
 			flag = false;
 		}
 		Log.d(Consts.DEBUG_TAG, "方法isAccessTokenExistAndValid()被调用,结果" + flag);
@@ -519,19 +520,19 @@ public class Main extends ListActivity {
 	 * @param int _id 如果是音乐则传入所在id，否则为0
 	 * @param int whichDialog 根据Consts.Dialog下面的编号判断是什么对话框
 	 * @return void
-	 * @author Harry Chen 显示程序的各种自定义对话框，包括dialogMain, dialogAbout, dialogSearch,
-	 *         dialogThank, dialogWelcome, dialogChangeColor
+	 * @author Harry Chen 显示程序的各种自定义对话框，包括dialogMain, mDialogAbout, mDialogSearch,
+	 *         mDialogThank, mDialogWelcome, mDialogChangeColor
 	 * 
 	 */
-	private void showCustomDialog(final int _id, int whichDialog) {
-		if (canDecectShake)
-			shakeDetector.stop();
+	private void showCustomDialog(final int musicId, int whichDialog) {
+		if (mCanDetectShake)
+			mShakeDetector.stop();
 		final DialogInterface.OnCancelListener onCancelListener = new DialogInterface.OnCancelListener() {
 			@Override
 			public void onCancel(DialogInterface dialog) {
 				try {
-					if (canDecectShake)
-						shakeDetector.start();
+					if (mCanDetectShake)
+						mShakeDetector.start();
 				} catch (Throwable t) {
 
 				}
@@ -544,7 +545,7 @@ public class Main extends ListActivity {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
-						dialogThank = new AlertDialog.Builder(Main.this)
+						mDialogThank = new AlertDialog.Builder(Main.this)
 								.setOnCancelListener(onCancelListener)
 								.setTitle(R.string.thank_title)
 								.setIcon(android.R.drawable.ic_dialog_info)
@@ -555,11 +556,11 @@ public class Main extends ListActivity {
 											public void onClick(
 													DialogInterface dialog,
 													int whichButton) {
-												dialogThank.cancel();
-												dialogAbout.show();
+												mDialogThank.cancel();
+												mDialogAbout.show();
 											}
 										}).create();
-						dialogThank.show();
+						mDialogThank.show();
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
 						Uri uri = Uri.parse(getString(R.string.url));
@@ -597,12 +598,9 @@ public class Main extends ListActivity {
 									showCustomDialog(Consts.NULL,
 											Consts.Dialogs.EMPTY);
 								} else {
-									String versionCode = "NameNotFoundException";
-									versionCode = Integer
-											.toString(Main.versionCode);
 									SendFeedback feedback = new SendFeedback(
-											contentString, handler,
-											versionCode, Main.this);
+											contentString, mHandler,
+											Main.sVersionCode, Main.this);
 									switch (whichButton) {
 									case DialogInterface.BUTTON_POSITIVE:
 										feedback.setMeans(Consts.ShareMeans.OTHERS);
@@ -632,49 +630,49 @@ public class Main extends ListActivity {
 					}
 				}
 			};
-			dialogAbout = new AlertDialog.Builder(this)
+			mDialogAbout = new AlertDialog.Builder(this)
 					.setIcon(R.drawable.ic_launcher)
 					.setTitle(getString(R.string.menu_about))
 					.setOnCancelListener(onCancelListener)
 					.setMessage(
 							getString(R.string.about_content) + "\n\n"
 									+ Consts.RELEASE_DATE + "\nVer "
-									+ versionName + " / " + versionCode + "\n"
+									+ mVersionName + " / " + sVersionCode + "\n"
 									+ getString(R.string.update_whats_new)
 									+ Consts.WHATSNEW)
 					.setPositiveButton(R.string.thank_list, listenerAbout)
 					.setNegativeButton(R.string.about_contact, listenerAbout)
 					.setNeutralButton(R.string.send_feedback, listenerAbout)
 					.create();
-			dialogAbout.show();
+			mDialogAbout.show();
 			break;
 		case Consts.Dialogs.SHARE:
-			View musicInfoView = getMusicInfoView(_id);
+			View musicInfoView = getMusicInfoView(musicId);
 			DialogInterface.OnClickListener listenerMain = new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int whichButton) {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
-						shareMusic(musics[_id].getTitle(),
-								musics[_id].getArtist(),
-								musics[_id].getAlbum(),
-								musics[_id].getAlbumId(),
+						shareMusic(mMusicDatas[musicId].getTitle(),
+								mMusicDatas[musicId].getArtist(),
+								mMusicDatas[musicId].getAlbum(),
+								mMusicDatas[musicId].getAlbumId(),
 								Consts.ShareMeans.WEIBO);
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
-						shareMusic(musics[_id].getTitle(),
-								musics[_id].getArtist(),
-								musics[_id].getAlbum(),
-								musics[_id].getAlbumId(),
+						shareMusic(mMusicDatas[musicId].getTitle(),
+								mMusicDatas[musicId].getArtist(),
+								mMusicDatas[musicId].getAlbum(),
+								mMusicDatas[musicId].getAlbumId(),
 								Consts.ShareMeans.OTHERS);
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
-						sendFile(musics[_id]);
+						sendFile(mMusicDatas[musicId]);
 						break;
 					}
 				}
 			};
-			dialogMain = new AlertDialog.Builder(this)
+			mDialogMain = new AlertDialog.Builder(this)
 					.setOnCancelListener(onCancelListener)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.choose_an_operation)
@@ -706,7 +704,7 @@ public class Main extends ListActivity {
 									.getText().toString(), et_album.getText()
 									.toString(), Consts.NULL,
 									Consts.ShareMeans.WEIBO);
-							dialogSearch.cancel();
+							mDialogSearch.cancel();
 						}
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
@@ -717,19 +715,19 @@ public class Main extends ListActivity {
 									.getText().toString(), et_album.getText()
 									.toString(), Consts.NULL,
 									Consts.ShareMeans.OTHERS);
-							dialogSearch.cancel();
+							mDialogSearch.cancel();
 						}
 						break;
 					}
 				}
 			};
-			dialogSearch = new AlertDialog.Builder(this).setView(search)
+			mDialogSearch = new AlertDialog.Builder(this).setView(search)
 					.setCancelable(true).setOnCancelListener(onCancelListener)
 					.setPositiveButton(R.string.share2weibo, listenerSearch)
 					.setNegativeButton(R.string.share2others, listenerSearch)
 					.setTitle(R.string.search)
 					.setIcon(android.R.drawable.ic_dialog_info).create();
-			dialogSearch.show();
+			mDialogSearch.show();
 			break;
 		case Consts.Dialogs.EMPTY:
 			new AlertDialog.Builder(Main.this)
@@ -840,8 +838,8 @@ public class Main extends ListActivity {
 				seekColor[i].setOnSeekBarChangeListener(seekListener);
 			}
 			String nowColor;
-			if (theme_preferences.contains(Consts.Preferences.BG_COLOR)) {
-				nowColor = theme_preferences.getString(
+			if (mPreferencesTheme.contains(Consts.Preferences.BG_COLOR)) {
+				nowColor = mPreferencesTheme.getString(
 						Consts.Preferences.BG_COLOR, "");
 				Log.d(Consts.DEBUG_TAG, "Got origin color");
 			} else {
@@ -870,46 +868,46 @@ public class Main extends ListActivity {
 					case DialogInterface.BUTTON_POSITIVE:
 						String color = textColorCode.getText().toString();
 						if (color.contains("#")) {
-							theme_preferences
+							mPreferencesTheme
 									.edit()
 									.putString(Consts.Preferences.BG_COLOR,
 											color).commit();
-							indexOverlay
+							mTvIndexOverlay
 									.setBackgroundColor(android.graphics.Color
 											.parseColor(color));
 							Log.d(Consts.DEBUG_TAG, "自定义颜色:" + color);
 						}
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
-						dialogChangeColor.cancel();
+						mDialogChangeColor.cancel();
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
-						theme_preferences
+						mPreferencesTheme
 								.edit()
 								.putString(Consts.Preferences.BG_COLOR,
 										Consts.ORIGIN_COLOR).commit();
-						indexOverlay.setBackgroundColor(android.graphics.Color
+						mTvIndexOverlay.setBackgroundColor(android.graphics.Color
 								.parseColor(Consts.ORIGIN_COLOR));
-						dialogChangeColor.cancel();
+						mDialogChangeColor.cancel();
 						break;
 					}
 				}
 			};
-			dialogChangeColor = new AlertDialog.Builder(Main.this)
+			mDialogChangeColor = new AlertDialog.Builder(Main.this)
 					.setOnCancelListener(onCancelListener).setView(changeColor)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.change_overlay_color)
 					.setPositiveButton(android.R.string.ok, listenerColor)
 					.setNegativeButton(android.R.string.cancel, listenerColor)
 					.setNeutralButton(R.string.reset, listenerColor).create();
-			dialogChangeColor.show();
+			mDialogChangeColor.show();
 			break;
 		case Consts.Dialogs.CHANGE_BACKGROUND:
 			View v = View.inflate(Main.this, R.layout.background_chooser, null);
 			final ImageView iv_background = (ImageView) v
 					.findViewById(R.id.imageView_background);
-			if (background_path != null) {
-				Drawable background = Drawable.createFromPath(background_path);
+			if (mBackgroundPath != null) {
+				Drawable background = Drawable.createFromPath(mBackgroundPath);
 				BitmapDrawable bd = (BitmapDrawable) background;
 				Bitmap bm = bd.getBitmap();
 				iv_background.setImageBitmap(bm);
@@ -920,11 +918,11 @@ public class Main extends ListActivity {
 				public void onClick(DialogInterface dialog, int which) {
 					switch (which) {
 					case DialogInterface.BUTTON_POSITIVE:
-						if (background_path != null) {
-							theme_preferences
+						if (mBackgroundPath != null) {
+							mPreferencesTheme
 									.edit()
 									.putString(Consts.Preferences.BG_PATH,
-											background_path).commit();
+											mBackgroundPath).commit();
 						}
 						setBackground();
 						break;
@@ -936,10 +934,10 @@ public class Main extends ListActivity {
 								Consts.PICK_BACKGROUND_REQUEST_CODE);
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
-						background_path = null;
+						mBackgroundPath = null;
 						iv_background
 								.setImageResource(R.drawable.background_holo_dark);
-						theme_preferences.edit()
+						mPreferencesTheme.edit()
 								.remove(Consts.Preferences.BG_PATH).commit();
 						setBackground();
 						break;
@@ -947,7 +945,7 @@ public class Main extends ListActivity {
 
 				}
 			};
-			dialogBackgroundChooser = new AlertDialog.Builder(Main.this)
+			mDialogBackgroundChooser = new AlertDialog.Builder(Main.this)
 					.setOnCancelListener(onCancelListener)
 					.setView(v)
 					.setIcon(android.R.drawable.ic_dialog_info)
@@ -957,7 +955,7 @@ public class Main extends ListActivity {
 							listenerBackground)
 					.setNeutralButton(R.string.choose_default,
 							listenerBackground).create();
-			dialogBackgroundChooser.show();
+			mDialogBackgroundChooser.show();
 			break;
 		default:
 			throw new RuntimeException("What the hell are you doing?");
@@ -970,7 +968,7 @@ public class Main extends ListActivity {
 	 * @author Harry Chen 用于dialogMain，显示音乐信息
 	 * 
 	 */
-	private View getMusicInfoView(final int _id) {
+	private View getMusicInfoView(final int musicId) {
 		View musicInfo = LayoutInflater.from(this).inflate(R.layout.music_info,
 				null);
 		ImageView albumArt = (ImageView) musicInfo
@@ -982,16 +980,16 @@ public class Main extends ListActivity {
 		TextView textDuration = (TextView) musicInfo
 				.findViewById(R.id.text_duration);
 		textTitle.setText(getString(R.string.title) + " : "
-				+ musics[_id].getTitle());
+				+ mMusicDatas[musicId].getTitle());
 		textArtist.setText(getString(R.string.artist) + " : "
-				+ musics[_id].getArtist());
+				+ mMusicDatas[musicId].getArtist());
 		textAlbum.setText(getString(R.string.album) + " : "
-				+ musics[_id].getAlbum());
+				+ mMusicDatas[musicId].getAlbum());
 		textDuration.setText(getString(R.string.duration) + " : "
-				+ musics[_id].getDuration());
+				+ mMusicDatas[musicId].getDuration());
 		int size = Utilities.getAdaptedSize(Main.this);
 		Bitmap bmpAlbum = Utilities.getLocalArtwork(Main.this,
-				musics[_id].getAlbumId(), size, size);
+				mMusicDatas[musicId].getAlbumId(), size, size);
 		try {
 			Log.d(Consts.DEBUG_TAG, "width:" + bmpAlbum.getWidth());
 			albumArt.setImageBitmap(bmpAlbum);
@@ -1005,7 +1003,7 @@ public class Main extends ListActivity {
 
 			@Override
 			public void onClick(View arg0) {
-				playMusic(_id);
+				playMusic(musicId);
 			}
 		});
 		// Log.d(Consts.DEBUG_TAG,"view:"+
@@ -1017,7 +1015,7 @@ public class Main extends ListActivity {
 	 * @author Xavier Yao 处理各种线程信息
 	 * 
 	 */
-	private Handler handler = new Handler() {
+	private Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -1027,8 +1025,8 @@ public class Main extends ListActivity {
 						.show();
 				break;
 			case Consts.Status.SEND_WEIBO:// 发送微博
-				if (canDecectShake)
-					shakeDetector.stop();
+				if (mCanDetectShake)
+					mShakeDetector.stop();
 				View sendweibo = LayoutInflater.from(getApplicationContext())
 						.inflate(R.layout.sendweibo, null);
 				final EditText et = (EditText) sendweibo.getRootView()
@@ -1083,14 +1081,14 @@ public class Main extends ListActivity {
 						}
 					}
 				});
-				dialogSendWeibo = new AlertDialog.Builder(Main.this)
+				mDialogSendWeibo = new AlertDialog.Builder(Main.this)
 						.setView(sendweibo)
 						.setOnCancelListener(
 								new DialogInterface.OnCancelListener() {
 									@Override
 									public void onCancel(DialogInterface dialog) {
-										if (canDecectShake)
-											shakeDetector.start();
+										if (mCanDetectShake)
+											mShakeDetector.start();
 									}
 								})
 						.setPositiveButton(getString(R.string.share),
@@ -1102,18 +1100,18 @@ public class Main extends ListActivity {
 												.toString();
 
 										if (!isAccessTokenExistAndValid()) {// 检测之前是否授权过
-											handler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
+											mHandler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
 											saveSendStatus(content,
 													cb.isChecked(), artworkUrl,
 													fileName);
 											Log.d(Consts.DEBUG_TAG,
 													"null?"
-															+ (weiboHelper
+															+ (mWeiboHelper
 																	.getListener() == null));
-											ssoHandler.authorize(weiboHelper
+											mSsoHandler.authorize(mWeiboHelper
 													.getListener());// 授权
 										} else {
-											weiboHelper.sendWeibo(content,
+											mWeiboHelper.sendWeibo(content,
 													artworkUrl, fileName,
 													cb.isChecked());
 										}
@@ -1163,7 +1161,7 @@ public class Main extends ListActivity {
 			case Consts.Status.NO_UPDATE:
 				Toast toast = Toast.makeText(Main.this, R.string.no_update,
 						Toast.LENGTH_LONG);
-				if (Main.checkForUpdateCount != 0) {
+				if (Main.sCheckForUpdateCount != 0) {
 					toast.show();
 				}
 				break;
@@ -1175,7 +1173,7 @@ public class Main extends ListActivity {
 						Toast.LENGTH_SHORT).show();
 				try {
 					generateMusicList();
-					unregisterReceiver(receiver);
+					unregisterReceiver(mReceiver);
 				} catch (Throwable t) {
 
 				}
@@ -1192,13 +1190,13 @@ public class Main extends ListActivity {
 	private class MusicListOnClickListener implements OnItemClickListener {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long id) {
-			// if (position != listview.getCount()) {
+			// if (position != mLvMain.getCount()) {
 			try {
-				dialogMain.cancel();
+				mDialogMain.cancel();
 			} catch (Exception e) {
 			}
 			// } 注释掉的代码好象是以前给footer用的
-			indexOverlay.setVisibility(View.INVISIBLE);
+			mTvIndexOverlay.setVisibility(View.INVISIBLE);
 			showCustomDialog(position, Consts.Dialogs.SHARE);
 		}
 	}
@@ -1221,20 +1219,20 @@ public class Main extends ListActivity {
 		// 过滤小于30s的音乐
 		if (cursor != null) {
 			cursor.moveToFirst();
-			musics = new MusicData[cursor.getCount()];
+			mMusicDatas = new MusicData[cursor.getCount()];
 			for (int i = 0; i < cursor.getCount(); i++) {
-				musics[i] = new MusicData();
-				musics[i].setTitle(cursor.getString(0).trim());
-				musics[i].setDuration(Utilities.convertDuration(cursor
+				mMusicDatas[i] = new MusicData();
+				mMusicDatas[i].setTitle(cursor.getString(0).trim());
+				mMusicDatas[i].setDuration(Utilities.convertDuration(cursor
 						.getInt(1)));
-				musics[i].setArtist(cursor.getString(2).trim());
-				musics[i].setPath(cursor.getString(3));
-				musics[i].setAlbum(cursor.getString(4).trim());
-				musics[i].setAlbumId(cursor.getLong(5));
-				musics[i].setType(cursor.getString(6));
+				mMusicDatas[i].setArtist(cursor.getString(2).trim());
+				mMusicDatas[i].setPath(cursor.getString(3));
+				mMusicDatas[i].setAlbum(cursor.getString(4).trim());
+				mMusicDatas[i].setAlbumId(cursor.getLong(5));
+				mMusicDatas[i].setType(cursor.getString(6));
 				cursor.moveToNext();
 			}
-			listview.setAdapter(new MusicListAdapter(this, musics));
+			mLvMain.setAdapter(new MusicListAdapter(this, mMusicDatas));
 			cursor.close();
 		}
 
@@ -1254,10 +1252,10 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void shareMusic(String title, String artist, String album,
-			long album_id, int means) {
+			long albumId, int means) {
 		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
-				artist, album, album_id, means, getApplicationContext(),
-				handler);
+				artist, album, albumId, means, getApplicationContext(),
+				mHandler);
 		query.start();
 		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG)
 				.show();
@@ -1274,7 +1272,7 @@ public class Main extends ListActivity {
 		musicIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		musicIntent.setAction(android.content.Intent.ACTION_VIEW);
 		musicIntent.setDataAndType(
-				Uri.fromFile(new File(musics[position].getPath())), "audio/*");
+				Uri.fromFile(new File(mMusicDatas[position].getPath())), "audio/*");
 		try {
 			startActivity(musicIntent);
 		} catch (ActivityNotFoundException e) {
@@ -1303,8 +1301,8 @@ public class Main extends ListActivity {
 					Intent.ACTION_MEDIA_SCANNER_STARTED);
 			filter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
 			filter.addDataScheme("file");
-			receiver = new Receiver(handler);
-			registerReceiver(receiver, filter);
+			mReceiver = new Receiver(mHandler);
+			registerReceiver(mReceiver, filter);
 			sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
 					Uri.parse("file://"
 							+ Environment.getExternalStorageDirectory()
@@ -1352,17 +1350,16 @@ public class Main extends ListActivity {
 
 	/**
 	 * @author Harry Chen
-	 * @param String
-	 *            path 音乐路径
+	 * @param MusicData whichMusic 待发送的音乐信息
 	 * @return void 发送音乐文件，通过其他App
 	 */
-	private void sendFile(MusicData music) {
+	private void sendFile(MusicData whichMusic) {
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_SEND);
-		intent.setType(music.getType());
+		intent.setType(whichMusic.getType());
 		// 果然是个好东西，不过多出来不少无关的，我在考虑要不要改回去呢
 		intent.putExtra(Intent.EXTRA_STREAM,
-				Uri.fromFile(new File(music.getPath())));
+				Uri.fromFile(new File(whichMusic.getPath())));
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException e) {
@@ -1434,7 +1431,7 @@ public class Main extends ListActivity {
 						Context.MODE_PRIVATE);
 		if (!preferences.getBoolean("hasFirstStarted", false)) {
 			Log.d(Consts.DEBUG_TAG, "首次启动");
-			dialogWelcome = new AlertDialog.Builder(Main.this)
+			mDialogWelcome = new AlertDialog.Builder(Main.this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.welcome_title)
 					.setMessage(
@@ -1446,11 +1443,11 @@ public class Main extends ListActivity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
-									dialogWelcome.cancel();
+									mDialogWelcome.cancel();
 								}
 							}).create();
 			Log.v(Consts.DEBUG_TAG, "首次启动对话框已初始化");
-			dialogWelcome.show();
+			mDialogWelcome.show();
 			Log.v(Consts.DEBUG_TAG, "首次启动对话框已显示");
 			preferences.edit().putBoolean("hasFirstStarted", true).commit();
 		} else

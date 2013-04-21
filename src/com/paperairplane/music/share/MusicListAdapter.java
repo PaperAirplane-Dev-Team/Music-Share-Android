@@ -11,22 +11,22 @@ import com.paperairplane.music.share.R;
 
 public class MusicListAdapter extends BaseAdapter {
 	private Context mContext;
-	private MusicData musicDatas[];
+	private MusicData mMusicDatas[];
 
-	public MusicListAdapter(Context context, MusicData _musicdata[]) {
+	public MusicListAdapter(Context context, MusicData musicdatas[]) {
 		mContext = context;
-		musicDatas = _musicdata;// 不要Cursor了……
+		mMusicDatas = musicdatas;// 不要Cursor了……
 	}
 
 	public int getCount() {
-		if (musicDatas != null) {
-			return musicDatas.length;
+		if (mMusicDatas != null) {
+			return mMusicDatas.length;
 		}
 		return 0;
 	}
 
 	public Object getItem(int position) {
-		return musicDatas[position];
+		return mMusicDatas[position];
 	}
 
 	public long getItemId(int position) {
@@ -36,15 +36,15 @@ public class MusicListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		convertView = LayoutInflater.from(mContext).inflate(
 				R.layout.musiclist_item, null);
-		TextView textTitle = (TextView) convertView
+		TextView tvTitle = (TextView) convertView
 				.findViewById(R.id.musicname);
-		TextView textSingerAndAlbum = (TextView) convertView
+		TextView tvSingerAndAlbum = (TextView) convertView
 				.findViewById(R.id.singer_and_album);
-		TextView textDuration = (TextView) convertView
+		TextView tvDuration = (TextView) convertView
 				.findViewById(R.id.duration);
-		textTitle.setText(musicDatas[position].getTitle());
-		textSingerAndAlbum.setText(musicDatas[position].getArtist()+"\n"+musicDatas[position].getAlbum());
-		textDuration.setText(musicDatas[position].getDuration());
+		tvTitle.setText(mMusicDatas[position].getTitle());
+		tvSingerAndAlbum.setText(mMusicDatas[position].getArtist()+"\n"+mMusicDatas[position].getAlbum());
+		tvDuration.setText(mMusicDatas[position].getDuration());
 		return convertView;
 	}
 

@@ -28,58 +28,58 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 public class AtSuggestionActivity extends Activity {
-	private ListView listView;
-	private EditText et;
-	private List<String> data = new ArrayList<String>();
-	private Handler handler;
-	private ArrayAdapter<String> adapter;
-	private Thread refreshThread;
-	private Intent i;
-	private Bundle extras;
+	private ListView mLvAtSuggestion;
+	private EditText mEtUserNick;
+	private List<String> mListSuggestion = new ArrayList<String>();
+	private Handler mHandler;
+	private ArrayAdapter<String> mAdapterSugestion;
+	private Thread mThreadRefresh;
+	private Intent mIntent;
+	private Bundle mExtras;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.at_suggestion);
-		i =new Intent(AtSuggestionActivity.this,Main.class);
-		extras = new Bundle();
-		extras.putAll(getIntent().getExtras());
-		i.putExtras(extras);
-		setResult(RESULT_CANCELED,i);
-		handler = new Handler() {
+		mIntent =new Intent(AtSuggestionActivity.this,Main.class);
+		mExtras = new Bundle();
+		mExtras.putAll(getIntent().getExtras());
+		mIntent.putExtras(mExtras);
+		setResult(RESULT_CANCELED,mIntent);
+		mHandler = new Handler() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public void handleMessage(Message msg) {
 				switch (msg.what) {
 				case Consts.Status.DATA_CHANGED:
 					try {
-						data.clear();
-						data.addAll((ArrayList<String>) msg.obj);
+						mListSuggestion.clear();
+						mListSuggestion.addAll((ArrayList<String>) msg.obj);
 					} catch (Exception e) {
 
 					}
-					adapter.notifyDataSetChanged();
+					mAdapterSugestion.notifyDataSetChanged();
 					break;
 				}
 			}
 		};
-		adapter = new ArrayAdapter<String>(AtSuggestionActivity.this,
-				android.R.layout.simple_expandable_list_item_1, data);
-		listView = (ListView) findViewById(R.id.listView_at);
-		listView.setAdapter(adapter);
-		et = (EditText) findViewById(R.id.editText_at);
-		et.setText("@");
-		et.setSelection(1);
-		et.addTextChangedListener(new TextWatcher() {
+		mAdapterSugestion = new ArrayAdapter<String>(AtSuggestionActivity.this,
+				android.R.layout.simple_expandable_list_item_1, mListSuggestion);
+		mLvAtSuggestion = (ListView) findViewById(R.id.listView_at);
+		mLvAtSuggestion.setAdapter(mAdapterSugestion);
+		mEtUserNick = (EditText) findViewById(R.id.editText_at);
+		mEtUserNick.setText("@");
+		mEtUserNick.setSelection(1);
+		mEtUserNick.addTextChangedListener(new TextWatcher() {
 
 			@Override
 			public void afterTextChanged(Editable e) {
 				try {
-					data.remove(0);
+					mListSuggestion.remove(0);
 				} catch (Exception e1) {
 				}
-				data.add(0, e.toString());
-				adapter.notifyDataSetChanged();
+				mListSuggestion.add(0, e.toString());
+				mAdapterSugestion.notifyDataSetChanged();
 				lookForSuggestions();
 			}
 
@@ -97,7 +97,7 @@ public class AtSuggestionActivity extends Activity {
 			}
 
 		});
-		listView.setOnItemClickListener(new OnItemClickListener(){
+		mLvAtSuggestion.setOnItemClickListener(new OnItemClickListener(){
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
@@ -105,13 +105,13 @@ public class AtSuggestionActivity extends Activity {
 				int selection,start;
 				start = getIntent().getExtras().getInt("start");
 				StringBuffer result = new StringBuffer(getIntent().getExtras().getString("content"));
-				result.replace(start, start+1, adapter.getItem(position));
-				selection = start + adapter.getItem(position).length();
+				result.replace(start, start+1, mAdapterSugestion.getItem(position));
+				selection = start + mAdapterSugestion.getItem(position).length();
 				Log.d(Consts.DEBUG_TAG,result.toString());
-				extras.putString("content", result.toString());
-				extras.putInt("selection", selection);
-				i.putExtras(extras);
-				setResult(RESULT_OK,i);
+				mExtras.putString("content", result.toString());
+				mExtras.putInt("selection", selection);
+				mIntent.putExtras(mExtras);
+				setResult(RESULT_OK,mIntent);
 				finish();
 			}
 			
@@ -119,15 +119,15 @@ public class AtSuggestionActivity extends Activity {
 	}
 
 	private void lookForSuggestions() {
-		refreshThread = new Thread(new Runnable() {
+		mThreadRefresh = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				Log.d(Consts.DEBUG_TAG, "搜寻建议");
 				WeiboParameters params = new WeiboParameters();
-				params.add("access_token", Main.accessToken.getToken());
-				params.add("q", et.getText().toString().replace("@", ""));
+				params.add("access_token", Main.sAccessToken.getToken());
+				params.add("q", mEtUserNick.getText().toString().replace("@", ""));
 				String url = Consts.Url.API_SUGGESTION;
-				final Message m = handler
+				final Message m = mHandler
 						.obtainMessage(Consts.Status.DATA_CHANGED);
 				try {
 					AsyncWeiboRunner.request(url, params, "GET",
@@ -137,7 +137,7 @@ public class AtSuggestionActivity extends Activity {
 									Log.v(Consts.DEBUG_TAG, "获取到结果："
 											+ result);
 									final List<String> fetched_data = new ArrayList<String>();
-									fetched_data.add(0, et.getText().toString());
+									fetched_data.add(0, mEtUserNick.getText().toString());
 									try {
 										JSONArray array = new JSONArray(result);
 										for (int i = 0; i < array.length(); i++) {
@@ -173,7 +173,7 @@ public class AtSuggestionActivity extends Activity {
 
 			}
 		});
-		refreshThread.start();
+		mThreadRefresh.start();
 	}
 
 

@@ -17,6 +17,7 @@ import android.util.FloatMath;
  *      mce_href="http://blog.csdn.net/zhengzhiren"&gt;Blog&lt;/a&gt;
  */
 // P.S.这个类写的真渣……这作者肯定不懂什么叫封装==
+//你自个儿实现啊啊啊
 public class ShakeDetector implements SensorEventListener {
 	/**
 	 * 检测的时间间隔
@@ -35,9 +36,9 @@ public class ShakeDetector implements SensorEventListener {
 	/**
 	 * 摇晃检测阈值，决定了对摇晃的敏感程度，越小越敏感。
 	 */
-	public int shakeThreshold = 5000;
+	public int mShakeThreshold = 5000;
 	// 这是我写的……
-	private int sensorChangeCount = 0;
+	private int mSensorChangeCount = 0;
 
 	public ShakeDetector(Context context) {
 		mSensorManager = (SensorManager) context
@@ -126,12 +127,12 @@ public class ShakeDetector implements SensorEventListener {
 		float delta = FloatMath.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ
 				* deltaZ)
 				/ diffTime * 10000;
-		if (delta > shakeThreshold) { // 当加速度的差值大于指定的阈值，认为这是一个摇晃
-			sensorChangeCount++;
+		if (delta > mShakeThreshold) { // 当加速度的差值大于指定的阈值，认为这是一个摇晃
+			mSensorChangeCount++;
 		}
-		if (sensorChangeCount == 3) {
+		if (mSensorChangeCount == 3) {
 			this.notifyListeners();
-			sensorChangeCount = 0;
+			mSensorChangeCount = 0;
 		}
 	}
 
