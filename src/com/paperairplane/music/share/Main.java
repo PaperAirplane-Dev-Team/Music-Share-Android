@@ -75,17 +75,26 @@ public class Main extends ListActivity {
 	private String mVersionName;
 	private ImageView mIvFloatSearchButton;
 	private ShakeDetector mShakeDetector;
-	private boolean mCanDetectShake = true;
+	private boolean mCanDetectShake;
 	// 求更好的办法
 	private String mBackgroundPath = null;
 	private SharedPreferences mPreferencesTheme;
-	private MusicListAdapter mMusicListAdapter = new MusicListAdapter(null, null);
+
+	// private MusicListAdapter mMusicListAdapter = new MusicListAdapter(null,
+	// null);
 
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
 		Log.i(Consts.DEBUG_TAG, "调试模式:" + Consts.DEBUG_ON);
 		super.onCreate(savedInstanceState);
+		Intent i = getIntent();
+		String action = i.getAction();
+		Log.d(Consts.DEBUG_TAG, "is data equals null? " + (i.getData() == null));
+		if (action.equals("android.intent.action.VIEW")
+				|| action.equals("android.intent.action.SEND")) {
+			handleIntent(i.getData());
+		}
 		setContentView(R.layout.main);
 		mPreferencesTheme = getApplicationContext().getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
@@ -107,6 +116,7 @@ public class Main extends ListActivity {
 		}
 		// 读取已存储的授权信息
 		Main.sAccessToken = mWeiboHelper.readAccessToken();
+		// 启动用于检查更新的后台线程
 		Thread updateThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -124,13 +134,35 @@ public class Main extends ListActivity {
 				// 如果用Thread.sleep会让整个程序ANR..
 			}
 		});
+		updateThread.setPriority(Thread.MIN_PRIORITY);
 		updateThread.start();
 		setBackground();
-		initShakeDetector();
-		System.loadLibrary("utilities");
-		Log.w(Consts.DEBUG_TAG, doNothing());
-		Log.i(Consts.DEBUG_TAG, "versionCode:"+Main.sVersionCode+"\nversionName:"+mVersionName);
+		/*
+		 * System.loadLibrary("utilities"); Log.w(Consts.DEBUG_TAG,
+		 * doNothing()); Log.i(Consts.DEBUG_TAG, "versionCode:" +
+		 * Main.sVersionCode + "\nversionName:" + mVersionName);
+		 */
 		// 吃饱了……
+
+	}
+
+	/**
+	 * 处理接收到的Intent
+	 * 
+	 * @author Xavier Yao
+	 * @param uri
+	 *            要处理的Intent
+	 */
+	private void handleIntent(Uri uri) {
+		// TODO 这里没做catch
+		Cursor cursor = getContentResolver().query(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Consts.MEDIA_INFO,
+				MediaStore.Audio.Media.DATA + "='" + uri.getPath() + "'", null,
+				MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+		cursor.moveToFirst();
+		MusicData data = generateMusicData(cursor);
+		showCustomDialog(data, Consts.Dialogs.SHARE);
+		cursor.close();
 	}
 
 	/**
@@ -147,16 +179,18 @@ public class Main extends ListActivity {
 				public void onShake() {
 					Log.d(Consts.DEBUG_TAG, "检测到摇动");
 					int position = 0;
-					// if (mMusicListAdapter.getCount() != 0) {
-					// 我发现只要有你的这个If在这个功能就没法用
-					Random r = new Random();
-					position = r.nextInt(mLvMain.getAdapter().getCount());
-					Log.d(Consts.DEBUG_TAG, "生成随机数" + position);
-					mTvIndexOverlay.setVisibility(View.INVISIBLE);
-					Toast.makeText(Main.this, R.string.shake_random,
-							Toast.LENGTH_LONG).show();
-					showCustomDialog(position, Consts.Dialogs.SHARE);
-					// }
+					if (!mLvMain.getAdapter().isEmpty()) {
+						// 我发现只要有你的这个If在这个功能就没法用
+						// 我去……一定是我改代码改的太乱了……
+						Random r = new Random();
+						position = r.nextInt(mLvMain.getAdapter().getCount());
+						Log.d(Consts.DEBUG_TAG, "生成随机数" + position);
+						mTvIndexOverlay.setVisibility(View.INVISIBLE);
+						Toast.makeText(Main.this, R.string.shake_random,
+								Toast.LENGTH_LONG).show();
+						showCustomDialog(mMusicDatas[position],
+								Consts.Dialogs.SHARE);
+					}
 				}
 			});
 			mShakeDetector.start();
@@ -181,9 +215,11 @@ public class Main extends ListActivity {
 			@Override
 			public boolean onTouch(View arg0, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					mIvFloatSearchButton.setImageResource(R.drawable.search_button_pressed);
+					mIvFloatSearchButton
+							.setImageResource(R.drawable.search_button_pressed);
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					mIvFloatSearchButton.setImageResource(R.drawable.search_button_normal);
+					mIvFloatSearchButton
+							.setImageResource(R.drawable.search_button_normal);
 				}
 				return false;
 			}
@@ -205,6 +241,9 @@ public class Main extends ListActivity {
 		 * 初始化ListView
 		 */
 		mLvMain = (ListView) findViewById(android.R.id.list);// 找LisView的ID
+		View vwEmpty = LayoutInflater.from(this).inflate(R.layout.empty, null);
+		mLvMain.setEmptyView(vwEmpty);
+		// FIXME:EmptyView突然很无力……
 		mLvMain.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
 		mLvMain.setOnScrollListener(new OnScrollListener() {
 			boolean visible;
@@ -350,7 +389,7 @@ public class Main extends ListActivity {
 			mBackgroundPath = cursor.getString(columnIndex);
 			cursor.close();
 			Log.d(Consts.DEBUG_TAG, "取到的背景地址：" + mBackgroundPath);
-			showCustomDialog(Consts.NULL, Consts.Dialogs.CHANGE_BACKGROUND);
+			showCustomDialog(null, Consts.Dialogs.CHANGE_BACKGROUND);
 
 		} else {
 			mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
@@ -399,7 +438,7 @@ public class Main extends ListActivity {
 			showAbout();
 			break;
 		case R.id.menu_change_color:
-			showCustomDialog(Consts.NULL, Consts.Dialogs.CHANGE_COLOR);
+			showCustomDialog(null, Consts.Dialogs.CHANGE_COLOR);
 			break;
 		case R.id.menu_clean_cache:
 			String ARTWORK_PATH = getExternalCacheDir().getAbsolutePath()
@@ -474,7 +513,7 @@ public class Main extends ListActivity {
 					getResources().getConfiguration().locale);
 			break;
 		case R.id.menu_change_background:
-			showCustomDialog(Consts.NULL, Consts.Dialogs.CHANGE_BACKGROUND);
+			showCustomDialog(null, Consts.Dialogs.CHANGE_BACKGROUND);
 			break;
 		}
 		return true;
@@ -511,7 +550,7 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	public void footer(View v) {
-		showCustomDialog(Consts.NULL, Consts.Dialogs.SEARCH);
+		showCustomDialog(null, Consts.Dialogs.SEARCH);
 	}
 
 	// 对话框处理
@@ -520,11 +559,11 @@ public class Main extends ListActivity {
 	 * @param int _id 如果是音乐则传入所在id，否则为0
 	 * @param int whichDialog 根据Consts.Dialog下面的编号判断是什么对话框
 	 * @return void
-	 * @author Harry Chen 显示程序的各种自定义对话框，包括dialogMain, mDialogAbout, mDialogSearch,
-	 *         mDialogThank, mDialogWelcome, mDialogChangeColor
+	 * @author Harry Chen 显示程序的各种自定义对话框，包括dialogMain, mDialogAbout,
+	 *         mDialogSearch, mDialogThank, mDialogWelcome, mDialogChangeColor
 	 * 
 	 */
-	private void showCustomDialog(final int musicId, int whichDialog) {
+	private void showCustomDialog(final MusicData music, int whichDialog) {
 		if (mCanDetectShake)
 			mShakeDetector.stop();
 		final DialogInterface.OnCancelListener onCancelListener = new DialogInterface.OnCancelListener() {
@@ -533,7 +572,7 @@ public class Main extends ListActivity {
 				try {
 					if (mCanDetectShake)
 						mShakeDetector.start();
-				} catch (Throwable t) {
+				} catch (Exception e) {
 
 				}
 			}
@@ -595,8 +634,7 @@ public class Main extends ListActivity {
 								String contentString = content.getText()
 										.toString().trim();
 								if (contentString.equals("")) {
-									showCustomDialog(Consts.NULL,
-											Consts.Dialogs.EMPTY);
+									showCustomDialog(null, Consts.Dialogs.EMPTY);
 								} else {
 									SendFeedback feedback = new SendFeedback(
 											contentString, mHandler,
@@ -637,7 +675,8 @@ public class Main extends ListActivity {
 					.setMessage(
 							getString(R.string.about_content) + "\n\n"
 									+ Consts.RELEASE_DATE + "\nVer "
-									+ mVersionName + " / " + sVersionCode + "\n"
+									+ mVersionName + " / " + sVersionCode
+									+ "\n"
 									+ getString(R.string.update_whats_new)
 									+ Consts.WHATSNEW)
 					.setPositiveButton(R.string.thank_list, listenerAbout)
@@ -647,27 +686,23 @@ public class Main extends ListActivity {
 			mDialogAbout.show();
 			break;
 		case Consts.Dialogs.SHARE:
-			View musicInfoView = getMusicInfoView(musicId);
+			View musicInfoView = getMusicInfoView(music);
 			DialogInterface.OnClickListener listenerMain = new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int whichButton) {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
-						shareMusic(mMusicDatas[musicId].getTitle(),
-								mMusicDatas[musicId].getArtist(),
-								mMusicDatas[musicId].getAlbum(),
-								mMusicDatas[musicId].getAlbumId(),
+						shareMusic(music.getTitle(), music.getArtist(),
+								music.getAlbum(), music.getAlbumId(),
 								Consts.ShareMeans.WEIBO);
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
-						shareMusic(mMusicDatas[musicId].getTitle(),
-								mMusicDatas[musicId].getArtist(),
-								mMusicDatas[musicId].getAlbum(),
-								mMusicDatas[musicId].getAlbumId(),
+						shareMusic(music.getTitle(), music.getArtist(),
+								music.getAlbum(), music.getAlbumId(),
 								Consts.ShareMeans.OTHERS);
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
-						sendFile(mMusicDatas[musicId]);
+						sendFile(music);
 						break;
 					}
 				}
@@ -697,7 +732,7 @@ public class Main extends ListActivity {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
 						if (et_title.getText().toString().trim().equals("")) {
-							showCustomDialog(Consts.NULL, Consts.Dialogs.EMPTY);
+							showCustomDialog(null, Consts.Dialogs.EMPTY);
 
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
@@ -709,7 +744,7 @@ public class Main extends ListActivity {
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
 						if (et_title.getText().toString().trim().equals("")) {
-							showCustomDialog(Consts.NULL, Consts.Dialogs.EMPTY);
+							showCustomDialog(null, Consts.Dialogs.EMPTY);
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
@@ -886,8 +921,9 @@ public class Main extends ListActivity {
 								.edit()
 								.putString(Consts.Preferences.BG_COLOR,
 										Consts.ORIGIN_COLOR).commit();
-						mTvIndexOverlay.setBackgroundColor(android.graphics.Color
-								.parseColor(Consts.ORIGIN_COLOR));
+						mTvIndexOverlay
+								.setBackgroundColor(android.graphics.Color
+										.parseColor(Consts.ORIGIN_COLOR));
 						mDialogChangeColor.cancel();
 						break;
 					}
@@ -968,7 +1004,7 @@ public class Main extends ListActivity {
 	 * @author Harry Chen 用于dialogMain，显示音乐信息
 	 * 
 	 */
-	private View getMusicInfoView(final int musicId) {
+	private View getMusicInfoView(final MusicData music) {
 		View musicInfo = LayoutInflater.from(this).inflate(R.layout.music_info,
 				null);
 		ImageView albumArt = (ImageView) musicInfo
@@ -979,17 +1015,15 @@ public class Main extends ListActivity {
 		TextView textAlbum = (TextView) musicInfo.findViewById(R.id.text_album);
 		TextView textDuration = (TextView) musicInfo
 				.findViewById(R.id.text_duration);
-		textTitle.setText(getString(R.string.title) + " : "
-				+ mMusicDatas[musicId].getTitle());
+		textTitle.setText(getString(R.string.title) + " : " + music.getTitle());
 		textArtist.setText(getString(R.string.artist) + " : "
-				+ mMusicDatas[musicId].getArtist());
-		textAlbum.setText(getString(R.string.album) + " : "
-				+ mMusicDatas[musicId].getAlbum());
+				+ music.getArtist());
+		textAlbum.setText(getString(R.string.album) + " : " + music.getAlbum());
 		textDuration.setText(getString(R.string.duration) + " : "
-				+ mMusicDatas[musicId].getDuration());
+				+ music.getDuration());
 		int size = Utilities.getAdaptedSize(Main.this);
 		Bitmap bmpAlbum = Utilities.getLocalArtwork(Main.this,
-				mMusicDatas[musicId].getAlbumId(), size, size);
+				music.getAlbumId(), size, size);
 		try {
 			Log.d(Consts.DEBUG_TAG, "width:" + bmpAlbum.getWidth());
 			albumArt.setImageBitmap(bmpAlbum);
@@ -1003,7 +1037,7 @@ public class Main extends ListActivity {
 
 			@Override
 			public void onClick(View arg0) {
-				playMusic(musicId);
+				playMusic(music);
 			}
 		});
 		// Log.d(Consts.DEBUG_TAG,"view:"+
@@ -1197,7 +1231,7 @@ public class Main extends ListActivity {
 			}
 			// } 注释掉的代码好象是以前给footer用的
 			mTvIndexOverlay.setVisibility(View.INVISIBLE);
-			showCustomDialog(position, Consts.Dialogs.SHARE);
+			showCustomDialog(mMusicDatas[position], Consts.Dialogs.SHARE);
 		}
 	}
 
@@ -1221,21 +1255,32 @@ public class Main extends ListActivity {
 			cursor.moveToFirst();
 			mMusicDatas = new MusicData[cursor.getCount()];
 			for (int i = 0; i < cursor.getCount(); i++) {
-				mMusicDatas[i] = new MusicData();
-				mMusicDatas[i].setTitle(cursor.getString(0).trim());
-				mMusicDatas[i].setDuration(Utilities.convertDuration(cursor
-						.getInt(1)));
-				mMusicDatas[i].setArtist(cursor.getString(2).trim());
-				mMusicDatas[i].setPath(cursor.getString(3));
-				mMusicDatas[i].setAlbum(cursor.getString(4).trim());
-				mMusicDatas[i].setAlbumId(cursor.getLong(5));
-				mMusicDatas[i].setType(cursor.getString(6));
+				mMusicDatas[i] = generateMusicData(cursor);
 				cursor.moveToNext();
 			}
 			mLvMain.setAdapter(new MusicListAdapter(this, mMusicDatas));
 			cursor.close();
 		}
+		initShakeDetector();
+	}
 
+	/**
+	 * 从cursor取值生成MusicData
+	 * 
+	 * @param cursor
+	 * @return 生成的MusicData
+	 */
+
+	private MusicData generateMusicData(Cursor cursor) {
+		MusicData musicData = new MusicData();
+		musicData.setTitle(cursor.getString(0).trim());
+		musicData.setDuration(Utilities.convertDuration(cursor.getInt(1)));
+		musicData.setArtist(cursor.getString(2).trim());
+		musicData.setPath(cursor.getString(3));
+		musicData.setAlbum(cursor.getString(4).trim());
+		musicData.setAlbumId(cursor.getLong(5));
+		musicData.setType(cursor.getString(6));
+		return musicData;
 	}
 
 	/**
@@ -1267,12 +1312,12 @@ public class Main extends ListActivity {
 	 * @author Xavier Yao 播放音乐的主调方法
 	 * 
 	 */
-	private void playMusic(int position) {
+	private void playMusic(MusicData music) {
 		Intent musicIntent = new Intent();
 		musicIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		musicIntent.setAction(android.content.Intent.ACTION_VIEW);
-		musicIntent.setDataAndType(
-				Uri.fromFile(new File(mMusicDatas[position].getPath())), "audio/*");
+		musicIntent.setDataAndType(Uri.fromFile(new File(music.getPath())),
+				"audio/*");
 		try {
 			startActivity(musicIntent);
 		} catch (ActivityNotFoundException e) {
@@ -1321,7 +1366,7 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void showAbout() {
-		showCustomDialog(Consts.NULL, Consts.Dialogs.ABOUT);
+		showCustomDialog(null, Consts.Dialogs.ABOUT);
 	}
 
 	/**
@@ -1350,7 +1395,8 @@ public class Main extends ListActivity {
 
 	/**
 	 * @author Harry Chen
-	 * @param MusicData whichMusic 待发送的音乐信息
+	 * @param MusicData
+	 *            whichMusic 待发送的音乐信息
 	 * @return void 发送音乐文件，通过其他App
 	 */
 	private void sendFile(MusicData whichMusic) {
