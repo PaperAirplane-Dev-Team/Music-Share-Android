@@ -31,6 +31,11 @@
         <item name="android:singleLine">true</item>
     </style>
 
-
+    <!-- The text appearance for secondary information (text with a lower importance) -->
+    <style name="secondary_text_appearance">
+        <item name="android:textSize">@dimen/secondary_text_size</item>
+        <item name="android:textColor">@color/black_transparent</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 
 </resources>

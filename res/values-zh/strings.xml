@@ -6,6 +6,7 @@
     <string name="menu_exit">退出</string>
     <string name="share_by">我用@纸飞机音乐分享 (http://t.cn/zYyzZOK )分享了</string>
     <string name="how_to_share">选择分享方式</string>
+    <string name="how_to_play">选择播放器</string>
     <string name="music_artist">的音乐</string>
     <string name="music_single">的单曲</string>
     <string name="music_album"> ,来自专辑</string>
@@ -63,7 +64,7 @@
     <string name="thank_list">感谢名单</string>
     <string name="thank_title">感谢你们！</string>
     <string name="welcome_title">欢迎使用纸飞机音乐分享！</string>
-        <string name="welcome_content">Share Satisfying Music\nEnjoy Good Days\n为雅安灾区加油 \n\n</string>
+    <string name="welcome_content">Share Satisfying Music\nEnjoy Good Days\n为雅安灾区加油 \n\n</string>
     <string name="welcome_button">希望您喜欢我们的App~</string>
     <string name="change_overlay_color">更改文字遮罩层背景颜色</string>
     <string name="red">红</string>
@@ -82,5 +83,6 @@
     <string name="clean_cache_done">喵,清理缓存成功~</string>
     <string name="shake_random">主人主人不要晃我~好头晕啊~</string>
     <string name="delete_file_count">删除的文件个数:</string>
+    <string name="intent_dialog_title">打开方式</string>
 
 </resources>

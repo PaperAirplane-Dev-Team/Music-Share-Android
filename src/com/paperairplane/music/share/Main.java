@@ -90,9 +90,10 @@ public class Main extends ListActivity {
 		super.onCreate(savedInstanceState);
 		Intent i = getIntent();
 		String action = i.getAction();
-		Log.d(Consts.DEBUG_TAG, "is data equals null? " + (i.getData() == null));
-		if (action.equals("android.intent.action.VIEW")
-				|| action.equals("android.intent.action.SEND")) {
+		boolean isDataNull = i.getData() == null;
+
+		if ((action.equals("android.intent.action.VIEW") || action
+				.equals("android.intent.action.SEND")) && !isDataNull) {
 			handleIntent(i.getData());
 		}
 		setContentView(R.layout.main);
@@ -154,19 +155,23 @@ public class Main extends ListActivity {
 	 *            要处理的Intent
 	 */
 	private void handleIntent(Uri uri) {
-		// TODO 这里没做catch
-		Cursor cursor = getContentResolver().query(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Consts.MEDIA_INFO,
-				MediaStore.Audio.Media.DATA + "='" + uri.getPath() + "'", null,
-				MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
-		cursor.moveToFirst();
-		MusicData data = generateMusicData(cursor);
-		showCustomDialog(data, Consts.Dialogs.SHARE);
-		cursor.close();
+		try {
+			Cursor cursor = getContentResolver().query(
+					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+					Consts.MEDIA_INFO,
+					MediaStore.Audio.Media.DATA + "='" + uri.getPath() + "'",
+					null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+			cursor.moveToFirst();
+			MusicData data = generateMusicData(cursor);
+			showCustomDialog(data, Consts.Dialogs.SHARE);
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
-	 * 一个脑残的功能==
+	 * 一个脑残的功能=.=
 	 */
 	private native String doNothing();
 

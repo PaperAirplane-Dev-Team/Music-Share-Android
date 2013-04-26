@@ -6,6 +6,7 @@
     <string name="menu_exit">Exit</string>
     <string name="share_by">I used Paper Airplane\'s Music Share (http://t.cn/zYyzZOK )to share</string>
     <string name="how_to_share">Choose an App to Share</string>
+    <string name="how_to_play">Choose an App to Share</string>
     <string name="music_artist">\'s music</string>
     <string name="music_single">\'s single</string>
     <string name="music_album">from the album</string>
@@ -85,4 +86,5 @@
     <string name="clean_cache_done">Successfully cleaned cache files!</string>
     <string name="shake_random">I\'m feeling good~</string>
     <string name="delete_file_count">Delete file count:</string>
+
 </resources>
