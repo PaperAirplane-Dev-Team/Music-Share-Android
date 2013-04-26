@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Random;
 
+import net.sourceforge.pinyin4j.PinyinHelper;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -27,13 +29,13 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
@@ -50,6 +52,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.paperairplane.music.share.ShakeDetector.OnShakeListener;
+import com.paperairplane.music.share.MyLogger;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.sso.SsoHandler;
@@ -77,11 +80,11 @@ public class Main extends ListActivity {
 	private String mBackgroundPath = null;
 	private SharedPreferences mPreferencesTheme;
 
-
 	@Override
 	// 主体
+	//我跟你丫没完你去掉了IndexOverlay的初始化不在onResume和onStop去掉啊……
 	public void onCreate(Bundle savedInstanceState) {
-		Log.i(Consts.DEBUG_TAG, "调试模式:" + Consts.DEBUG_ON);
+		MyLogger.i(Consts.DEBUG_TAG, "调试模式:" + Consts.DEBUG_ON);
 		super.onCreate(savedInstanceState);
 		Intent i = getIntent();
 		String action = i.getAction();
@@ -90,6 +93,10 @@ public class Main extends ListActivity {
 		if ((action.equals("android.intent.action.VIEW") || action
 				.equals("android.intent.action.SEND")) && !isDataNull) {
 			handleIntent(i.getData());
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+			this.setVisible(false);
+			//留给你黑糊糊的
+			return;
 		}
 		setContentView(R.layout.main);
 		mPreferencesTheme = getApplicationContext().getSharedPreferences(
@@ -126,7 +133,7 @@ public class Main extends ListActivity {
 
 					}
 				}, 5000);
-				Log.i(Consts.DEBUG_TAG, "休息休息");
+				MyLogger.i(Consts.DEBUG_TAG, "休息休息");
 				// 如果用Thread.sleep会让整个程序ANR..
 			}
 		});
@@ -134,10 +141,12 @@ public class Main extends ListActivity {
 		updateThread.start();
 		setBackground();
 		/*
-		 * System.loadLibrary("utilities"); Log.w(Consts.DEBUG_TAG,
-		 * doNothing()); Log.i(Consts.DEBUG_TAG, "versionCode:" +
-		 * Main.sVersionCode + "\nversionName:" + mVersionName);
+		 * System.loadLibrary("utilities"); MyLogger.w(Consts.DEBUG_TAG,
+		 * doNothing());
 		 */
+		MyLogger.i(Consts.DEBUG_TAG, "versionCode:" + Main.sVersionCode
+				+ "\nversionName:" + mVersionName);
+
 		// 吃饱了……
 
 	}
@@ -168,7 +177,7 @@ public class Main extends ListActivity {
 	/**
 	 * 一个脑残的功能=.=
 	 */
-	private native String doNothing();
+	//private native String doNothing();
 
 	private void initShakeDetector() {
 		try {
@@ -177,14 +186,14 @@ public class Main extends ListActivity {
 			mShakeDetector.registerOnShakeListener(new OnShakeListener() {
 				@Override
 				public void onShake() {
-					Log.d(Consts.DEBUG_TAG, "检测到摇动");
+					MyLogger.d(Consts.DEBUG_TAG, "检测到摇动");
 					int position = 0;
 					if (!mLvMain.getAdapter().isEmpty()) {
 						// 我发现只要有你的这个If在这个功能就没法用
 						// 我去……一定是我改代码改的太乱了……
 						Random r = new Random();
 						position = r.nextInt(mLvMain.getAdapter().getCount());
-						Log.d(Consts.DEBUG_TAG, "生成随机数" + position);
+						MyLogger.d(Consts.DEBUG_TAG, "生成随机数" + position);
 						mTvIndexOverlay.setVisibility(View.INVISIBLE);
 						Toast.makeText(Main.this, R.string.shake_random,
 								Toast.LENGTH_LONG).show();
@@ -195,7 +204,7 @@ public class Main extends ListActivity {
 			});
 			mShakeDetector.start();
 		} catch (Exception e) {
-			Log.e(Consts.DEBUG_TAG, "ShakeDetector初始化失败，禁用");
+			MyLogger.e(Consts.DEBUG_TAG, "ShakeDetector初始化失败，禁用");
 			mCanDetectShake = false;
 		}
 	}
@@ -296,16 +305,16 @@ public class Main extends ListActivity {
 	private void setBackground() {
 		mBackgroundPath = mPreferencesTheme.getString(
 				Consts.Preferences.BG_PATH, null);
-		Log.d(Consts.DEBUG_TAG, "读取到的地址" + mBackgroundPath);
+		MyLogger.d(Consts.DEBUG_TAG, "读取到的地址" + mBackgroundPath);
 		View main_layout = findViewById(R.id.main_linearLayout);
 		if (mBackgroundPath == null || !new File(mBackgroundPath).exists()) {
 			// 原来可以不用catch...
 			main_layout.setBackgroundResource(R.drawable.background_holo_dark);
-			Log.d(Consts.DEBUG_TAG, "设置为默认壁纸");
+			MyLogger.d(Consts.DEBUG_TAG, "设置为默认壁纸");
 		} else {
 			main_layout.setBackgroundDrawable(Drawable
 					.createFromPath(mBackgroundPath));
-			Log.d(Consts.DEBUG_TAG, "设置为自定壁纸" + mBackgroundPath);
+			MyLogger.d(Consts.DEBUG_TAG, "设置为自定壁纸" + mBackgroundPath);
 		}
 	}
 
@@ -314,35 +323,29 @@ public class Main extends ListActivity {
 	 */
 	private void showOverlay() {
 		/*
-		try {
-			getWindowManager()
-					.addView(
-							mTvIndexOverlay,
-							new WindowManager.LayoutParams(
-									LayoutParams.WRAP_CONTENT,
-									LayoutParams.WRAP_CONTENT,
-									WindowManager.LayoutParams.TYPE_APPLICATION,
-									WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-											| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-									PixelFormat.TRANSLUCENT));
-		} catch (IllegalStateException e) {
-			Log.e(Consts.DEBUG_TAG, "Overlay Exception");
-		}
-		*/
+		 * try { getWindowManager() .addView( mTvIndexOverlay, new
+		 * WindowManager.LayoutParams( LayoutParams.WRAP_CONTENT,
+		 * LayoutParams.WRAP_CONTENT,
+		 * WindowManager.LayoutParams.TYPE_APPLICATION,
+		 * WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+		 * WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+		 * PixelFormat.TRANSLUCENT)); } catch (IllegalStateException e) {
+		 * MyLogger.e(Consts.DEBUG_TAG, "Overlay Exception"); }
+		 */
 	}
 
 	@Override
 	protected void onStop() {
-		Log.d(Consts.DEBUG_TAG, "onStop()");
+		MyLogger.d(Consts.DEBUG_TAG, "onStop()");
 		// 将当前Overlay的显示状态保存到SharedPreferences
-		if (mTvIndexOverlay.getVisibility() == View.VISIBLE) {
+/*		if (mTvIndexOverlay.getVisibility() == View.VISIBLE) {
 			getWindowManager().removeView(mTvIndexOverlay);
 			SharedPreferences pref = getSharedPreferences(
 					Consts.Preferences.OVERLAY, MODE_PRIVATE);
 			Editor edit = pref.edit();
 			edit.putBoolean("resume", true);
 			edit.commit();
-		}
+		}*/
 		// 关闭摇动检查
 		if (mCanDetectShake)
 			mShakeDetector.stop();
@@ -361,7 +364,7 @@ public class Main extends ListActivity {
 		boolean resume = pref.getBoolean("resume", false);
 		if (resume) {
 			showOverlay();
-			mTvIndexOverlay.setVisibility(View.INVISIBLE);
+			//mTvIndexOverlay.setVisibility(View.INVISIBLE);
 			// 我说了得这样……
 		}
 
@@ -373,7 +376,7 @@ public class Main extends ListActivity {
 		// 这里判断接收到的Intent是来自AtSuggestion还是微博SSO授权
 		// 还有可爱的背景
 		if (requestCode == Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE) {
-			Log.d(Consts.DEBUG_TAG, "返回");
+			MyLogger.d(Consts.DEBUG_TAG, "返回");
 			// 这里根据bundle的数据重启dialogSendWeibo
 			mDialogSendWeibo.dismiss();
 			Message m = mHandler.obtainMessage(Consts.Status.SEND_WEIBO);
@@ -390,7 +393,7 @@ public class Main extends ListActivity {
 			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
 			mBackgroundPath = cursor.getString(columnIndex);
 			cursor.close();
-			Log.d(Consts.DEBUG_TAG, "取到的背景地址：" + mBackgroundPath);
+			MyLogger.d(Consts.DEBUG_TAG, "取到的背景地址：" + mBackgroundPath);
 			showCustomDialog(null, Consts.Dialogs.CHANGE_BACKGROUND);
 
 		} else {
@@ -451,13 +454,13 @@ public class Main extends ListActivity {
 				fileCount = files.length;
 				for (File f : files) {
 					f.delete();
-					Log.v(Consts.DEBUG_TAG, f.getName() + " deleted.");
+					MyLogger.v(Consts.DEBUG_TAG, f.getName() + " deleted.");
 					// 虽然比起来常规for可能性能差……不过不过不过！好歹我发现了for-each!
 					// Effective Java建议多用for-each……
 				}
 			} catch (Exception e) {
 				// e.printStackTrace();
-				Log.e(Consts.DEBUG_TAG, "Exception: NO FILE deleted.");
+				MyLogger.e(Consts.DEBUG_TAG, "Exception: NO FILE deleted.");
 				// 仁慈一点，红色。不报错，不报错，不报错
 			}
 			String toastText = getString(R.string.clean_cache_done) + "\n"
@@ -496,7 +499,7 @@ public class Main extends ListActivity {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				Log.v(Consts.DEBUG_TAG, e.getMessage());
+				MyLogger.v(Consts.DEBUG_TAG, e.getMessage());
 			}
 			break;
 		case Consts.MenuItem.AUTH:
@@ -541,7 +544,8 @@ public class Main extends ListActivity {
 				|| Main.sAccessToken.isSessionValid() == false) {
 			flag = false;
 		}
-		Log.d(Consts.DEBUG_TAG, "方法isAccessTokenExistAndValid()被调用,结果" + flag);
+		MyLogger.d(Consts.DEBUG_TAG, "方法isAccessTokenExistAndValid()被调用,结果"
+				+ flag);
 		return flag;
 	}
 
@@ -695,8 +699,7 @@ public class Main extends ListActivity {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_NEGATIVE:
 						shareMusic(music.getTitle(), music.getArtist(),
-								music.getAlbum(), music.getAlbumId()
-								);
+								music.getAlbum(), music.getAlbumId());
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
 						sendFile(music);
@@ -713,7 +716,7 @@ public class Main extends ListActivity {
 					.setNeutralButton(R.string.send_file, listenerMain).show();
 			break;
 		case Consts.Dialogs.SEARCH:
-			Log.v(Consts.DEBUG_TAG, "点击footer");
+			MyLogger.v(Consts.DEBUG_TAG, "点击footer");
 			View search = LayoutInflater.from(this).inflate(R.layout.search,
 					null);
 			final EditText et_title = (EditText) search
@@ -733,8 +736,7 @@ public class Main extends ListActivity {
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
-									.toString(), Consts.NULL
-									);
+									.toString(), Consts.NULL);
 							mDialogSearch.cancel();
 						}
 						break;
@@ -744,8 +746,7 @@ public class Main extends ListActivity {
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
-									.toString(), Consts.NULL
-									);
+									.toString(), Consts.NULL);
 							mDialogSearch.cancel();
 						}
 						break;
@@ -859,7 +860,7 @@ public class Main extends ListActivity {
 							+ color[Consts.Color.RED]
 							+ color[Consts.Color.GREEN] + color[Consts.Color.BLUE])
 							.toUpperCase(Locale.getDefault());
-					// Log.d(Consts.DEBUG_TAG, "Color: "+hexColor);
+					// MyLogger.d(Consts.DEBUG_TAG, "Color: "+hexColor);
 					textColorCode.setText(hexColor);
 					textShowColor.setBackgroundColor(android.graphics.Color
 							.parseColor(hexColor));
@@ -872,7 +873,7 @@ public class Main extends ListActivity {
 			if (mPreferencesTheme.contains(Consts.Preferences.BG_COLOR)) {
 				nowColor = mPreferencesTheme.getString(
 						Consts.Preferences.BG_COLOR, "");
-				Log.d(Consts.DEBUG_TAG, "Got origin color");
+				MyLogger.d(Consts.DEBUG_TAG, "Got origin color");
 			} else {
 				nowColor = Consts.ORIGIN_COLOR;
 			}
@@ -885,7 +886,7 @@ public class Main extends ListActivity {
 					nowColor.substring(7, 9), 16);
 			colorInt[Consts.Color.OPACITY] = Integer.valueOf(
 					nowColor.substring(1, 3), 16);
-			Log.d(Consts.DEBUG_TAG, "Integers are: " + colorInt[0] + " "
+			MyLogger.d(Consts.DEBUG_TAG, "Integers are: " + colorInt[0] + " "
 					+ colorInt[1] + " " + colorInt[2] + " " + colorInt[3]);
 			for (int i = 0; i < 4; i++) {
 				seekColor[i].setProgress(colorInt[i]);
@@ -906,7 +907,7 @@ public class Main extends ListActivity {
 							mTvIndexOverlay
 									.setBackgroundColor(android.graphics.Color
 											.parseColor(color));
-							Log.d(Consts.DEBUG_TAG, "自定义颜色:" + color);
+							MyLogger.d(Consts.DEBUG_TAG, "自定义颜色:" + color);
 						}
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
@@ -1021,12 +1022,12 @@ public class Main extends ListActivity {
 		Bitmap bmpAlbum = Utilities.getLocalArtwork(Main.this,
 				music.getAlbumId(), size, size);
 		try {
-			Log.d(Consts.DEBUG_TAG, "width:" + bmpAlbum.getWidth());
+			MyLogger.d(Consts.DEBUG_TAG, "width:" + bmpAlbum.getWidth());
 			albumArt.setImageBitmap(bmpAlbum);
-			Log.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
+			MyLogger.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			Log.v(Consts.DEBUG_TAG,
+			MyLogger.v(Consts.DEBUG_TAG,
 					"Oh shit, we got null again ...... Don't panic");
 		}
 		albumArt.setOnClickListener(new View.OnClickListener() {
@@ -1036,7 +1037,7 @@ public class Main extends ListActivity {
 				playMusic(music);
 			}
 		});
-		// Log.d(Consts.DEBUG_TAG,"view:"+
+		// MyLogger.d(Consts.DEBUG_TAG,"view:"+
 		// albumArt.getHeight()+","+albumArt.getWidth());
 		return musicInfo;
 	}
@@ -1076,7 +1077,7 @@ public class Main extends ListActivity {
 				final String artworkUrl = bundle.getString("artworkUrl");
 				final String fileName = bundle.getString("fileName");
 				int selection = bundle.getInt("selection", _content.length());
-				// Log.v(Consts.DEBUG_TAG, artworkUrl);
+				// MyLogger.v(Consts.DEBUG_TAG, artworkUrl);
 				cb.setChecked(bundle.getBoolean("isChecked", true));
 				et.setText(_content);
 				et.setSelection(selection);
@@ -1095,7 +1096,7 @@ public class Main extends ListActivity {
 							int before, int count) {
 						try {
 							if (s.toString().charAt(start) == '@') {
-								Log.d(Consts.DEBUG_TAG, "@ CAUGHT!"); // @提醒
+								MyLogger.d(Consts.DEBUG_TAG, "@ CAUGHT!"); // @提醒
 								// 我有错，我悔过
 								Intent i = new Intent(Main.this,
 										AtSuggestionActivity.class);
@@ -1134,7 +1135,8 @@ public class Main extends ListActivity {
 											saveSendStatus(content,
 													cb.isChecked(), artworkUrl,
 													fileName);
-											Log.d(Consts.DEBUG_TAG,
+											MyLogger.d(
+													Consts.DEBUG_TAG,
 													"null?"
 															+ (mWeiboHelper
 																	.getListener() == null));
@@ -1149,7 +1151,7 @@ public class Main extends ListActivity {
 									}
 
 								}).show();
-				Log.v(Consts.DEBUG_TAG, "弹出微博编辑对话框");
+				MyLogger.v(Consts.DEBUG_TAG, "弹出微博编辑对话框");
 				break;
 			case Consts.Status.SEND_SUCCEED:// 发送成功
 				Toast.makeText(Main.this, R.string.send_succeed,
@@ -1163,13 +1165,13 @@ public class Main extends ListActivity {
 				Toast.makeText(Main.this,
 						R.string.auth_error + (String) msg.obj,
 						Toast.LENGTH_LONG).show();
-				Log.e(Consts.DEBUG_TAG, "授权错误" + (String) msg.obj);
+				MyLogger.e(Consts.DEBUG_TAG, "授权错误" + (String) msg.obj);
 				break;
 			case Consts.Status.SEND_ERROR:// 发送错误
 				Toast.makeText(Main.this,
 						R.string.send_error + (String) msg.obj,
 						Toast.LENGTH_LONG).show();
-				Log.e(Consts.DEBUG_TAG, "发送错误" + (String) msg.obj);
+				MyLogger.e(Consts.DEBUG_TAG, "发送错误" + (String) msg.obj);
 				break;
 			case Consts.Status.AUTH_SUCCEED:// 授权成功
 				Toast.makeText(Main.this, R.string.auth_succeed,
@@ -1209,7 +1211,8 @@ public class Main extends ListActivity {
 				}
 				break;
 			case Consts.Status.MUSIC_INFO_FETCHED:
-				IntentResolver.handleIntent(Main.this, (Intent)msg.obj, mHandler);
+				IntentResolver.handleIntent(Main.this, (Intent) msg.obj,
+						mHandler);
 			}
 
 		}
@@ -1240,7 +1243,7 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void generateMusicList() throws NullPointerException {
-		Log.d(Consts.DEBUG_TAG, "方法generateMusicList被调用");
+		MyLogger.d(Consts.DEBUG_TAG, "方法generateMusicList被调用");
 		Cursor cursor = getContentResolver().query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				Consts.MEDIA_INFO,
@@ -1278,6 +1281,17 @@ public class Main extends ListActivity {
 		musicData.setAlbum(cursor.getString(4).trim());
 		musicData.setAlbumId(cursor.getLong(5));
 		musicData.setType(cursor.getString(6));
+		String title=musicData.getTitle();
+		if(Character.isLetter(title.charAt(0))){
+			musicData.setFirstChar(title.toUpperCase(Locale.getDefault()).charAt(0));
+			//MyLogger.d(Consts.DEBUG_TAG, "English Letter");
+			//我只有英文歌……
+		}
+		else{
+			//musicData.setFirstChar(PinyinHelper.toHanyuPinyinStringArray(title.charAt(0))[0].substring(0, 1)
+				//.toUpperCase(Locale.getDefault()).charAt(0));
+			//异常……
+		}
 		return musicData;
 	}
 
@@ -1297,8 +1311,7 @@ public class Main extends ListActivity {
 	private void shareMusic(String title, String artist, String album,
 			long albumId) {
 		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
-				artist, album, albumId, getApplicationContext(),
-				mHandler);
+				artist, album, albumId, getApplicationContext(), mHandler);
 		query.start();
 		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG)
 				.show();
@@ -1474,7 +1487,7 @@ public class Main extends ListActivity {
 				.getSharedPreferences(Consts.Preferences.GENERAL,
 						Context.MODE_PRIVATE);
 		if (!preferences.getBoolean("hasFirstStarted", false)) {
-			Log.d(Consts.DEBUG_TAG, "首次启动");
+			MyLogger.d(Consts.DEBUG_TAG, "首次启动");
 			mDialogWelcome = new AlertDialog.Builder(Main.this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.welcome_title)
@@ -1490,12 +1503,12 @@ public class Main extends ListActivity {
 									mDialogWelcome.cancel();
 								}
 							}).create();
-			Log.v(Consts.DEBUG_TAG, "首次启动对话框已初始化");
+			MyLogger.v(Consts.DEBUG_TAG, "首次启动对话框已初始化");
 			mDialogWelcome.show();
-			Log.v(Consts.DEBUG_TAG, "首次启动对话框已显示");
+			MyLogger.v(Consts.DEBUG_TAG, "首次启动对话框已显示");
 			preferences.edit().putBoolean("hasFirstStarted", true).commit();
 		} else
-			Log.d(Consts.DEBUG_TAG, "非首次启动");
+			MyLogger.d(Consts.DEBUG_TAG, "非首次启动");
 	}
 
 }

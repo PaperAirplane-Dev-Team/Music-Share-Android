@@ -8,7 +8,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.WeiboAuthListener;
@@ -20,6 +19,7 @@ import com.weibo.sdk.android.net.AsyncWeiboRunner;
 import com.weibo.sdk.android.net.RequestListener;
 
 import com.paperairplane.music.share.Consts;
+import com.paperairplane.music.share.MyLogger;
 
 public class WeiboHelper {
 	private StatusesAPI mApi = null;
@@ -56,7 +56,7 @@ public class WeiboHelper {
 		if (mAuthListener == null) {
 			mAuthListener = new AuthDialogListener();
 		}
-		Log.v(Consts.DEBUG_TAG,"方法WeiboHelper::getListener()被调用");
+		MyLogger.v(Consts.DEBUG_TAG,"方法WeiboHelper::getListener()被调用");
 		return mAuthListener;
 	}
 
@@ -77,13 +77,13 @@ public class WeiboHelper {
 		initRequestListener();
 
 		if (artworkUrl == null) {
-			Log.v(Consts.DEBUG_TAG, "发送无图微博");
+			MyLogger.v(Consts.DEBUG_TAG, "发送无图微博");
 			mApi.update(content, null, null, mRequestListener);
 		} else if (fileName != null) {
-			Log.v(Consts.DEBUG_TAG, "发布带本地封面的微博");
+			MyLogger.v(Consts.DEBUG_TAG, "发布带本地封面的微博");
 			mApi.upload(content, fileName, null, null, mRequestListener);
 		} else {
-			Log.v(Consts.DEBUG_TAG, "发送带图微博，url=" + artworkUrl);
+			MyLogger.v(Consts.DEBUG_TAG, "发送带图微博，url=" + artworkUrl);
 			String url = "https://mApi.weibo.com/2/statuses/upload_url_text.json";
 			WeiboParameters params = new WeiboParameters();
 			params.add("access_token", Main.sAccessToken.getToken());
@@ -137,7 +137,7 @@ public class WeiboHelper {
 					new RequestListener() {
 						@Override
 						public void onComplete(String arg0) {
-							Log.v("Music Share DUBUG", "followed");
+							MyLogger.v("Music Share DUBUG", "followed");
 						}
 
 						@Override
@@ -158,13 +158,13 @@ public class WeiboHelper {
 
 		@Override
 		public void onComplete(Bundle values) {
-			Log.d(Consts.DEBUG_TAG, "接收到授权信息");
+			MyLogger.d(Consts.DEBUG_TAG, "接收到授权信息");
 			String token = values.getString("access_token");
 			String expires_in = values.getString("expires_in");
 			Main.sAccessToken = new Oauth2AccessToken(token, expires_in);
 			keepAccessToken(Main.sAccessToken);
 			mHandler.sendEmptyMessage(Consts.Status.AUTH_SUCCEED);
-			Log.v(Consts.DEBUG_TAG, "授权成功，\n AccessToken:" + token);
+			MyLogger.v(Consts.DEBUG_TAG, "授权成功，\n AccessToken:" + token);
 			SharedPreferences preferences = mContext
 					.getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
 			if (preferences.getBoolean("read", false)) {
@@ -173,7 +173,7 @@ public class WeiboHelper {
 				String fileName = preferences.getString("fileName", null);
 				boolean willFollow = preferences
 						.getBoolean("willFollow", false);
-				Log.v(Consts.DEBUG_TAG, "获取状态\n" + content + "\n" + artworkUrl
+				MyLogger.v(Consts.DEBUG_TAG, "获取状态\n" + content + "\n" + artworkUrl
 						+ "\n" + willFollow);
 				sendWeibo(content, artworkUrl, fileName, willFollow);
 				preferences.edit().putBoolean("read", false).commit();
@@ -217,7 +217,7 @@ public class WeiboHelper {
 		Oauth2AccessToken token = new Oauth2AccessToken();
 		token.setToken(mPreferences.getString("token", ""));
 		token.setExpiresTime(mPreferences.getLong("expiresTime", 0));
-		Log.d(Consts.DEBUG_TAG,"Read Token:"+token.getToken());
+		MyLogger.d(Consts.DEBUG_TAG,"Read Token:"+token.getToken());
 		return token;
 	}
 

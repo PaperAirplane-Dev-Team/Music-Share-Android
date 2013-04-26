@@ -2,6 +2,7 @@ package com.paperairplane.music.share;
 
 public class MusicData {
 	private String mTitle, mArtist, mDuration, mPath, mAlbum, mType;
+	private char mFirstChar;
 	private long mAlbumId;
 
 	public void setPath(String path) {
@@ -31,6 +32,10 @@ public class MusicData {
 	public void setType(String type) {
 		mType = type;
 	}
+	
+	public void setFirstChar(char firstChar) {
+		mFirstChar = firstChar;
+	}
 
 	public String getPath() {
 		return mPath;
@@ -55,8 +60,13 @@ public class MusicData {
 	public long getAlbumId() {
 		return mAlbumId;
 	}
+	
 	public String getType(){
 		return mType;
+	}
+	
+	public char getFirstChar(){
+		return mFirstChar;
 	}
 
 }

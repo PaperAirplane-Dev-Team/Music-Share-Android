@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.paperairplane.music.share.R;
+//import com.paperairplane.music.share.MyLogger;
 
 public class MusicListAdapter extends BaseAdapter /*implements SectionIndexer */{
 	private Context mContext;
@@ -35,7 +36,7 @@ public class MusicListAdapter extends BaseAdapter /*implements SectionIndexer */
 				firstChar = firstChar.substring(0, 1);
 			}
 			firstChar = PinyinHelper.toHanyuPinyinStringArray(firstChar.toCharArray()[0])[0].toUpperCase();
-			Log.d(Consts.DEBUG_TAG,"Ê××ÖÄ¸+"+firstChar);
+			MyLogger.d(Consts.DEBUG_TAG,"Ê××ÖÄ¸+"+firstChar);
 			mMap.put(i, firstChar);
 		}
 		*/

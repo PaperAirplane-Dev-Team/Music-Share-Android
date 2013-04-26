@@ -19,13 +19,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import com.paperairplane.music.share.MyLogger;
 
 public class AtSuggestionActivity extends Activity {
 	private ListView mLvAtSuggestion;
@@ -107,7 +108,7 @@ public class AtSuggestionActivity extends Activity {
 				StringBuffer result = new StringBuffer(getIntent().getExtras().getString("content"));
 				result.replace(start, start+1, mAdapterSugestion.getItem(position));
 				selection = start + mAdapterSugestion.getItem(position).length();
-				Log.d(Consts.DEBUG_TAG,result.toString());
+				MyLogger.d(Consts.DEBUG_TAG,result.toString());
 				mExtras.putString("content", result.toString());
 				mExtras.putInt("selection", selection);
 				mIntent.putExtras(mExtras);
@@ -122,7 +123,7 @@ public class AtSuggestionActivity extends Activity {
 		mThreadRefresh = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				Log.d(Consts.DEBUG_TAG, "搜寻建议");
+				MyLogger.d(Consts.DEBUG_TAG, "搜寻建议");
 				WeiboParameters params = new WeiboParameters();
 				params.add("access_token", Main.sAccessToken.getToken());
 				params.add("q", mEtUserNick.getText().toString().replace("@", ""));
@@ -134,7 +135,7 @@ public class AtSuggestionActivity extends Activity {
 							new RequestListener() {
 								@Override
 								public void onComplete(String result) {
-									Log.v(Consts.DEBUG_TAG, "获取到结果："
+									MyLogger.v(Consts.DEBUG_TAG, "获取到结果："
 											+ result);
 									final List<String> fetched_data = new ArrayList<String>();
 									fetched_data.add(0, mEtUserNick.getText().toString());
@@ -146,7 +147,7 @@ public class AtSuggestionActivity extends Activity {
 															.getString(
 																	"nickname")+" ";
 											fetched_data.add(nickname);
-											Log.v(Consts.DEBUG_TAG, "添加数据"
+											MyLogger.v(Consts.DEBUG_TAG, "添加数据"
 													+ nickname);
 										}
 										m.obj = fetched_data;
@@ -160,7 +161,7 @@ public class AtSuggestionActivity extends Activity {
 								@Override
 								public void onError(WeiboException e) {
 									e.printStackTrace();
-									Log.e(Consts.DEBUG_TAG, "获取错误"+e.getStatusCode()+e.getMessage());
+									MyLogger.e(Consts.DEBUG_TAG, "获取错误"+e.getStatusCode()+e.getMessage());
 								}
 
 								@Override

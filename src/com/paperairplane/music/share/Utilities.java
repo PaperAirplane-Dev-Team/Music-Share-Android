@@ -38,7 +38,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
-import android.util.Log;
+
+import com.paperairplane.music.share.MyLogger;
 
 public class Utilities {
 
@@ -76,13 +77,13 @@ public class Utilities {
 	 */
 	public static String[] getMusicAndArtworkUrl(String title, String artist,
 			Context context, Handler handler) {
-		Log.v(Consts.DEBUG_TAG, "方法 getMusicAndArtworkUrl被调用");
+		MyLogger.v(Consts.DEBUG_TAG, "方法 getMusicAndArtworkUrl被调用");
 		String json = getJson(title, artist, handler);
 		String info[] = new String[5];
 		if (json == null) {
 			info[Consts.ArraySubscript.MUSIC] = context
 					.getString(R.string.no_music_url_found);
-			Log.v(Consts.DEBUG_TAG, "方法 getMusicAndArtworkUrl获得空的json字符串");
+			MyLogger.v(Consts.DEBUG_TAG, "方法 getMusicAndArtworkUrl获得空的json字符串");
 		} else {
 			try {
 				JSONObject rootObject = new JSONObject(json);
@@ -111,7 +112,7 @@ public class Utilities {
 					info[Consts.ArraySubscript.VERSION] = null;
 				}
 			} catch (JSONException e) {
-				Log.e(Consts.DEBUG_TAG, "JSON解析错误");
+				MyLogger.e(Consts.DEBUG_TAG, "JSON解析错误");
 				e.printStackTrace();
 				info[Consts.ArraySubscript.MUSIC] = context
 						.getString(R.string.no_music_url_found);
@@ -120,10 +121,10 @@ public class Utilities {
 		if (info[Consts.ArraySubscript.ALBUM] != null) {
 			info[Consts.ArraySubscript.ALBUM] = info[Consts.ArraySubscript.ALBUM]
 					.replace("[\"", "").replace("\"]", "");
-			Log.d(Consts.DEBUG_TAG, info[Consts.ArraySubscript.ALBUM]);
+			MyLogger.d(Consts.DEBUG_TAG, info[Consts.ArraySubscript.ALBUM]);
 		}
-		// Log.v(Consts.DEBUG_TAG, info[MUSIC]);
-		// Log.v(Consts.DEBUG_TAG, info[ARTWORK]);
+		// MyLogger.v(Consts.DEBUG_TAG, info[MUSIC]);
+		// MyLogger.v(Consts.DEBUG_TAG, info[ARTWORK]);
 		// 加Log的话如果上面那两个值有null就会崩溃……懒得catch
 		return info;
 	}
@@ -164,18 +165,18 @@ public class Utilities {
 			Bitmap bitmap = BitmapFactory.decodeStream(Utilities
 					.getImageStream(artworkUrl));
 			Utilities.saveFile(bitmap, fileName, artwork_path);
-			Log.v(Consts.DEBUG_TAG, "获取专辑封面成功");
+			MyLogger.v(Consts.DEBUG_TAG, "获取专辑封面成功");
 			return fileName;
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e(Consts.DEBUG_TAG, "获取专辑封面失败" + e.getMessage());
+			MyLogger.e(Consts.DEBUG_TAG, "获取专辑封面失败" + e.getMessage());
 			return null;
 		}
 	}
 
 	// 通过豆瓣API获取音乐信息
 	private static String getJson(String title, String artist, Handler handler) {
-		Log.v(Consts.DEBUG_TAG, "方法 getJSON被调用");
+		MyLogger.v(Consts.DEBUG_TAG, "方法 getJSON被调用");
 		String json = null;
 		HttpResponse httpResponse;
 		try {
@@ -183,23 +184,23 @@ public class Utilities {
 					+ java.net.URLEncoder.encode(
 							(title + "+" + artist).replaceAll(" ", "+"),
 							"UTF-8");
-			Log.v(Consts.DEBUG_TAG, "方法 getJSON将要进行的请求为" + api_url);
+			MyLogger.v(Consts.DEBUG_TAG, "方法 getJSON将要进行的请求为" + api_url);
 			HttpUriRequest httpGet = new HttpGet(api_url);
 			httpGet.addHeader("User-Agent", "Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))");
 			HttpClient client = new DefaultHttpClient();			
 			httpResponse = client.execute(httpGet);
-			Log.v(Consts.DEBUG_TAG, "进行的HTTP GET返回状态为"
+			MyLogger.v(Consts.DEBUG_TAG, "进行的HTTP GET返回状态为"
 					+ httpResponse.getStatusLine().getStatusCode());
 			if (httpResponse.getStatusLine().getStatusCode() == 200) {
 				
 				json = EntityUtils.toString(httpResponse.getEntity());
-				Log.v(Consts.DEBUG_TAG, "返回结果为" + json);
+				MyLogger.v(Consts.DEBUG_TAG, "返回结果为" + json);
 			} else {
 				handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
 				json = null;
 			}
 		} catch (Exception e) {
-			Log.v(Consts.DEBUG_TAG, "抛出错误" + e.getMessage());
+			MyLogger.v(Consts.DEBUG_TAG, "抛出错误" + e.getMessage());
 			handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
 			e.printStackTrace();
 			json = null;
@@ -228,7 +229,7 @@ public class Utilities {
 		device_info.append(" Release:" + Build.VERSION.RELEASE + "\r");
 		HttpPost post = null;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		Log.v(Consts.DEBUG_TAG, "content is " + content + "\r"
+		MyLogger.v(Consts.DEBUG_TAG, "content is " + content + "\r"
 				+ "device info is :" + device_info.toString());
 		try {
 			switch (feedbackMean) {
@@ -252,17 +253,17 @@ public class Utilities {
 						+ device_info.toString(), null, null, false);
 				return true;
 			}
-			Log.v(Consts.DEBUG_TAG, "param is " + params.toString());
+			MyLogger.v(Consts.DEBUG_TAG, "param is " + params.toString());
 			post.setEntity(new UrlEncodedFormEntity(params));
 			HttpResponse response = new DefaultHttpClient().execute(post);
 			if (response.getStatusLine().getStatusCode() == 200) {
-				Log.v(Consts.DEBUG_TAG, "Feedback succeed");
+				MyLogger.v(Consts.DEBUG_TAG, "Feedback succeed");
 				return true;
 			} else
 				throw new RuntimeException();
 
 		} catch (Exception e) {
-			Log.d(Consts.DEBUG_TAG, "Feedbak failed");
+			MyLogger.d(Consts.DEBUG_TAG, "Feedbak failed");
 			e.printStackTrace();
 			return false;
 		}
@@ -317,7 +318,7 @@ public class Utilities {
 						b = tmp;
 					}
 				}
-				Log.v(Consts.DEBUG_TAG,"方法Utilities.getLocalArtwork返回Bitmap");
+				MyLogger.v(Consts.DEBUG_TAG,"方法Utilities.getLocalArtwork返回Bitmap");
 				return b;
 			} catch (FileNotFoundException e) {
 			} finally {
@@ -345,7 +346,7 @@ public class Utilities {
 
 	public static void checkForUpdate(final int versionCode,
 			final Handler handler, final Context context, final Locale currentLocale) {
-		Log.v(Consts.DEBUG_TAG, "方法checkForUpdate被调用");
+		MyLogger.v(Consts.DEBUG_TAG, "方法checkForUpdate被调用");
 		Thread updateThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -362,26 +363,26 @@ public class Utilities {
 			HttpGet httpGet;
 			if(!Consts.DEBUG_ON){
 			httpGet = new HttpGet(Consts.Url.CHECK_UPDATE);
-			Log.v(Consts.DEBUG_TAG, "方法 checkForUpdate将要进行的请求为"
+			MyLogger.v(Consts.DEBUG_TAG, "方法 checkForUpdate将要进行的请求为"
 					+ Consts.Url.CHECK_UPDATE);
 			}else{
 				httpGet = new HttpGet(Consts.Url.CHECK_TEST_UPDATE);
-				Log.v(Consts.DEBUG_TAG, "方法 checkForUpdate将要进行的请求为"
+				MyLogger.v(Consts.DEBUG_TAG, "方法 checkForUpdate将要进行的请求为"
 						+ Consts.Url.CHECK_TEST_UPDATE);
 			}
 			httpResponse = new DefaultHttpClient().execute(httpGet);
-			Log.v(Consts.DEBUG_TAG, "进行的HTTP GET返回状态为"
+			MyLogger.v(Consts.DEBUG_TAG, "进行的HTTP GET返回状态为"
 					+ httpResponse.getStatusLine().getStatusCode());
 			if (httpResponse.getStatusLine().getStatusCode() == 200) {
 				json = EntityUtils.toString(httpResponse.getEntity());
-				Log.v(Consts.DEBUG_TAG, "返回结果为" + json);
+				MyLogger.v(Consts.DEBUG_TAG, "返回结果为" + json);
 			} else {
 				json = null;
 				handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
 				return;
 			}
 		} catch (Exception e) {
-			Log.v(Consts.DEBUG_TAG, "抛出错误" + e.getMessage());
+			MyLogger.v(Consts.DEBUG_TAG, "抛出错误" + e.getMessage());
 			handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
 			//e.printStackTrace();
 			json = null;

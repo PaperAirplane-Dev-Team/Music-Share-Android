@@ -8,7 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+
+import com.paperairplane.music.share.MyLogger;
 
 class QueryAndShareMusicInfo extends Thread {
 	private long mAlbumId;
@@ -32,7 +33,7 @@ class QueryAndShareMusicInfo extends Thread {
 		}
 		try {
 			boolean flag = (mAlbumId != Consts.NULL)&& (Utilities.getLocalArtwork(mContext, mAlbumId, 10, 10) != null);
-			Log.d(Consts.DEBUG_TAG,"是否有本地插图："+flag);
+			MyLogger.d(Consts.DEBUG_TAG,"是否有本地插图："+flag);
 			if (flag) {
 				//你丫不能省省?1X1就够了判断啊
 				//有问题啊！！！问题是！
@@ -40,14 +41,14 @@ class QueryAndShareMusicInfo extends Thread {
 						Utilities.getLocalArtwork(mContext, mAlbumId, 300, 300),
 						mAlbum + "_" + mArtist + ".jpg", mArtworkPath);
 				fileName = mArtworkPath + mAlbum + "_" + mArtist + ".jpg";
-				Log.d(Consts.DEBUG_TAG, "获取本地封面成功");
+				MyLogger.d(Consts.DEBUG_TAG, "获取本地封面成功");
 			} else {
 				fileName = mArtworkPath
 						+ Utilities.getArtwork(artworkUrl, mAlbum, mArtist,
 								mArtworkPath);
 			}
 		} catch (Exception e) {
-			Log.e(Consts.DEBUG_TAG, "Error Occured");
+			MyLogger.e(Consts.DEBUG_TAG, "Error Occured");
 			e.printStackTrace();
 			// fileName = mArtworkPath + Utilities.getArtwork(artworkUrl, mTitle,
 			// mArtworkPath);
@@ -62,7 +63,7 @@ class QueryAndShareMusicInfo extends Thread {
 			if (fileName != null) {
 				intent.putExtra(Intent.EXTRA_STREAM,
 						Uri.fromFile(new File(fileName)));
-				Log.d(Consts.DEBUG_TAG, "Intent " + fileName);
+				MyLogger.d(Consts.DEBUG_TAG, "Intent " + fileName);
 				type = "image/*";
 			}
 			intent.setType(type);
@@ -88,7 +89,7 @@ class QueryAndShareMusicInfo extends Thread {
 		if (fileName != null) {
 			intent.putExtra(Intent.EXTRA_STREAM,
 					Uri.fromFile(new File(fileName)));
-			Log.d(Consts.DEBUG_TAG, "Intent " + fileName);
+			MyLogger.d(Consts.DEBUG_TAG, "Intent " + fileName);
 			type = "image/*";
 		}
 		intent.setType(type);

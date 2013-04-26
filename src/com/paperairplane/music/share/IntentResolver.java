@@ -14,7 +14,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.paperairplane.music.share.MyLogger;
 
 public class IntentResolver {
 	private static Context mCtx;
@@ -37,18 +38,19 @@ public class IntentResolver {
 		pm = ctx.getPackageManager();
 		List<ResolveInfo> info = pm.queryIntentActivities(i,
 				PackageManager.MATCH_DEFAULT_ONLY);
-		Log.d(Consts.DEBUG_TAG,"handleIntent");
+		MyLogger.d(Consts.DEBUG_TAG,"handleIntent");
 		// 这里区分ACTION_SEND和ACTION_VIEW
-		if (view) {
-			// 若为ACTION_VIEW,去除分享选项
-			Iterator<ResolveInfo> it = info.iterator();
-			while (it.hasNext()) {
-				if (it.next().labelRes == R.string.title_activity_main) {
-					it.remove();
-				}
+		Iterator<ResolveInfo> it = info.iterator();
+		while (it.hasNext()) {
+			if (it.next().labelRes == R.string.title_activity_main) {
+				it.remove();
 			}
-		}else{
+		}
+		if (!view) {
+			// 若为ACTION_VIEW,去除分享选项
 			//若为SEND，增加内置的微博发布器
+			//同学,SEND也要去掉自己的,不然会有自己很jiong的
+			//不对,目测不对,怎么样才能让播放还有发送的时候不出现自己……
 			ResolveInfo share2weibo = new ResolveInfo();
 			share2weibo.icon = R.drawable.weibo_logo;
 			share2weibo.labelRes = R.string.share2weibo;
@@ -87,6 +89,7 @@ public class IntentResolver {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			//找到资源
+			//这东西CM弄来的?怎么这么难看啊……
 			View vwItem = LayoutInflater.from(mCtx).inflate(R.layout.intent_item, null);
 			ImageView ivItemIcon = (ImageView)vwItem.findViewById(R.id.intent_item_icon);
 			TextView tvItemText = (TextView)vwItem.findViewById(R.id.intent_item_text);
@@ -116,7 +119,7 @@ public class IntentResolver {
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
 				ResolveInfo ri = info.get(position);
-				boolean isInternal = ri.activityInfo.flags == Consts.ShareMeans.INTERNAL;
+				boolean isInternal = (ri.activityInfo.flags == Consts.ShareMeans.INTERNAL);
 				if (!isInternal){
 					//采用其它分享方式
 				       Intent intent = new Intent(i);
@@ -132,7 +135,7 @@ public class IntentResolver {
 		                intent.setComponent(new ComponentName(cn.getPackageName(),cn.getClassName()));
 		                mCtx.startActivity(intent);
 				}else{
-					//采用內置的分享方式
+					//采用内置的分享方式
 					Bundle bundle ;
 					bundle = i.getExtras();
 					Message m = mHandler.obtainMessage(Consts.Status.SEND_WEIBO, bundle);
