@@ -34,7 +34,6 @@
     <string name="unauth">取消授权</string>
     <string name="auth_succeed">授权成功</string>
     <string name="unauthed">已取消授权</string>
-    <string name="share2others">分享到别处</string>
     <string name="share2weibo">分享到微博</string>
     <string name="followauthor">关注开发者</string>
     <string name="search">搜索互联网</string>

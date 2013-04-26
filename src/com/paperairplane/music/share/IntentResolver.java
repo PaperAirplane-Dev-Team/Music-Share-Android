@@ -3,30 +3,41 @@ package com.paperairplane.music.share;
 import java.util.Iterator;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.DataSetObserver;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class IntentResolver {
 	private static Context mCtx;
+	private static PackageManager pm;
+	private static Handler mHandler;
 
-	public static void handleIntent(Context ctx, Intent i) {
+	public static void handleIntent(Context ctx, Intent i,Handler handler) {
 		mCtx = ctx;
+		mHandler = handler;
 		boolean view = i.getAction().equals(Intent.ACTION_VIEW);
-		final PackageManager pm = ctx.getPackageManager();
+		pm = ctx.getPackageManager();
 		List<ResolveInfo> info = pm.queryIntentActivities(i,
 				PackageManager.MATCH_DEFAULT_ONLY);
+		Log.d(Consts.DEBUG_TAG,"handleIntent");
 		// 这里区分ACTION_SEND和ACTION_VIEW
 		if (view) {
 			// 若为ACTION_VIEW,去除分享选项
@@ -36,94 +47,109 @@ public class IntentResolver {
 					it.remove();
 				}
 			}
+		}else{
+			//若为SEND，增加内置的微博发布器
+			ResolveInfo share2weibo = new ResolveInfo();
+			share2weibo.icon = R.drawable.weibo_logo;
+			share2weibo.labelRes = R.string.share2weibo;
+			share2weibo.activityInfo = new ActivityInfo();
+			share2weibo.activityInfo.flags = Consts.ShareMeans.INTERNAL;
+			info.add(0,share2weibo);
 		}
-		showDialog(info, view);
+		showDialog(info, view,i);
 	}
-//TODO To be continued.
-	private static void showDialog(List<ResolveInfo> info, boolean view) {
-		Dialog intentDialog = new Dialog(mCtx);
-		ListView v = new ListView(mCtx);
-		v.setAdapter(new ListAdapter(){
+	private static class IntentListAdapter extends BaseAdapter{
+
+		List<ResolveInfo> info;
+		
+	    public IntentListAdapter(List<ResolveInfo> info){
+	    	this.info = info;
+	    }
+
+		@Override
+		public int getCount() {
+
+			return info.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+
+			return info.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			//找到资源
 			View vwItem = LayoutInflater.from(mCtx).inflate(R.layout.intent_item, null);
 			ImageView ivItemIcon = (ImageView)vwItem.findViewById(R.id.intent_item_icon);
 			TextView tvItemText = (TextView)vwItem.findViewById(R.id.intent_item_text);
-			@Override
-			public int getCount() {
-				// TODO Auto-generated method stub
-				return 0;
+			//为资源定义值
+			Drawable icon ;
+			String label;
+			ResolveInfo ri = info.get(position);
+			if (ri.activityInfo.flags!=Consts.ShareMeans.INTERNAL){
+				icon = ri.activityInfo.loadIcon(pm);
+				label = ri.activityInfo.loadLabel(pm).toString();
+			}else{
+				icon = mCtx.getResources().getDrawable(ri.icon);
+				label = mCtx.getString(ri.labelRes);
+
 			}
+			ivItemIcon.setImageDrawable(icon);
+			tvItemText.setText(label);
+			return vwItem;
+		}
+		
+	}
+	private static void showDialog(final List<ResolveInfo> info, boolean view, final Intent i) {
+		Dialog intentDialog = new Dialog(mCtx);
+		OnItemClickListener listener = new OnItemClickListener(){
 
 			@Override
-			public Object getItem(int arg0) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public long getItemId(int arg0) {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public int getItemViewType(int arg0) {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public View getView(int arg0, View arg1, ViewGroup arg2) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public int getViewTypeCount() {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public boolean hasStableIds() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean isEmpty() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public void registerDataSetObserver(DataSetObserver arg0) {
-				// TODO Auto-generated method stub
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				ResolveInfo ri = info.get(position);
+				boolean isInternal = ri.activityInfo.flags == Consts.ShareMeans.INTERNAL;
+				if (!isInternal){
+					//采用其它分享方式
+				       Intent intent = new Intent(i);
+				        intent.setFlags(
+				                intent.getFlags() &~
+				                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+				        intent.addFlags(
+				                Intent.FLAG_ACTIVITY_FORWARD_RESULT |
+				                Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		                ComponentName cn = new ComponentName(
+		                        ri.activityInfo.applicationInfo.packageName,
+		                        ri.activityInfo.name);
+		                intent.setComponent(new ComponentName(cn.getPackageName(),cn.getClassName()));
+		                mCtx.startActivity(intent);
+				}else{
+					//采用內置的分享方式
+					Bundle bundle ;
+					bundle = i.getExtras();
+					Message m = mHandler.obtainMessage(Consts.Status.SEND_WEIBO, bundle);
+					mHandler.sendMessage(m);
+				}
 				
-			}
-
-			@Override
-			public void unregisterDataSetObserver(DataSetObserver arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public boolean areAllItemsEnabled() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean isEnabled(int arg0) {
-				// TODO Auto-generated method stub
-				return false;
 			}
 			
-		});
+		};
+		ListView v = new ListView(mCtx);
+		v.setAdapter(new IntentListAdapter(info));
+		v.setOnItemClickListener(listener);
 		intentDialog.setContentView(v);
 		String title = (view) ? mCtx.getString(R.string.how_to_play) : mCtx
 				.getString(R.string.how_to_share);
 		intentDialog.setTitle(title);
+		intentDialog.show();
 	}
 
 }

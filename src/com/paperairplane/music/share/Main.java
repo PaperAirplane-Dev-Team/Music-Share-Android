@@ -16,7 +16,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -37,8 +36,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -80,8 +77,6 @@ public class Main extends ListActivity {
 	private String mBackgroundPath = null;
 	private SharedPreferences mPreferencesTheme;
 
-	// private MusicListAdapter mMusicListAdapter = new MusicListAdapter(null,
-	// null);
 
 	@Override
 	// 主体
@@ -318,6 +313,7 @@ public class Main extends ListActivity {
 	 * 显示Overlay的方法。添加indexOverlay这个View
 	 */
 	private void showOverlay() {
+		/*
 		try {
 			getWindowManager()
 					.addView(
@@ -332,6 +328,7 @@ public class Main extends ListActivity {
 		} catch (IllegalStateException e) {
 			Log.e(Consts.DEBUG_TAG, "Overlay Exception");
 		}
+		*/
 	}
 
 	@Override
@@ -696,15 +693,10 @@ public class Main extends ListActivity {
 				@Override
 				public void onClick(DialogInterface dialog, int whichButton) {
 					switch (whichButton) {
-					case DialogInterface.BUTTON_POSITIVE:
-						shareMusic(music.getTitle(), music.getArtist(),
-								music.getAlbum(), music.getAlbumId(),
-								Consts.ShareMeans.WEIBO);
-						break;
 					case DialogInterface.BUTTON_NEGATIVE:
 						shareMusic(music.getTitle(), music.getArtist(),
-								music.getAlbum(), music.getAlbumId(),
-								Consts.ShareMeans.OTHERS);
+								music.getAlbum(), music.getAlbumId()
+								);
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
 						sendFile(music);
@@ -717,8 +709,7 @@ public class Main extends ListActivity {
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.choose_an_operation)
 					.setView(musicInfoView)
-					.setNegativeButton(R.string.share2others, listenerMain)
-					.setPositiveButton(R.string.share2weibo, listenerMain)
+					.setNegativeButton(R.string.share, listenerMain)
 					.setNeutralButton(R.string.send_file, listenerMain).show();
 			break;
 		case Consts.Dialogs.SEARCH:
@@ -742,8 +733,8 @@ public class Main extends ListActivity {
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
-									.toString(), Consts.NULL,
-									Consts.ShareMeans.WEIBO);
+									.toString(), Consts.NULL
+									);
 							mDialogSearch.cancel();
 						}
 						break;
@@ -753,8 +744,8 @@ public class Main extends ListActivity {
 						} else {
 							shareMusic(et_title.getText().toString(), et_artist
 									.getText().toString(), et_album.getText()
-									.toString(), Consts.NULL,
-									Consts.ShareMeans.OTHERS);
+									.toString(), Consts.NULL
+									);
 							mDialogSearch.cancel();
 						}
 						break;
@@ -763,8 +754,8 @@ public class Main extends ListActivity {
 			};
 			mDialogSearch = new AlertDialog.Builder(this).setView(search)
 					.setCancelable(true).setOnCancelListener(onCancelListener)
-					.setPositiveButton(R.string.share2weibo, listenerSearch)
-					.setNegativeButton(R.string.share2others, listenerSearch)
+					.setPositiveButton(R.string.share, listenerSearch)
+					.setNegativeButton(R.string.share, listenerSearch)
 					.setTitle(R.string.search)
 					.setIcon(android.R.drawable.ic_dialog_info).create();
 			mDialogSearch.show();
@@ -1081,7 +1072,7 @@ public class Main extends ListActivity {
 					}
 				});
 				final Bundle bundle = (Bundle) msg.obj;
-				String _content = bundle.getString("content");
+				String _content = bundle.getString(Intent.EXTRA_TEXT);
 				final String artworkUrl = bundle.getString("artworkUrl");
 				final String fileName = bundle.getString("fileName");
 				int selection = bundle.getInt("selection", _content.length());
@@ -1217,6 +1208,8 @@ public class Main extends ListActivity {
 
 				}
 				break;
+			case Consts.Status.MUSIC_INFO_FETCHED:
+				IntentResolver.handleIntent(Main.this, (Intent)msg.obj, mHandler);
 			}
 
 		}
@@ -1302,9 +1295,9 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void shareMusic(String title, String artist, String album,
-			long albumId, int means) {
+			long albumId) {
 		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
-				artist, album, albumId, means, getApplicationContext(),
+				artist, album, albumId, getApplicationContext(),
 				mHandler);
 		query.start();
 		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG)

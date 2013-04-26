@@ -11,7 +11,6 @@ import android.os.Message;
 import android.util.Log;
 
 class QueryAndShareMusicInfo extends Thread {
-	private int mShareMean;
 	private long mAlbumId;
 	private String mArtist, mTitle, mAlbum;
 	private Context mContext;
@@ -54,6 +53,7 @@ class QueryAndShareMusicInfo extends Thread {
 			// mArtworkPath);
 			// 咦上面那句是什么情况……
 		}
+		/*
 		switch (mShareMean) {
 		case Consts.ShareMeans.OTHERS:
 			String type = "text/plain";
@@ -75,14 +75,33 @@ class QueryAndShareMusicInfo extends Thread {
 			break;
 		case Consts.ShareMeans.WEIBO:
 			Bundle bundle = new Bundle();
-			bundle.putString("content", content);
-			bundle.putString("artworkUrl", artworkUrl);
-			bundle.putString("fileName", fileName);
+			bundle.putString(Intent.EXTRA_TEXT, content);
+
 			Message m = mHandler.obtainMessage(Consts.Status.SEND_WEIBO, bundle);
 			mHandler.sendMessage(m);
 			break;
 		}
+		*/
+		String type = "text/plain";
 
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		if (fileName != null) {
+			intent.putExtra(Intent.EXTRA_STREAM,
+					Uri.fromFile(new File(fileName)));
+			Log.d(Consts.DEBUG_TAG, "Intent " + fileName);
+			type = "image/*";
+		}
+		intent.setType(type);
+		intent.putExtra(Intent.EXTRA_SUBJECT,
+				mContext.getString(R.string.app_name));
+		intent.putExtra(Intent.EXTRA_TEXT, content);
+		Bundle bundle = new Bundle();
+		bundle.putString("artworkUrl", artworkUrl);
+		bundle.putString("fileName", fileName);
+		intent.putExtras(bundle);
+		Message m = mHandler.obtainMessage(Consts.Status.MUSIC_INFO_FETCHED);
+		m.obj = (Object) intent;
+		m.sendToTarget();
 	}
 
 	private String genContent(String[] info) {
@@ -109,12 +128,11 @@ class QueryAndShareMusicInfo extends Thread {
 	}
 
 	public QueryAndShareMusicInfo(String title, String artist, String album,
-			long albumId, int shareMean, Context context, Handler handler) {
+			long albumId,Context context, Handler handler) {
 		mAlbumId = albumId;
 		mTitle = title;
 		mArtist = artist;
 		mAlbum = album;
-		mShareMean = shareMean;
 		mContext = context;
 		mHandler = handler;
 		mArtworkPath = context.getExternalCacheDir().getAbsolutePath() +

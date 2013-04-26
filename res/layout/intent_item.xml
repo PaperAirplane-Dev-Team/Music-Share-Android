@@ -14,31 +14,35 @@
      limitations under the License.
  -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="@dimen/grid_width"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
   android:layout_height="wrap_content"
-  android:background="@drawable/holo_selection"
-  android:orientation="vertical" >
+  android:background="#FFFFFF"
+  android:orientation="horizontal" >
 
-    <ImageView android:id="@+id/intent_item_icon"
-      android:width="@dimen/grid_image_width"
-      android:height="@dimen/grid_image_height"
-      android:layout_width="@dimen/grid_width"
-      android:layout_height="@dimen/grid_height"
-      android:contentDescription="@null"
-      android:layout_centerInParent="true"
-      android:scaleType="center"
-      android:src="@null" />
+    <ImageView
+                android:layout_marginTop="20dp"
+        
+        android:id="@+id/intent_item_icon"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:contentDescription="@null"
+        android:height="50sp"
+        android:scaleType="fitCenter"
+        android:src="@null"
+        android:width="50sp" />
 
-    <TextView android:id="@+id/intent_item_text"
-      android:layout_width="@dimen/grid_width"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"
-      android:textAppearance="@style/secondary_text_appearance"
-      android:paddingBottom="@dimen/default_margin"
-      android:gravity="center"
-      android:textStyle="bold"
-      android:singleLine="true"
-      android:ellipsize="end" />
+    <TextView
+                android:layout_marginTop="20dp"
+        
+        android:id="@+id/intent_item_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="left|center_vertical"
+        android:singleLine="true"
+        android:textAppearance="@style/IntentTextViewStyle"
+        android:textSize="20sp"
+        android:textStyle="normal" />
 
-</RelativeLayout>
+</LinearLayout>

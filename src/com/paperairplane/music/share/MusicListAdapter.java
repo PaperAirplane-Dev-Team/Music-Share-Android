@@ -9,13 +9,36 @@ import android.widget.TextView;
 
 import com.paperairplane.music.share.R;
 
-public class MusicListAdapter extends BaseAdapter {
+public class MusicListAdapter extends BaseAdapter /*implements SectionIndexer */{
 	private Context mContext;
 	private MusicData mMusicDatas[];
+//	private Map<Integer,String> mMap = new HashMap<Integer,String>();
+	
 
 	public MusicListAdapter(Context context, MusicData musicdatas[]) {
 		mContext = context;
 		mMusicDatas = musicdatas;// 不要Cursor了……
+		/*
+		int length = mMusicDatas.length;
+		for (int i=0;i<length;i++){
+			String firstChar = mMusicDatas[i].getTitle();
+			if (firstChar.toLowerCase(Locale.getDefault()).startsWith(
+					"the ")) {
+				firstChar = firstChar.substring(4, 5);
+			} else if (firstChar.toLowerCase(Locale.getDefault())
+					.startsWith("a ")) {
+				firstChar = firstChar.substring(2, 3);
+			} else if (firstChar.toLowerCase(Locale.getDefault())
+					.startsWith("an ")) {
+				firstChar = firstChar.substring(3, 4);
+			} else {
+				firstChar = firstChar.substring(0, 1);
+			}
+			firstChar = PinyinHelper.toHanyuPinyinStringArray(firstChar.toCharArray()[0])[0].toUpperCase();
+			Log.d(Consts.DEBUG_TAG,"首字母+"+firstChar);
+			mMap.put(i, firstChar);
+		}
+		*/
 	}
 
 	public int getCount() {
@@ -42,5 +65,22 @@ public class MusicListAdapter extends BaseAdapter {
 		tvSinger.setText(mMusicDatas[position].getArtist());
 		return convertView;
 	}
+/*
+	@Override
+	public int getPositionForSection(int section) {
+		//TODO Xas
+		return 0;
+	}
 
+	@Override
+	public int getSectionForPosition(int position) {
+		
+		return mMap.get(position).codePointAt(0);
+	}
+
+	@Override
+	public Object[] getSections() {
+		return null;
+	}
+*/
 }
