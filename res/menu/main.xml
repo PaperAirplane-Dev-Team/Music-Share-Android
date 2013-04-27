@@ -4,7 +4,8 @@
         android:id="@+id/menu_update"
         android:icon="@android:drawable/ic_menu_view"
         android:orderInCategory="4"
-        android:title="@string/menu_update">
+        android:title="@string/menu_update"
+        >
     </item>
     <item
         android:id="@+id/menu_clean_cache"

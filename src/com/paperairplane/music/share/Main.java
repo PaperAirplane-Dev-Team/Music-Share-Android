@@ -120,25 +120,28 @@ public class Main extends ListActivity {
 		// 读取已存储的授权信息
 		Main.sAccessToken = mWeiboHelper.readAccessToken();
 		// 启动用于检查更新的后台线程
-		Thread updateThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				mHandler.postDelayed(new Runnable() {
-
-					@Override
-					public void run() {
-						Utilities.checkForUpdate(Main.sVersionCode, mHandler,
-								Main.this,
-								getResources().getConfiguration().locale);
-
-					}
-				}, 5000);
-				MyLogger.i(Consts.DEBUG_TAG, "休息休息");
-				// 如果用Thread.sleep会让整个程序ANR..
-			}
-		});
-		updateThread.setPriority(Thread.MIN_PRIORITY);
-		updateThread.start();
+		MyLogger.d(Consts.DEBUG_TAG, "On Play Store?"+Consts.ON_PLAY_STORE);
+		if (!Consts.ON_PLAY_STORE){
+			Thread updateThread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					mHandler.postDelayed(new Runnable() {
+	
+						@Override
+						public void run() {
+							Utilities.checkForUpdate(Main.sVersionCode, mHandler,
+									Main.this,
+									getResources().getConfiguration().locale);
+	
+						}
+					}, 5000);
+					MyLogger.i(Consts.DEBUG_TAG, "休息休息");
+					// 如果用Thread.sleep会让整个程序ANR..
+				}
+			});
+			updateThread.setPriority(Thread.MIN_PRIORITY);
+			updateThread.start();
+		}
 		setBackground();
 		/*
 		 * System.loadLibrary("utilities"); MyLogger.w(Consts.DEBUG_TAG,
@@ -426,6 +429,9 @@ public class Main extends ListActivity {
 		} else {
 			menu.add(Menu.NONE, Consts.MenuItem.UNAUTH, 2, R.string.unauth)
 					.setIcon(android.R.drawable.ic_menu_delete);
+		}
+		if (Consts.ON_PLAY_STORE){
+			menu.removeItem(R.id.menu_update);
 		}
 		return true;
 	}
