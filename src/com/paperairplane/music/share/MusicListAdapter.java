@@ -1,52 +1,45 @@
 package com.paperairplane.music.share;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.paperairplane.music.share.R;
-//import com.paperairplane.music.share.MyLogger;
 
-public class MusicListAdapter extends BaseAdapter /*implements SectionIndexer */{
+//TODO 有点错乱的说…太晚了脑子不清醒
+public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	private Context mContext;
 	private MusicData mMusicDatas[];
-//	private Map<Integer,String> mMap = new HashMap<Integer,String>();
-	
+	private int[] mMap;
 
 	public MusicListAdapter(Context context, MusicData musicdatas[]) {
 		mContext = context;
 		mMusicDatas = musicdatas;// 不要Cursor了……
-		/*
-		int length = mMusicDatas.length;
-		for (int i=0;i<length;i++){
-			String firstChar = mMusicDatas[i].getTitle();
-			if (firstChar.toLowerCase(Locale.getDefault()).startsWith(
-					"the ")) {
-				firstChar = firstChar.substring(4, 5);
-			} else if (firstChar.toLowerCase(Locale.getDefault())
-					.startsWith("a ")) {
-				firstChar = firstChar.substring(2, 3);
-			} else if (firstChar.toLowerCase(Locale.getDefault())
-					.startsWith("an ")) {
-				firstChar = firstChar.substring(3, 4);
-			} else {
-				firstChar = firstChar.substring(0, 1);
+		Arrays.sort(mMusicDatas, new Comparator<MusicData>() {
+			@Override
+			public int compare(MusicData lhs, MusicData rhs) {
+				return lhs.compareTo(rhs);
 			}
-			firstChar = PinyinHelper.toHanyuPinyinStringArray(firstChar.toCharArray()[0])[0].toUpperCase();
-			MyLogger.d(Consts.DEBUG_TAG,"首字母+"+firstChar);
-			mMap.put(i, firstChar);
+		});
+		int length = mMusicDatas.length;
+		mMap = new int[27];
+		for (int i = length-1; i >= 0; i--) {
+			MusicData a =mMusicDatas[i];
+			mMap[mMusicDatas[i].getFirstChar() - 65] = i;
 		}
-		*/
 	}
 
 	public int getCount() {
-//		if (mMusicDatas != null) {
-			return mMusicDatas.length;
-//		}
-//		return 0;
+		// if (mMusicDatas != null) {
+		return mMusicDatas.length;
+		// }
+		// return 0;
 	}
 
 	public Object getItem(int position) {
@@ -66,22 +59,25 @@ public class MusicListAdapter extends BaseAdapter /*implements SectionIndexer */
 		tvSinger.setText(mMusicDatas[position].getArtist());
 		return convertView;
 	}
-/*
+
 	@Override
 	public int getPositionForSection(int section) {
-		//TODO Xas
-		return 0;
+		return mMap[section];
 	}
 
 	@Override
 	public int getSectionForPosition(int position) {
-		
-		return mMap.get(position).codePointAt(0);
+
+		return mMusicDatas[position].getFirstChar() - 65;
 	}
 
 	@Override
 	public Object[] getSections() {
-		return null;
+		char[] s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
+		Character[] charArr = new Character[27];
+		for (int i = 0; i < 27; i++)
+			charArr[i] = Character.valueOf(s[i]);
+		return charArr;
 	}
-*/
+
 }

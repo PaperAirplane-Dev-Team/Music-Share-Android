@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Random;
 
+import net.sourceforge.pinyin4j.PinyinHelper;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -80,7 +81,8 @@ public class Main extends ListActivity {
 
 	@Override
 	// 主体
-	//我跟你丫没完你去掉了IndexOverlay的初始化不在onResume和onStop去掉啊……
+	// 我跟你丫没完你去掉了IndexOverlay的初始化不在onResume和onStop去掉啊……
+//	只是它突然没法启动我才去掉的啊！！！！！！！！！！！！！！！！！
 	public void onCreate(Bundle savedInstanceState) {
 		MyLogger.i(Consts.DEBUG_TAG, "调试模式:" + Consts.DEBUG_ON);
 		super.onCreate(savedInstanceState);
@@ -93,7 +95,8 @@ public class Main extends ListActivity {
 			handleIntent(i.getData());
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			this.setVisible(false);
-			//留给你黑糊糊的
+			// 留给你黑糊糊的
+//			TODO 发布之前解决！
 			return;
 		}
 		setContentView(R.layout.main);
@@ -102,7 +105,8 @@ public class Main extends ListActivity {
 		initListView();
 		try {
 			generateMusicList();
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		firstShow();
 		mSsoHandler = new SsoHandler(Main.this, mWeibo);
@@ -118,19 +122,19 @@ public class Main extends ListActivity {
 		// 读取已存储的授权信息
 		Main.sAccessToken = mWeiboHelper.readAccessToken();
 		// 启动用于检查更新的后台线程
-		MyLogger.d(Consts.DEBUG_TAG, "On Play Store?"+Consts.ON_PLAY_STORE);
-		if (!Consts.ON_PLAY_STORE){
+		MyLogger.d(Consts.DEBUG_TAG, "On Play Store?" + Consts.ON_PLAY_STORE);
+		if (!Consts.ON_PLAY_STORE) {
 			Thread updateThread = new Thread(new Runnable() {
 				@Override
 				public void run() {
 					mHandler.postDelayed(new Runnable() {
-	
+
 						@Override
 						public void run() {
-							Utilities.checkForUpdate(Main.sVersionCode, mHandler,
-									Main.this,
-									getResources().getConfiguration().locale);
-	
+							Utilities.checkForUpdate(Main.sVersionCode,
+									mHandler, Main.this, getResources()
+											.getConfiguration().locale);
+
 						}
 					}, 5000);
 					MyLogger.i(Consts.DEBUG_TAG, "休息休息");
@@ -178,7 +182,7 @@ public class Main extends ListActivity {
 	/**
 	 * 一个脑残的功能=.=
 	 */
-	//private native String doNothing();
+	// private native String doNothing();
 
 	private void initShakeDetector() {
 		try {
@@ -302,6 +306,7 @@ public class Main extends ListActivity {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private void setBackground() {
 		mBackgroundPath = mPreferencesTheme.getString(
 				Consts.Preferences.BG_PATH, null);
@@ -338,14 +343,13 @@ public class Main extends ListActivity {
 	protected void onStop() {
 		MyLogger.d(Consts.DEBUG_TAG, "onStop()");
 		// 将当前Overlay的显示状态保存到SharedPreferences
-/*		if (mTvIndexOverlay.getVisibility() == View.VISIBLE) {
-			getWindowManager().removeView(mTvIndexOverlay);
-			SharedPreferences pref = getSharedPreferences(
-					Consts.Preferences.OVERLAY, MODE_PRIVATE);
-			Editor edit = pref.edit();
-			edit.putBoolean("resume", true);
-			edit.commit();
-		}*/
+		/*
+		 * if (mTvIndexOverlay.getVisibility() == View.VISIBLE) {
+		 * getWindowManager().removeView(mTvIndexOverlay); SharedPreferences
+		 * pref = getSharedPreferences( Consts.Preferences.OVERLAY,
+		 * MODE_PRIVATE); Editor edit = pref.edit(); edit.putBoolean("resume",
+		 * true); edit.commit(); }
+		 */
 		// 关闭摇动检查
 		if (mCanDetectShake)
 			mShakeDetector.stop();
@@ -364,7 +368,7 @@ public class Main extends ListActivity {
 		boolean resume = pref.getBoolean("resume", false);
 		if (resume) {
 			showOverlay();
-			//mTvIndexOverlay.setVisibility(View.INVISIBLE);
+			// mTvIndexOverlay.setVisibility(View.INVISIBLE);
 			// 我说了得这样……
 		}
 
@@ -427,7 +431,7 @@ public class Main extends ListActivity {
 			menu.add(Menu.NONE, Consts.MenuItem.UNAUTH, 2, R.string.unauth)
 					.setIcon(android.R.drawable.ic_menu_delete);
 		}
-		if (Consts.ON_PLAY_STORE){
+		if (Consts.ON_PLAY_STORE) {
 			menu.removeItem(R.id.menu_update);
 		}
 		return true;
@@ -1214,8 +1218,8 @@ public class Main extends ListActivity {
 				}
 				break;
 			case Consts.Status.MUSIC_INFO_FETCHED:
-				IntentResolver.handleIntent(Main.this, (Intent) msg.obj,
-						mHandler);
+				IntentResolver ir = new IntentResolver();
+				ir.handleIntent(Main.this, (Intent) msg.obj, mHandler);
 			}
 
 		}
@@ -1284,17 +1288,6 @@ public class Main extends ListActivity {
 		musicData.setAlbum(cursor.getString(4).trim());
 		musicData.setAlbumId(cursor.getLong(5));
 		musicData.setType(cursor.getString(6));
-		String title=musicData.getTitle();
-		if(Character.isLetter(title.charAt(0))){
-			musicData.setFirstChar(title.toUpperCase(Locale.getDefault()).charAt(0));
-			//MyLogger.d(Consts.DEBUG_TAG, "English Letter");
-			//我只有英文歌……
-		}
-		else{
-			//musicData.setFirstChar(PinyinHelper.toHanyuPinyinStringArray(title.charAt(0))[0].substring(0, 1)
-				//.toUpperCase(Locale.getDefault()).charAt(0));
-			//异常……
-		}
 		return musicData;
 	}
 

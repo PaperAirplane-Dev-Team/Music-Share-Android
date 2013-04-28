@@ -27,14 +27,28 @@ import android.widget.TextView;
 import com.paperairplane.music.share.MyLogger;
 
 public class IntentResolver {
-	private static Context mCtx;
-	private static PackageManager pm;
-	private static Handler mHandler;
+	private Context mCtx;
+	private PackageManager pm;
+	private Handler mHandler;
+	private Class<?> mClassInternalR,mClassId,mClassLayout,mClassDrawable;
 
-	public static void handleIntent(Context ctx, Intent i, Handler handler) {
+	public void handleIntent(Context ctx, Intent i, Handler handler) {
 		mCtx = ctx;
 		mHandler = handler;
 		boolean view = i.getAction().equals(Intent.ACTION_VIEW);
+		try {
+			mClassInternalR = Class.forName("com.android.internal.R");
+			@SuppressWarnings("rawtypes")
+			Class[] classArr = mClassInternalR.getClasses();
+			mClassId= classArr[8];
+			mClassDrawable= classArr[9];
+			mClassLayout = classArr[6];
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// 我蛋疼了……内部类只能这么用……
 		pm = ctx.getPackageManager();
 		List<ResolveInfo> info = pm.queryIntentActivities(i,
 				PackageManager.MATCH_DEFAULT_ONLY);
@@ -61,7 +75,7 @@ public class IntentResolver {
 		showDialog(info, view, i);
 	}
 
-	private static class IntentListAdapter extends BaseAdapter {
+	private class IntentListAdapter extends BaseAdapter {
 
 		List<ResolveInfo> info;
 
@@ -89,26 +103,42 @@ public class IntentResolver {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View vwItem = LayoutInflater
-					.from(mCtx)
-					.inflate(com.android.internal.R.layout.resolve_list_item, null);
-			ImageView ivItemIcon = (ImageView) vwItem
-					.findViewById(com.android.internal.R.id.icon);
-			TextView tvItemLabel = (TextView) vwItem
-					.findViewById(com.android.internal.R.id.text1);
-			TextView tvItemExtended = (TextView) vwItem
-					.findViewById(com.android.internal.R.id.text2);
-			//为了方便你我先这样,建议你赶紧改造了那个android.jar
+			int idResolveListItem = 0, idIcon = 0, idText1 = 0, idText2 = 0;
+			try {
+
+				idResolveListItem = mClassLayout.getField("resolve_list_item")
+						.getInt(null);
+				idIcon = mClassId.getField("icon").getInt(null);
+				idText1 = mClassId.getField("text1").getInt(null);
+				idText2 = mClassId.getField("text2").getInt(null);
+
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			View vwItem = LayoutInflater.from(mCtx).inflate(idResolveListItem,
+					null);
+			// 为了方便你我先这样,建议你赶紧改造了那个android.jar
 			// 为资源定义值
+			ImageView ivItemIcon = (ImageView) vwItem.findViewById(idIcon);
+			TextView tvItemLabel = (TextView) vwItem.findViewById(idText1);
+			TextView tvItemExtended = (TextView) vwItem.findViewById(idText2);
 			Drawable icon;
-			String label , extended;
+			String label, extended;
 			ResolveInfo ri = info.get(position);
 			if (ri.activityInfo.flags != Consts.ShareMeans.INTERNAL) {
 				icon = ri.activityInfo.loadIcon(pm);
 				label = ri.activityInfo.loadLabel(pm).toString();
-				//总觉得我们获取的东西还不对,例如(求不要吐槽)微信的分享有两个
-				//一个分享到朋友圈一个发送给朋友,现在都显示成"微信"
-				//我看那代码里面有一个什么来着,好像是LabeledIntent
+				// 总觉得我们获取的东西还不对,例如(求不要吐槽)微信的分享有两个
+				// 一个分享到朋友圈一个发送给朋友,现在都显示成"微信"
+				// 我看那代码里面有一个什么来着,好像是LabeledIntent
 				extended = ri.activityInfo.packageName;
 			} else {
 				icon = mCtx.getResources().getDrawable(ri.icon);
@@ -118,13 +148,13 @@ public class IntentResolver {
 			ivItemIcon.setImageDrawable(icon);
 			tvItemLabel.setText(label);
 			tvItemExtended.setText(extended);
-			/*if (!Consts.DEBUG_ON)*/ tvItemExtended.setVisibility(View.GONE);
+			tvItemExtended.setVisibility(View.GONE);
 			return vwItem;
 		}
 
 	}
 
-	private static void showDialog(final List<ResolveInfo> info, boolean view,
+	private void showDialog(final List<ResolveInfo> info, boolean view,
 			final Intent i) {
 		final Dialog intentDialog = new Dialog(mCtx);
 		OnItemClickListener listener = new OnItemClickListener() {
@@ -157,12 +187,29 @@ public class IntentResolver {
 					mHandler.sendMessage(m);
 				}
 				intentDialog.cancel();
-				//你忘了这个!不然总是留着
+				// 你忘了这个!不然总是留着
 			}
 
 		};
+		
 		ListView v = new ListView(mCtx);
-		//Annoying ListView Solved
+		// Annoying ListView Solved
+		int color=0;
+		try {
+			color = mClassDrawable.getField("activity_picker_bg").getInt(null);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//TODO 这一团糟！！不能只关心你那4.X!!!
+		v.setBackgroundColor(color);
+		v.setCacheColorHint(color);
 		v.setAdapter(new IntentListAdapter(info));
 		v.setOnItemClickListener(listener);
 		intentDialog.setContentView(v);
@@ -170,7 +217,7 @@ public class IntentResolver {
 				.getString(R.string.how_to_share);
 		intentDialog.setTitle(title);
 		intentDialog.show();
-		
+
 	}
 
 }
