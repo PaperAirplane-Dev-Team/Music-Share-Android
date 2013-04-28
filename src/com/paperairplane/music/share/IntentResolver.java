@@ -89,36 +89,36 @@ public class IntentResolver {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			// 找到资源
-			// 这东西CM弄来的?怎么这么难看啊……
-			// View vwItem =
-			// LayoutInflater.from(mCtx).inflate(R.layout.intent_item, null);
-			// ImageView ivItemIcon =
-			// (ImageView)vwItem.findViewById(R.id.intent_item_icon);
-			// TextView tvItemText =
-			// (TextView)vwItem.findViewById(R.id.intent_item_text);
 			View vwItem = LayoutInflater
 					.from(mCtx)
-					.inflate(Consts.HiddenId.activity_chooser_view_list_item, null);
+					.inflate(com.android.internal.R.layout.resolve_list_item, null);
 			ImageView ivItemIcon = (ImageView) vwItem
-					.findViewById(Consts.HiddenId.icon);
-			TextView tvItemText = (TextView) vwItem
-					.findViewById(Consts.HiddenId.title);
+					.findViewById(com.android.internal.R.id.icon);
+			TextView tvItemLabel = (TextView) vwItem
+					.findViewById(com.android.internal.R.id.text1);
+			TextView tvItemExtended = (TextView) vwItem
+					.findViewById(com.android.internal.R.id.text2);
 			//为了方便你我先这样,建议你赶紧改造了那个android.jar
 			// 为资源定义值
 			Drawable icon;
-			String label;
+			String label , extended;
 			ResolveInfo ri = info.get(position);
 			if (ri.activityInfo.flags != Consts.ShareMeans.INTERNAL) {
 				icon = ri.activityInfo.loadIcon(pm);
 				label = ri.activityInfo.loadLabel(pm).toString();
+				//总觉得我们获取的东西还不对,例如(求不要吐槽)微信的分享有两个
+				//一个分享到朋友圈一个发送给朋友,现在都显示成"微信"
+				//我看那代码里面有一个什么来着,好像是LabeledIntent
+				extended = ri.activityInfo.packageName;
 			} else {
 				icon = mCtx.getResources().getDrawable(ri.icon);
 				label = mCtx.getString(ri.labelRes);
-
+				extended = mCtx.getPackageName();
 			}
 			ivItemIcon.setImageDrawable(icon);
-			tvItemText.setText(label);
+			tvItemLabel.setText(label);
+			tvItemExtended.setText(extended);
+			/*if (!Consts.DEBUG_ON)*/ tvItemExtended.setVisibility(View.GONE);
 			return vwItem;
 		}
 
@@ -126,7 +126,7 @@ public class IntentResolver {
 
 	private static void showDialog(final List<ResolveInfo> info, boolean view,
 			final Intent i) {
-		Dialog intentDialog = new Dialog(mCtx);
+		final Dialog intentDialog = new Dialog(mCtx);
 		OnItemClickListener listener = new OnItemClickListener() {
 
 			@Override
@@ -156,12 +156,13 @@ public class IntentResolver {
 							Consts.Status.SEND_WEIBO, bundle);
 					mHandler.sendMessage(m);
 				}
-
+				intentDialog.cancel();
+				//你忘了这个!不然总是留着
 			}
 
 		};
-		ListView v = new ListView(mCtx, null, Consts.HiddenId.dropDownListViewStyle);
-		//FIXME 我真心受不了了……
+		ListView v = new ListView(mCtx);
+		//Annoying ListView Solved
 		v.setAdapter(new IntentListAdapter(info));
 		v.setOnItemClickListener(listener);
 		intentDialog.setContentView(v);

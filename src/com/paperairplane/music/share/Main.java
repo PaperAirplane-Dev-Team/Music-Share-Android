@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Random;
 
-import net.sourceforge.pinyin4j.PinyinHelper;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -15,7 +14,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -304,7 +302,6 @@ public class Main extends ListActivity {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	private void setBackground() {
 		mBackgroundPath = mPreferencesTheme.getString(
 				Consts.Preferences.BG_PATH, null);
