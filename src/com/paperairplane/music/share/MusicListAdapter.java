@@ -46,6 +46,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 		}
 		getSections();
 		MyLogger.d(Consts.DEBUG_TAG, "Have " + mSectionMap.size() + " values");
+		
 	}
 
 	public int getCount() {
@@ -86,6 +87,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 		return position;
 		// 这一滚动就乱是啥意思……
 		// 我明白了,你没有处理那些指向是0(不存在以此开头的歌曲)的section
+
 	}
 
 	@Override

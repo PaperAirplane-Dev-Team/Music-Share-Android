@@ -78,9 +78,8 @@ public class Main extends ListActivity {
 	@Override
 	// 主体
 	// 我跟你丫没完你去掉了IndexOverlay的初始化不在onResume和onStop去掉啊……
-//	只是它突然没法启动我才去掉的啊！！！！！！！！！！！！！！！！！
+	// 只是它突然没法启动我才去掉的啊！！！！！！！！！！！！！！！！！
 	public void onCreate(Bundle savedInstanceState) {
-		MyLogger.i(Consts.DEBUG_TAG, "调试模式:" + Consts.DEBUG_ON);
 		super.onCreate(savedInstanceState);
 		Intent i = getIntent();
 		String action = i.getAction();
@@ -92,7 +91,7 @@ public class Main extends ListActivity {
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			this.setVisible(false);
 			// 留给你黑糊糊的
-//			TODO FIXME 发布之前解决！
+			// TODO 发布之前解决！
 			return;
 		}
 		setContentView(R.layout.main);
@@ -118,28 +117,25 @@ public class Main extends ListActivity {
 		// 读取已存储的授权信息
 		Main.sAccessToken = mWeiboHelper.readAccessToken();
 		// 启动用于检查更新的后台线程
-		MyLogger.d(Consts.DEBUG_TAG, "On Play Store?" + Consts.ON_PLAY_STORE);
-		if (!Consts.ON_PLAY_STORE) {
-			Thread updateThread = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					mHandler.postDelayed(new Runnable() {
+		Thread updateThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				mHandler.postDelayed(new Runnable() {
 
-						@Override
-						public void run() {
-							Utilities.checkForUpdate(Main.sVersionCode,
-									mHandler, Main.this, getResources()
-											.getConfiguration().locale);
+					@Override
+					public void run() {
+						Utilities.checkForUpdate(Main.sVersionCode, mHandler,
+								Main.this,
+								getResources().getConfiguration().locale);
 
-						}
-					}, 5000);
-					MyLogger.i(Consts.DEBUG_TAG, "休息休息");
-					// 如果用Thread.sleep会让整个程序ANR..
-				}
-			});
-			updateThread.setPriority(Thread.MIN_PRIORITY);
-			updateThread.start();
-		}
+					}
+				}, 5000);
+				// 如果用Thread.sleep会让整个程序ANR..
+			}
+		});
+		updateThread.setPriority(Thread.MIN_PRIORITY);
+		updateThread.start();
+
 		setBackground();
 		/*
 		 * System.loadLibrary("utilities"); MyLogger.w(Consts.DEBUG_TAG,
@@ -234,6 +230,19 @@ public class Main extends ListActivity {
 			}
 		});
 		/*
+		 * 初始化Overlay，从SharedPreferences里读取Overlay的背景色
+		 */
+		// TODO 文本颜色选择
+		SharedPreferences preference = getSharedPreferences(
+				Consts.Preferences.GENERAL, MODE_PRIVATE);
+		if (preference.contains(Consts.Preferences.BG_COLOR)) {
+			/*
+			 * mTvIndexOverlay.setBackgroundColor(android.graphics.Color
+			 * .parseColor(preference.getString( Consts.Preferences.BG_COLOR,
+			 * "")));
+			 */
+		}
+		/*
 		 * 初始化ListView
 		 */
 		mLvMain = (ListView) findViewById(android.R.id.list);// 找LisView的ID
@@ -241,44 +250,29 @@ public class Main extends ListActivity {
 		mLvMain.setEmptyView(vwEmpty);
 		// FIXME:EmptyView突然很无力……
 		mLvMain.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
+		// P.S. 删了你写的这么多代码表示很抱歉……但是官方取代民间是历史发展必然
+		// 我早就在你之前删了
 	}
 
 	@SuppressWarnings("deprecation")
 	private void setBackground() {
 		mBackgroundPath = mPreferencesTheme.getString(
 				Consts.Preferences.BG_PATH, null);
-		MyLogger.d(Consts.DEBUG_TAG, "读取到的地址" + mBackgroundPath);
 		View main_layout = findViewById(R.id.main_linearLayout);
+		/*
+		 * 这里判断SharedPreferences里读到的背景是否存在并设置，不存在则使用默认壁纸
+		 */
 		if (mBackgroundPath == null || !new File(mBackgroundPath).exists()) {
 			// 原来可以不用catch...
 			main_layout.setBackgroundResource(R.drawable.background_holo_dark);
-			MyLogger.d(Consts.DEBUG_TAG, "设置为默认壁纸");
 		} else {
 			main_layout.setBackgroundDrawable(Drawable
 					.createFromPath(mBackgroundPath));
-			MyLogger.d(Consts.DEBUG_TAG, "设置为自定壁纸" + mBackgroundPath);
 		}
-	}
-
-	/**
-	 * 显示Overlay的方法。添加indexOverlay这个View
-	 */
-	private void showOverlay() {
-		/*
-		 * try { getWindowManager() .addView( mTvIndexOverlay, new
-		 * WindowManager.LayoutParams( LayoutParams.WRAP_CONTENT,
-		 * LayoutParams.WRAP_CONTENT,
-		 * WindowManager.LayoutParams.TYPE_APPLICATION,
-		 * WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
-		 * WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-		 * PixelFormat.TRANSLUCENT)); } catch (IllegalStateException e) {
-		 * MyLogger.e(Consts.DEBUG_TAG, "Overlay Exception"); }
-		 */
 	}
 
 	@Override
 	protected void onStop() {
-		MyLogger.d(Consts.DEBUG_TAG, "onStop()");
 		// 将当前Overlay的显示状态保存到SharedPreferences
 		/*
 		 * if (mTvIndexOverlay.getVisibility() == View.VISIBLE) {
@@ -299,16 +293,6 @@ public class Main extends ListActivity {
 		// 恢复摇动检测
 		if (mCanDetectShake)
 			mShakeDetector.start();
-		// 读取并恢复Overlay的可见性
-		SharedPreferences pref = getSharedPreferences(
-				Consts.Preferences.OVERLAY, MODE_PRIVATE);
-		boolean resume = pref.getBoolean("resume", false);
-		if (resume) {
-			showOverlay();
-			// mTvIndexOverlay.setVisibility(View.INVISIBLE);
-			// 我说了得这样……
-		}
-
 	}
 
 	@Override
@@ -317,7 +301,6 @@ public class Main extends ListActivity {
 		// 这里判断接收到的Intent是来自AtSuggestion还是微博SSO授权
 		// 还有可爱的背景
 		if (requestCode == Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE) {
-			MyLogger.d(Consts.DEBUG_TAG, "返回");
 			// 这里根据bundle的数据重启dialogSendWeibo
 			mDialogSendWeibo.dismiss();
 			Message m = mHandler.obtainMessage(Consts.Status.SEND_WEIBO);
@@ -334,7 +317,6 @@ public class Main extends ListActivity {
 			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
 			mBackgroundPath = cursor.getString(columnIndex);
 			cursor.close();
-			MyLogger.d(Consts.DEBUG_TAG, "取到的背景地址：" + mBackgroundPath);
 			showCustomDialog(null, Consts.Dialogs.CHANGE_BACKGROUND);
 
 		} else {
@@ -400,7 +382,6 @@ public class Main extends ListActivity {
 				fileCount = files.length;
 				for (File f : files) {
 					f.delete();
-					MyLogger.v(Consts.DEBUG_TAG, f.getName() + " deleted.");
 					// 虽然比起来常规for可能性能差……不过不过不过！好歹我发现了for-each!
 					// Effective Java建议多用for-each……
 				}
@@ -445,7 +426,6 @@ public class Main extends ListActivity {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				MyLogger.v(Consts.DEBUG_TAG, e.getMessage());
 			}
 			break;
 		case Consts.MenuItem.AUTH:
@@ -490,8 +470,6 @@ public class Main extends ListActivity {
 				|| Main.sAccessToken.isSessionValid() == false) {
 			flag = false;
 		}
-		MyLogger.d(Consts.DEBUG_TAG, "方法isAccessTokenExistAndValid()被调用,结果"
-				+ flag);
 		return flag;
 	}
 
@@ -662,7 +640,6 @@ public class Main extends ListActivity {
 					.setNeutralButton(R.string.send_file, listenerMain).show();
 			break;
 		case Consts.Dialogs.SEARCH:
-			MyLogger.v(Consts.DEBUG_TAG, "点击footer");
 			View search = LayoutInflater.from(this).inflate(R.layout.search,
 					null);
 			final EditText et_title = (EditText) search
@@ -819,7 +796,6 @@ public class Main extends ListActivity {
 			if (mPreferencesTheme.contains(Consts.Preferences.BG_COLOR)) {
 				nowColor = mPreferencesTheme.getString(
 						Consts.Preferences.BG_COLOR, "");
-				MyLogger.d(Consts.DEBUG_TAG, "Got origin color");
 			} else {
 				nowColor = Consts.ORIGIN_COLOR;
 			}
@@ -832,7 +808,7 @@ public class Main extends ListActivity {
 					nowColor.substring(7, 9), 16);
 			colorInt[Consts.Color.OPACITY] = Integer.valueOf(
 					nowColor.substring(1, 3), 16);
-			MyLogger.d(Consts.DEBUG_TAG, "Integers are: " + colorInt[0] + " "
+			MyLogger.i(Consts.DEBUG_TAG, "Integers are: " + colorInt[0] + " "
 					+ colorInt[1] + " " + colorInt[2] + " " + colorInt[3]);
 			for (int i = 0; i < 4; i++) {
 				seekColor[i].setProgress(colorInt[i]);
@@ -853,6 +829,12 @@ public class Main extends ListActivity {
 							//mTvIndexOverlay
 									//.setBackgroundColor(android.graphics.Color
 											//.parseColor(color));
+							// TODO 把Overlay颜色选择器改成TextView颜色选择器
+							/*
+							 * mTvIndexOverlay
+							 * .setBackgroundColor(android.graphics.Color
+							 * .parseColor(color));
+							 */
 							MyLogger.d(Consts.DEBUG_TAG, "自定义颜色:" + color);
 						}
 						break;
@@ -868,6 +850,12 @@ public class Main extends ListActivity {
 								//.setBackgroundColor(android.graphics.Color
 										//.parseColor(Consts.ORIGIN_COLOR));
 						mDialogChangeColor.cancel();
+						/*
+						 * mTvIndexOverlay
+						 * .setBackgroundColor(android.graphics.Color
+						 * .parseColor(Consts.ORIGIN_COLOR));
+						 * mDialogChangeColor.cancel();
+						 */
 						break;
 					}
 				}
@@ -983,8 +971,6 @@ public class Main extends ListActivity {
 				playMusic(music);
 			}
 		});
-		// MyLogger.d(Consts.DEBUG_TAG,"view:"+
-		// albumArt.getHeight()+","+albumArt.getWidth());
 		return musicInfo;
 	}
 
@@ -1042,7 +1028,7 @@ public class Main extends ListActivity {
 							int before, int count) {
 						try {
 							if (s.toString().charAt(start) == '@') {
-								MyLogger.d(Consts.DEBUG_TAG, "@ CAUGHT!"); // @提醒
+								MyLogger.i(Consts.DEBUG_TAG, "@ CAUGHT!"); // @提醒
 								// 我有错，我悔过
 								Intent i = new Intent(Main.this,
 										AtSuggestionActivity.class);
@@ -1081,11 +1067,6 @@ public class Main extends ListActivity {
 											saveSendStatus(content,
 													cb.isChecked(), artworkUrl,
 													fileName);
-											MyLogger.d(
-													Consts.DEBUG_TAG,
-													"null?"
-															+ (mWeiboHelper
-																	.getListener() == null));
 											mSsoHandler.authorize(mWeiboHelper
 													.getListener());// 授权
 										} else {
@@ -1097,7 +1078,6 @@ public class Main extends ListActivity {
 									}
 
 								}).show();
-				MyLogger.v(Consts.DEBUG_TAG, "弹出微博编辑对话框");
 				break;
 			case Consts.Status.SEND_SUCCEED:// 发送成功
 				Toast.makeText(Main.this, R.string.send_succeed,
@@ -1188,7 +1168,6 @@ public class Main extends ListActivity {
 	 * 
 	 */
 	private void generateMusicList() throws NullPointerException {
-		MyLogger.d(Consts.DEBUG_TAG, "方法generateMusicList被调用");
 		Cursor cursor = getContentResolver().query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				Consts.MEDIA_INFO,
@@ -1373,7 +1352,7 @@ public class Main extends ListActivity {
 	 *            [] info传回的各种更新信息 通过返回的更新信息显示对话框让用户决定是否更新程序
 	 */
 	private void updateApp(final String[] info) {
-		new AlertDialog.Builder(Main.this)
+		AlertDialog.Builder builder = new AlertDialog.Builder(Main.this)
 				.setIcon(android.R.drawable.ic_dialog_info)
 				.setTitle(R.string.update_found)
 				.setMessage(info[Consts.ArraySubscript.UPDATE_INFO])
@@ -1387,27 +1366,28 @@ public class Main extends ListActivity {
 										uri);
 								startActivity(intent);
 							}
-						})
-				.setNegativeButton(R.string.update_view,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Uri uri = Uri
-										.parse("market://details?id=com.paperairplane.music.share");
-								Intent intent = new Intent(Intent.ACTION_VIEW,
-										uri);
-								try {
-									startActivity(intent);
-								} catch (ActivityNotFoundException e) {
-									e.printStackTrace();
-									Toast.makeText(
-											getApplicationContext(),
-											getString(R.string.update_no_market_found),
-											Toast.LENGTH_SHORT).show();
-								}
-							}
-						}).show();
+						});
+		if (!Consts.ON_PLAY_STORE) {
+			builder.setNegativeButton(R.string.update_view,
+
+			new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Uri uri = Uri
+							.parse("market://details?id=com.paperairplane.music.share");
+					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+					try {
+						startActivity(intent);
+					} catch (ActivityNotFoundException e) {
+						e.printStackTrace();
+						Toast.makeText(getApplicationContext(),
+								getString(R.string.update_no_market_found),
+								Toast.LENGTH_SHORT).show();
+					}
+				}
+			});
+		}
+		builder.show();
 
 	}
 
@@ -1437,12 +1417,9 @@ public class Main extends ListActivity {
 									mDialogWelcome.cancel();
 								}
 							}).create();
-			MyLogger.v(Consts.DEBUG_TAG, "首次启动对话框已初始化");
 			mDialogWelcome.show();
-			MyLogger.v(Consts.DEBUG_TAG, "首次启动对话框已显示");
 			preferences.edit().putBoolean("hasFirstStarted", true).commit();
-		} else
-			MyLogger.d(Consts.DEBUG_TAG, "非首次启动");
-	}
+		}
 
+	}
 }

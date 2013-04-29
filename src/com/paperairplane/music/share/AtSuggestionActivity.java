@@ -108,7 +108,6 @@ public class AtSuggestionActivity extends Activity {
 				StringBuffer result = new StringBuffer(getIntent().getExtras().getString("content"));
 				result.replace(start, start+1, mAdapterSugestion.getItem(position));
 				selection = start + mAdapterSugestion.getItem(position).length();
-				MyLogger.d(Consts.DEBUG_TAG,result.toString());
 				mExtras.putString("content", result.toString());
 				mExtras.putInt("selection", selection);
 				mIntent.putExtras(mExtras);
@@ -123,7 +122,6 @@ public class AtSuggestionActivity extends Activity {
 		mThreadRefresh = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				MyLogger.d(Consts.DEBUG_TAG, "搜寻建议");
 				WeiboParameters params = new WeiboParameters();
 				params.add("access_token", Main.sAccessToken.getToken());
 				params.add("q", mEtUserNick.getText().toString().replace("@", ""));
@@ -135,8 +133,6 @@ public class AtSuggestionActivity extends Activity {
 							new RequestListener() {
 								@Override
 								public void onComplete(String result) {
-									MyLogger.v(Consts.DEBUG_TAG, "获取到结果："
-											+ result);
 									final List<String> fetched_data = new ArrayList<String>();
 									fetched_data.add(0, mEtUserNick.getText().toString());
 									try {
