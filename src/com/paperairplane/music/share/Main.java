@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Random;
 
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -77,19 +76,15 @@ public class Main extends ListActivity {
 
 	@Override
 	// 主体
-	// 我跟你丫没完你去掉了IndexOverlay的初始化不在onResume和onStop去掉啊……
-	// 只是它突然没法启动我才去掉的啊！！！！！！！！！！！！！！！！！
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// 此处判断是否接收到其它App发来的Intent，并判断Intent携带的Uri是否为null。符合则处理。
 		Intent i = getIntent();
 		String action = i.getAction();
 		boolean isDataNull = i.getData() == null;
-
 		if ((action.equals("android.intent.action.VIEW") || action
 				.equals("android.intent.action.SEND")) && !isDataNull) {
 			handleIntent(i.getData());
-			requestWindowFeature(Window.FEATURE_NO_TITLE);
-			this.setVisible(false);
 			// 留给你黑糊糊的
 			// TODO 发布之前解决！
 			return;
@@ -156,6 +151,9 @@ public class Main extends ListActivity {
 	 *            要处理的Intent
 	 */
 	private void handleIntent(Uri uri) {
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setTheme(android.R.style.Theme_Dialog);
+		//FIXME android.music是通过setContentView直接实现的……可是我们用的是Dialog……
 		try {
 			Cursor cursor = getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -170,11 +168,11 @@ public class Main extends ListActivity {
 			e.printStackTrace();
 		}
 	}
+	// private native String doNothing();
 
 	/**
 	 * 一个脑残的功能=.=
 	 */
-	// private native String doNothing();
 
 	private void initShakeDetector() {
 		try {
@@ -370,8 +368,8 @@ public class Main extends ListActivity {
 			break;
 		case R.id.menu_change_color:
 			Toast.makeText(Main.this, "暂时不可用", Toast.LENGTH_LONG);
-			//FIXME 把这个换到别的地方,可以再利用的吧,例如以后背景/文字
-			//showCustomDialog(null, Consts.Dialogs.CHANGE_COLOR);
+			// FIXME 把这个换到别的地方,可以再利用的吧,例如以后背景/文字
+			// showCustomDialog(null, Consts.Dialogs.CHANGE_COLOR);
 			break;
 		case R.id.menu_clean_cache:
 			String ARTWORK_PATH = getExternalCacheDir().getAbsolutePath()
@@ -826,9 +824,9 @@ public class Main extends ListActivity {
 									.edit()
 									.putString(Consts.Preferences.BG_COLOR,
 											color).commit();
-							//mTvIndexOverlay
-									//.setBackgroundColor(android.graphics.Color
-											//.parseColor(color));
+							// mTvIndexOverlay
+							// .setBackgroundColor(android.graphics.Color
+							// .parseColor(color));
 							// TODO 把Overlay颜色选择器改成TextView颜色选择器
 							/*
 							 * mTvIndexOverlay
@@ -846,9 +844,9 @@ public class Main extends ListActivity {
 								.edit()
 								.putString(Consts.Preferences.BG_COLOR,
 										Consts.ORIGIN_COLOR).commit();
-						//mTvIndexOverlay
-								//.setBackgroundColor(android.graphics.Color
-										//.parseColor(Consts.ORIGIN_COLOR));
+						// mTvIndexOverlay
+						// .setBackgroundColor(android.graphics.Color
+						// .parseColor(Consts.ORIGIN_COLOR));
 						mDialogChangeColor.cancel();
 						/*
 						 * mTvIndexOverlay

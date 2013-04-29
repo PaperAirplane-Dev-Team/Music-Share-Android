@@ -133,7 +133,22 @@ public class WeiboHelper {
 		params.add("uid", uid);
 		String url = "https://mApi.weibo.com/2/friendships/create.json";
 		try {
-			AsyncWeiboRunner.request(url, params, "POST", null);
+			AsyncWeiboRunner.request(url, params, "POST",
+					new RequestListener() {
+						@Override
+						public void onComplete(String response) {
+						}
+
+						@Override
+						public void onIOException(IOException e) {
+						}
+
+						@Override
+						public void onError(WeiboException e) {
+							
+						}
+
+					});
 		} catch (Exception e) {
 		}
 		// 既然关注就悄悄地进行不报错了

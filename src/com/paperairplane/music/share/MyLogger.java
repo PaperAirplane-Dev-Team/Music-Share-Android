@@ -2,6 +2,7 @@ package com.paperairplane.music.share;
 
 import android.util.Log;
 
+@SuppressWarnings("unused")
 public class MyLogger {
 
 	public static int d(String tag, String msg) {

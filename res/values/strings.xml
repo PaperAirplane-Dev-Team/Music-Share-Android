@@ -34,7 +34,7 @@
     <string name="unauth">Unauthorize</string>
     <string name="auth_succeed">Succeeded</string>
     <string name="unauthed">Unauthorized</string>
-    <string name="share2weibo">Share to Weibo(Internal)</string>
+    <string name="share2weibo">Share to Weibo</string>
     <string name="followauthor">Follow Author</string>
     <string name="search">Search the Internet</string>
     <string name="title">Title</string>
