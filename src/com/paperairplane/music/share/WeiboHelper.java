@@ -42,8 +42,8 @@ public class WeiboHelper {
 	public WeiboHelper(Handler handler, Context context) {
 		mHandler = handler;
 		mContext = context;
-		mPreferences = mContext.getSharedPreferences(
-				Consts.Preferences.WEIBO, Context.MODE_APPEND);
+		mPreferences = mContext.getSharedPreferences(Consts.Preferences.WEIBO,
+				Context.MODE_APPEND);
 		mEditor = mPreferences.edit();
 	}
 
@@ -56,7 +56,7 @@ public class WeiboHelper {
 		if (mAuthListener == null) {
 			mAuthListener = new AuthDialogListener();
 		}
-		MyLogger.v(Consts.DEBUG_TAG,"方法WeiboHelper::getListener()被调用");
+		MyLogger.v(Consts.DEBUG_TAG, "方法WeiboHelper::getListener()被调用");
 		return mAuthListener;
 	}
 
@@ -133,21 +133,7 @@ public class WeiboHelper {
 		params.add("uid", uid);
 		String url = "https://mApi.weibo.com/2/friendships/create.json";
 		try {
-			AsyncWeiboRunner.request(url, params, "POST",
-					new RequestListener() {
-						@Override
-						public void onComplete(String arg0) {
-							MyLogger.v("Music Share DUBUG", "followed");
-						}
-
-						@Override
-						public void onError(WeiboException arg0) {
-						}
-
-						@Override
-						public void onIOException(IOException arg0) {
-						}
-					});
+			AsyncWeiboRunner.request(url, params, "POST", null);
 		} catch (Exception e) {
 		}
 		// 既然关注就悄悄地进行不报错了
@@ -158,23 +144,20 @@ public class WeiboHelper {
 
 		@Override
 		public void onComplete(Bundle values) {
-			MyLogger.d(Consts.DEBUG_TAG, "接收到授权信息");
 			String token = values.getString("access_token");
 			String expires_in = values.getString("expires_in");
 			Main.sAccessToken = new Oauth2AccessToken(token, expires_in);
 			keepAccessToken(Main.sAccessToken);
 			mHandler.sendEmptyMessage(Consts.Status.AUTH_SUCCEED);
 			MyLogger.v(Consts.DEBUG_TAG, "授权成功，\n AccessToken:" + token);
-			SharedPreferences preferences = mContext
-					.getSharedPreferences("ShareStatus", Context.MODE_PRIVATE);
+			SharedPreferences preferences = mContext.getSharedPreferences(
+					"ShareStatus", Context.MODE_PRIVATE);
 			if (preferences.getBoolean("read", false)) {
 				String content = preferences.getString("content", null);
 				String artworkUrl = preferences.getString("artworkUrl", null);
 				String fileName = preferences.getString("fileName", null);
 				boolean willFollow = preferences
 						.getBoolean("willFollow", false);
-				MyLogger.v(Consts.DEBUG_TAG, "获取状态\n" + content + "\n" + artworkUrl
-						+ "\n" + willFollow);
 				sendWeibo(content, artworkUrl, fileName, willFollow);
 				preferences.edit().putBoolean("read", false).commit();
 			}
@@ -217,7 +200,6 @@ public class WeiboHelper {
 		Oauth2AccessToken token = new Oauth2AccessToken();
 		token.setToken(mPreferences.getString("token", ""));
 		token.setExpiresTime(mPreferences.getLong("expiresTime", 0));
-		MyLogger.d(Consts.DEBUG_TAG,"Read Token:"+token.getToken());
 		return token;
 	}
 

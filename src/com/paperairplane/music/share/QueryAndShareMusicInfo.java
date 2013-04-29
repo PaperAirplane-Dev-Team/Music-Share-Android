@@ -48,7 +48,6 @@ class QueryAndShareMusicInfo extends Thread {
 								mArtworkPath);
 			}
 		} catch (Exception e) {
-			MyLogger.e(Consts.DEBUG_TAG, "Error Occured");
 			e.printStackTrace();
 			// fileName = mArtworkPath + Utilities.getArtwork(artworkUrl, mTitle,
 			// mArtworkPath);
@@ -89,7 +88,6 @@ class QueryAndShareMusicInfo extends Thread {
 		if (fileName != null) {
 			intent.putExtra(Intent.EXTRA_STREAM,
 					Uri.fromFile(new File(fileName)));
-			MyLogger.d(Consts.DEBUG_TAG, "Intent " + fileName);
 			type = "image/*";
 		}
 		intent.setType(type);

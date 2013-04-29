@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,7 +31,7 @@ public class IntentResolver {
 	private Context mCtx;
 	private PackageManager pm;
 	private Handler mHandler;
-	private Class<?> mClassInternalR,mClassId,mClassLayout,mClassDrawable;
+	private Class<?> mClassInternalR, mClassId, mClassLayout;
 
 	public void handleIntent(Context ctx, Intent i, Handler handler) {
 		mCtx = ctx;
@@ -40,11 +41,9 @@ public class IntentResolver {
 			mClassInternalR = Class.forName("com.android.internal.R");
 			@SuppressWarnings("rawtypes")
 			Class[] classArr = mClassInternalR.getClasses();
-			mClassId= classArr[8];
-			mClassDrawable= classArr[9];
+			mClassId = classArr[8];
 			mClassLayout = classArr[6];
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -113,13 +112,10 @@ public class IntentResolver {
 				idText2 = mClassId.getField("text2").getInt(null);
 
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -139,7 +135,7 @@ public class IntentResolver {
 				// 总觉得我们获取的东西还不对,例如(求不要吐槽)微信的分享有两个
 				// 一个分享到朋友圈一个发送给朋友,现在都显示成"微信"
 				// 我看那代码里面有一个什么来着,好像是LabeledIntent
-				extended = ri.activityInfo.packageName;
+				// extended = ri.activityInfo.packageName;
 			} else {
 				icon = mCtx.getResources().getDrawable(ri.icon);
 				label = mCtx.getString(ri.labelRes);
@@ -147,7 +143,7 @@ public class IntentResolver {
 			}
 			ivItemIcon.setImageDrawable(icon);
 			tvItemLabel.setText(label);
-			tvItemExtended.setText(extended);
+			// tvItemExtended.setText(extended);
 			tvItemExtended.setVisibility(View.GONE);
 			return vwItem;
 		}
@@ -191,25 +187,22 @@ public class IntentResolver {
 			}
 
 		};
-		
+
 		ListView v = new ListView(mCtx);
 		// Annoying ListView Solved
-		int color=0;
-		try {
-			color = mClassDrawable.getField("activity_picker_bg").getInt(null);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		/*
+		 * int color = 0; try { color =
+		 * mClassDrawable.getField("activity_picker_bg").getInt(null); } catch
+		 * (IllegalArgumentException e) { e.printStackTrace(); } catch
+		 * (IllegalAccessException e) { e.printStackTrace(); } catch
+		 * (NoSuchFieldException e) { e.printStackTrace(); }
+		 */
+		// TODO 勉强凑合
+		if (Build.VERSION.SDK_INT < 10) {
+			v.setBackgroundColor(mCtx.getResources().getColor(
+					android.R.color.background_dark));
 		}
-		//TODO 这一团糟！！不能只关心你那4.X!!!
-		v.setBackgroundColor(color);
-		v.setCacheColorHint(color);
+		v.setCacheColorHint(0);
 		v.setAdapter(new IntentListAdapter(info));
 		v.setOnItemClickListener(listener);
 		intentDialog.setContentView(v);

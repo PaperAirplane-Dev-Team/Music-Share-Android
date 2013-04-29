@@ -29,8 +29,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 		});
 		int length = mMusicDatas.length;
 		mMap = new int[27];
-		for (int i = length-1; i >= 0; i--) {
-			MusicData a =mMusicDatas[i];
+		for (int i = length - 1; i >= 0; i--) {
 			mMap[mMusicDatas[i].getFirstChar() - 65] = i;
 		}
 	}
@@ -62,6 +61,13 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 
 	@Override
 	public int getPositionForSection(int section) {
+		if (section != 0 && mMap[section] == 0) {
+			int i = section++;
+			while (mMap[i] == 0){
+				i++;
+			}
+			return mMap[i];
+		}
 		return mMap[section];
 	}
 
