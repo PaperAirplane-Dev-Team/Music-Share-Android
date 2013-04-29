@@ -44,7 +44,6 @@ public class IntentResolver {
 			mClassDrawable= classArr[9];
 			mClassLayout = classArr[6];
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -112,14 +111,7 @@ public class IntentResolver {
 				idText1 = mClassId.getField("text1").getInt(null);
 				idText2 = mClassId.getField("text2").getInt(null);
 
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
@@ -136,7 +128,7 @@ public class IntentResolver {
 			if (ri.activityInfo.flags != Consts.ShareMeans.INTERNAL) {
 				icon = ri.activityInfo.loadIcon(pm);
 				label = ri.activityInfo.loadLabel(pm).toString();
-				// 总觉得我们获取的东西还不对,例如(求不要吐槽)微信的分享有两个
+				//FIXME 总觉得我们获取的东西还不对,例如(求不要吐槽)微信的分享有两个
 				// 一个分享到朋友圈一个发送给朋友,现在都显示成"微信"
 				// 我看那代码里面有一个什么来着,好像是LabeledIntent
 				extended = ri.activityInfo.packageName;
@@ -197,17 +189,11 @@ public class IntentResolver {
 		int color=0;
 		try {
 			color = mClassDrawable.getField("activity_picker_bg").getInt(null);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		//TODO 这一团糟！！不能只关心你那4.X!!!
+		//问题是,问题是,我只有4.x
 		v.setBackgroundColor(color);
 		v.setCacheColorHint(color);
 		v.setAdapter(new IntentListAdapter(info));

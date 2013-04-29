@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Random;
 
-import net.sourceforge.pinyin4j.PinyinHelper;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -37,8 +36,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
@@ -69,7 +66,6 @@ public class Main extends ListActivity {
 			mDialogBackgroundChooser;
 	private SsoHandler mSsoHandler;
 	private WeiboHelper mWeiboHelper;
-	private TextView mTvIndexOverlay;
 	private static int sVersionCode, sCheckForUpdateCount = 0;
 	private String mVersionName;
 	private ImageView mIvFloatSearchButton;
@@ -96,7 +92,7 @@ public class Main extends ListActivity {
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			this.setVisible(false);
 			// 留给你黑糊糊的
-//			TODO 发布之前解决！
+//			TODO FIXME 发布之前解决！
 			return;
 		}
 		setContentView(R.layout.main);
@@ -199,7 +195,6 @@ public class Main extends ListActivity {
 						Random r = new Random();
 						position = r.nextInt(mLvMain.getAdapter().getCount());
 						MyLogger.d(Consts.DEBUG_TAG, "生成随机数" + position);
-						mTvIndexOverlay.setVisibility(View.INVISIBLE);
 						Toast.makeText(Main.this, R.string.shake_random,
 								Toast.LENGTH_LONG).show();
 						showCustomDialog(mMusicDatas[position],
@@ -239,19 +234,6 @@ public class Main extends ListActivity {
 			}
 		});
 		/*
-		 * 初始化Overlay，从SharedPreferences里读取Overlay的背景色
-		 */
-		mTvIndexOverlay = (TextView) View.inflate(Main.this, R.layout.indexer,
-				null);
-		showOverlay();
-		SharedPreferences preference = getSharedPreferences(
-				Consts.Preferences.GENERAL, MODE_PRIVATE);
-		if (preference.contains(Consts.Preferences.BG_COLOR)) {
-			mTvIndexOverlay.setBackgroundColor(android.graphics.Color
-					.parseColor(preference.getString(
-							Consts.Preferences.BG_COLOR, "")));
-		}
-		/*
 		 * 初始化ListView
 		 */
 		mLvMain = (ListView) findViewById(android.R.id.list);// 找LisView的ID
@@ -259,51 +241,6 @@ public class Main extends ListActivity {
 		mLvMain.setEmptyView(vwEmpty);
 		// FIXME:EmptyView突然很无力……
 		mLvMain.setOnItemClickListener(new MusicListOnClickListener());// 创建一个ListView监听器对象
-		mLvMain.setOnScrollListener(new OnScrollListener() {
-			boolean visible;
-
-			@SuppressLint("NewApi")
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-				if (visible) {
-					// 这里为Overlay设置文字。识别冠词the,a,an
-					String firstChar = mMusicDatas[firstVisibleItem].getTitle();
-					if (firstChar.toLowerCase(Locale.getDefault()).startsWith(
-							"the ")) {
-						firstChar = firstChar.substring(4, 5);
-					} else if (firstChar.toLowerCase(Locale.getDefault())
-							.startsWith("a ")) {
-						firstChar = firstChar.substring(2, 3);
-					} else if (firstChar.toLowerCase(Locale.getDefault())
-							.startsWith("an ")) {
-						firstChar = firstChar.substring(3, 4);
-					} else {
-						firstChar = firstChar.substring(0, 1);
-					}
-					mTvIndexOverlay.setText(firstChar.toUpperCase(Locale
-							.getDefault()));
-					mTvIndexOverlay.setVisibility(View.VISIBLE);
-				}
-				if (firstVisibleItem == 0
-						|| (firstVisibleItem + visibleItemCount) == totalItemCount) {
-					mTvIndexOverlay.setVisibility(View.INVISIBLE);
-				}
-				if ((firstVisibleItem + visibleItemCount) >= (totalItemCount - 3)
-						&& visibleItemCount < totalItemCount) {
-				}
-			}
-
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				visible = true;
-				if (scrollState == ListView.OnScrollListener.SCROLL_STATE_IDLE) {
-					mTvIndexOverlay.setVisibility(View.INVISIBLE);
-				}
-			}
-
-		});
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -450,7 +387,9 @@ public class Main extends ListActivity {
 			showAbout();
 			break;
 		case R.id.menu_change_color:
-			showCustomDialog(null, Consts.Dialogs.CHANGE_COLOR);
+			Toast.makeText(Main.this, "暂时不可用", Toast.LENGTH_LONG);
+			//FIXME 把这个换到别的地方,可以再利用的吧,例如以后背景/文字
+			//showCustomDialog(null, Consts.Dialogs.CHANGE_COLOR);
 			break;
 		case R.id.menu_clean_cache:
 			String ARTWORK_PATH = getExternalCacheDir().getAbsolutePath()
@@ -911,9 +850,9 @@ public class Main extends ListActivity {
 									.edit()
 									.putString(Consts.Preferences.BG_COLOR,
 											color).commit();
-							mTvIndexOverlay
-									.setBackgroundColor(android.graphics.Color
-											.parseColor(color));
+							//mTvIndexOverlay
+									//.setBackgroundColor(android.graphics.Color
+											//.parseColor(color));
 							MyLogger.d(Consts.DEBUG_TAG, "自定义颜色:" + color);
 						}
 						break;
@@ -925,9 +864,9 @@ public class Main extends ListActivity {
 								.edit()
 								.putString(Consts.Preferences.BG_COLOR,
 										Consts.ORIGIN_COLOR).commit();
-						mTvIndexOverlay
-								.setBackgroundColor(android.graphics.Color
-										.parseColor(Consts.ORIGIN_COLOR));
+						//mTvIndexOverlay
+								//.setBackgroundColor(android.graphics.Color
+										//.parseColor(Consts.ORIGIN_COLOR));
 						mDialogChangeColor.cancel();
 						break;
 					}
@@ -1238,7 +1177,6 @@ public class Main extends ListActivity {
 			} catch (Exception e) {
 			}
 			// } 注释掉的代码好象是以前给footer用的
-			mTvIndexOverlay.setVisibility(View.INVISIBLE);
 			showCustomDialog(mMusicDatas[position], Consts.Dialogs.SHARE);
 		}
 	}

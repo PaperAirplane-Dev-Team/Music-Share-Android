@@ -8,12 +8,13 @@ public class Consts {
 	public final static String[] MEDIA_INFO = new String[] {
 			MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DURATION,
 			MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.DATA,
-			MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID ,MediaStore.Audio.Media.MIME_TYPE};
+			MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
+			MediaStore.Audio.Media.MIME_TYPE };
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
 	public final static String RELEASE_DATE = "2013.4.28";
-	public final static String WHATSNEW = "继续优化发送界面, 区分是否在Play Store发布以禁用自动更新";
+	public final static String WHATSNEW = "果断重写SectionIndexer";
 	public final static String ORIGIN_COLOR = "#99000088";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
@@ -22,6 +23,7 @@ public class Consts {
 	public final static boolean ON_PLAY_STORE = false;
 	public final static int LOOK_FOR_SUGGESTION_REQUEST_CODE = 233;
 	public final static int PICK_BACKGROUND_REQUEST_CODE = 234;
+	public final static char UNKNOWN_CHAR = 91;
 
 	public final class Url {
 		public final static String API_SUGGESTION = "https://api.weibo.com/2/search/suggestions/at_users.json";
@@ -68,7 +70,6 @@ public class Consts {
 		public static final int DOWNLOAD_URL = 1;
 	}
 
-	
 	public final class ShareMeans {
 		public static final int WEIBO = 0;
 		public static final int OTHERS = 1;
@@ -107,5 +108,5 @@ public class Consts {
 		public final static int BLUE = 2;
 		public final static int OPACITY = 3;
 	}
-	
+
 }

@@ -2,6 +2,8 @@ package com.paperairplane.music.share;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +18,8 @@ import com.paperairplane.music.share.R;
 public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	private Context mContext;
 	private MusicData mMusicDatas[];
-	private int[] mMap;
+	private HashMap<Character, Integer> mSectionMap;
+	private Character[] sectionCharArr;
 
 	public MusicListAdapter(Context context, MusicData musicdatas[]) {
 		mContext = context;
@@ -28,11 +31,21 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 			}
 		});
 		int length = mMusicDatas.length;
-		mMap = new int[27];
-		for (int i = length-1; i >= 0; i--) {
-			MusicData a =mMusicDatas[i];
-			mMap[mMusicDatas[i].getFirstChar() - 65] = i;
+		mSectionMap = new HashMap<Character, Integer>();
+		char charTemp = 0, charNow;// 随手赋值不然第一次会出错
+		for (int i = length - 1; i >= 0; i--) {
+			charNow = mMusicDatas[i].getFirstChar();
+			if (charTemp == charNow) {
+				mSectionMap.remove(charTemp);
+			}
+			charTemp = mMusicDatas[i].getFirstChar();
+			mSectionMap.put(charTemp, i);
+			/*
+			 * 说说我的思路,倒序遍历,先只管放进去,遇到字符相同的话扔掉原来的写新的 这样不会出现没有的字符
+			 */
 		}
+		getSections();
+		MyLogger.d(Consts.DEBUG_TAG, "Have " + mSectionMap.size() + " values");
 	}
 
 	public int getCount() {
@@ -62,22 +75,53 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 
 	@Override
 	public int getPositionForSection(int section) {
-		return mMap[section];
+		char sectionChar = sectionCharArr[section];
+		if (section == mSectionMap.size() - 1)
+			sectionChar = Consts.UNKNOWN_CHAR;
+		int position = mSectionMap.get(sectionChar);
+		//MyLogger.d(Consts.DEBUG_TAG, "Section is " + sectionChar
+				//+ ", return position " + position);
+		//MyLogger.d(Consts.DEBUG_TAG,
+				//"Title: " + mMusicDatas[position].getTitle());
+		return position;
+		// 这一滚动就乱是啥意思……
+		// 我明白了,你没有处理那些指向是0(不存在以此开头的歌曲)的section
 	}
 
 	@Override
 	public int getSectionForPosition(int position) {
-
-		return mMusicDatas[position].getFirstChar() - 65;
+		int section = 0;
+		char charNow = mMusicDatas[position].getFirstChar();
+		for (char charTemp : sectionCharArr) {
+			if (charNow != charTemp) {
+				section++;
+				continue;
+			}
+			if (charNow == charTemp) {
+				break;
+			}
+		}
+		if (charNow == Consts.UNKNOWN_CHAR) {
+			return mSectionMap.size() - 1;
+		}
+		return section;
 	}
 
 	@Override
 	public Object[] getSections() {
-		char[] s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
-		Character[] charArr = new Character[27];
-		for (int i = 0; i < 27; i++)
-			charArr[i] = Character.valueOf(s[i]);
-		return charArr;
+		// char[] s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
+		int arraySize = mSectionMap.size();
+		sectionCharArr = new Character[arraySize];
+		char nowChar = 'A';
+		for (int i = 0, j = 0; i < 26; i++, nowChar++) {
+			if (mSectionMap.containsKey(Character.valueOf(nowChar))) {
+				sectionCharArr[j] = Character.valueOf(nowChar);
+				j++;
+			}
+		}
+		sectionCharArr[arraySize - 1] = '#';
+		// 我觉着这样应该是可以的吧
+		return sectionCharArr;
 	}
 
 }
