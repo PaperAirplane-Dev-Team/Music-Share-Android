@@ -87,7 +87,6 @@ public class AtSuggestionActivity extends Activity {
 			@Override
 			public void beforeTextChanged(CharSequence s, int arg1, int arg2,
 					int arg3) {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -149,7 +148,6 @@ public class AtSuggestionActivity extends Activity {
 										m.obj = fetched_data;
 										m.sendToTarget();
 									} catch (JSONException e) {
-										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}
 								}

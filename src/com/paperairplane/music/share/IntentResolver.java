@@ -129,6 +129,8 @@ public class IntentResolver {
 				/*
 				 * 泪奔……早知当初就不支持2.X了 这里改变文字颜色以符合系统风格
 				 * 另外，text_light是黑色的text_black是白色的……
+				 * 我告诉你在我的Holo上面没法看,背景也是黑的
+				 * FIXME
 				 */
 				tvItemLabel.setTextColor(mCtx.getResources().getColor(
 						android.R.color.primary_text_light));

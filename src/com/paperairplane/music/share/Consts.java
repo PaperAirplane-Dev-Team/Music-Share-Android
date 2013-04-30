@@ -13,8 +13,8 @@ public class Consts {
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
-	public final static String RELEASE_DATE = "2013.4.28";
-	public final static String WHATSNEW = "果断重写SectionIndexer";
+	public final static String RELEASE_DATE = "2013.4.30";
+	public final static String WHATSNEW = "对话框处理";
 	public final static String ORIGIN_COLOR = "#99000088";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");

@@ -37,6 +37,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -152,8 +153,8 @@ public class Main extends ListActivity {
 	 */
 	private void handleIntent(Uri uri) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setTheme(android.R.style.Theme_Dialog);
-		//FIXME android.music是通过setContentView直接实现的……可是我们用的是Dialog……
+		setTheme(R.style.DialogTheme);
+		// FIXME android.music是通过setContentView直接实现的……可是我们用的是Dialog……
 		try {
 			Cursor cursor = getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -162,12 +163,14 @@ public class Main extends ListActivity {
 					null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 			cursor.moveToFirst();
 			MusicData data = generateMusicData(cursor);
-			showCustomDialog(data, Consts.Dialogs.SHARE);
+			View v=getMusicInfoView(data, false);
+			setContentView(v);
 			cursor.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 	// private native String doNothing();
 
 	/**
@@ -484,9 +487,10 @@ public class Main extends ListActivity {
 	// 对话框处理
 
 	/**
-	 * @param int _id 如果是音乐则传入所在id，否则为0
-	 * @param int whichDialog 根据Consts.Dialog下面的编号判断是什么对话框
-	 * @return void
+	 * @param music
+	 *            传入分享的音乐信息
+	 * @param whichDialog
+	 *            根据Consts.Dialog下面的编号判断是什么对话框
 	 * @author Harry Chen 显示程序的各种自定义对话框，包括dialogMain, mDialogAbout,
 	 *         mDialogSearch, mDialogThank, mDialogWelcome, mDialogChangeColor
 	 * 
@@ -614,7 +618,7 @@ public class Main extends ListActivity {
 			mDialogAbout.show();
 			break;
 		case Consts.Dialogs.SHARE:
-			View musicInfoView = getMusicInfoView(music);
+			View musicInfoView = getMusicInfoView(music, true);
 			DialogInterface.OnClickListener listenerMain = new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int whichButton) {
@@ -933,7 +937,7 @@ public class Main extends ListActivity {
 	 * @author Harry Chen 用于dialogMain，显示音乐信息
 	 * 
 	 */
-	private View getMusicInfoView(final MusicData music) {
+	private View getMusicInfoView(final MusicData music, boolean isDialog) {
 		View musicInfo = LayoutInflater.from(this).inflate(R.layout.music_info,
 				null);
 		ImageView albumArt = (ImageView) musicInfo
@@ -944,6 +948,9 @@ public class Main extends ListActivity {
 		TextView textAlbum = (TextView) musicInfo.findViewById(R.id.text_album);
 		TextView textDuration = (TextView) musicInfo
 				.findViewById(R.id.text_duration);
+		Button btnShare = (Button) musicInfo.findViewById(R.id.btn_share);
+		Button btnSendFile = (Button) musicInfo
+				.findViewById(R.id.btn_send_file);
 		textTitle.setText(getString(R.string.title) + " : " + music.getTitle());
 		textArtist.setText(getString(R.string.artist) + " : "
 				+ music.getArtist());
@@ -962,13 +969,30 @@ public class Main extends ListActivity {
 			MyLogger.v(Consts.DEBUG_TAG,
 					"Oh shit, we got null again ...... Don't panic");
 		}
-		albumArt.setOnClickListener(new View.OnClickListener() {
-
+		View.OnClickListener listener = new View.OnClickListener() {
 			@Override
-			public void onClick(View arg0) {
-				playMusic(music);
+			public void onClick(View v) {
+				switch (v.getId()) {
+				case R.id.image_music:
+					playMusic(music);
+					break;
+				case R.id.btn_share:
+					shareMusic(music.getTitle(), music.getArtist(),
+							music.getAlbum(), music.getAlbumId());
+					break;
+				case R.id.btn_send_file:
+					sendFile(music);
+					break;
+				}
 			}
-		});
+		};
+		albumArt.setOnClickListener(listener);
+		btnSendFile.setOnClickListener(listener);
+		btnShare.setOnClickListener(listener);
+		if(isDialog){
+			btnSendFile.setVisibility(View.GONE);
+			btnShare.setVisibility(View.GONE);
+		}
 		return musicInfo;
 	}
 

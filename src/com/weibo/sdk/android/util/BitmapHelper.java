@@ -82,7 +82,6 @@ public final class BitmapHelper {
         try {
 			input.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         return (options.outHeight > 0) && (options.outWidth > 0);

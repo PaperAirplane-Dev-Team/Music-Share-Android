@@ -3,8 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical" >
-
+    android:orientation="vertical"
+    style="@style/AppTheme" >
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,7 +55,30 @@
                 style="@style/MainTextViewStyle"
                 android:text="@string/play" >
             </TextView>
+        </LinearLayout><LinearLayout
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             >
+
+                <Button
+                    android:id="@+id/btn_share"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/share"
+                    android:layout_marginRight="5dp" />
+
+                <Button
+                    android:id="@+id/btn_send_file"
+					android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/send_file"
+                    android:layout_marginLeft="5dp" />
+
         </LinearLayout>
+
     </LinearLayout>
 
 </ScrollView>
