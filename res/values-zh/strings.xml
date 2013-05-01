@@ -82,6 +82,5 @@
     <string name="clean_cache_done">喵,清理缓存成功~</string>
     <string name="shake_random">主人主人不要晃我~好头晕啊~</string>
     <string name="delete_file_count">删除的文件个数:</string>
-    <string name="intent_dialog_title">打开方式</string>
 
 </resources>

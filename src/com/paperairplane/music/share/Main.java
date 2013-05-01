@@ -351,9 +351,7 @@ public class Main extends ListActivity {
 			menu.add(Menu.NONE, Consts.MenuItem.UNAUTH, 2, R.string.unauth)
 					.setIcon(android.R.drawable.ic_menu_delete);
 		}
-		if (Consts.ON_PLAY_STORE) {
-			menu.removeItem(R.id.menu_update);
-		}
+		menu.removeItem(R.id.menu_change_color);
 		return true;
 	}
 
@@ -1054,7 +1052,7 @@ public class Main extends ListActivity {
 								// 我有错，我悔过
 								Intent i = new Intent(Main.this,
 										AtSuggestionActivity.class);
-								bundle.putString("content", s.toString());
+								bundle.putString(Intent.EXTRA_TEXT, s.toString());
 								bundle.putBoolean("isChecked", cb.isChecked());
 								bundle.putInt("start", start);
 								i.putExtras(bundle);
@@ -1264,6 +1262,8 @@ public class Main extends ListActivity {
 		musicIntent.setAction(android.content.Intent.ACTION_VIEW);
 		musicIntent.setDataAndType(Uri.fromFile(new File(music.getPath())),
 				"audio/*");
+		new IntentResolver().handleIntent(Main.this, musicIntent, mHandler);
+		/*
 		try {
 			startActivity(musicIntent);
 		} catch (ActivityNotFoundException e) {
@@ -1277,6 +1277,7 @@ public class Main extends ListActivity {
 								}
 							}).show();
 		}
+		*/
 
 	}
 
@@ -1352,6 +1353,9 @@ public class Main extends ListActivity {
 		// 果然是个好东西，不过多出来不少无关的，我在考虑要不要改回去呢
 		intent.putExtra(Intent.EXTRA_STREAM,
 				Uri.fromFile(new File(whichMusic.getPath())));
+		IntentResolver ir = new IntentResolver();
+		ir.handleIntent(Main.this, intent, mHandler);
+		/*
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException e) {
@@ -1365,6 +1369,7 @@ public class Main extends ListActivity {
 								}
 							}).show();
 		}
+		*/
 	}
 
 	/**

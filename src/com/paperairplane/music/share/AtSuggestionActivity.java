@@ -104,10 +104,10 @@ public class AtSuggestionActivity extends Activity {
 					long arg3) {
 				int selection,start;
 				start = getIntent().getExtras().getInt("start");
-				StringBuffer result = new StringBuffer(getIntent().getExtras().getString("content"));
+				StringBuffer result = new StringBuffer(getIntent().getExtras().getString(Intent.EXTRA_TEXT));
 				result.replace(start, start+1, mAdapterSugestion.getItem(position));
 				selection = start + mAdapterSugestion.getItem(position).length();
-				mExtras.putString("content", result.toString());
+				mExtras.putString(Intent.EXTRA_TEXT, result.toString());
 				mExtras.putInt("selection", selection);
 				mIntent.putExtras(mExtras);
 				setResult(RESULT_OK,mIntent);

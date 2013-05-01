@@ -1,7 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.paperairplane.music.share"
     android:versionCode="0087"
+<<<<<<< HEAD
     android:versionName="1.0.7 " >
+=======
+    android:versionName="1.0.8 Developer Preview" >
+>>>>>>> Quick FIx:At联想FC问题
 
     <uses-sdk
         android:minSdkVersion="8"

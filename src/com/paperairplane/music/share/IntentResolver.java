@@ -51,12 +51,18 @@ public class IntentResolver {
 				PackageManager.MATCH_DEFAULT_ONLY);
 		MyLogger.d(Consts.DEBUG_TAG, "handleIntent");
 		// 去除分享选项
+		for (ResolveInfo ri:info){
+//TODO 待完善
+		}
+		/*
 		Iterator<ResolveInfo> it = info.iterator();
 		while (it.hasNext()) {
+			MyLogger.d(Consts.DEBUG_TAG, "labelRes->"+it.next().activityInfo.packageName.startsWith("com.paperairplane"));
 			if (it.next().labelRes == R.string.title_activity_main) {
 				it.remove();
 			}
 		}
+		*/
 		if (!view) {
 			// 若为SEND，增加内置的微博发布器
 			ResolveInfo share2weibo = new ResolveInfo();
@@ -116,6 +122,7 @@ public class IntentResolver {
 				/*
 				 * FIXME 总觉得我们获取的东西还不对,例如(求不要吐槽)微信的分享有两个
 				 * 一个分享到朋友圈一个发送给朋友,现在都显示成"微信" 我看那代码里面有一个什么来着,好像是LabeledIntent
+				 * 确实不对，ResolveInfo有个方法……
 				 */
 			} else {
 				// 内部编辑器直接从资源中获取
@@ -166,11 +173,9 @@ public class IntentResolver {
 					intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT
 							| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
 							| Intent.FLAG_ACTIVITY_NEW_TASK);
-					ComponentName cn = new ComponentName(
-							ri.activityInfo.applicationInfo.packageName,
-							ri.activityInfo.name);
-					intent.setComponent(new ComponentName(cn.getPackageName(),
-							cn.getClassName()));
+
+					intent.setComponent(new ComponentName(ri.activityInfo.applicationInfo.packageName,
+							ri.activityInfo.name));
 					mCtx.startActivity(intent);
 				} else {
 					// 采用内置的分享方式
