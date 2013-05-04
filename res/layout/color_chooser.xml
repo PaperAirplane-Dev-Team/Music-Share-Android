@@ -17,6 +17,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dip"
             android:text="@string/red"
+            android:textColor="#FFFFFF"
             android:textSize="28sp" />
 
         <SeekBar
@@ -35,6 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/green"
+            android:textColor="#FFFFFF"
             android:textSize="28sp" />
 
         <SeekBar
@@ -52,6 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/blue"
+            android:textColor="#FFFFFF"
             android:textSize="28sp" />
 
         <SeekBar
@@ -63,22 +66,6 @@
             android:max="255"
             android:progress="0" />
 
-        <TextView
-            android:id="@+id/text_trans"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/opacity"
-            android:textSize="28sp" />
-
-        <SeekBar
-            android:id="@+id/seek_trans"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:max="255"
-            android:progress="0" />
 
         <TextView
             android:id="@+id/text_color"
@@ -86,6 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/to_show_color"
+            android:textColor="#FFFFFF"
             android:textSize="25sp" />
 
         <TextView

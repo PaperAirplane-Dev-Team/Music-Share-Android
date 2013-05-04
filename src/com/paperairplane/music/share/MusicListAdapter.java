@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.paperairplane.music.share.R;
 
-//TODO 有点错乱的说…太晚了脑子不清醒
 public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	private Context mContext;
 	private MusicData mMusicDatas[];
@@ -48,7 +47,6 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 			 */
 		}
 		getSections();
-		MyLogger.d(Consts.DEBUG_TAG, "Have " + mSectionMap.size() + " values");
 		// TODO 文本颜色选择
 		isTextColorSet=false;
 		SharedPreferences preference = mContext.getSharedPreferences(
@@ -95,14 +93,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 		if (section == mSectionMap.size() - 1)
 			sectionChar = Consts.UNKNOWN_CHAR;
 		int position = mSectionMap.get(sectionChar);
-		//MyLogger.d(Consts.DEBUG_TAG, "Section is " + sectionChar
-				//+ ", return position " + position);
-		//MyLogger.d(Consts.DEBUG_TAG,
-				//"Title: " + mMusicDatas[position].getTitle());
 		return position;
-		// 这一滚动就乱是啥意思……
-		// 我明白了,你没有处理那些指向是0(不存在以此开头的歌曲)的section
-
 	}
 
 	@Override

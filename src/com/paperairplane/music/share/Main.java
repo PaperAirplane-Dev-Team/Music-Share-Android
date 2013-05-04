@@ -86,18 +86,14 @@ public class Main extends ListActivity {
 		if ((action.equals("android.intent.action.VIEW") || action
 				.equals("android.intent.action.SEND")) && !isDataNull) {
 			handleIntent(i.getData());
-			// Solved
 			return;
 		}
 		setContentView(R.layout.main);
+		initListView();
 		mPreferencesTheme = getApplicationContext().getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
-		initListView();
-		try {
-			generateMusicList();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		generateMusicList();
+
 		firstShow();
 		mSsoHandler = new SsoHandler(Main.this, mWeibo);
 		mWeiboHelper = new WeiboHelper(mHandler, getApplicationContext());
@@ -151,7 +147,6 @@ public class Main extends ListActivity {
 	private void handleIntent(Uri uri) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setTheme(R.style.DialogTheme);
-		// Solved
 		try {
 			Cursor cursor = getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -166,6 +161,7 @@ public class Main extends ListActivity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	// private native String doNothing();
@@ -184,8 +180,6 @@ public class Main extends ListActivity {
 					MyLogger.d(Consts.DEBUG_TAG, "检测到摇动");
 					int position = 0;
 					if (!mLvMain.getAdapter().isEmpty()) {
-						// 我发现只要有你的这个If在这个功能就没法用
-						// 我去……一定是我改代码改的太乱了……
 						Random r = new Random();
 						position = r.nextInt(mLvMain.getAdapter().getCount());
 						MyLogger.d(Consts.DEBUG_TAG, "生成随机数" + position);
@@ -256,14 +250,7 @@ public class Main extends ListActivity {
 
 	@Override
 	protected void onStop() {
-		// 将当前Overlay的显示状态保存到SharedPreferences
-		/*
-		 * if (mTvIndexOverlay.getVisibility() == View.VISIBLE) {
-		 * getWindowManager().removeView(mTvIndexOverlay); SharedPreferences
-		 * pref = getSharedPreferences( Consts.Preferences.OVERLAY,
-		 * MODE_PRIVATE); Editor edit = pref.edit(); edit.putBoolean("resume",
-		 * true); edit.commit(); }
-		 */
+
 		// 关闭摇动检查
 		if (mCanDetectShake)
 			mShakeDetector.stop();
@@ -680,8 +667,8 @@ public class Main extends ListActivity {
 		case Consts.Dialogs.CHANGE_COLOR:
 			View changeColor = View.inflate(Main.this, R.layout.color_chooser,
 					null);
-			final SeekBar seekColor[] = new SeekBar[4];
-			final TextView textColor[] = new TextView[4];
+			final SeekBar seekColor[] = new SeekBar[3];
+			final TextView textColor[] = new TextView[3];
 			final TextView textColorCode = (TextView) changeColor
 					.findViewById(R.id.text_color);
 			final TextView textShowColor = (TextView) changeColor
@@ -692,17 +679,14 @@ public class Main extends ListActivity {
 					.findViewById(R.id.seek_green);
 			seekColor[Consts.Color.BLUE] = (SeekBar) changeColor
 					.findViewById(R.id.seek_blue);
-			seekColor[Consts.Color.OPACITY] = (SeekBar) changeColor
-					.findViewById(R.id.seek_trans);
 			textColor[Consts.Color.RED] = (TextView) changeColor
 					.findViewById(R.id.text_red);
 			textColor[Consts.Color.GREEN] = (TextView) changeColor
 					.findViewById(R.id.text_green);
 			textColor[Consts.Color.BLUE] = (TextView) changeColor
 					.findViewById(R.id.text_blue);
-			textColor[Consts.Color.OPACITY] = (TextView) changeColor
-					.findViewById(R.id.text_trans);
 			// 实际测试,不透明度是必须的
+			// 我昨天也发现了……
 
 			OnSeekBarChangeListener seekListener = new OnSeekBarChangeListener() {
 
@@ -733,11 +717,6 @@ public class Main extends ListActivity {
 								.setText(getString(R.string.blue) + ":"
 										+ progress);
 						break;
-					case R.id.seek_trans:
-						textColor[Consts.Color.OPACITY]
-								.setText(getString(R.string.opacity) + ":"
-										+ progress * 100 / 255 + "%");
-						break;
 					}
 					changeColor();
 
@@ -754,9 +733,7 @@ public class Main extends ListActivity {
 					color[Consts.Color.BLUE] = Integer
 							.toHexString(seekColor[Consts.Color.BLUE]
 									.getProgress());
-					color[Consts.Color.OPACITY] = Integer
-							.toHexString(seekColor[Consts.Color.OPACITY]
-									.getProgress());
+					color[Consts.Color.OPACITY] = "FF";
 					for (int i = 0; i < 4; i++) {
 						if (color[i].length() == 1)
 							color[i] = "0" + color[i];
@@ -771,7 +748,7 @@ public class Main extends ListActivity {
 							.parseColor(hexColor));
 				}
 			};
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 3; i++) {
 				seekColor[i].setOnSeekBarChangeListener(seekListener);
 			}
 			String nowColor;
@@ -781,18 +758,16 @@ public class Main extends ListActivity {
 			} else {
 				nowColor = Consts.ORIGIN_COLOR;
 			}
-			int colorInt[] = new int[4];
+			int colorInt[] = new int[3];
 			colorInt[Consts.Color.RED] = Integer.valueOf(
 					nowColor.substring(3, 5), 16);
 			colorInt[Consts.Color.GREEN] = Integer.valueOf(
 					nowColor.substring(5, 7), 16);
 			colorInt[Consts.Color.BLUE] = Integer.valueOf(
 					nowColor.substring(7, 9), 16);
-			colorInt[Consts.Color.OPACITY] = Integer.valueOf(
-					nowColor.substring(1, 3), 16);
 			MyLogger.i(Consts.DEBUG_TAG, "Integers are: " + colorInt[0] + " "
-					+ colorInt[1] + " " + colorInt[2] + " " + colorInt[3]);
-			for (int i = 0; i < 4; i++) {
+					+ colorInt[1] + " " + colorInt[2] );
+			for (int i = 0; i < 3; i++) {
 				seekColor[i].setProgress(colorInt[i]);
 			}
 
@@ -860,21 +835,24 @@ public class Main extends ListActivity {
 											mBackgroundPath).commit();
 						}
 						setBackground();
-						/*	DialogInterface.OnClickListener listenerNotice=new DialogInterface.OnClickListener() {
-						@Override
-							public void onClick(DialogInterface dialog, int whichButton) {
+						DialogInterface.OnClickListener listenerNotice = new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
 								if (whichButton == DialogInterface.BUTTON_POSITIVE)
-									showCustomDialog(null, Consts.Dialogs.CHANGE_COLOR);
+									showCustomDialog(null,
+											Consts.Dialogs.CHANGE_COLOR);
 							}
 						};
-						new AlertDialog.Builder(getApplicationContext())
+						new AlertDialog.Builder(Main.this)
 								.setIcon(android.R.drawable.ic_dialog_info)
 								.setTitle(R.string.if_change_text_color)
-								.setPositiveButton(android.R.string.yes, listenerNotice)
-								.setNegativeButton(android.R.string.no, listenerNotice)
-								.show();*/
-						//这算不算人性化……
-						//FIXME Crash Here...
+								.setPositiveButton(android.R.string.yes,
+										listenerNotice)
+								.setNegativeButton(android.R.string.no,
+										listenerNotice).show();
+						// 这算不算人性化……
+						// FIXME Crash Here...
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
 						Intent i = new Intent(

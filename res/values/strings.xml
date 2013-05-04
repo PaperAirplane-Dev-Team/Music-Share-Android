@@ -1,7 +1,6 @@
 ﻿<resources>
 
     <string name="app_name">Music Share</string>
-    <string name="title_activity_main">Music Share</string>
     <string name="empty">Type Something First</string>
     <string name="menu_exit">Exit</string>
     <string name="share_by">I used Paper Airplane\'s Music Share (http://t.cn/zYyzZOK )to share</string>

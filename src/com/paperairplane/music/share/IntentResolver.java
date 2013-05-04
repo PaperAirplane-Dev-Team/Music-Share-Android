@@ -50,18 +50,12 @@ public class IntentResolver {
 				PackageManager.MATCH_DEFAULT_ONLY);
 		MyLogger.d(Consts.DEBUG_TAG, "handleIntent");
 		// 去除分享选项
-		for (ResolveInfo ri:info){
-//TODO 待完善
-		}
-		/*
-		Iterator<ResolveInfo> it = info.iterator();
-		while (it.hasNext()) {
-			MyLogger.d(Consts.DEBUG_TAG, "labelRes->"+it.next().activityInfo.packageName.startsWith("com.paperairplane"));
-			if (it.next().labelRes == R.string.title_activity_main) {
-				it.remove();
+		for (ResolveInfo ri : info) {
+			if (ri.loadLabel(mPm).equals(mCtx.getString(R.string.app_name))) {
+				info.remove(ri);
 			}
 		}
-		*/
+
 		if (!view) {
 			// 若为SEND，增加内置的微博发布器
 			ResolveInfo share2weibo = new ResolveInfo();
@@ -132,15 +126,8 @@ public class IntentResolver {
 			tvItemLabel.setText(label);
 			tvItemExtended.setVisibility(View.GONE);
 			if (Build.VERSION.SDK_INT < 11) {
-				/*
-				 * 泪奔……早知当初就不支持2.X了 这里改变文字颜色以符合系统风格
-				 * 另外，text_light是黑色的text_black是白色的……
-				 * 我告诉你在我的Holo上面没法看,背景也是黑的
-				 * FIXME
-				 */
 				tvItemLabel.setTextColor(mCtx.getResources().getColor(
 						android.R.color.primary_text_light));
-
 			}
 			return vwItem;
 		}
@@ -173,7 +160,8 @@ public class IntentResolver {
 							| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
 							| Intent.FLAG_ACTIVITY_NEW_TASK);
 
-					intent.setComponent(new ComponentName(ri.activityInfo.applicationInfo.packageName,
+					intent.setComponent(new ComponentName(
+							ri.activityInfo.applicationInfo.packageName,
 							ri.activityInfo.name));
 					mCtx.startActivity(intent);
 				} else {

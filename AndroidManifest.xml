@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.paperairplane.music.share"
-    android:versionCode="0088"
+    android:versionCode="0089"
 
     android:versionName="1.0.8 Developer Preview" >
 
@@ -24,7 +24,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".Main"
-            android:label="@string/title_activity_main" >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
