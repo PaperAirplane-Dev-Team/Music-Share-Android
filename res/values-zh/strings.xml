@@ -65,12 +65,12 @@
     <string name="welcome_title">欢迎使用纸飞机音乐分享！</string>
     <string name="welcome_content">Share Satisfying Music\nEnjoy Good Days\n为雅安灾区加油 \n\n</string>
     <string name="welcome_button">希望您喜欢我们的App~</string>
-    <string name="change_overlay_color">更改文字遮罩层背景颜色</string>
+    <string name="change_text_color">更改主界面文字颜色</string>
     <string name="red">红</string>
     <string name="green">绿</string>
     <string name="blue">蓝</string>
     <string name="to_show_color">这里显示您选择的颜色</string>
-    <string name="menu_change_color">更改遮罩层颜色</string>
+    <string name="menu_change_color">更改文字颜色</string>
     <string name="reset">重置</string>
     <string name="opacity">不透明度</string>
     <string name="at_notice">想圈谁？</string>
@@ -82,5 +82,6 @@
     <string name="clean_cache_done">喵,清理缓存成功~</string>
     <string name="shake_random">主人主人不要晃我~好头晕啊~</string>
     <string name="delete_file_count">删除的文件个数:</string>
+    <string name="if_change_text_color">您更换了背景,要同时更换文字颜色吗?</string>
 
 </resources>

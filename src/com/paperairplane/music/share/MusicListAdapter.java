@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	private MusicData mMusicDatas[];
 	private HashMap<Character, Integer> mSectionMap;
 	private Character[] sectionCharArr;
+	private boolean isTextColorSet;
+	private int textColor;
 
 	public MusicListAdapter(Context context, MusicData musicdatas[]) {
 		mContext = context;
@@ -46,7 +49,15 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 		}
 		getSections();
 		MyLogger.d(Consts.DEBUG_TAG, "Have " + mSectionMap.size() + " values");
-		
+		// TODO 文本颜色选择
+		isTextColorSet=false;
+		SharedPreferences preference = mContext.getSharedPreferences(
+				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
+		if (preference.contains(Consts.Preferences.TEXT_COLOR)) {
+			textColor = android.graphics.Color.parseColor(preference.getString(
+					Consts.Preferences.TEXT_COLOR, ""));
+			isTextColorSet=true;
+		}
 	}
 
 	public int getCount() {
@@ -71,6 +82,10 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 		TextView tvSinger = (TextView) convertView.findViewById(R.id.singer);
 		tvTitle.setText(mMusicDatas[position].getTitle());
 		tvSinger.setText(mMusicDatas[position].getArtist());
+		if(isTextColorSet){
+			tvSinger.setTextColor(textColor);
+			tvTitle.setTextColor(textColor);
+		}
 		return convertView;
 	}
 

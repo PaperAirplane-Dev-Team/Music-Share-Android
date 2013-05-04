@@ -13,10 +13,10 @@ public class Consts {
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
-
-	public final static String RELEASE_DATE = "2013.5.1";
-	public final static String WHATSNEW = "实现了Section Indexer,加入了Intent Filter,整合的分享选项";
-	public final static String ORIGIN_COLOR = "#99000088";
+	public final static String RELEASE_DATE = "2013.5.4";
+	public final static String WHATSNEW = "亲爱的颜色选择器又回来了//实现了Section Indexer,加入了Intent Filter,整合的分享选项";
+	public final static String ORIGIN_COLOR = "#FFFFFFFF";
+	//FIXME 这玩意儿怎么办?
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
 	public final static int NULL = -1;
@@ -92,9 +92,10 @@ public class Consts {
 		public final static String SHARE = "ShareStatus";
 		public final static String FEEDBACK = "FeedbackStatus";
 		public final static String GENERAL = "General";
-		public final static String BG_COLOR = "overlay_bg_color";
+		//public final static String BG_COLOR = "overlay_bg_color";
+		public final static String TEXT_COLOR = "text_color";
 		public final static String BG_PATH = "background_path";
-		public final static String OVERLAY = "overlay";
+		//public final static String OVERLAY = "overlay";
 	}
 
 	public final class MenuItem {

@@ -86,8 +86,7 @@ public class Main extends ListActivity {
 		if ((action.equals("android.intent.action.VIEW") || action
 				.equals("android.intent.action.SEND")) && !isDataNull) {
 			handleIntent(i.getData());
-			// 留给你黑糊糊的
-			// TODO 发布之前解决！
+			// Solved
 			return;
 		}
 		setContentView(R.layout.main);
@@ -140,8 +139,6 @@ public class Main extends ListActivity {
 		MyLogger.i(Consts.DEBUG_TAG, "versionCode:" + Main.sVersionCode
 				+ "\nversionName:" + mVersionName);
 
-		// 吃饱了……
-
 	}
 
 	/**
@@ -154,7 +151,7 @@ public class Main extends ListActivity {
 	private void handleIntent(Uri uri) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setTheme(R.style.DialogTheme);
-		// FIXME android.music是通过setContentView直接实现的……可是我们用的是Dialog……
+		// Solved
 		try {
 			Cursor cursor = getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -163,7 +160,7 @@ public class Main extends ListActivity {
 					null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 			cursor.moveToFirst();
 			MusicData data = generateMusicData(cursor);
-			View v=getMusicInfoView(data, false);
+			View v = getMusicInfoView(data, false);
 			setContentView(v);
 			cursor.close();
 		} catch (Exception e) {
@@ -207,8 +204,6 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param void
-	 * @return void
 	 * @author Xavier Yao 初始化主界面ListView相关属性，初始化文字遮罩
 	 * 
 	 */
@@ -230,19 +225,6 @@ public class Main extends ListActivity {
 				return false;
 			}
 		});
-		/*
-		 * 初始化Overlay，从SharedPreferences里读取Overlay的背景色
-		 */
-		// TODO 文本颜色选择
-		SharedPreferences preference = getSharedPreferences(
-				Consts.Preferences.GENERAL, MODE_PRIVATE);
-		if (preference.contains(Consts.Preferences.BG_COLOR)) {
-			/*
-			 * mTvIndexOverlay.setBackgroundColor(android.graphics.Color
-			 * .parseColor(preference.getString( Consts.Preferences.BG_COLOR,
-			 * "")));
-			 */
-		}
 		/*
 		 * 初始化ListView
 		 */
@@ -368,9 +350,8 @@ public class Main extends ListActivity {
 			showAbout();
 			break;
 		case R.id.menu_change_color:
-			Toast.makeText(Main.this, "暂时不可用", Toast.LENGTH_LONG);
-			// FIXME 把这个换到别的地方,可以再利用的吧,例如以后背景/文字
-			// showCustomDialog(null, Consts.Dialogs.CHANGE_COLOR);
+			// Solved
+			showCustomDialog(null, Consts.Dialogs.CHANGE_COLOR);
 			break;
 		case R.id.menu_clean_cache:
 			String ARTWORK_PATH = getExternalCacheDir().getAbsolutePath()
@@ -721,6 +702,7 @@ public class Main extends ListActivity {
 					.findViewById(R.id.text_blue);
 			textColor[Consts.Color.OPACITY] = (TextView) changeColor
 					.findViewById(R.id.text_trans);
+			// 实际测试,不透明度是必须的
 
 			OnSeekBarChangeListener seekListener = new OnSeekBarChangeListener() {
 
@@ -793,9 +775,9 @@ public class Main extends ListActivity {
 				seekColor[i].setOnSeekBarChangeListener(seekListener);
 			}
 			String nowColor;
-			if (mPreferencesTheme.contains(Consts.Preferences.BG_COLOR)) {
+			if (mPreferencesTheme.contains(Consts.Preferences.TEXT_COLOR)) {
 				nowColor = mPreferencesTheme.getString(
-						Consts.Preferences.BG_COLOR, "");
+						Consts.Preferences.TEXT_COLOR, "");
 			} else {
 				nowColor = Consts.ORIGIN_COLOR;
 			}
@@ -824,17 +806,10 @@ public class Main extends ListActivity {
 						if (color.contains("#")) {
 							mPreferencesTheme
 									.edit()
-									.putString(Consts.Preferences.BG_COLOR,
+									.putString(Consts.Preferences.TEXT_COLOR,
 											color).commit();
-							// mTvIndexOverlay
-							// .setBackgroundColor(android.graphics.Color
-							// .parseColor(color));
-							// TODO 把Overlay颜色选择器改成TextView颜色选择器
-							/*
-							 * mTvIndexOverlay
-							 * .setBackgroundColor(android.graphics.Color
-							 * .parseColor(color));
-							 */
+							mLvMain.setAdapter(new MusicListAdapter(
+									getApplicationContext(), mMusicDatas));
 							MyLogger.d(Consts.DEBUG_TAG, "自定义颜色:" + color);
 						}
 						break;
@@ -842,20 +817,13 @@ public class Main extends ListActivity {
 						mDialogChangeColor.cancel();
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
-						mPreferencesTheme
-								.edit()
-								.putString(Consts.Preferences.BG_COLOR,
-										Consts.ORIGIN_COLOR).commit();
-						// mTvIndexOverlay
-						// .setBackgroundColor(android.graphics.Color
-						// .parseColor(Consts.ORIGIN_COLOR));
-						mDialogChangeColor.cancel();
-						/*
-						 * mTvIndexOverlay
-						 * .setBackgroundColor(android.graphics.Color
-						 * .parseColor(Consts.ORIGIN_COLOR));
-						 * mDialogChangeColor.cancel();
-						 */
+						if (mPreferencesTheme
+								.contains(Consts.Preferences.TEXT_COLOR))
+							mPreferencesTheme.edit()
+									.remove(Consts.Preferences.TEXT_COLOR)
+									.commit();
+						mLvMain.setAdapter(new MusicListAdapter(
+								getApplicationContext(), mMusicDatas));
 						break;
 					}
 				}
@@ -863,7 +831,7 @@ public class Main extends ListActivity {
 			mDialogChangeColor = new AlertDialog.Builder(Main.this)
 					.setOnCancelListener(onCancelListener).setView(changeColor)
 					.setIcon(android.R.drawable.ic_dialog_info)
-					.setTitle(R.string.change_overlay_color)
+					.setTitle(R.string.change_text_color)
 					.setPositiveButton(android.R.string.ok, listenerColor)
 					.setNegativeButton(android.R.string.cancel, listenerColor)
 					.setNeutralButton(R.string.reset, listenerColor).create();
@@ -882,8 +850,8 @@ public class Main extends ListActivity {
 			DialogInterface.OnClickListener listenerBackground = new DialogInterface.OnClickListener() {
 
 				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					switch (which) {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
 						if (mBackgroundPath != null) {
 							mPreferencesTheme
@@ -892,6 +860,21 @@ public class Main extends ListActivity {
 											mBackgroundPath).commit();
 						}
 						setBackground();
+						/*	DialogInterface.OnClickListener listenerNotice=new DialogInterface.OnClickListener() {
+						@Override
+							public void onClick(DialogInterface dialog, int whichButton) {
+								if (whichButton == DialogInterface.BUTTON_POSITIVE)
+									showCustomDialog(null, Consts.Dialogs.CHANGE_COLOR);
+							}
+						};
+						new AlertDialog.Builder(getApplicationContext())
+								.setIcon(android.R.drawable.ic_dialog_info)
+								.setTitle(R.string.if_change_text_color)
+								.setPositiveButton(android.R.string.yes, listenerNotice)
+								.setNegativeButton(android.R.string.no, listenerNotice)
+								.show();*/
+						//这算不算人性化……
+						//FIXME Crash Here...
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
 						Intent i = new Intent(
@@ -987,7 +970,7 @@ public class Main extends ListActivity {
 		albumArt.setOnClickListener(listener);
 		btnSendFile.setOnClickListener(listener);
 		btnShare.setOnClickListener(listener);
-		if(isDialog){
+		if (isDialog) {
 			btnSendFile.setVisibility(View.GONE);
 			btnShare.setVisibility(View.GONE);
 		}
@@ -1052,7 +1035,8 @@ public class Main extends ListActivity {
 								// 我有错，我悔过
 								Intent i = new Intent(Main.this,
 										AtSuggestionActivity.class);
-								bundle.putString(Intent.EXTRA_TEXT, s.toString());
+								bundle.putString(Intent.EXTRA_TEXT,
+										s.toString());
 								bundle.putBoolean("isChecked", cb.isChecked());
 								bundle.putInt("start", start);
 								i.putExtras(bundle);
@@ -1264,20 +1248,15 @@ public class Main extends ListActivity {
 				"audio/*");
 		new IntentResolver().handleIntent(Main.this, musicIntent, mHandler);
 		/*
-		try {
-			startActivity(musicIntent);
-		} catch (ActivityNotFoundException e) {
-			new AlertDialog.Builder(Main.this)
-					.setMessage(getString(R.string.no_app_found))
-					.setPositiveButton(getString(android.R.string.ok),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-								}
-							}).show();
-		}
-		*/
+		 * try { startActivity(musicIntent); } catch (ActivityNotFoundException
+		 * e) { new AlertDialog.Builder(Main.this)
+		 * .setMessage(getString(R.string.no_app_found))
+		 * .setPositiveButton(getString(android.R.string.ok), new
+		 * DialogInterface.OnClickListener() {
+		 * 
+		 * @Override public void onClick(DialogInterface dialog, int which) { }
+		 * }).show(); }
+		 */
 
 	}
 
@@ -1356,20 +1335,15 @@ public class Main extends ListActivity {
 		IntentResolver ir = new IntentResolver();
 		ir.handleIntent(Main.this, intent, mHandler);
 		/*
-		try {
-			startActivity(intent);
-		} catch (ActivityNotFoundException e) {
-			new AlertDialog.Builder(Main.this)
-					.setMessage(getString(R.string.no_app_found))
-					.setPositiveButton(getString(android.R.string.ok),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-								}
-							}).show();
-		}
-		*/
+		 * try { startActivity(intent); } catch (ActivityNotFoundException e) {
+		 * new AlertDialog.Builder(Main.this)
+		 * .setMessage(getString(R.string.no_app_found))
+		 * .setPositiveButton(getString(android.R.string.ok), new
+		 * DialogInterface.OnClickListener() {
+		 * 
+		 * @Override public void onClick(DialogInterface dialog, int which) { }
+		 * }).show(); }
+		 */
 	}
 
 	/**

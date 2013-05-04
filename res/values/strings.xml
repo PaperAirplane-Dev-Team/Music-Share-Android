@@ -48,7 +48,7 @@
     <string name="feedback_mail">(Auto)Feedback via Mail</string>
     <string name="feedback_weibo">Feedback via Weibo</string>
     <string name="thank_for_feedback">Thank you for your feedback</string>
-    <string name="feedback_hint">Please tell us when and how the problem happens OR what you wanna say. Don\'t forget to tell us how to CONTACT you. We are really grateful for your great help!</string>
+    <string name="feedback_hint">Please tell us when and how the problem happens OR what you want to say. Don\'t forget to tell us how to CONTACT you. We are really grateful for your great help!</string>
     <string name="feedback_succeed">Feedback successfully reported, thank you!</string>
     <string name="feedback_failed">Sorry but we met some problem while reporting your feedback. Don\'t worry, we\'ll try again. Still thank you!</string>
     <string name="send_file">Send File</string>
@@ -68,7 +68,7 @@
     <string name="welcome_title">Welcome To Our App</string>
     <string name="welcome_content">Share Satisfying Music\nEnjoy Good Days \n\n</string>
     <string name="welcome_button">Let\'s enjoy this app~</string>
-    <string name="change_overlay_color">Change the background color of text overlay</string>
+    <string name="change_text_color">Change the color of the text</string>
     <string name="red">Red</string>
     <string name="green">Green</string>
     <string name="blue">Blue</string>
@@ -85,5 +85,6 @@
     <string name="clean_cache_done">Successfully cleaned cache files!</string>
     <string name="shake_random">I\'m feeling good~</string>
     <string name="delete_file_count">Delete file count:</string>
+    <string name="if_change_text_color">You have changed the backgroud. Do you want to change the text color now?</string>
 
 </resources>
