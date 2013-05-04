@@ -53,35 +53,7 @@ class QueryAndShareMusicInfo extends Thread {
 			// mArtworkPath);
 			// 咦上面那句是什么情况……
 		}
-		/*
-		switch (mShareMean) {
-		case Consts.ShareMeans.OTHERS:
-			String type = "text/plain";
-
-			Intent intent = new Intent(Intent.ACTION_SEND);
-			if (fileName != null) {
-				intent.putExtra(Intent.EXTRA_STREAM,
-						Uri.fromFile(new File(fileName)));
-				MyLogger.d(Consts.DEBUG_TAG, "Intent " + fileName);
-				type = "image/*";
-			}
-			intent.setType(type);
-			intent.putExtra(Intent.EXTRA_SUBJECT,
-					mContext.getString(R.string.app_name));
-			intent.putExtra(Intent.EXTRA_TEXT, content);
-			mContext.startActivity(Intent.createChooser(intent,
-					mContext.getString(R.string.how_to_share)).addFlags(
-					Intent.FLAG_ACTIVITY_NEW_TASK));
-			break;
-		case Consts.ShareMeans.WEIBO:
-			Bundle bundle = new Bundle();
-			bundle.putString(Intent.EXTRA_TEXT, content);
-
-			Message m = mHandler.obtainMessage(Consts.Status.SEND_WEIBO, bundle);
-			mHandler.sendMessage(m);
-			break;
-		}
-		*/
+		
 		String type = "text/plain";
 
 		Intent intent = new Intent(Intent.ACTION_SEND);

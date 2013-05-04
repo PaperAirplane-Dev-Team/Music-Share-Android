@@ -2,9 +2,11 @@ package com.paperairplane.music.share;
 
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -44,7 +46,7 @@ public class IntentResolver {
 	public void handleIntent(Context ctx, Intent i, Handler handler) {
 		mCtx = ctx;
 		mHandler = handler;
-		boolean view = i.getAction().equals(Intent.ACTION_VIEW);
+		boolean isShare = i.hasExtra("artworkUrl");
 		mPm = ctx.getPackageManager();
 		List<ResolveInfo> info = mPm.queryIntentActivities(i,
 				PackageManager.MATCH_DEFAULT_ONLY);
@@ -56,7 +58,7 @@ public class IntentResolver {
 			}
 		}
 
-		if (!view) {
+		if (isShare) {
 			// 若为SEND，增加内置的微博发布器
 			ResolveInfo share2weibo = new ResolveInfo();
 			share2weibo.icon = R.drawable.weibo_logo;
@@ -66,7 +68,7 @@ public class IntentResolver {
 			info.add(0, share2weibo);
 		}
 		// 显示Intent列表
-		showDialog(info, view, i);
+		showDialog(info, i);
 	}
 
 	private class IntentListAdapter extends BaseAdapter {
@@ -141,8 +143,23 @@ public class IntentResolver {
 	 * @param view
 	 * @param i
 	 */
-	private void showDialog(final List<ResolveInfo> info, boolean view,
-			final Intent i) {
+	private void showDialog(final List<ResolveInfo> info, final Intent i) {
+		if (info.size() == 0) {
+			new AlertDialog.Builder(mCtx)
+					.setMessage(mCtx.getString(R.string.no_app_found))
+					.setPositiveButton(mCtx.getString(android.R.string.ok),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+								}
+							}).show();
+			return;
+		} else if (info.size() == 1) {
+			Intent intent = generateIntent(i, info.get(0));
+			mCtx.startActivity(intent);
+			return;
+		}
 		final Dialog intentDialog = new Dialog(mCtx);
 		OnItemClickListener listener = new OnItemClickListener() {
 
@@ -153,16 +170,7 @@ public class IntentResolver {
 				boolean isInternal = (ri.activityInfo.flags == Consts.ShareMeans.INTERNAL);
 				if (!isInternal) {
 					// 采用其它分享方式
-					Intent intent = new Intent(i);
-					intent.setFlags(intent.getFlags()
-							& ~Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-					intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT
-							| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
-							| Intent.FLAG_ACTIVITY_NEW_TASK);
-
-					intent.setComponent(new ComponentName(
-							ri.activityInfo.applicationInfo.packageName,
-							ri.activityInfo.name));
+					Intent intent = generateIntent(i, ri);
 					mCtx.startActivity(intent);
 				} else {
 					// 采用内置的分享方式
@@ -188,11 +196,26 @@ public class IntentResolver {
 		v.setAdapter(new IntentListAdapter(info));
 		v.setOnItemClickListener(listener);
 		intentDialog.setContentView(v);
-		String title = (view) ? mCtx.getString(R.string.how_to_play) : mCtx
+		String title = (i.getAction().equals(Intent.ACTION_VIEW)) ? mCtx
+				.getString(R.string.how_to_play) : mCtx
 				.getString(R.string.how_to_share);
 		intentDialog.setTitle(title);
 		intentDialog.show();
 
+	}
+
+	private Intent generateIntent(final Intent i, ResolveInfo ri) {
+		Intent intent = new Intent(i);
+		intent.setFlags(intent.getFlags()
+				& ~Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+		intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT
+				| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
+				| Intent.FLAG_ACTIVITY_NEW_TASK);
+
+		intent.setComponent(new ComponentName(
+				ri.activityInfo.applicationInfo.packageName,
+				ri.activityInfo.name));
+		return intent;
 	}
 
 }

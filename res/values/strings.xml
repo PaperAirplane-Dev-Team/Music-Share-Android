@@ -67,6 +67,7 @@
     <string name="welcome_title">Welcome To Our App</string>
     <string name="welcome_content">Share Satisfying Music\nEnjoy Good Days \n\n</string>
     <string name="welcome_button">Let\'s enjoy this app~</string>
+    <string name="whats_new">Implemented Alphabet Indexer\nAdded Intent Filter\nCombined Share Options</string>
     <string name="change_text_color">Change the color of the text</string>
     <string name="red">Red</string>
     <string name="green">Green</string>

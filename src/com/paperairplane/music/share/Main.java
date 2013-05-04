@@ -576,7 +576,7 @@ public class Main extends ListActivity {
 									+ mVersionName + " / " + sVersionCode
 									+ "\n"
 									+ getString(R.string.update_whats_new)
-									+ Consts.WHATSNEW)
+									+ getString(R.string.whats_new))
 					.setPositiveButton(R.string.thank_list, listenerAbout)
 					.setNegativeButton(R.string.about_contact, listenerAbout)
 					.setNeutralButton(R.string.send_feedback, listenerAbout)
@@ -619,35 +619,20 @@ public class Main extends ListActivity {
 			DialogInterface.OnClickListener listenerSearch = new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int whichButton) {
-					switch (whichButton) {
-					case DialogInterface.BUTTON_POSITIVE:
-						if (et_title.getText().toString().trim().equals("")) {
-							showCustomDialog(null, Consts.Dialogs.EMPTY);
+					if (et_title.getText().toString().trim().equals("")) {
+						showCustomDialog(null, Consts.Dialogs.EMPTY);
 
-						} else {
-							shareMusic(et_title.getText().toString(), et_artist
-									.getText().toString(), et_album.getText()
-									.toString(), Consts.NULL);
-							mDialogSearch.cancel();
-						}
-						break;
-					case DialogInterface.BUTTON_NEGATIVE:
-						if (et_title.getText().toString().trim().equals("")) {
-							showCustomDialog(null, Consts.Dialogs.EMPTY);
-						} else {
-							shareMusic(et_title.getText().toString(), et_artist
-									.getText().toString(), et_album.getText()
-									.toString(), Consts.NULL);
-							mDialogSearch.cancel();
-						}
-						break;
+					} else {
+						shareMusic(et_title.getText().toString(), et_artist
+								.getText().toString(), et_album.getText()
+								.toString(), Consts.NULL);
+						mDialogSearch.cancel();
 					}
 				}
 			};
 			mDialogSearch = new AlertDialog.Builder(this).setView(search)
 					.setCancelable(true).setOnCancelListener(onCancelListener)
 					.setPositiveButton(R.string.share, listenerSearch)
-					.setNegativeButton(R.string.share, listenerSearch)
 					.setTitle(R.string.search)
 					.setIcon(android.R.drawable.ic_dialog_info).create();
 			mDialogSearch.show();
@@ -766,7 +751,7 @@ public class Main extends ListActivity {
 			colorInt[Consts.Color.BLUE] = Integer.valueOf(
 					nowColor.substring(7, 9), 16);
 			MyLogger.i(Consts.DEBUG_TAG, "Integers are: " + colorInt[0] + " "
-					+ colorInt[1] + " " + colorInt[2] );
+					+ colorInt[1] + " " + colorInt[2]);
 			for (int i = 0; i < 3; i++) {
 				seekColor[i].setProgress(colorInt[i]);
 			}
@@ -846,7 +831,8 @@ public class Main extends ListActivity {
 						};
 						new AlertDialog.Builder(Main.this)
 								.setIcon(android.R.drawable.ic_dialog_info)
-								.setTitle(R.string.if_change_text_color)
+								.setTitle(android.R.string.dialog_alert_title)
+								.setMessage(R.string.if_change_text_color)
 								.setPositiveButton(android.R.string.yes,
 										listenerNotice)
 								.setNegativeButton(android.R.string.no,
@@ -1225,17 +1211,6 @@ public class Main extends ListActivity {
 		musicIntent.setDataAndType(Uri.fromFile(new File(music.getPath())),
 				"audio/*");
 		new IntentResolver().handleIntent(Main.this, musicIntent, mHandler);
-		/*
-		 * try { startActivity(musicIntent); } catch (ActivityNotFoundException
-		 * e) { new AlertDialog.Builder(Main.this)
-		 * .setMessage(getString(R.string.no_app_found))
-		 * .setPositiveButton(getString(android.R.string.ok), new
-		 * DialogInterface.OnClickListener() {
-		 * 
-		 * @Override public void onClick(DialogInterface dialog, int which) { }
-		 * }).show(); }
-		 */
-
 	}
 
 	/**
@@ -1307,7 +1282,6 @@ public class Main extends ListActivity {
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_SEND);
 		intent.setType(whichMusic.getType());
-		// 果然是个好东西，不过多出来不少无关的，我在考虑要不要改回去呢
 		intent.putExtra(Intent.EXTRA_STREAM,
 				Uri.fromFile(new File(whichMusic.getPath())));
 		IntentResolver ir = new IntentResolver();
@@ -1387,7 +1361,7 @@ public class Main extends ListActivity {
 					.setMessage(
 							getString(R.string.welcome_content)
 									+ getString(R.string.update_whats_new)
-									+ Consts.WHATSNEW)
+									+ getString(R.string.whats_new))
 					.setPositiveButton(R.string.welcome_button,
 							new DialogInterface.OnClickListener() {
 								@Override
