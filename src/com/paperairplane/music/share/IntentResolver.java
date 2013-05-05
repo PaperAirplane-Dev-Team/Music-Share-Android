@@ -1,5 +1,6 @@
 package com.paperairplane.music.share;
 
+import java.util.Iterator;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -52,12 +53,14 @@ public class IntentResolver {
 				PackageManager.MATCH_DEFAULT_ONLY);
 		MyLogger.d(Consts.DEBUG_TAG, "handleIntent");
 		// 去除分享选项
-		for (ResolveInfo ri : info) {
-			if (ri.loadLabel(mPm).equals(mCtx.getString(R.string.app_name))) {
+		Iterator<ResolveInfo> it=info.listIterator();
+		String myPackageName=mCtx.getPackageName();
+		while(it.hasNext()){
+			ResolveInfo ri=it.next();
+			if(ri.activityInfo.packageName.equals(myPackageName)){
 				info.remove(ri);
 			}
 		}
-
 		if (isShare) {
 			// 若为SEND，增加内置的微博发布器
 			ResolveInfo share2weibo = new ResolveInfo();
@@ -201,6 +204,7 @@ public class IntentResolver {
 				.getString(R.string.how_to_share);
 		intentDialog.setTitle(title);
 		intentDialog.show();
+		//FIXME CRASH!
 
 	}
 
