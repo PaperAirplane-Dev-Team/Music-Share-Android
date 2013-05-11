@@ -13,9 +13,8 @@ Github: `git clone git@github.com:PaperAirplane-Dev-Team/Music-Share-Android.git
 
 Gitcafe: `git clone git@gitcafe.com:PaperAirplane/Music-Share-Android.git`
 
------------
 其他
 ===========
 联系我们: 
-<li><a href="mailto:chenshengqi1@gmail.com">Harry Chen via Gmail</a>
+<li><a href="mailto:chenshengqi1@gmail.com">Harry Chen via Gmail</a><br/>
 <li><a href="mailto:xavieryao@me.com">Xavier Yao via iCloud</a>
