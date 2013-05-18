@@ -142,7 +142,7 @@ public class AtSuggestionActivity extends Activity {
 															.getString(
 																	"nickname")+" ";
 											fetched_data.add(nickname);
-											MyLogger.v(Consts.DEBUG_TAG, "添加数据"
+											MyLogger.v(Consts.DEBUG_TAG, "娣诲姞鏁版嵁"
 													+ nickname);
 										}
 										m.obj = fetched_data;
@@ -155,7 +155,7 @@ public class AtSuggestionActivity extends Activity {
 								@Override
 								public void onError(WeiboException e) {
 									e.printStackTrace();
-									MyLogger.e(Consts.DEBUG_TAG, "获取错误"+e.getStatusCode()+e.getMessage());
+									MyLogger.e(Consts.DEBUG_TAG, "鑾峰彇閿欒"+e.getStatusCode()+e.getMessage());
 								}
 
 								@Override

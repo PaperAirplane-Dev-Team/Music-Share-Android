@@ -44,11 +44,11 @@ import com.paperairplane.music.share.MyLogger;
 public class Utilities {
 
 	/**
-	 * ½«integerÀàĞÍµÄÊ±¼ä³¤¶È¸ñÊ½»¯
+	 * å°†integerç±»å‹çš„æ—¶é—´é•¿åº¦æ ¼å¼åŒ–
 	 * 
 	 * @param duration
-	 *            intÀàĞÍµÄÊ±¼ä³¤¶È£¨ms£©
-	 * @return ¸ñÊ½»¯ºÃµÄÊ±³¤×Ö·û´®
+	 *            intç±»å‹çš„æ—¶é—´é•¿åº¦ï¼ˆmsï¼‰
+	 * @return æ ¼å¼åŒ–å¥½çš„æ—¶é•¿å­—ç¬¦ä¸²
 	 */
 	public static String convertDuration(long duration) {
 
@@ -59,21 +59,21 @@ public class Utilities {
 		long s = (duration % (60 * 1000)) / 1000;
 		sb.append(s < 10 ? "0" + s : s);
 		return sb.toString();
-		// àÅ,Ö±½ÓÓÃÈË¼ÒµÄ·½·¨ÁË,ºÙ
+		// å—¯,ç›´æ¥ç”¨äººå®¶çš„æ–¹æ³•äº†,å˜¿
 	}
 
 	/**
-	 * Í¨¹ı¶¹°êAPI»ñÈ¡ÒôÀÖµÄĞÅÏ¢
+	 * é€šè¿‡è±†ç“£APIè·å–éŸ³ä¹çš„ä¿¡æ¯
 	 * 
 	 * @param title
-	 *            ÒôÀÖ±êÌâ
+	 *            éŸ³ä¹æ ‡é¢˜
 	 * @param artist
-	 *            ÒôÀÖ×÷Õß
+	 *            éŸ³ä¹ä½œè€…
 	 * @param context
-	 *            ÓÃÓÚ»ñÈ¡×ÊÔ´µÄcontext
+	 *            ç”¨äºè·å–èµ„æºçš„context
 	 * @param handler
-	 *            ÓÃÓÚ¿ØÖÆUIÏß³ÌµÄHandler
-	 * @return °üº¬ÒôÀÖÏêÇéµØÖ·¡¢¸èÊÖ¡¢×¨¼­¡¢µ¥Çúor×¨¼­¡¢×¨¼­·âÃæµÄ×Ö·û´®Êı×é
+	 *            ç”¨äºæ§åˆ¶UIçº¿ç¨‹çš„Handler
+	 * @return åŒ…å«éŸ³ä¹è¯¦æƒ…åœ°å€ã€æ­Œæ‰‹ã€ä¸“è¾‘ã€å•æ›²orä¸“è¾‘ã€ä¸“è¾‘å°é¢çš„å­—ç¬¦ä¸²æ•°ç»„
 	 */
 	public static String[] getMusicAndArtworkUrl(String title, String artist,
 			Context context, Handler handler) {
@@ -100,7 +100,7 @@ public class Utilities {
 							"attrs").getString("title");
 					info[Consts.ArraySubscript.VERSION] = item.getJSONObject(
 							"attrs").getString("version");
-					// ÕâÀï,ÕâÀï,ÕâÑù¾Í²»»áÓĞµ°ÌÛµÄ¿Õ°×´íÎóÁË
+					// è¿™é‡Œ,è¿™é‡Œ,è¿™æ ·å°±ä¸ä¼šæœ‰è›‹ç–¼çš„ç©ºç™½é”™è¯¯äº†
 				} else {
 					info[Consts.ArraySubscript.MUSIC] = context
 							.getString(R.string.no_music_url_found);
@@ -110,7 +110,7 @@ public class Utilities {
 					info[Consts.ArraySubscript.VERSION] = null;
 				}
 			} catch (JSONException e) {
-				MyLogger.e(Consts.DEBUG_TAG, "JSON½âÎö´íÎó");
+				MyLogger.e(Consts.DEBUG_TAG, "JSONè§£æé”™è¯¯");
 				e.printStackTrace();
 				info[Consts.ArraySubscript.MUSIC] = context
 						.getString(R.string.no_music_url_found);
@@ -122,7 +122,7 @@ public class Utilities {
 		}
 		// MyLogger.v(Consts.DEBUG_TAG, info[MUSIC]);
 		// MyLogger.v(Consts.DEBUG_TAG, info[ARTWORK]);
-		// ¼ÓLogµÄ»°Èç¹ûÉÏÃæÄÇÁ½¸öÖµÓĞnull¾Í»á±ÀÀ£¡­¡­ÀÁµÃcatch
+		// åŠ Logçš„è¯å¦‚æœä¸Šé¢é‚£ä¸¤ä¸ªå€¼æœ‰nullå°±ä¼šå´©æºƒâ€¦â€¦æ‡’å¾—catch
 		return info;
 	}
 
@@ -165,12 +165,12 @@ public class Utilities {
 			return fileName;
 		} catch (Exception e) {
 			e.printStackTrace();
-			MyLogger.e(Consts.DEBUG_TAG, "»ñÈ¡×¨¼­·âÃæÊ§°Ü" + e.getMessage());
+			MyLogger.e(Consts.DEBUG_TAG, "è·å–ä¸“è¾‘å°é¢å¤±è´¥" + e.getMessage());
 			return null;
 		}
 	}
 
-	// Í¨¹ı¶¹°êAPI»ñÈ¡ÒôÀÖĞÅÏ¢
+	// é€šè¿‡è±†ç“£APIè·å–éŸ³ä¹ä¿¡æ¯
 	private static String getJson(String title, String artist, Handler handler) {
 		String json = null;
 		HttpResponse httpResponse;
@@ -183,7 +183,7 @@ public class Utilities {
 			httpGet.addHeader("User-Agent", "Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))");
 			HttpClient client = new DefaultHttpClient();			
 			httpResponse = client.execute(httpGet);
-			MyLogger.v(Consts.DEBUG_TAG, "½øĞĞµÄHTTP GET·µ»Ø×´Ì¬Îª"
+			MyLogger.v(Consts.DEBUG_TAG, "è¿›è¡Œçš„HTTP GETè¿”å›çŠ¶æ€ä¸º"
 					+ httpResponse.getStatusLine().getStatusCode());
 			if (httpResponse.getStatusLine().getStatusCode() == 200) {
 				
@@ -259,7 +259,7 @@ public class Utilities {
 
 	public static Bitmap getLocalArtwork(Context context, long album_id, int w,
 			int h) {
-		// ´ÓMusic AppÖ±½Ó×§³öÀ´
+		// ä»Music Appç›´æ¥æ‹½å‡ºæ¥
 		// NOTE: There is in fact a 1 pixel border on the right side in the
 		// ImageView
 		// used to display this drawable. Take it into account now, so we don't
@@ -306,7 +306,7 @@ public class Utilities {
 						b = tmp;
 					}
 				}
-				MyLogger.v(Consts.DEBUG_TAG,"·½·¨Utilities.getLocalArtwork·µ»ØBitmap");
+				MyLogger.v(Consts.DEBUG_TAG,"æ–¹æ³•Utilities.getLocalArtworkè¿”å›Bitmap");
 				return b;
 			} catch (FileNotFoundException e) {
 			} finally {
@@ -334,7 +334,7 @@ public class Utilities {
 
 	public static void checkForUpdate(final int versionCode,
 			final Handler handler, final Context context, final Locale currentLocale) {
-		MyLogger.v(Consts.DEBUG_TAG, "·½·¨checkForUpdate±»µ÷ÓÃ");
+		MyLogger.v(Consts.DEBUG_TAG, "æ–¹æ³•checkForUpdateè¢«è°ƒç”¨");
 		Thread updateThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -355,7 +355,7 @@ public class Utilities {
 				httpGet = new HttpGet(Consts.Url.CHECK_TEST_UPDATE);
 			}
 			httpResponse = new DefaultHttpClient().execute(httpGet);
-			MyLogger.v(Consts.DEBUG_TAG, "½øĞĞµÄHTTP GET·µ»Ø×´Ì¬Îª"
+			MyLogger.v(Consts.DEBUG_TAG, "è¿›è¡Œçš„HTTP GETè¿”å›çŠ¶æ€ä¸º"
 					+ httpResponse.getStatusLine().getStatusCode());
 			if (httpResponse.getStatusLine().getStatusCode() == 200) {
 				json = EntityUtils.toString(httpResponse.getEntity());
@@ -365,7 +365,7 @@ public class Utilities {
 				return;
 			}
 		} catch (Exception e) {
-			MyLogger.v(Consts.DEBUG_TAG, "Å×³ö´íÎó" + e.getMessage());
+			MyLogger.v(Consts.DEBUG_TAG, "æŠ›å‡ºé”™è¯¯" + e.getMessage());
 			handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
 			//e.printStackTrace();
 			json = null;

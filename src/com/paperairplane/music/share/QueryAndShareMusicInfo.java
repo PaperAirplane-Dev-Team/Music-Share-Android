@@ -33,15 +33,15 @@ class QueryAndShareMusicInfo extends Thread {
 		}
 		try {
 			boolean flag = (mAlbumId != Consts.NULL)&& (Utilities.getLocalArtwork(mContext, mAlbumId, 10, 10) != null);
-			MyLogger.d(Consts.DEBUG_TAG,"ÊÇ·ñÓĞ±¾µØ²åÍ¼£º"+flag);
+			MyLogger.d(Consts.DEBUG_TAG,"æ˜¯å¦æœ‰æœ¬åœ°æ’å›¾ï¼š"+flag);
 			if (flag) {
-				//ÄãÑ¾²»ÄÜÊ¡Ê¡?1X1¾Í¹»ÁËÅĞ¶Ï°¡
-				//ÓĞÎÊÌâ°¡£¡£¡£¡ÎÊÌâÊÇ£¡
+				//ä½ ä¸«ä¸èƒ½çœçœ?1X1å°±å¤Ÿäº†åˆ¤æ–­å•Š
+				//æœ‰é—®é¢˜å•Šï¼ï¼ï¼é—®é¢˜æ˜¯ï¼
 				Utilities.saveFile(
 						Utilities.getLocalArtwork(mContext, mAlbumId, 300, 300),
 						mAlbum + "_" + mArtist + ".jpg", mArtworkPath);
 				fileName = mArtworkPath + mAlbum + "_" + mArtist + ".jpg";
-				MyLogger.d(Consts.DEBUG_TAG, "»ñÈ¡±¾µØ·âÃæ³É¹¦");
+				MyLogger.d(Consts.DEBUG_TAG, "è·å–æœ¬åœ°å°é¢æˆåŠŸ");
 			} else {
 				fileName = mArtworkPath
 						+ Utilities.getArtwork(artworkUrl, mAlbum, mArtist,
@@ -51,7 +51,7 @@ class QueryAndShareMusicInfo extends Thread {
 			e.printStackTrace();
 			// fileName = mArtworkPath + Utilities.getArtwork(artworkUrl, mTitle,
 			// mArtworkPath);
-			// ß×ÉÏÃæÄÇ¾äÊÇÊ²Ã´Çé¿ö¡­¡­
+			// å’¦ä¸Šé¢é‚£å¥æ˜¯ä»€ä¹ˆæƒ…å†µâ€¦â€¦
 		}
 		
 		String type = "text/plain";

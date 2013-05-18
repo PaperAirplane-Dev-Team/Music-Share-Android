@@ -25,7 +25,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 
 	public MusicListAdapter(Context context, MusicData musicdatas[]) {
 		mContext = context;
-		mMusicDatas = musicdatas;// ²»ÒªCursorÁË¡­¡­
+		mMusicDatas = musicdatas;// ä¸è¦Cursoräº†â€¦â€¦
 		Arrays.sort(mMusicDatas, new Comparator<MusicData>() {
 			@Override
 			public int compare(MusicData lhs, MusicData rhs) {
@@ -34,7 +34,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 		});
 		int length = mMusicDatas.length;
 		mSectionMap = new HashMap<Character, Integer>();
-		char charTemp = 0, charNow;// ËæÊÖ¸³Öµ²»È»µÚÒ»´Î»á³ö´í
+		char charTemp = 0, charNow;// éšæ‰‹èµ‹å€¼ä¸ç„¶ç¬¬ä¸€æ¬¡ä¼šå‡ºé”™
 		for (int i = length - 1; i >= 0; i--) {
 			charNow = mMusicDatas[i].getFirstChar();
 			if (charTemp == charNow) {
@@ -43,11 +43,11 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 			charTemp = mMusicDatas[i].getFirstChar();
 			mSectionMap.put(charTemp, i);
 			/*
-			 * ËµËµÎÒµÄË¼Â·,µ¹Ğò±éÀú,ÏÈÖ»¹Ü·Å½øÈ¥,Óöµ½×Ö·ûÏàÍ¬µÄ»°ÈÓµôÔ­À´µÄĞ´ĞÂµÄ ÕâÑù²»»á³öÏÖÃ»ÓĞµÄ×Ö·û
+			 * è¯´è¯´æˆ‘çš„æ€è·¯,å€’åºéå†,å…ˆåªç®¡æ”¾è¿›å»,é‡åˆ°å­—ç¬¦ç›¸åŒçš„è¯æ‰”æ‰åŸæ¥çš„å†™æ–°çš„ è¿™æ ·ä¸ä¼šå‡ºç°æ²¡æœ‰çš„å­—ç¬¦
 			 */
 		}
 		getSections();
-		// TODO ÎÄ±¾ÑÕÉ«Ñ¡Ôñ
+		// TODO æ–‡æœ¬é¢œè‰²é€‰æ‹©
 		isTextColorSet=false;
 		SharedPreferences preference = mContext.getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
@@ -128,7 +128,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 			}
 		}
 		sectionCharArr[arraySize - 1] = '#';
-		// ÎÒ¾õ×ÅÕâÑùÓ¦¸ÃÊÇ¿ÉÒÔµÄ°É
+		// æˆ‘è§‰ç€è¿™æ ·åº”è¯¥æ˜¯å¯ä»¥çš„å§
 		return sectionCharArr;
 	}
 

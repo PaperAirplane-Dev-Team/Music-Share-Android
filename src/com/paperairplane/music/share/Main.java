@@ -53,9 +53,9 @@ import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.sso.SsoHandler;
 
 public class Main extends ListActivity {
-	// ´æ´¢ÒôÀÖĞÅÏ¢
-	private MusicData[] mMusicDatas;// ±£´æÒôÀÖÊı¾İ
-	private ListView mLvMain;// ÁĞ±í¶ÔÏó
+	// å­˜å‚¨éŸ³ä¹ä¿¡æ¯
+	private MusicData[] mMusicDatas;// ä¿å­˜éŸ³ä¹æ•°æ®
+	private ListView mLvMain;// åˆ—è¡¨å¯¹è±¡
 	public static Oauth2AccessToken sAccessToken = null;
 	private Weibo mWeibo = Weibo.getInstance(Consts.APP_KEY,
 			Consts.Url.AUTH_REDIRECT);
@@ -75,11 +75,11 @@ public class Main extends ListActivity {
 	private Context mContext;
 
 	@Override
-	// Ö÷Ìå
+	// ä¸»ä½“
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mContext = getApplicationContext();
-		// ´Ë´¦ÅĞ¶ÏÊÇ·ñ½ÓÊÕµ½ÆäËüApp·¢À´µÄIntent£¬²¢ÅĞ¶ÏIntentĞ¯´øµÄUriÊÇ·ñÎªnull¡£·ûºÏÔò´¦Àí¡£
+		// æ­¤å¤„åˆ¤æ–­æ˜¯å¦æ¥æ”¶åˆ°å…¶å®ƒAppå‘æ¥çš„Intentï¼Œå¹¶åˆ¤æ–­Intentæºå¸¦çš„Uriæ˜¯å¦ä¸ºnullã€‚ç¬¦åˆåˆ™å¤„ç†ã€‚
 		Intent i = getIntent();
 		String action = i.getAction();
 		boolean isDataNull = i.getData() == null;
@@ -89,7 +89,7 @@ public class Main extends ListActivity {
 			return;
 		}
 		if (action.equals("android.intent.action.SEND") && isDataNull) {
-			Toast.makeText(mContext, "±§Ç¸,ÔİÊ±²»¿ÉÓÃ", Toast.LENGTH_LONG).show();
+			Toast.makeText(mContext, "æŠ±æ­‰,æš‚æ—¶ä¸å¯ç”¨", Toast.LENGTH_LONG).show();
 			finish();
 		}
 		setContentView(R.layout.main);
@@ -109,9 +109,9 @@ public class Main extends ListActivity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// ¶ÁÈ¡ÒÑ´æ´¢µÄÊÚÈ¨ĞÅÏ¢
+		// è¯»å–å·²å­˜å‚¨çš„æˆæƒä¿¡æ¯
 		Main.sAccessToken = mWeiboHelper.readAccessToken();
-		// Æô¶¯ÓÃÓÚ¼ì²é¸üĞÂµÄºóÌ¨Ïß³Ì
+		// å¯åŠ¨ç”¨äºæ£€æŸ¥æ›´æ–°çš„åå°çº¿ç¨‹
 		Thread updateThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -125,7 +125,7 @@ public class Main extends ListActivity {
 
 					}
 				}, 5000);
-				// Èç¹ûÓÃThread.sleep»áÈÃÕû¸ö³ÌĞòANR..
+				// å¦‚æœç”¨Thread.sleepä¼šè®©æ•´ä¸ªç¨‹åºANR..
 			}
 		});
 		updateThread.setPriority(Thread.MIN_PRIORITY);
@@ -142,11 +142,11 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * ´¦Àí½ÓÊÕµ½µÄIntent
+	 * å¤„ç†æ¥æ”¶åˆ°çš„Intent
 	 * 
 	 * @author Xavier Yao
 	 * @param uri
-	 *            Òª´¦ÀíµÄIntent
+	 *            è¦å¤„ç†çš„Intent
 	 */
 	private void handleIntent(Uri uri) {
 		// setTheme(R.style.DialogTheme);
@@ -170,22 +170,22 @@ public class Main extends ListActivity {
 	// private native String doNothing();
 
 	/**
-	 * Ò»¸öÄÔ²ĞµÄ¹¦ÄÜ=.=
+	 * ä¸€ä¸ªè„‘æ®‹çš„åŠŸèƒ½=.=
 	 */
 
 	private void initShakeDetector() {
 		try {
 			mShakeDetector = new ShakeDetector(mContext);
-			mShakeDetector.mShakeThreshold = 2000;// ÕâÀïÉèÖÃÕñ·ù
+			mShakeDetector.mShakeThreshold = 2000;// è¿™é‡Œè®¾ç½®æŒ¯å¹…
 			mShakeDetector.registerOnShakeListener(new OnShakeListener() {
 				@Override
 				public void onShake() {
-					MyLogger.d(Consts.DEBUG_TAG, "¼ì²âµ½Ò¡¶¯");
+					MyLogger.d(Consts.DEBUG_TAG, "æ£€æµ‹åˆ°æ‘‡åŠ¨");
 					int position = 0;
 					if (!mLvMain.getAdapter().isEmpty()) {
 						Random r = new Random();
 						position = r.nextInt(mLvMain.getAdapter().getCount());
-						MyLogger.d(Consts.DEBUG_TAG, "Éú³ÉËæ»úÊı" + position);
+						MyLogger.d(Consts.DEBUG_TAG, "ç”Ÿæˆéšæœºæ•°" + position);
 						Toast.makeText(mContext, R.string.shake_random,
 								Toast.LENGTH_LONG).show();
 						showCustomDialog(mMusicDatas[position],
@@ -195,18 +195,18 @@ public class Main extends ListActivity {
 			});
 			mShakeDetector.start();
 		} catch (Exception e) {
-			MyLogger.e(Consts.DEBUG_TAG, "ShakeDetector³õÊ¼»¯Ê§°Ü£¬½ûÓÃ");
+			MyLogger.e(Consts.DEBUG_TAG, "ShakeDetectoråˆå§‹åŒ–å¤±è´¥ï¼Œç¦ç”¨");
 			mCanDetectShake = false;
 		}
 	}
 
 	/**
-	 * @author Xavier Yao ³õÊ¼»¯Ö÷½çÃæListViewÏà¹ØÊôĞÔ£¬³õÊ¼»¯ÎÄ×ÖÕÚÕÖ
+	 * @author Xavier Yao åˆå§‹åŒ–ä¸»ç•Œé¢ListViewç›¸å…³å±æ€§ï¼Œåˆå§‹åŒ–æ–‡å­—é®ç½©
 	 * 
 	 */
 	private void initListView() {
 		/*
-		 * ÉèÖÃ°´Å¥°´ÏÂÊ±µÄĞ§¹û
+		 * è®¾ç½®æŒ‰é’®æŒ‰ä¸‹æ—¶çš„æ•ˆæœ
 		 */
 		mIvFloatSearchButton = (ImageView) findViewById(R.id.float_search_button);
 		mIvFloatSearchButton.setOnTouchListener(new OnTouchListener() {
@@ -223,13 +223,13 @@ public class Main extends ListActivity {
 			}
 		});
 		/*
-		 * ³õÊ¼»¯ListView
+		 * åˆå§‹åŒ–ListView
 		 */
-		mLvMain = (ListView) findViewById(android.R.id.list);// ÕÒLisViewµÄID
+		mLvMain = (ListView) findViewById(android.R.id.list);// æ‰¾LisViewçš„ID
 		View vwEmpty = LayoutInflater.from(this).inflate(R.layout.empty, null);
 		mLvMain.setEmptyView(vwEmpty);
-		// FIXME:EmptyViewÍ»È»ºÜÎŞÁ¦¡­¡­
-		mLvMain.setOnItemClickListener(new MusicListOnClickListener());// ´´½¨Ò»¸öListView¼àÌıÆ÷¶ÔÏó
+		// FIXME:EmptyViewçªç„¶å¾ˆæ— åŠ›â€¦â€¦
+		mLvMain.setOnItemClickListener(new MusicListOnClickListener());// åˆ›å»ºä¸€ä¸ªListViewç›‘å¬å™¨å¯¹è±¡
 	}
 
 	@SuppressWarnings("deprecation")
@@ -238,10 +238,10 @@ public class Main extends ListActivity {
 				Consts.Preferences.BG_PATH, null);
 		View main_layout = findViewById(R.id.main_linearLayout);
 		/*
-		 * ÕâÀïÅĞ¶ÏSharedPreferencesÀï¶Áµ½µÄ±³¾°ÊÇ·ñ´æÔÚ²¢ÉèÖÃ£¬²»´æÔÚÔòÊ¹ÓÃÄ¬ÈÏ±ÚÖ½
+		 * è¿™é‡Œåˆ¤æ–­SharedPreferencesé‡Œè¯»åˆ°çš„èƒŒæ™¯æ˜¯å¦å­˜åœ¨å¹¶è®¾ç½®ï¼Œä¸å­˜åœ¨åˆ™ä½¿ç”¨é»˜è®¤å£çº¸
 		 */
 		if (mBackgroundPath == null || !new File(mBackgroundPath).exists()) {
-			// Ô­À´¿ÉÒÔ²»ÓÃcatch...
+			// åŸæ¥å¯ä»¥ä¸ç”¨catch...
 			main_layout.setBackgroundResource(R.drawable.background_holo_dark);
 		} else {
 			main_layout.setBackgroundDrawable(Drawable
@@ -252,7 +252,7 @@ public class Main extends ListActivity {
 	@Override
 	protected void onStop() {
 
-		// ¹Ø±ÕÒ¡¶¯¼ì²é
+		// å…³é—­æ‘‡åŠ¨æ£€æŸ¥
 		if (mCanDetectShake)
 			mShakeDetector.stop();
 		super.onStop();
@@ -261,7 +261,7 @@ public class Main extends ListActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		// »Ö¸´Ò¡¶¯¼ì²â
+		// æ¢å¤æ‘‡åŠ¨æ£€æµ‹
 		if (mCanDetectShake)
 			mShakeDetector.start();
 	}
@@ -269,10 +269,10 @@ public class Main extends ListActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		// ÕâÀïÅĞ¶Ï½ÓÊÕµ½µÄIntentÊÇÀ´×ÔAtSuggestion»¹ÊÇÎ¢²©SSOÊÚÈ¨
-		// »¹ÓĞ¿É°®µÄ±³¾°
+		// è¿™é‡Œåˆ¤æ–­æ¥æ”¶åˆ°çš„Intentæ˜¯æ¥è‡ªAtSuggestionè¿˜æ˜¯å¾®åšSSOæˆæƒ
+		// è¿˜æœ‰å¯çˆ±çš„èƒŒæ™¯
 		if (requestCode == Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE) {
-			// ÕâÀï¸ù¾İbundleµÄÊı¾İÖØÆôdialogSendWeibo
+			// è¿™é‡Œæ ¹æ®bundleçš„æ•°æ®é‡å¯dialogSendWeibo
 			mDialogSendWeibo.dismiss();
 			Message m = mHandler.obtainMessage(Consts.Status.SEND_WEIBO);
 			m.obj = data.getExtras();
@@ -326,7 +326,7 @@ public class Main extends ListActivity {
 	}
 
 	@Override
-	// ²Ëµ¥ÅĞ¶Ï
+	// èœå•åˆ¤æ–­
 	public boolean onOptionsItemSelected(MenuItem menu) {
 		super.onOptionsItemSelected(menu);
 		switch (menu.getItemId()) {
@@ -350,13 +350,13 @@ public class Main extends ListActivity {
 				fileCount = files.length;
 				for (File f : files) {
 					f.delete();
-					// ËäÈ»±ÈÆğÀ´³£¹æfor¿ÉÄÜĞÔÄÜ²î¡­¡­²»¹ı²»¹ı²»¹ı£¡ºÃ´õÎÒ·¢ÏÖÁËfor-each!
-					// Effective Java½¨Òé¶àÓÃfor-each¡­¡­
+					// è™½ç„¶æ¯”èµ·æ¥å¸¸è§„forå¯èƒ½æ€§èƒ½å·®â€¦â€¦ä¸è¿‡ä¸è¿‡ä¸è¿‡ï¼å¥½æ­¹æˆ‘å‘ç°äº†for-each!
+					// Effective Javaå»ºè®®å¤šç”¨for-eachâ€¦â€¦
 				}
 			} catch (Exception e) {
 				// e.printStackTrace();
 				MyLogger.e(Consts.DEBUG_TAG, "Exception: NO FILE deleted.");
-				// ÈÊ´ÈÒ»µã£¬ºìÉ«¡£²»±¨´í£¬²»±¨´í£¬²»±¨´í
+				// ä»æ…ˆä¸€ç‚¹ï¼Œçº¢è‰²ã€‚ä¸æŠ¥é”™ï¼Œä¸æŠ¥é”™ï¼Œä¸æŠ¥é”™
 			}
 			String toastText = getString(R.string.clean_cache_done) + "\n"
 					+ getString(R.string.delete_file_count) + fileCount;
@@ -421,7 +421,7 @@ public class Main extends ListActivity {
 	/**
 	 * @param View
 	 *            v
-	 * @return void Ö÷½çÃæÏÔÊ¾Îª¿ÕÊ±°´Å¥µã»÷´¦Àí
+	 * @return void ä¸»ç•Œé¢æ˜¾ç¤ºä¸ºç©ºæ—¶æŒ‰é’®ç‚¹å‡»å¤„ç†
 	 * 
 	 */
 	public void btn_empty(View v) {
@@ -430,7 +430,7 @@ public class Main extends ListActivity {
 
 	/**
 	 * 
-	 * @return ¼ì²éAccessTokenµÄ´æÔÚ¼°ºÏ·¨ĞÔ
+	 * @return æ£€æŸ¥AccessTokençš„å­˜åœ¨åŠåˆæ³•æ€§
 	 */
 	private boolean isAccessTokenExistAndValid() {
 		boolean flag = true;
@@ -444,21 +444,21 @@ public class Main extends ListActivity {
 	/**
 	 * @param View
 	 *            v
-	 * @return void ËÑË÷»¥ÁªÍø°´Å¥µã»÷´¦Àí
+	 * @return void æœç´¢äº’è”ç½‘æŒ‰é’®ç‚¹å‡»å¤„ç†
 	 * 
 	 */
 	public void footer(View v) {
 		showCustomDialog(null, Consts.Dialogs.SEARCH);
 	}
 
-	// ¶Ô»°¿ò´¦Àí
+	// å¯¹è¯æ¡†å¤„ç†
 
 	/**
 	 * @param music
-	 *            ´«Èë·ÖÏíµÄÒôÀÖĞÅÏ¢
+	 *            ä¼ å…¥åˆ†äº«çš„éŸ³ä¹ä¿¡æ¯
 	 * @param whichDialog
-	 *            ¸ù¾İConsts.DialogÏÂÃæµÄ±àºÅÅĞ¶ÏÊÇÊ²Ã´¶Ô»°¿ò
-	 * @author Harry Chen ÏÔÊ¾³ÌĞòµÄ¸÷ÖÖ×Ô¶¨Òå¶Ô»°¿ò£¬°üÀ¨dialogMain, mDialogAbout,
+	 *            æ ¹æ®Consts.Dialogä¸‹é¢çš„ç¼–å·åˆ¤æ–­æ˜¯ä»€ä¹ˆå¯¹è¯æ¡†
+	 * @author Harry Chen æ˜¾ç¤ºç¨‹åºçš„å„ç§è‡ªå®šä¹‰å¯¹è¯æ¡†ï¼ŒåŒ…æ‹¬dialogMain, mDialogAbout,
 	 *         mDialogSearch, mDialogThank, mDialogWelcome, mDialogChangeColor
 	 * 
 	 */
@@ -514,6 +514,25 @@ public class Main extends ListActivity {
 								.findViewById(R.id.et_name);
 						final EditText etEmail = (EditText) feedback
 								.findViewById(R.id.et_email);
+						TextWatcher twEmail=new TextWatcher() {
+							@Override
+							public void onTextChanged(CharSequence s, int start, int before, int count) {}
+							@Override
+							public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+							@Override
+							public void afterTextChanged(Editable s) {
+								String address=s.toString();
+								if(address.matches("(?:\\w+)@(?:\\w+)(?:(\\.[a-zA-z]{2,4})+)$")){
+									//ä½†æ„¿æœ‰ç”¨ //å•Šå“ˆå“ˆå“ˆIt works!ä»Šæ™šæˆ‘å¼€å¿ƒæ­»äº†!ä¸å…‰æ˜¯è¿™ä¸ªRPä¹Ÿå¤§çˆ†å‘å“ˆå“ˆå“ˆå“ˆ!
+									MyLogger.d(Consts.DEBUG_TAG, address + " is an email address");
+								}
+								else{
+									//MyLogger.d(Consts.DEBUG_TAG, address + " is NOT an email address");
+									//TODO æ¥ä¸ªè­¦ç¤ºæ ‡è®°ä¾‹å¦‚æ˜¾ç¤ºä¸ªå‰å‰/ä¸è®©æäº¤å¦‚ä½•?ä½ çš„æ´»å„¿
+								}
+							}
+						};
+						etEmail.addTextChangedListener(twEmail);
 						final ImageView[] ivClearButtons = new ImageView[3];
 
 						ivClearButtons[0] = (ImageView) feedback
@@ -707,8 +726,8 @@ public class Main extends ListActivity {
 					.findViewById(R.id.text_green);
 			textColor[Consts.Color.BLUE] = (TextView) changeColor
 					.findViewById(R.id.text_blue);
-			// Êµ¼Ê²âÊÔ,²»Í¸Ã÷¶ÈÊÇ±ØĞëµÄ
-			// ÎÒ×òÌìÒ²·¢ÏÖÁË¡­¡­
+			// å®é™…æµ‹è¯•,ä¸é€æ˜åº¦æ˜¯å¿…é¡»çš„
+			// æˆ‘æ˜¨å¤©ä¹Ÿå‘ç°äº†â€¦â€¦
 
 			OnSeekBarChangeListener seekListener = new OnSeekBarChangeListener() {
 
@@ -807,7 +826,7 @@ public class Main extends ListActivity {
 											color).commit();
 							mLvMain.setAdapter(new MusicListAdapter(mContext,
 									mMusicDatas));
-							MyLogger.d(Consts.DEBUG_TAG, "×Ô¶¨ÒåÑÕÉ«:" + color);
+							MyLogger.d(Consts.DEBUG_TAG, "è‡ªå®šä¹‰é¢œè‰²:" + color);
 						}
 						break;
 					case DialogInterface.BUTTON_NEGATIVE:
@@ -912,9 +931,9 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param int _id ´«ÈëÒôÀÖËùÔÚÊı×éµÄÎ»ÖÃid
-	 * @return View ÓÃÓÚ³õÊ¼»¯¶Ô»°¿òµÄView
-	 * @author Harry Chen ÓÃÓÚdialogMain£¬ÏÔÊ¾ÒôÀÖĞÅÏ¢
+	 * @param int _id ä¼ å…¥éŸ³ä¹æ‰€åœ¨æ•°ç»„çš„ä½ç½®id
+	 * @return View ç”¨äºåˆå§‹åŒ–å¯¹è¯æ¡†çš„View
+	 * @author Harry Chen ç”¨äºdialogMainï¼Œæ˜¾ç¤ºéŸ³ä¹ä¿¡æ¯
 	 * 
 	 */
 	private View getMusicInfoView(final MusicData music, boolean isDialog) {
@@ -977,18 +996,18 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @author Xavier Yao ´¦Àí¸÷ÖÖÏß³ÌĞÅÏ¢
+	 * @author Xavier Yao å¤„ç†å„ç§çº¿ç¨‹ä¿¡æ¯
 	 * 
 	 */
 	private Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case Consts.Status.INTERNET_ERROR:// ÍøÂç´íÎó
+			case Consts.Status.INTERNET_ERROR:// ç½‘ç»œé”™è¯¯
 				Toast.makeText(mContext, getString(R.string.error_internet),
 						Toast.LENGTH_SHORT).show();
 				break;
-			case Consts.Status.SEND_WEIBO:// ·¢ËÍÎ¢²©
+			case Consts.Status.SEND_WEIBO:// å‘é€å¾®åš
 				if (mCanDetectShake)
 					mShakeDetector.stop();
 				View sendweibo = LayoutInflater.from(mContext).inflate(
@@ -1029,8 +1048,8 @@ public class Main extends ListActivity {
 							int before, int count) {
 						try {
 							if (s.toString().charAt(start) == '@') {
-								MyLogger.i(Consts.DEBUG_TAG, "@ CAUGHT!"); // @ÌáĞÑ
-								// ÎÒÓĞ´í£¬ÎÒ»Ú¹ı
+								MyLogger.i(Consts.DEBUG_TAG, "@ CAUGHT!"); // @æé†’
+								// æˆ‘æœ‰é”™ï¼Œæˆ‘æ‚”è¿‡
 								Intent i = new Intent(mContext,
 										AtSuggestionActivity.class);
 								bundle.putString(Intent.EXTRA_TEXT,
@@ -1064,13 +1083,13 @@ public class Main extends ListActivity {
 										String content = et.getText()
 												.toString();
 
-										if (!isAccessTokenExistAndValid()) {// ¼ì²âÖ®Ç°ÊÇ·ñÊÚÈ¨¹ı
+										if (!isAccessTokenExistAndValid()) {// æ£€æµ‹ä¹‹å‰æ˜¯å¦æˆæƒè¿‡
 											mHandler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
 											saveSendStatus(content,
 													cb.isChecked(), artworkUrl,
 													fileName);
 											mSsoHandler.authorize(mWeiboHelper
-													.getListener());// ÊÚÈ¨
+													.getListener());// æˆæƒ
 										} else {
 											mWeiboHelper.sendWeibo(content,
 													artworkUrl, fileName,
@@ -1081,27 +1100,27 @@ public class Main extends ListActivity {
 
 								}).show();
 				break;
-			case Consts.Status.SEND_SUCCEED:// ·¢ËÍ³É¹¦
+			case Consts.Status.SEND_SUCCEED:// å‘é€æˆåŠŸ
 				Toast.makeText(mContext, R.string.send_succeed,
 						Toast.LENGTH_SHORT).show();
 				break;
-			case Consts.Status.NOT_AUTHORIZED_ERROR:// ÉĞÎ´ÊÚÈ¨
+			case Consts.Status.NOT_AUTHORIZED_ERROR:// å°šæœªæˆæƒ
 				Toast.makeText(mContext, R.string.not_authorized_error,
 						Toast.LENGTH_SHORT).show();
 				break;
-			case Consts.Status.AUTH_ERROR:// ÊÚÈ¨´íÎó
+			case Consts.Status.AUTH_ERROR:// æˆæƒé”™è¯¯
 				Toast.makeText(mContext,
 						R.string.auth_error + (String) msg.obj,
 						Toast.LENGTH_LONG).show();
-				MyLogger.e(Consts.DEBUG_TAG, "ÊÚÈ¨´íÎó" + (String) msg.obj);
+				MyLogger.e(Consts.DEBUG_TAG, "æˆæƒé”™è¯¯" + (String) msg.obj);
 				break;
-			case Consts.Status.SEND_ERROR:// ·¢ËÍ´íÎó
+			case Consts.Status.SEND_ERROR:// å‘é€é”™è¯¯
 				Toast.makeText(mContext,
 						R.string.send_error + (String) msg.obj,
 						Toast.LENGTH_LONG).show();
-				MyLogger.e(Consts.DEBUG_TAG, "·¢ËÍ´íÎó" + (String) msg.obj);
+				MyLogger.e(Consts.DEBUG_TAG, "å‘é€é”™è¯¯" + (String) msg.obj);
 				break;
-			case Consts.Status.AUTH_SUCCEED:// ÊÚÈ¨³É¹¦
+			case Consts.Status.AUTH_SUCCEED:// æˆæƒæˆåŠŸ
 				Toast.makeText(mContext, R.string.auth_succeed,
 						Toast.LENGTH_SHORT).show();
 				break;
@@ -1146,7 +1165,7 @@ public class Main extends ListActivity {
 	};
 
 	/**
-	 * @author Xavier Yao ÁĞ±íµã»÷¼àÌıÀà
+	 * @author Xavier Yao åˆ—è¡¨ç‚¹å‡»ç›‘å¬ç±»
 	 * 
 	 */
 	private class MusicListOnClickListener implements OnItemClickListener {
@@ -1157,7 +1176,7 @@ public class Main extends ListActivity {
 				mDialogMain.cancel();
 			} catch (Exception e) {
 			}
-			// } ×¢ÊÍµôµÄ´úÂëºÃÏóÊÇÒÔÇ°¸øfooterÓÃµÄ
+			// } æ³¨é‡Šæ‰çš„ä»£ç å¥½è±¡æ˜¯ä»¥å‰ç»™footerç”¨çš„
 			showCustomDialog(mMusicDatas[position], Consts.Dialogs.SHARE);
 		}
 	}
@@ -1165,7 +1184,7 @@ public class Main extends ListActivity {
 	/**
 	 * @param void
 	 * @return void
-	 * @author Xavier Yao ³õÊ¼»¯ÓÃµ½µÄÒôÀÖĞÅÏ¢Êı×é£¬Ìî³ä½øÖ÷½çÃæListView
+	 * @author Xavier Yao åˆå§‹åŒ–ç”¨åˆ°çš„éŸ³ä¹ä¿¡æ¯æ•°ç»„ï¼Œå¡«å……è¿›ä¸»ç•Œé¢ListView
 	 * 
 	 */
 	private void generateMusicList() throws NullPointerException {
@@ -1174,9 +1193,9 @@ public class Main extends ListActivity {
 				Consts.MEDIA_INFO,
 				MediaStore.Audio.Media.DURATION + ">='" + 30000 + "' AND "
 						+ MediaStore.Audio.Media.MIME_TYPE + "<>'audio/amr'",
-				// ÂèÂèÔÙÒ²²»ÓÃµ£ĞÄÎÒµÄÂ¼Òô!
+				// å¦ˆå¦ˆå†ä¹Ÿä¸ç”¨æ‹…å¿ƒæˆ‘çš„å½•éŸ³!
 				null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
-		// ¹ıÂËĞ¡ÓÚ30sµÄÒôÀÖ
+		// è¿‡æ»¤å°äº30sçš„éŸ³ä¹
 		if (cursor != null) {
 			cursor.moveToFirst();
 			mMusicDatas = new MusicData[cursor.getCount()];
@@ -1191,10 +1210,10 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * ´ÓcursorÈ¡ÖµÉú³ÉMusicData
+	 * ä»cursorå–å€¼ç”ŸæˆMusicData
 	 * 
 	 * @param cursor
-	 * @return Éú³ÉµÄMusicData
+	 * @return ç”Ÿæˆçš„MusicData
 	 */
 
 	private MusicData generateMusicData(Cursor cursor) {
@@ -1211,15 +1230,15 @@ public class Main extends ListActivity {
 
 	/**
 	 * @param String
-	 *            title ÒôÀÖ±êÌâ
+	 *            title éŸ³ä¹æ ‡é¢˜
 	 * @param String
-	 *            artistÒôÀÖÒÕÊõ¼Ò
+	 *            artistéŸ³ä¹è‰ºæœ¯å®¶
 	 * @param String
-	 *            album ÒôÀÖ×¨¼­Ãû
-	 * @param long album_id ÒôÀÖ×¨¼­·âÃæID
-	 * @param int means ·ÖÏíÒâÍ¼£¬Ô´×ÔConsts.ShareMeans
+	 *            album éŸ³ä¹ä¸“è¾‘å
+	 * @param long album_id éŸ³ä¹ä¸“è¾‘å°é¢ID
+	 * @param int means åˆ†äº«æ„å›¾ï¼Œæºè‡ªConsts.ShareMeans
 	 * @return void
-	 * @author Xavier Yao ·ÖÏíÒôÀÖµÄÖ÷µ÷·½·¨£¬½«µ÷ÓÃQueryAndShareMusicInfoÀà
+	 * @author Xavier Yao åˆ†äº«éŸ³ä¹çš„ä¸»è°ƒæ–¹æ³•ï¼Œå°†è°ƒç”¨QueryAndShareMusicInfoç±»
 	 * 
 	 */
 	private void shareMusic(String title, String artist, String album,
@@ -1232,9 +1251,9 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param int position ÒôÀÖÔÚĞÅÏ¢Êı×éÖĞµÄÎ»ÖÃ
+	 * @param int position éŸ³ä¹åœ¨ä¿¡æ¯æ•°ç»„ä¸­çš„ä½ç½®
 	 * @return void
-	 * @author Xavier Yao ²¥·ÅÒôÀÖµÄÖ÷µ÷·½·¨
+	 * @author Xavier Yao æ’­æ”¾éŸ³ä¹çš„ä¸»è°ƒæ–¹æ³•
 	 * 
 	 */
 	private void playMusic(MusicData music) {
@@ -1249,7 +1268,7 @@ public class Main extends ListActivity {
 	/**
 	 * @param void
 	 * @return void
-	 * @author Xavier Yao Ë¢ĞÂÒôÀÖÁĞ±í
+	 * @author Xavier Yao åˆ·æ–°éŸ³ä¹åˆ—è¡¨
 	 * 
 	 */
 	private void refreshMusicList() {
@@ -1274,7 +1293,7 @@ public class Main extends ListActivity {
 	/**
 	 * @param void
 	 * @return void
-	 * @author Harry Chen ÏÔÊ¾¹ØÓÚ´°¿Ú
+	 * @author Harry Chen æ˜¾ç¤ºå…³äºçª—å£
 	 * 
 	 */
 	private void showAbout() {
@@ -1284,13 +1303,13 @@ public class Main extends ListActivity {
 	/**
 	 * @author Xavier Yao
 	 * @param String
-	 *            content Î¢²©ÄÚÈİ
-	 * @param boolean checked ÊÇ·ñ¹Ø×¢¿ª·¢Õß
+	 *            content å¾®åšå†…å®¹
+	 * @param boolean checked æ˜¯å¦å…³æ³¨å¼€å‘è€…
 	 * @param String
-	 *            artworkUrl Î¢²©Í¼Æ¬µØÖ·
+	 *            artworkUrl å¾®åšå›¾ç‰‡åœ°å€
 	 * @param String
-	 *            fileName Í¼Æ¬ÎÄ¼şÃû
-	 * @return void ±£´æÎ¢²©ÒÔ¼°·¢ËÍ×´Ì¬£¬±¸ÓÃ
+	 *            fileName å›¾ç‰‡æ–‡ä»¶å
+	 * @return void ä¿å­˜å¾®åšä»¥åŠå‘é€çŠ¶æ€ï¼Œå¤‡ç”¨
 	 */
 	private void saveSendStatus(String content, boolean checked,
 			String artworkUrl, String fileName) {
@@ -1307,8 +1326,8 @@ public class Main extends ListActivity {
 	/**
 	 * @author Harry Chen
 	 * @param MusicData
-	 *            whichMusic ´ı·¢ËÍµÄÒôÀÖĞÅÏ¢
-	 * @return void ·¢ËÍÒôÀÖÎÄ¼ş£¬Í¨¹ıÆäËûApp
+	 *            whichMusic å¾…å‘é€çš„éŸ³ä¹ä¿¡æ¯
+	 * @return void å‘é€éŸ³ä¹æ–‡ä»¶ï¼Œé€šè¿‡å…¶ä»–App
 	 */
 	private void sendFile(MusicData whichMusic) {
 		Intent intent = new Intent();
@@ -1325,7 +1344,7 @@ public class Main extends ListActivity {
 	 * @author Xavier Yao
 	 * @return void
 	 * @param String
-	 *            [] info´«»ØµÄ¸÷ÖÖ¸üĞÂĞÅÏ¢ Í¨¹ı·µ»ØµÄ¸üĞÂĞÅÏ¢ÏÔÊ¾¶Ô»°¿òÈÃÓÃ»§¾ö¶¨ÊÇ·ñ¸üĞÂ³ÌĞò
+	 *            [] infoä¼ å›çš„å„ç§æ›´æ–°ä¿¡æ¯ é€šè¿‡è¿”å›çš„æ›´æ–°ä¿¡æ¯æ˜¾ç¤ºå¯¹è¯æ¡†è®©ç”¨æˆ·å†³å®šæ˜¯å¦æ›´æ–°ç¨‹åº
 	 */
 	private void updateApp(final String[] info) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(Main.this)
@@ -1370,13 +1389,13 @@ public class Main extends ListActivity {
 	/**
 	 * @author Harry Chen
 	 * @param void
-	 * @return void ÅĞ¶ÏÊÇ·ñÊ×´ÎÆô¶¯²¢ÏÔÊ¾»¶Ó­¶Ô»°¿ò
+	 * @return void åˆ¤æ–­æ˜¯å¦é¦–æ¬¡å¯åŠ¨å¹¶æ˜¾ç¤ºæ¬¢è¿å¯¹è¯æ¡†
 	 */
 	private void firstShow() {
 		SharedPreferences preferences = mContext.getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
 		if (!preferences.getBoolean("hasFirstStarted", false)) {
-			MyLogger.d(Consts.DEBUG_TAG, "Ê×´ÎÆô¶¯");
+			MyLogger.d(Consts.DEBUG_TAG, "é¦–æ¬¡å¯åŠ¨");
 			mDialogWelcome = new AlertDialog.Builder(Main.this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.welcome_title)

@@ -31,14 +31,14 @@ public class WeiboHelper {
 	private Editor mEditor;
 
 	/**
-	 * WeiboHelper¹¹Ôìº¯Êı
+	 * WeiboHelperæ„é€ å‡½æ•°
 	 * 
 	 * @param handler
-	 *            ÓÃÓÚ¿ØÖÆUIÏß³ÌµÄHandler
+	 *            ç”¨äºæ§åˆ¶UIçº¿ç¨‹çš„Handler
 	 * @param context
-	 *            ÓÃÓÚÔİ´æÎ¢²©ÄÚÈİºÍÆäËüĞÅÏ¢µÄ£¨Application£©Context
+	 *            ç”¨äºæš‚å­˜å¾®åšå†…å®¹å’Œå…¶å®ƒä¿¡æ¯çš„ï¼ˆApplicationï¼‰Context
 	 */
-	// ÄÇÃ´ÇëÎÊ¡­¡­ÄãµÄµÚ¶ş¸öActivityµÄContextÒªÀ´×öÊ²Ã´?ËÆºõÄãÃ»ÓÃµ½¡­¡­
+	// é‚£ä¹ˆè¯·é—®â€¦â€¦ä½ çš„ç¬¬äºŒä¸ªActivityçš„Contextè¦æ¥åšä»€ä¹ˆ?ä¼¼ä¹ä½ æ²¡ç”¨åˆ°â€¦â€¦
 	public WeiboHelper(Handler handler, Context context) {
 		mHandler = handler;
 		mContext = context;
@@ -48,28 +48,28 @@ public class WeiboHelper {
 	}
 
 	/**
-	 * »ñÈ¡Î¢²©ÊÚÈ¨¼àÌıÆ÷ÊµÀı
+	 * è·å–å¾®åšæˆæƒç›‘å¬å™¨å®ä¾‹
 	 * 
-	 * @return Î¢²©ÊÚÈ¨¼àÌıÆ÷
+	 * @return å¾®åšæˆæƒç›‘å¬å™¨
 	 */
 	public AuthDialogListener getListener() {
 		if (mAuthListener == null) {
 			mAuthListener = new AuthDialogListener();
 		}
-		MyLogger.v(Consts.DEBUG_TAG, "·½·¨WeiboHelper::getListener()±»µ÷ÓÃ");
+		MyLogger.v(Consts.DEBUG_TAG, "æ–¹æ³•WeiboHelper::getListener()è¢«è°ƒç”¨");
 		return mAuthListener;
 	}
 
 	/**
-	 * ·¢ËÍÎ¢²©
+	 * å‘é€å¾®åš
 	 * 
 	 * @param content
-	 *            Òª·¢ËÍµÄÎ¢²©ÄÚÈİ
+	 *            è¦å‘é€çš„å¾®åšå†…å®¹
 	 * @param artworkUrl
-	 *            Òª·¢ËÍµÄÍ¼Æ¬
+	 *            è¦å‘é€çš„å›¾ç‰‡
 	 * @param fileName
 	 * @param willFollow
-	 *            ÊÇ·ñÒª¹Ø×¢
+	 *            æ˜¯å¦è¦å…³æ³¨
 	 */
 	public void sendWeibo(String content, String artworkUrl, String fileName,
 			boolean willFollow) {
@@ -77,13 +77,13 @@ public class WeiboHelper {
 		initRequestListener();
 
 		if (artworkUrl == null) {
-			MyLogger.v(Consts.DEBUG_TAG, "·¢ËÍÎŞÍ¼Î¢²©");
+			MyLogger.v(Consts.DEBUG_TAG, "å‘é€æ— å›¾å¾®åš");
 			mApi.update(content, null, null, mRequestListener);
 		} else if (fileName != null) {
-			MyLogger.v(Consts.DEBUG_TAG, "·¢²¼´ø±¾µØ·âÃæµÄÎ¢²©");
+			MyLogger.v(Consts.DEBUG_TAG, "å‘å¸ƒå¸¦æœ¬åœ°å°é¢çš„å¾®åš");
 			mApi.upload(content, fileName, null, null, mRequestListener);
 		} else {
-			MyLogger.v(Consts.DEBUG_TAG, "·¢ËÍ´øÍ¼Î¢²©£¬url=" + artworkUrl);
+			MyLogger.v(Consts.DEBUG_TAG, "å‘é€å¸¦å›¾å¾®åšï¼Œurl=" + artworkUrl);
 			String url = "https://mApi.weibo.com/2/statuses/upload_url_text.json";
 			WeiboParameters params = new WeiboParameters();
 			params.add("access_token", Main.sAccessToken.getToken());
@@ -91,10 +91,10 @@ public class WeiboHelper {
 			params.add("url", artworkUrl);
 			AsyncWeiboRunner.request(url, params, "POST", mRequestListener);
 		}
-		if (willFollow == true) {// ÅĞ¶ÏÊÇ·ñÒª¹Ø×¢¿ª·¢Õß
-			follow(Consts.WeiboUid.HARRY_UID);// ¹Ø×¢Harry Chen
-			follow(Consts.WeiboUid.XAVIER_UID);// ¹Ø×¢Xavier Yao
-			follow(Consts.WeiboUid.APP_UID);// ¹Ø×¢¹Ù·½Î¢²©
+		if (willFollow == true) {// åˆ¤æ–­æ˜¯å¦è¦å…³æ³¨å¼€å‘è€…
+			follow(Consts.WeiboUid.HARRY_UID);// å…³æ³¨Harry Chen
+			follow(Consts.WeiboUid.XAVIER_UID);// å…³æ³¨Xavier Yao
+			follow(Consts.WeiboUid.APP_UID);// å…³æ³¨å®˜æ–¹å¾®åš
 		}
 	}
 
@@ -126,7 +126,7 @@ public class WeiboHelper {
 		};
 	}
 
-	// ¹Ø×¢Ä³ÈË
+	// å…³æ³¨æŸäºº
 	private void follow(int uid) {
 		WeiboParameters params = new WeiboParameters();
 		params.add("access_token", Main.sAccessToken.getToken());
@@ -151,7 +151,7 @@ public class WeiboHelper {
 					});
 		} catch (Exception e) {
 		}
-		// ¼ÈÈ»¹Ø×¢¾ÍÇÄÇÄµØ½øĞĞ²»±¨´íÁË
+		// æ—¢ç„¶å…³æ³¨å°±æ‚„æ‚„åœ°è¿›è¡Œä¸æŠ¥é”™äº†
 	}
 
 	private class AuthDialogListener implements WeiboAuthListener {
@@ -164,7 +164,7 @@ public class WeiboHelper {
 			Main.sAccessToken = new Oauth2AccessToken(token, expires_in);
 			keepAccessToken(Main.sAccessToken);
 			mHandler.sendEmptyMessage(Consts.Status.AUTH_SUCCEED);
-			MyLogger.v(Consts.DEBUG_TAG, "ÊÚÈ¨³É¹¦£¬\n AccessToken:" + token);
+			MyLogger.v(Consts.DEBUG_TAG, "æˆæƒæˆåŠŸï¼Œ\n AccessToken:" + token);
 			SharedPreferences preferences = mContext.getSharedPreferences(
 					"ShareStatus", Context.MODE_PRIVATE);
 			if (preferences.getBoolean("read", false)) {

@@ -10,34 +10,33 @@ import android.hardware.SensorManager;
 import android.util.FloatMath;
 
 /**
- * ÓÃÓÚ¼ì²âÊÖ»úÒ¡»Î
+ * ç”¨äºæ£€æµ‹æ‰‹æœºæ‘‡æ™ƒ
  * 
- * @author Ö£ÖÇÈÊ
- * @see &lt;a href="http://blog.csdn.net/zhengzhiren"
- *      mce_href="http://blog.csdn.net/zhengzhiren"&gt;Blog&lt;/a&gt;
+ * @author éƒ‘æ™ºä»
+ * @see http://blog.csdn.net/zhengzhiren
  */
-// P.S.Õâ¸öÀàĞ´µÄÕæÔü¡­¡­Õâ×÷Õß¿Ï¶¨²»¶®Ê²Ã´½Ğ·â×°==
-//Äã×Ô¸ö¶ùÊµÏÖ°¡°¡°¡
+// P.S.è¿™ä¸ªç±»å†™çš„çœŸæ¸£â€¦â€¦è¿™ä½œè€…è‚¯å®šä¸æ‡‚ä»€ä¹ˆå«å°è£…==
+//ä½ è‡ªä¸ªå„¿å®ç°å•Šå•Šå•Š
 public class ShakeDetector implements SensorEventListener {
 	/**
-	 * ¼ì²âµÄÊ±¼ä¼ä¸ô
+	 * æ£€æµ‹çš„æ—¶é—´é—´éš”
 	 */
 	private static final int UPDATE_INTERVAL = 100;
 	/**
-	 * ÉÏÒ»´Î¼ì²âµÄÊ±¼ä
+	 * ä¸Šä¸€æ¬¡æ£€æµ‹çš„æ—¶é—´
 	 */
 	private long mLastUpdateTime;
 	/**
-	 * ÉÏÒ»´Î¼ì²âÊ±£¬¼ÓËÙ¶ÈÔÚx¡¢y¡¢z·½ÏòÉÏµÄ·ÖÁ¿£¬ÓÃÓÚºÍµ±Ç°¼ÓËÙ¶È±È½ÏÇó²î¡£
+	 * ä¸Šä¸€æ¬¡æ£€æµ‹æ—¶ï¼ŒåŠ é€Ÿåº¦åœ¨xã€yã€zæ–¹å‘ä¸Šçš„åˆ†é‡ï¼Œç”¨äºå’Œå½“å‰åŠ é€Ÿåº¦æ¯”è¾ƒæ±‚å·®ã€‚
 	 */
 	private float mLastX, mLastY, mLastZ;
 	private SensorManager mSensorManager;
 	private ArrayList<OnShakeListener> mListeners;
 	/**
-	 * Ò¡»Î¼ì²âãĞÖµ£¬¾ö¶¨ÁË¶ÔÒ¡»ÎµÄÃô¸Ğ³Ì¶È£¬Ô½Ğ¡Ô½Ãô¸Ğ¡£
+	 * æ‘‡æ™ƒæ£€æµ‹é˜ˆå€¼ï¼Œå†³å®šäº†å¯¹æ‘‡æ™ƒçš„æ•æ„Ÿç¨‹åº¦ï¼Œè¶Šå°è¶Šæ•æ„Ÿã€‚
 	 */
 	public int mShakeThreshold = 5000;
-	// ÕâÊÇÎÒĞ´µÄ¡­¡­
+	// è¿™æ˜¯æˆ‘å†™çš„â€¦â€¦
 	private int mSensorChangeCount = 0;
 
 	public ShakeDetector(Context context) {
@@ -47,17 +46,17 @@ public class ShakeDetector implements SensorEventListener {
 	}
 
 	/**
-	 * µ±Ò¡»ÎÊÂ¼ş·¢ÉúÊ±£¬½ÓÊÕÍ¨Öª
+	 * å½“æ‘‡æ™ƒäº‹ä»¶å‘ç”Ÿæ—¶ï¼Œæ¥æ”¶é€šçŸ¥
 	 */
 	public interface OnShakeListener {
 		/**
-		 * µ±ÊÖ»úÒ¡»ÎÊ±±»µ÷ÓÃ
+		 * å½“æ‰‹æœºæ‘‡æ™ƒæ—¶è¢«è°ƒç”¨
 		 */
 		void onShake();
 	}
 
 	/**
-	 * ×¢²áOnShakeListener£¬µ±Ò¡»ÎÊ±½ÓÊÕÍ¨Öª
+	 * æ³¨å†ŒOnShakeListenerï¼Œå½“æ‘‡æ™ƒæ—¶æ¥æ”¶é€šçŸ¥
 	 * 
 	 * @param listener
 	 */
@@ -68,7 +67,7 @@ public class ShakeDetector implements SensorEventListener {
 	}
 
 	/**
-	 * ÒÆ³ıÒÑ¾­×¢²áµÄOnShakeListener
+	 * ç§»é™¤å·²ç»æ³¨å†Œçš„OnShakeListener
 	 * 
 	 * @param listener
 	 */
@@ -77,7 +76,7 @@ public class ShakeDetector implements SensorEventListener {
 	}
 
 	/**
-	 * Æô¶¯Ò¡»Î¼ì²â
+	 * å¯åŠ¨æ‘‡æ™ƒæ£€æµ‹
 	 */
 	public void start() {
 		if (mSensorManager == null) {
@@ -96,7 +95,7 @@ public class ShakeDetector implements SensorEventListener {
 	}
 
 	/**
-	 * Í£Ö¹Ò¡»Î¼ì²â
+	 * åœæ­¢æ‘‡æ™ƒæ£€æµ‹
 	 */
 	public void stop() {
 		if (mSensorManager != null)
@@ -126,7 +125,7 @@ public class ShakeDetector implements SensorEventListener {
 		float delta = FloatMath.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ
 				* deltaZ)
 				/ diffTime * 10000;
-		if (delta > mShakeThreshold) { // µ±¼ÓËÙ¶ÈµÄ²îÖµ´óÓÚÖ¸¶¨µÄãĞÖµ£¬ÈÏÎªÕâÊÇÒ»¸öÒ¡»Î
+		if (delta > mShakeThreshold) { // å½“åŠ é€Ÿåº¦çš„å·®å€¼å¤§äºæŒ‡å®šçš„é˜ˆå€¼ï¼Œè®¤ä¸ºè¿™æ˜¯ä¸€ä¸ªæ‘‡æ™ƒ
 			mSensorChangeCount++;
 		}
 		if (mSensorChangeCount == 3) {
@@ -136,7 +135,7 @@ public class ShakeDetector implements SensorEventListener {
 	}
 
 	/**
-	 * µ±Ò¡»ÎÊÂ¼ş·¢ÉúÊ±£¬Í¨ÖªËùÓĞµÄlistener
+	 * å½“æ‘‡æ™ƒäº‹ä»¶å‘ç”Ÿæ—¶ï¼Œé€šçŸ¥æ‰€æœ‰çš„listener
 	 */
 	private void notifyListeners() {
 		for (OnShakeListener listener : mListeners) {

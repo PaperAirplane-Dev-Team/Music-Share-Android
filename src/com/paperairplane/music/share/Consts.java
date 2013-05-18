@@ -12,7 +12,7 @@ public class Consts {
 			MediaStore.Audio.Media.MIME_TYPE };
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String APP_KEY = "1006183120";
-	public final static String FEEDBACK = "#Ö½·É»úÒôÀÖ·ÖÏí·´À¡# @Ò¦ÅæÈ» @HarryChen-SIGKILL- ";
+	public final static String FEEDBACK = "#çº¸é£æœºéŸ³ä¹åˆ†äº«åé¦ˆ# @å§šæ²›ç„¶ @HarryChen-SIGKILL- ";
 	public final static String RELEASE_DATE = "2013.5.4";
 	public final static String ORIGIN_COLOR = "#FFFFFFFF";
 	public final static Uri ARTWORK_URI = Uri

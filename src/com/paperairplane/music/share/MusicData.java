@@ -28,15 +28,15 @@ public class MusicData implements Comparable<MusicData> {
 			}
 			mFirstChar = (char) (title.toUpperCase(Locale.getDefault())
 					.charAt(0));
-			// ÎÒÖ»ÓĞÓ¢ÎÄ¸è¡­¡­
+			// æˆ‘åªæœ‰è‹±æ–‡æ­Œâ€¦â€¦
 		} else {
 			try {
 				mFirstChar = (char) (PinyinHelper
 						.toHanyuPinyinStringArray(title.charAt(0))[0]
 						.toUpperCase(Locale.getDefault()).charAt(0));
-				// Òì³£¡­¡­
+				// å¼‚å¸¸â€¦â€¦
 			} catch (Exception e) {
-				mFirstChar = Consts.UNKNOWN_CHAR;// Õâ¸ö×Ö·ûµÄ±àÂëÔÚ×ÖÄ¸µÄºóÃæ¡­¡­
+				mFirstChar = Consts.UNKNOWN_CHAR;// è¿™ä¸ªå­—ç¬¦çš„ç¼–ç åœ¨å­—æ¯çš„åé¢â€¦â€¦
 			}
 		}
 

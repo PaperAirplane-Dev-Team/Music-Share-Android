@@ -35,14 +35,14 @@ public class IntentResolver {
 	private Handler mHandler;
 
 	/**
-	 * ÖØĞÂ´¦ÀíIntent£¬ÔÚResolveInfoÖĞÈ¥³ı±¾Ó¦ÓÃ£¬²¢¼ÓÈëÄÚÖÃ·ÖÏíÆ÷
+	 * é‡æ–°å¤„ç†Intentï¼Œåœ¨ResolveInfoä¸­å»é™¤æœ¬åº”ç”¨ï¼Œå¹¶åŠ å…¥å†…ç½®åˆ†äº«å™¨
 	 * 
 	 * @param ctx
-	 *            µ±Ç°Context
+	 *            å½“å‰Context
 	 * @param i
-	 *            ´ı´¦ÀíµÄIntent
+	 *            å¾…å¤„ç†çš„Intent
 	 * @param handler
-	 *            ´¦ÀíUIÏûÏ¢µÄHandler
+	 *            å¤„ç†UIæ¶ˆæ¯çš„Handler
 	 */
 	public void handleIntent(Context ctx, Intent i, Handler handler) {
 		mCtx = ctx;
@@ -52,7 +52,7 @@ public class IntentResolver {
 		List<ResolveInfo> info = mPm.queryIntentActivities(i,
 				PackageManager.MATCH_DEFAULT_ONLY);
 		MyLogger.d(Consts.DEBUG_TAG, "handleIntent");
-		// È¥³ı·ÖÏíÑ¡Ïî
+		// å»é™¤åˆ†äº«é€‰é¡¹
 		Iterator<ResolveInfo> it=info.listIterator();
 		String myPackageName=mCtx.getPackageName();
 		while(it.hasNext()){
@@ -62,7 +62,7 @@ public class IntentResolver {
 			}
 		}
 		if (isShare) {
-			// ÈôÎªSEND£¬Ôö¼ÓÄÚÖÃµÄÎ¢²©·¢²¼Æ÷
+			// è‹¥ä¸ºSENDï¼Œå¢åŠ å†…ç½®çš„å¾®åšå‘å¸ƒå™¨
 			ResolveInfo share2weibo = new ResolveInfo();
 			share2weibo.icon = R.drawable.weibo_logo;
 			share2weibo.labelRes = R.string.share2weibo;
@@ -70,7 +70,7 @@ public class IntentResolver {
 			share2weibo.activityInfo.flags = Consts.ShareMeans.INTERNAL;
 			info.add(0, share2weibo);
 		}
-		// ÏÔÊ¾IntentÁĞ±í
+		// æ˜¾ç¤ºIntentåˆ—è¡¨
 		showDialog(info, i);
 	}
 
@@ -109,16 +109,16 @@ public class IntentResolver {
 					.findViewById(android.R.id.text1);
 			TextView tvItemExtended = (TextView) vwItem
 					.findViewById(android.R.id.text2);
-			// Îª¿Ø¼ş¶¨Òå×ÊÔ´
+			// ä¸ºæ§ä»¶å®šä¹‰èµ„æº
 			Drawable icon;
 			String label;
 			ResolveInfo ri = info.get(position);
 			if (ri.activityInfo.flags != Consts.ShareMeans.INTERNAL) {
-				// Íâ²¿Ó¦ÓÃÍ¨¹ıPackageManager»ñÈ¡×ÊÔ´
+				// å¤–éƒ¨åº”ç”¨é€šè¿‡PackageManagerè·å–èµ„æº
 				icon = ri.activityInfo.loadIcon(mPm);
 				label = ri.activityInfo.loadLabel(mPm).toString();
 			} else {
-				// ÄÚ²¿±à¼­Æ÷Ö±½Ó´Ó×ÊÔ´ÖĞ»ñÈ¡
+				// å†…éƒ¨ç¼–è¾‘å™¨ç›´æ¥ä»èµ„æºä¸­è·å–
 				icon = mCtx.getResources().getDrawable(ri.icon);
 				label = mCtx.getString(ri.labelRes);
 			}
@@ -135,7 +135,7 @@ public class IntentResolver {
 	}
 
 	/**
-	 * ÏÔÊ¾ResolveInfoµÄList
+	 * æ˜¾ç¤ºResolveInfoçš„List
 	 * 
 	 * @param info
 	 * @param view
@@ -167,11 +167,11 @@ public class IntentResolver {
 				ResolveInfo ri = info.get(position);
 				boolean isInternal = (ri.activityInfo.flags == Consts.ShareMeans.INTERNAL);
 				if (!isInternal) {
-					// ²ÉÓÃÆäËü·ÖÏí·½Ê½
+					// é‡‡ç”¨å…¶å®ƒåˆ†äº«æ–¹å¼
 					Intent intent = generateIntent(i, ri);
 					mCtx.startActivity(intent);
 				} else {
-					// ²ÉÓÃÄÚÖÃµÄ·ÖÏí·½Ê½
+					// é‡‡ç”¨å†…ç½®çš„åˆ†äº«æ–¹å¼
 					Bundle bundle;
 					bundle = i.getExtras();
 					Message m = mHandler.obtainMessage(
@@ -179,7 +179,7 @@ public class IntentResolver {
 					mHandler.sendMessage(m);
 				}
 				intentDialog.cancel();
-				// ÄãÍüÁËÕâ¸ö!²»È»×ÜÊÇÁô×Å
+				// ä½ å¿˜äº†è¿™ä¸ª!ä¸ç„¶æ€»æ˜¯ç•™ç€
 			}
 
 		};
@@ -187,7 +187,7 @@ public class IntentResolver {
 		ListView v = new ListView(mCtx);
 		v.setCacheColorHint(0);
 		if (Build.VERSION.SDK_INT < 11) {
-			// ÕâÀï¸Ä±ä¶Ô»°¿ò±³¾°ÒÔ·ûºÏÏµÍ³·ç¸ñ
+			// è¿™é‡Œæ”¹å˜å¯¹è¯æ¡†èƒŒæ™¯ä»¥ç¬¦åˆç³»ç»Ÿé£æ ¼
 			v.setBackgroundColor(mCtx.getResources().getColor(
 					android.R.color.primary_text_dark));
 		}
