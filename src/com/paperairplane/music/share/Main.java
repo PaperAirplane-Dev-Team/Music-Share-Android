@@ -73,13 +73,14 @@ public class Main extends ListActivity {
 	// 求更好的办法
 	private String mBackgroundPath = null;
 	private SharedPreferences mPreferencesTheme;
-	private Context mContext;
+	//private Context mContext;
 
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mContext=getApplicationContext();
+		//mContext=getApplicationContext();
+		//传入这个会导致大量的FC...
 		// 此处判断是否接收到其它App发来的Intent，并判断Intent携带的Uri是否为null。符合则处理。
 		Intent i = getIntent();
 		String action = i.getAction();
@@ -90,18 +91,18 @@ public class Main extends ListActivity {
 			return;
 		}
 		if( action .equals("android.intent.action.SEND") && isDataNull){
-			Toast.makeText(mContext, "抱歉,暂时不可用", Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), "抱歉,暂时不可用", Toast.LENGTH_LONG).show();
 			finish();
 		}
 		setContentView(R.layout.main);
 		initListView();
-		mPreferencesTheme = mContext.getSharedPreferences(
+		mPreferencesTheme = getApplicationContext().getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
 		generateMusicList();
 
 		firstShow();
 		mSsoHandler = new SsoHandler(Main.this, mWeibo);
-		mWeiboHelper = new WeiboHelper(mHandler, mContext);
+		mWeiboHelper = new WeiboHelper(mHandler, getApplicationContext());
 		try {
 			Main.sVersionCode = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionCode;
@@ -121,7 +122,7 @@ public class Main extends ListActivity {
 					@Override
 					public void run() {
 						Utilities.checkForUpdate(Main.sVersionCode, mHandler,
-								mContext,
+								getApplicationContext(),
 								getResources().getConfiguration().locale);
 
 					}
@@ -176,7 +177,7 @@ public class Main extends ListActivity {
 
 	private void initShakeDetector() {
 		try {
-			mShakeDetector = new ShakeDetector(mContext);
+			mShakeDetector = new ShakeDetector(getApplicationContext());
 			mShakeDetector.mShakeThreshold = 2000;// 这里设置振幅
 			mShakeDetector.registerOnShakeListener(new OnShakeListener() {
 				@Override
@@ -187,7 +188,7 @@ public class Main extends ListActivity {
 						Random r = new Random();
 						position = r.nextInt(mLvMain.getAdapter().getCount());
 						MyLogger.d(Consts.DEBUG_TAG, "生成随机数" + position);
-						Toast.makeText(mContext, R.string.shake_random,
+						Toast.makeText(getApplicationContext(), R.string.shake_random,
 								Toast.LENGTH_LONG).show();
 						showCustomDialog(mMusicDatas[position],
 								Consts.Dialogs.SHARE);
@@ -363,7 +364,7 @@ public class Main extends ListActivity {
 			}
 			String toastText = getString(R.string.clean_cache_done) + "\n"
 					+ getString(R.string.delete_file_count) + fileCount;
-			Toast.makeText(mContext, toastText, Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_LONG).show();
 			break;
 		case Consts.MenuItem.UNAUTH:
 			try {
@@ -382,7 +383,7 @@ public class Main extends ListActivity {
 										if (Build.VERSION.SDK_INT > 10) {
 											invalidateOptionsMenu();
 										}
-										Toast.makeText(mContext,
+										Toast.makeText(getApplicationContext(),
 												getString(R.string.unauthed),
 												Toast.LENGTH_SHORT).show();
 									}
@@ -411,7 +412,7 @@ public class Main extends ListActivity {
 			break;
 		case R.id.menu_update:
 			Main.sCheckForUpdateCount++;
-			Utilities.checkForUpdate(Main.sVersionCode, mHandler, mContext,
+			Utilities.checkForUpdate(Main.sVersionCode, mHandler, getApplicationContext(),
 					getResources().getConfiguration().locale);
 			break;
 		case R.id.menu_change_background:
@@ -486,7 +487,7 @@ public class Main extends ListActivity {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
-						mDialogThank = new AlertDialog.Builder(mContext)
+						mDialogThank = new AlertDialog.Builder(getApplicationContext())
 								.setOnCancelListener(onCancelListener)
 								.setTitle(R.string.thank_title)
 								.setIcon(android.R.drawable.ic_dialog_info)
@@ -509,7 +510,7 @@ public class Main extends ListActivity {
 						startActivity(intent);
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
-						View feedback = LayoutInflater.from(mContext).inflate(
+						View feedback = LayoutInflater.from(getApplicationContext()).inflate(
 								R.layout.feedback, null);
 						final EditText content = (EditText) feedback
 								.findViewById(R.id.et_feedback);
@@ -527,7 +528,7 @@ public class Main extends ListActivity {
 						content.setText(text);
 						pref.edit().clear().commit();
 						final AlertDialog.Builder builder = new AlertDialog.Builder(
-								mContext);
+								getApplicationContext());
 						DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
@@ -540,7 +541,7 @@ public class Main extends ListActivity {
 								} else {
 									SendFeedback feedback = new SendFeedback(
 											contentString, mHandler,
-											Main.sVersionCode, mContext);
+											Main.sVersionCode, getApplicationContext());
 									switch (whichButton) {
 									case DialogInterface.BUTTON_POSITIVE:
 										feedback.setMeans(Consts.ShareMeans.OTHERS);
@@ -642,7 +643,7 @@ public class Main extends ListActivity {
 			mDialogSearch.show();
 			break;
 		case Consts.Dialogs.EMPTY:
-			new AlertDialog.Builder(mContext)
+			new AlertDialog.Builder(getApplicationContext())
 					.setMessage(getString(R.string.empty))
 					.setPositiveButton(getString(android.R.string.ok),
 							new DialogInterface.OnClickListener() {
@@ -654,7 +655,7 @@ public class Main extends ListActivity {
 			break;
 
 		case Consts.Dialogs.CHANGE_COLOR:
-			View changeColor = View.inflate(mContext, R.layout.color_chooser,
+			View changeColor = View.inflate(getApplicationContext(), R.layout.color_chooser,
 					null);
 			final SeekBar seekColor[] = new SeekBar[3];
 			final TextView textColor[] = new TextView[3];
@@ -773,7 +774,7 @@ public class Main extends ListActivity {
 									.putString(Consts.Preferences.TEXT_COLOR,
 											color).commit();
 							mLvMain.setAdapter(new MusicListAdapter(
-									mContext, mMusicDatas));
+									getApplicationContext(), mMusicDatas));
 							MyLogger.d(Consts.DEBUG_TAG, "自定义颜色:" + color);
 						}
 						break;
@@ -787,12 +788,12 @@ public class Main extends ListActivity {
 									.remove(Consts.Preferences.TEXT_COLOR)
 									.commit();
 						mLvMain.setAdapter(new MusicListAdapter(
-								mContext, mMusicDatas));
+								getApplicationContext(), mMusicDatas));
 						break;
 					}
 				}
 			};
-			mDialogChangeColor = new AlertDialog.Builder(mContext)
+			mDialogChangeColor = new AlertDialog.Builder(getApplicationContext())
 					.setOnCancelListener(onCancelListener).setView(changeColor)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.change_text_color)
@@ -802,7 +803,7 @@ public class Main extends ListActivity {
 			mDialogChangeColor.show();
 			break;
 		case Consts.Dialogs.CHANGE_BACKGROUND:
-			View v = View.inflate(mContext, R.layout.background_chooser, null);
+			View v = View.inflate(getApplicationContext(), R.layout.background_chooser, null);
 			final ImageView iv_background = (ImageView) v
 					.findViewById(R.id.imageView_background);
 			if (mBackgroundPath != null) {
@@ -833,7 +834,7 @@ public class Main extends ListActivity {
 											Consts.Dialogs.CHANGE_COLOR);
 							}
 						};
-						new AlertDialog.Builder(mContext)
+						new AlertDialog.Builder(getApplicationContext())
 								.setIcon(android.R.drawable.ic_dialog_info)
 								.setTitle(android.R.string.dialog_alert_title)
 								.setMessage(R.string.if_change_text_color)
@@ -863,7 +864,7 @@ public class Main extends ListActivity {
 
 				}
 			};
-			mDialogBackgroundChooser = new AlertDialog.Builder(mContext)
+			mDialogBackgroundChooser = new AlertDialog.Builder(getApplicationContext())
 					.setOnCancelListener(onCancelListener)
 					.setView(v)
 					.setIcon(android.R.drawable.ic_dialog_info)
@@ -907,7 +908,7 @@ public class Main extends ListActivity {
 		textDuration.setText(getString(R.string.duration) + " : "
 				+ music.getDuration());
 		int size = Utilities.getAdaptedSize(Main.this);
-		Bitmap bmpAlbum = Utilities.getLocalArtwork(mContext,
+		Bitmap bmpAlbum = Utilities.getLocalArtwork(getApplicationContext(),
 				music.getAlbumId(), size, size);
 		try {
 			MyLogger.d(Consts.DEBUG_TAG, "width:" + bmpAlbum.getWidth());
@@ -954,14 +955,14 @@ public class Main extends ListActivity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case Consts.Status.INTERNET_ERROR:// 网络错误
-				Toast.makeText(mContext,
+				Toast.makeText(getApplicationContext(),
 						getString(R.string.error_internet), Toast.LENGTH_SHORT)
 						.show();
 				break;
 			case Consts.Status.SEND_WEIBO:// 发送微博
 				if (mCanDetectShake)
 					mShakeDetector.stop();
-				View sendweibo = LayoutInflater.from(mContext)
+				View sendweibo = LayoutInflater.from(getApplicationContext())
 						.inflate(R.layout.sendweibo, null);
 				final EditText et = (EditText) sendweibo.getRootView()
 						.findViewById(R.id.et_content);
@@ -1001,7 +1002,7 @@ public class Main extends ListActivity {
 							if (s.toString().charAt(start) == '@') {
 								MyLogger.i(Consts.DEBUG_TAG, "@ CAUGHT!"); // @提醒
 								// 我有错，我悔过
-								Intent i = new Intent(mContext,
+								Intent i = new Intent(getApplicationContext(),
 										AtSuggestionActivity.class);
 								bundle.putString(Intent.EXTRA_TEXT,
 										s.toString());
@@ -1016,7 +1017,7 @@ public class Main extends ListActivity {
 						}
 					}
 				});
-				mDialogSendWeibo = new AlertDialog.Builder(mContext)
+				mDialogSendWeibo = new AlertDialog.Builder(getApplicationContext())
 						.setView(sendweibo)
 						.setOnCancelListener(
 								new DialogInterface.OnCancelListener() {
@@ -1052,44 +1053,44 @@ public class Main extends ListActivity {
 								}).show();
 				break;
 			case Consts.Status.SEND_SUCCEED:// 发送成功
-				Toast.makeText(mContext, R.string.send_succeed,
+				Toast.makeText(getApplicationContext(), R.string.send_succeed,
 						Toast.LENGTH_SHORT).show();
 				break;
 			case Consts.Status.NOT_AUTHORIZED_ERROR:// 尚未授权
-				Toast.makeText(mContext, R.string.not_authorized_error,
+				Toast.makeText(getApplicationContext(), R.string.not_authorized_error,
 						Toast.LENGTH_SHORT).show();
 				break;
 			case Consts.Status.AUTH_ERROR:// 授权错误
-				Toast.makeText(mContext,
+				Toast.makeText(getApplicationContext(),
 						R.string.auth_error + (String) msg.obj,
 						Toast.LENGTH_LONG).show();
 				MyLogger.e(Consts.DEBUG_TAG, "授权错误" + (String) msg.obj);
 				break;
 			case Consts.Status.SEND_ERROR:// 发送错误
-				Toast.makeText(mContext,
+				Toast.makeText(getApplicationContext(),
 						R.string.send_error + (String) msg.obj,
 						Toast.LENGTH_LONG).show();
 				MyLogger.e(Consts.DEBUG_TAG, "发送错误" + (String) msg.obj);
 				break;
 			case Consts.Status.AUTH_SUCCEED:// 授权成功
-				Toast.makeText(mContext, R.string.auth_succeed,
+				Toast.makeText(getApplicationContext(), R.string.auth_succeed,
 						Toast.LENGTH_SHORT).show();
 				break;
 			case Consts.Status.FEEDBACK_SUCCEED:
-				Toast.makeText(mContext, R.string.feedback_succeed,
+				Toast.makeText(getApplicationContext(), R.string.feedback_succeed,
 						Toast.LENGTH_LONG).show();
 				break;
 			case Consts.Status.FEEDBACK_FAIL:
-				Toast.makeText(mContext, R.string.feedback_failed,
+				Toast.makeText(getApplicationContext(), R.string.feedback_failed,
 						Toast.LENGTH_LONG).show();
-				SharedPreferences preferences = mContext
+				SharedPreferences preferences = getApplicationContext()
 						.getSharedPreferences(Consts.Preferences.FEEDBACK,
 								Context.MODE_PRIVATE);
 				preferences.edit().putString("content", (String) msg.obj)
 						.commit();
 				break;
 			case Consts.Status.NO_UPDATE:
-				Toast toast = Toast.makeText(mContext, R.string.no_update,
+				Toast toast = Toast.makeText(getApplicationContext(), R.string.no_update,
 						Toast.LENGTH_LONG);
 				if (Main.sCheckForUpdateCount != 0) {
 					toast.show();
@@ -1099,7 +1100,7 @@ public class Main extends ListActivity {
 				updateApp((String[]) msg.obj);
 				break;
 			case Consts.Status.REFRESH_LIST_FINISHED:
-				Toast.makeText(mContext, R.string.refresh_success,
+				Toast.makeText(getApplicationContext(), R.string.refresh_success,
 						Toast.LENGTH_SHORT).show();
 				try {
 					generateMusicList();
@@ -1110,7 +1111,7 @@ public class Main extends ListActivity {
 				break;
 			case Consts.Status.MUSIC_INFO_FETCHED:
 				IntentResolver ir = new IntentResolver();
-				ir.handleIntent(mContext, (Intent) msg.obj, mHandler);
+				ir.handleIntent(getApplicationContext(), (Intent) msg.obj, mHandler);
 			}
 
 		}
@@ -1196,7 +1197,7 @@ public class Main extends ListActivity {
 	private void shareMusic(String title, String artist, String album,
 			long albumId) {
 		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
-				artist, album, albumId, mContext, mHandler);
+				artist, album, albumId, getApplicationContext(), mHandler);
 		query.start();
 		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG)
 				.show();
@@ -1214,7 +1215,7 @@ public class Main extends ListActivity {
 		musicIntent.setAction(android.content.Intent.ACTION_VIEW);
 		musicIntent.setDataAndType(Uri.fromFile(new File(music.getPath())),
 				"audio/*");
-		new IntentResolver().handleIntent(mContext, musicIntent, mHandler);
+		new IntentResolver().handleIntent(getApplicationContext(), musicIntent, mHandler);
 	}
 
 	/**
@@ -1265,7 +1266,7 @@ public class Main extends ListActivity {
 	 */
 	private void saveSendStatus(String content, boolean checked,
 			String artworkUrl, String fileName) {
-		SharedPreferences preferences = mContext
+		SharedPreferences preferences = getApplicationContext()
 				.getSharedPreferences(Consts.Preferences.SHARE,
 						Context.MODE_PRIVATE);
 		preferences.edit().putBoolean("read", true).commit();
@@ -1289,10 +1290,10 @@ public class Main extends ListActivity {
 		intent.putExtra(Intent.EXTRA_STREAM,
 				Uri.fromFile(new File(whichMusic.getPath())));
 		IntentResolver ir = new IntentResolver();
-		ir.handleIntent(mContext, intent, mHandler);
+		ir.handleIntent(getApplicationContext(), intent, mHandler);
 		/*
 		 * try { startActivity(intent); } catch (ActivityNotFoundException e) {
-		 * new AlertDialog.Builder(mContext)
+		 * new AlertDialog.Builder(getApplicationContext())
 		 * .setMessage(getString(R.string.no_app_found))
 		 * .setPositiveButton(getString(android.R.string.ok), new
 		 * DialogInterface.OnClickListener() {
@@ -1309,7 +1310,7 @@ public class Main extends ListActivity {
 	 *            [] info传回的各种更新信息 通过返回的更新信息显示对话框让用户决定是否更新程序
 	 */
 	private void updateApp(final String[] info) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
+		AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext())
 				.setIcon(android.R.drawable.ic_dialog_info)
 				.setTitle(R.string.update_found)
 				.setMessage(info[Consts.ArraySubscript.UPDATE_INFO])
@@ -1337,7 +1338,7 @@ public class Main extends ListActivity {
 						startActivity(intent);
 					} catch (ActivityNotFoundException e) {
 						e.printStackTrace();
-						Toast.makeText(mContext,
+						Toast.makeText(getApplicationContext(),
 								getString(R.string.update_no_market_found),
 								Toast.LENGTH_SHORT).show();
 					}
@@ -1354,12 +1355,12 @@ public class Main extends ListActivity {
 	 * @return void 判断是否首次启动并显示欢迎对话框
 	 */
 	private void firstShow() {
-		SharedPreferences preferences = mContext
+		SharedPreferences preferences = getApplicationContext()
 				.getSharedPreferences(Consts.Preferences.GENERAL,
 						Context.MODE_PRIVATE);
 		if (!preferences.getBoolean("hasFirstStarted", false)) {
 			MyLogger.d(Consts.DEBUG_TAG, "首次启动");
-			mDialogWelcome = new AlertDialog.Builder(mContext)
+			mDialogWelcome = new AlertDialog.Builder(getApplicationContext())
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.welcome_title)
 					.setMessage(
