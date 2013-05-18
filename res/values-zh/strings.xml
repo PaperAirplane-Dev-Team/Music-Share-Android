@@ -45,6 +45,8 @@
     <string name="feedback_mail">(自动)邮件反馈</string>
     <string name="feedback_weibo">微博反馈</string>
     <string name="thank_for_feedback">感谢您的反馈！</string>
+    <string name="email_hint">请在此填写电子邮箱</string>
+    <string name="name_hint">请留下尊姓大名</string>
     <string name="feedback_hint">请提供尽可能详细关于问题的信息或者您的宝贵建议。别忘了留下您的联系方式(Email/微博/QQ/手机等)。我们真的很感谢您的帮助！</string>
     <string name="feedback_succeed">反馈成功，十分感谢！</string>
     <string name="feedback_failed">抱歉，反馈失败，我们会重新尝试的~仍然感谢！</string>

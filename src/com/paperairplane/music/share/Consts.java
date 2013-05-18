@@ -108,5 +108,10 @@ public class Consts {
 		public final static int BLUE = 2;
 		public final static int OPACITY = 3;
 	}
+	public final class FeedbackContentsItem{
+		public final static int CONTENT = 0;
+		public final static int NAME = 1;
+		public final static int EMAIL = 2;
+	}
 
 }

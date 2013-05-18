@@ -47,7 +47,9 @@
     <string name="feedback_mail">(Auto)Feedback via Mail</string>
     <string name="feedback_weibo">Feedback via Weibo</string>
     <string name="thank_for_feedback">Thank you for your feedback</string>
-    <string name="feedback_hint">Please tell us when and how the problem happens OR what you want to say. Don\'t forget to tell us how to CONTACT you. We are really grateful for your great help!</string>
+    <string name="feedback_hint">Please tell us when and how the problem happens OR what you want to say. We are really grateful for your great help!</string>
+    <string name="email_hint">Please leave your e-mail address here.</string>
+    <string name="name_hint">How do we entitle you?</string>
     <string name="feedback_succeed">Feedback successfully reported, thank you!</string>
     <string name="feedback_failed">Sorry but we met some problem while reporting your feedback. Don\'t worry, we\'ll try again. Still thank you!</string>
     <string name="send_file">Send File</string>

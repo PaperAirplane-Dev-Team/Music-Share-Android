@@ -1,25 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/et_feedback"
+    <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="200dip"
-        android:ems="10"
-        android:hint="@string/feedback_hint"
-        android:inputType="textMultiLine" />
+        android:layout_height="wrap_content" >
 
-    <ImageView
-        android:id="@+id/clear_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:layout_margin="5dip"
-        android:contentDescription="@string/reset"
-        android:padding="5dip"
-        android:src="@drawable/android:ic_input_delete" >
-    </ImageView>
+        <EditText
+            android:id="@+id/et_feedback"
+            android:layout_width="fill_parent"
+            android:layout_height="160dip"
+            android:ems="10"
+            android:hint="@string/feedback_hint"
+            android:inputType="textMultiLine" >
 
-</FrameLayout>
+            <requestFocus />
+        </EditText>
+
+        <ImageView
+            android:id="@+id/btn_clear_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_margin="5dip"
+            android:contentDescription="@string/reset"
+            android:padding="5dip"
+            android:src="@drawable/android:ic_input_delete" >
+        </ImageView>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/name_hint"
+            android:ems="10"
+            android:inputType="textPersonName" >
+        </EditText>
+
+        <ImageView
+            android:id="@+id/btn_clear_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_margin="5dip"
+            android:contentDescription="@string/reset"
+            android:padding="5dip"
+            android:src="@drawable/android:ic_input_delete" >
+        </ImageView>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/et_email"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/email_hint"
+            android:inputType="textEmailAddress" >
+        </EditText>
+
+        <ImageView
+            android:id="@+id/btn_clear_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_margin="5dip"
+            android:contentDescription="@string/reset"
+            android:padding="5dip"
+            android:src="@drawable/android:ic_input_delete" >
+        </ImageView>
+    </FrameLayout>
+
+</LinearLayout>

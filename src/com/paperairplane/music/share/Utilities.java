@@ -201,9 +201,9 @@ public class Utilities {
 
 	}
 
-	public static boolean sendFeedback(String content, int versionCode,
+	public static boolean sendFeedback(String[] contents, int versionCode,
 			int feedbackMean, Context context, Handler handler) {
-		StringBuffer device_info = new StringBuffer("\r" + "App Version:");
+		StringBuilder device_info = new StringBuilder("\r" + "App Version:");
 		device_info.append(versionCode);
 		if (feedbackMean == Consts.ShareMeans.OTHERS)
 			device_info.append("\r" + "Device Info:" + "\r");
@@ -212,37 +212,34 @@ public class Utilities {
 			device_info.append(" Manufacturer:" + Build.MANUFACTURER + "\r");
 			device_info.append(" Product:" + Build.PRODUCT + "\r");
 			device_info.append(" SDK Version:" + Build.VERSION.SDK_INT + "\r");
-			// device_info.append(" Incremental:" + Build.VERSION.INCREMENTAL +
-			// "\r");
 			device_info.append(" Build ID:" + Build.DISPLAY + "\r");
-			// device_info.append(" Code Name:" + Build.VERSION.CODENAME +
-			// "\r");
 		}
 		device_info.append(" Release:" + Build.VERSION.RELEASE + "\r");
+		StringBuilder contact_info = new StringBuilder(" Name:");
+		contact_info.append(contents[Consts.FeedbackContentsItem.NAME]);
+		contact_info.append("\r E-Mail:");
+		contact_info.append(contents[Consts.FeedbackContentsItem.EMAIL]);
 		HttpPost post = null;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		MyLogger.v(Consts.DEBUG_TAG, "content is " + content + "\r"
+		MyLogger.v(Consts.DEBUG_TAG, "content is " + contents[Consts.FeedbackContentsItem.CONTENT] + "\r"
 				+ "device info is :" + device_info.toString());
 		try {
 			switch (feedbackMean) {
 			case Consts.ShareMeans.OTHERS:
 				post = new HttpPost(Consts.Url.FEEDBACK);
 				params.add(new BasicNameValuePair("content",
-						java.net.URLEncoder.encode(content, "UTF-8")));
+						java.net.URLEncoder.encode(contents[Consts.FeedbackContentsItem.CONTENT], "UTF-8")));
 				params.add(new BasicNameValuePair("device_info",
 						java.net.URLEncoder.encode(device_info.toString(),
 								"UTF-8")));
+				params.add(new BasicNameValuePair("contact_info",
+						java.net.URLEncoder.encode(contact_info.toString(),
+								"UTF-8")));
 				break;
 			case Consts.ShareMeans.WEIBO:
-				// post = new HttpPost(Consts.WEIBO_STATUSES_UPDATE);
-				// params.add(new BasicNameValuePair("access_token"
-				// ,sAccessToken));
-				// params.add(new BasicNameValuePair("status"
-				// ,java.net.URLEncoder.encode(content + device_info.toString()
-				// + Consts.FEEDBACK, "UTF-8")));
 				WeiboHelper helper = new WeiboHelper(handler, context);
-				helper.sendWeibo(Consts.FEEDBACK + content + "|||"
-						+ device_info.toString(), null, null, false);
+				helper.sendWeibo(Consts.FEEDBACK + contents[Consts.FeedbackContentsItem.CONTENT] + "||"
+						+ device_info.toString()+"||"+contact_info.toString(), null, null, false);
 				return true;
 			}
 			post.setEntity(new UrlEncodedFormEntity(params));

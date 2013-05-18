@@ -117,11 +117,6 @@ public class IntentResolver {
 				// 外部应用通过PackageManager获取资源
 				icon = ri.activityInfo.loadIcon(mPm);
 				label = ri.activityInfo.loadLabel(mPm).toString();
-				/*
-				 * FIXME 总觉得我们获取的东西还不对,例如(求不要吐槽)微信的分享有两个
-				 * 一个分享到朋友圈一个发送给朋友,现在都显示成"微信" 我看那代码里面有一个什么来着,好像是LabeledIntent
-				 * 确实不对，ResolveInfo有个方法……
-				 */
 			} else {
 				// 内部编辑器直接从资源中获取
 				icon = mCtx.getResources().getDrawable(ri.icon);
@@ -204,8 +199,6 @@ public class IntentResolver {
 				.getString(R.string.how_to_share);
 		intentDialog.setTitle(title);
 		intentDialog.show();
-		//FIXME CRASH!
-
 	}
 
 	private Intent generateIntent(final Intent i, ResolveInfo ri) {

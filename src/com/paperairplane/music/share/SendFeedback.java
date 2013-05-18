@@ -6,25 +6,25 @@ import android.os.Message;
 
 public class SendFeedback extends Thread {
 
-	private String mFeedbackContent;
+	private String[] mFeedbackContents;
 	private int mVersionCode;
 	private Handler mHandler;
 	private int mFeedbackMean;
 	private Context mContext;
 	
 	public void run() {
-		boolean result=Utilities.sendFeedback(mFeedbackContent, mVersionCode, mFeedbackMean, mContext, mHandler);
+		boolean result=Utilities.sendFeedback(mFeedbackContents, mVersionCode, mFeedbackMean, mContext, mHandler);
 		if (result&&mFeedbackMean==Consts.ShareMeans.OTHERS) {
 			mHandler.sendEmptyMessage(Consts.Status.FEEDBACK_SUCCEED);
 		}
 		else if(!result){
-			Message m=mHandler.obtainMessage(Consts.Status.FEEDBACK_FAIL, mFeedbackContent);
+			Message m=mHandler.obtainMessage(Consts.Status.FEEDBACK_FAIL, mFeedbackContents);
 			mHandler.sendMessage(m);
 		}
 	}
 
-	public SendFeedback(String content, Handler handler, int versionCode, Context context) {
-		mFeedbackContent = content;
+	public SendFeedback(String[] contents, Handler handler, int versionCode, Context context) {
+		mFeedbackContents = contents;
 		mVersionCode = versionCode;
 		mHandler = handler;
 		mContext = context;
