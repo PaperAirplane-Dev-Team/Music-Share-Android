@@ -69,7 +69,7 @@ public class Main extends ListActivity {
 	private String mVersionName;
 	private ImageView mIvFloatSearchButton;
 	private ShakeDetector mShakeDetector;
-	private boolean mCanDetectShake;
+	private boolean mCanDetectShake, mIsFullRunning; // 区分菜单项目
 	private String mBackgroundPath = null;
 	private SharedPreferences mPreferencesTheme;
 	private Context mContext;
@@ -78,27 +78,8 @@ public class Main extends ListActivity {
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// 由于需要在AtSuggetstion中调用，必须先进行
 		mContext = getApplicationContext();
-		// 此处判断是否接收到其它App发来的Intent，并判断Intent携带的Uri是否为null。符合则处理。
-		Intent i = getIntent();
-		String action = i.getAction();
-		boolean isDataNull = i.getData() == null;
-		if ((action.equals("android.intent.action.VIEW") || action
-				.equals("android.intent.action.SEND")) && !isDataNull) {
-			handleIntent(i.getData());
-			return;
-		}
-		if (action.equals("android.intent.action.SEND") && isDataNull) {
-			Toast.makeText(mContext, "抱歉,暂时不可用", Toast.LENGTH_LONG).show();
-			finish();
-		}
-		setContentView(R.layout.main);
-		initListView();
-		mPreferencesTheme = mContext.getSharedPreferences(
-				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
-		generateMusicList();
-
-		firstShow();
 		mSsoHandler = new SsoHandler(Main.this, mWeibo);
 		mWeiboHelper = new WeiboHelper(mHandler, mContext);
 		try {
@@ -111,6 +92,38 @@ public class Main extends ListActivity {
 		}
 		// 读取已存储的授权信息
 		Main.sAccessToken = mWeiboHelper.readAccessToken();
+		// 此处判断是否接收到其它App发来的Intent，并判断Intent携带的Uri是否为null。符合则处理。
+		Intent i = getIntent();
+		String action = i.getAction();
+		// boolean isDataNull = i.getData() == null;
+		if (action.equals("android.intent.action.VIEW")) {
+			handleIntent(i.getData());
+			mIsFullRunning = false;
+			return;
+		}
+		if (action.equals("android.intent.action.SEND")) {
+			// Toast.makeText(mContext, "抱歉,暂时不可用", Toast.LENGTH_LONG).show();
+			Bundle bundle = i.getExtras();
+			// if(bundle!=null)Log.d(Consts.DEBUG_TAG,
+			// "I HAVE DATA! "+bundle.size());
+			// Object keyset[]=bundle.keySet().toArray();
+			// Log.d(Consts.DEBUG_TAG, "KEY IS "+keyset[0]);
+			// finish();
+			Uri uri = (Uri) bundle.get(Intent.EXTRA_STREAM);
+			// Log.d(Consts.DEBUG_TAG, "Type is "+uri.getClass());
+			// Log.d(Consts.DEBUG_TAG, "path is "+uri.getPath());
+			// 我终于是试出来了啊
+			handleIntent(uri);
+			mIsFullRunning = false;
+			return;
+		}
+		setContentView(R.layout.main);
+		initListView();
+		mPreferencesTheme = mContext.getSharedPreferences(
+				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
+		generateMusicList();
+
+		firstShow();
 		// 启动用于检查更新的后台线程
 		Thread updateThread = new Thread(new Runnable() {
 			@Override
@@ -130,7 +143,6 @@ public class Main extends ListActivity {
 		});
 		updateThread.setPriority(Thread.MIN_PRIORITY);
 		updateThread.start();
-
 		setBackground();
 		/*
 		 * System.loadLibrary("utilities"); MyLogger.w(Consts.DEBUG_TAG,
@@ -138,7 +150,7 @@ public class Main extends ListActivity {
 		 */
 		MyLogger.i(Consts.DEBUG_TAG, "versionCode:" + Main.sVersionCode
 				+ "\nversionName:" + mVersionName);
-
+		mIsFullRunning = true;
 	}
 
 	/**
@@ -158,7 +170,7 @@ public class Main extends ListActivity {
 					null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 			cursor.moveToFirst();
 			MusicData data = generateMusicData(cursor);
-			View v = getMusicInfoView(data, false);
+			View v = getMusicInfoView(data);
 			setContentView(v);
 			cursor.close();
 		} catch (Exception e) {
@@ -194,6 +206,7 @@ public class Main extends ListActivity {
 				}
 			});
 			mShakeDetector.start();
+			mCanDetectShake = true; // 你难道不知道不赋值的boolean就是false么……
 		} catch (Exception e) {
 			MyLogger.e(Consts.DEBUG_TAG, "ShakeDetector初始化失败，禁用");
 			mCanDetectShake = false;
@@ -299,6 +312,11 @@ public class Main extends ListActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
+		if (!mIsFullRunning) {
+			menu.add(Menu.NONE, R.id.menu_exit, 0, R.string.menu_exit).setIcon(
+					android.R.drawable.ic_menu_delete);
+			return true;
+		}
 		getMenuInflater().inflate(R.menu.main, menu);
 		SubMenu submenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3,
 				R.string.menu_customize).setIcon(
@@ -514,21 +532,30 @@ public class Main extends ListActivity {
 								.findViewById(R.id.et_name);
 						final EditText etEmail = (EditText) feedback
 								.findViewById(R.id.et_email);
-						TextWatcher twEmail=new TextWatcher() {
+						TextWatcher twEmail = new TextWatcher() {
 							@Override
-							public void onTextChanged(CharSequence s, int start, int before, int count) {}
+							public void onTextChanged(CharSequence s,
+									int start, int before, int count) {
+							}
+
 							@Override
-							public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+							public void beforeTextChanged(CharSequence s,
+									int start, int count, int after) {
+							}
+
 							@Override
 							public void afterTextChanged(Editable s) {
-								String address=s.toString();
-								if(address.matches("(?:\\w+)@(?:\\w+)(?:(\\.[a-zA-z]{2,4})+)$")){
-									//但愿有用 //啊哈哈哈It works!今晚我开心死了!不光是这个RP也大爆发哈哈哈哈!
-									MyLogger.d(Consts.DEBUG_TAG, address + " is an email address");
-								}
-								else{
-									//MyLogger.d(Consts.DEBUG_TAG, address + " is NOT an email address");
-									//TODO 来个警示标记例如显示个叉叉/不让提交如何?你的活儿
+								String address = s.toString();
+								if (address
+										.matches("(?:\\w+)@(?:\\w+)(?:(\\.[a-zA-z]{2,4})+)$")) {
+									// 但愿有用 //啊哈哈哈It
+									// works!今晚我开心死了!不光是这个RP也大爆发哈哈哈哈!
+									MyLogger.d(Consts.DEBUG_TAG, address
+											+ " is an email address");
+								} else {
+									// MyLogger.d(Consts.DEBUG_TAG, address +
+									// " is NOT an email address");
+									// TODO 来个警示标记例如显示个叉叉/不让提交如何?你的活儿
 								}
 							}
 						};
@@ -640,7 +667,7 @@ public class Main extends ListActivity {
 			mDialogAbout.show();
 			break;
 		case Consts.Dialogs.SHARE:
-			View musicInfoView = getMusicInfoView(music, true);
+			View musicInfoView = getMusicInfoView(music);
 			DialogInterface.OnClickListener listenerMain = new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int whichButton) {
@@ -936,7 +963,7 @@ public class Main extends ListActivity {
 	 * @author Harry Chen 用于dialogMain，显示音乐信息
 	 * 
 	 */
-	private View getMusicInfoView(final MusicData music, boolean isDialog) {
+	private View getMusicInfoView(final MusicData music) {
 		View musicInfo = LayoutInflater.from(this).inflate(R.layout.music_info,
 				null);
 		ImageView albumArt = (ImageView) musicInfo
@@ -988,7 +1015,7 @@ public class Main extends ListActivity {
 		albumArt.setOnClickListener(listener);
 		btnSendFile.setOnClickListener(listener);
 		btnShare.setOnClickListener(listener);
-		if (isDialog) {
+		if (mIsFullRunning) {
 			btnSendFile.setVisibility(View.GONE);
 			btnShare.setVisibility(View.GONE);
 		}
