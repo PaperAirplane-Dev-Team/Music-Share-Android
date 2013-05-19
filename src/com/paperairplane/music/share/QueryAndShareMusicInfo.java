@@ -66,6 +66,7 @@ class QueryAndShareMusicInfo extends Thread {
 		intent.putExtra(Intent.EXTRA_SUBJECT,
 				mContext.getString(R.string.app_name));
 		intent.putExtra(Intent.EXTRA_TEXT, content);
+		intent.putExtra("sms_body", intent.getStringExtra(Intent.EXTRA_TEXT));
 		Bundle bundle = new Bundle();
 		bundle.putString("artworkUrl", artworkUrl);
 		bundle.putString("fileName", fileName);

@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -546,16 +547,13 @@ public class Main extends ListActivity {
 							@Override
 							public void afterTextChanged(Editable s) {
 								String address = s.toString();
-								if (address
+								if (!address
 										.matches("(?:\\w+)@(?:\\w+)(?:(\\.[a-zA-z]{2,4})+)$")) {
-									// 但愿有用 //啊哈哈哈It
-									// works!今晚我开心死了!不光是这个RP也大爆发哈哈哈哈!
-									MyLogger.d(Consts.DEBUG_TAG, address
-											+ " is an email address");
+									etEmail.setTextColor(Color.RED);
 								} else {
-									// MyLogger.d(Consts.DEBUG_TAG, address +
-									// " is NOT an email address");
-									// TODO 来个警示标记例如显示个叉叉/不让提交如何?你的活儿
+									etEmail.setTextColor(getResources()
+											.getColor(
+													android.R.color.primary_text_light));
 								}
 							}
 						};

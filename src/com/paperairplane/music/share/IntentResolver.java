@@ -169,9 +169,6 @@ public class IntentResolver {
 				if (!isInternal) {
 					// 采用其它分享方式
 					Intent intent = generateIntent(i, ri);
-					if(ri.activityInfo.packageName.contains("mms")||ri.activityInfo.packageName.contains("sms")){
-						intent.putExtra("sms_body", intent.getStringExtra(Intent.EXTRA_TEXT));
-					}
 					mCtx.startActivity(intent);
 				} else {
 					// 采用内置的分享方式
