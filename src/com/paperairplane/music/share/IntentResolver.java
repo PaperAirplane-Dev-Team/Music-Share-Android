@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -59,6 +60,14 @@ public class IntentResolver {
 			ResolveInfo ri=it.next();
 			if(ri.activityInfo.packageName.equals(myPackageName)){
 				info.remove(ri);
+				break;
+				/* 我解释一下原因吧,一旦List有变,Iterator就不能再使用
+				 * 在我们这里没出错,就是因为我们都是中文,"音"一般排在最后了
+				 * 所以我压根就没想到也没有遇到这个问题
+				 * 但是老外那里"M"就不一定了
+				 * 所以一旦往下迭代立马完蛋
+				 * 我想及时break应该就没问题了
+				 * */
 			}
 		}
 		if (isShare) {
@@ -119,8 +128,15 @@ public class IntentResolver {
 				label = ri.activityInfo.loadLabel(mPm).toString();
 			} else {
 				// 内部编辑器直接从资源中获取
-				icon = mCtx.getResources().getDrawable(ri.icon);
-				label = mCtx.getString(ri.labelRes);
+				// 我没有仔细读代码,姑且认为它是我们App本身的资源
+				// XXX 需要审阅
+				try {
+					icon = mCtx.getResources().getDrawable(ri.icon);
+					label = mCtx.getString(ri.labelRes);
+				} catch (NotFoundException e) {
+					icon = mCtx.getResources().getDrawable(R.drawable.ic_launcher);
+					label = mCtx.getString(R.string.app_name);
+				}
 			}
 			ivItemIcon.setImageDrawable(icon);
 			tvItemLabel.setText(label);
@@ -169,6 +185,9 @@ public class IntentResolver {
 				if (!isInternal) {
 					// 采用其它分享方式
 					Intent intent = generateIntent(i, ri);
+					if(ri.activityInfo.packageName.contains("mms")||ri.activityInfo.packageName.contains("sms")){
+						intent.putExtra("sms_body", intent.getStringExtra(Intent.EXTRA_TEXT));
+					}
 					mCtx.startActivity(intent);
 				} else {
 					// 采用内置的分享方式

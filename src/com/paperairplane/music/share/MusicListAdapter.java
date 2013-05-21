@@ -19,9 +19,9 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	private Context mContext;
 	private MusicData mMusicDatas[];
 	private HashMap<Character, Integer> mSectionMap;
-	private Character[] sectionCharArr;
-	private boolean isTextColorSet;
-	private int textColor;
+	private Character[] mSectionCharArr;
+	private boolean mIsTextColorSet, mHasUnknownChar;
+	private int mTextColor;
 
 	public MusicListAdapter(Context context, MusicData musicdatas[]) {
 		mContext = context;
@@ -46,15 +46,18 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 			 * 说说我的思路,倒序遍历,先只管放进去,遇到字符相同的话扔掉原来的写新的 这样不会出现没有的字符
 			 */
 		}
+		if (mMusicDatas[mMusicDatas.length - 1].getFirstChar() == Consts.UNKNOWN_CHAR) {
+			mHasUnknownChar = true;
+		}
 		getSections();
 		// TODO 文本颜色选择
-		isTextColorSet=false;
+		mIsTextColorSet = false;
 		SharedPreferences preference = mContext.getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
 		if (preference.contains(Consts.Preferences.TEXT_COLOR)) {
-			textColor = android.graphics.Color.parseColor(preference.getString(
-					Consts.Preferences.TEXT_COLOR, ""));
-			isTextColorSet=true;
+			mTextColor = android.graphics.Color.parseColor(preference
+					.getString(Consts.Preferences.TEXT_COLOR, ""));
+			mIsTextColorSet = true;
 		}
 	}
 
@@ -80,17 +83,18 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 		TextView tvSinger = (TextView) convertView.findViewById(R.id.singer);
 		tvTitle.setText(mMusicDatas[position].getTitle());
 		tvSinger.setText(mMusicDatas[position].getArtist());
-		if(isTextColorSet){
-			tvSinger.setTextColor(textColor);
-			tvTitle.setTextColor(textColor);
+		if (mIsTextColorSet) {
+			tvSinger.setTextColor(mTextColor);
+			tvTitle.setTextColor(mTextColor);
 		}
 		return convertView;
 	}
 
 	@Override
 	public int getPositionForSection(int section) {
-		char sectionChar = sectionCharArr[section];
-		if (section == mSectionMap.size() - 1)
+		char sectionChar = mSectionCharArr[section];
+		if (mHasUnknownChar && section == mSectionMap.size() - 1)
+			//同样防止多事
 			sectionChar = Consts.UNKNOWN_CHAR;
 		int position = mSectionMap.get(sectionChar);
 		return position;
@@ -100,7 +104,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	public int getSectionForPosition(int position) {
 		int section = 0;
 		char charNow = mMusicDatas[position].getFirstChar();
-		for (char charTemp : sectionCharArr) {
+		for (char charTemp : mSectionCharArr) {
 			if (charNow != charTemp) {
 				section++;
 				continue;
@@ -110,6 +114,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 			}
 		}
 		if (charNow == Consts.UNKNOWN_CHAR) {
+			// 这里应该不会有问题, 因为如果没有这样的歌也就不会触发这个语句
 			return mSectionMap.size() - 1;
 		}
 		return section;
@@ -119,17 +124,21 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	public Object[] getSections() {
 		// char[] s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
 		int arraySize = mSectionMap.size();
-		sectionCharArr = new Character[arraySize];
+		mSectionCharArr = new Character[arraySize];
 		char nowChar = 'A';
 		for (int i = 0, j = 0; i < 26; i++, nowChar++) {
 			if (mSectionMap.containsKey(Character.valueOf(nowChar))) {
-				sectionCharArr[j] = Character.valueOf(nowChar);
+				mSectionCharArr[j] = Character.valueOf(nowChar);
 				j++;
 			}
 		}
-		sectionCharArr[arraySize - 1] = '#';
-		// 我觉着这样应该是可以的吧
-		return sectionCharArr;
+		if (mHasUnknownChar)
+			mSectionCharArr[arraySize - 1] = '#';
+		/*
+		 * 这样的话应该可以防止莫名其妙的ArrayIndexOutOfBound了吧 但是回过头来说, 你给我看的异常里面下标是-1,
+		 * 也就是arraySize是0 这是怎样一种节奏啊,难道……没有音乐?
+		 */
+		return mSectionCharArr;
 	}
 
 }
