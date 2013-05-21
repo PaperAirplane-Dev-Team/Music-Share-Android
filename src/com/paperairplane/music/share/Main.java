@@ -75,6 +75,10 @@ public class Main extends ListActivity {
 	private SharedPreferences mPreferencesTheme;
 	private Context mContext;
 
+	private native String convertDuration(long duration);
+    static {
+        System.loadLibrary("utilities");
+    }
 	@Override
 	// 主体
 	public void onCreate(Bundle savedInstanceState) {
@@ -123,7 +127,6 @@ public class Main extends ListActivity {
 		mPreferencesTheme = mContext.getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
 		generateMusicList();
-
 		firstShow();
 		// 启动用于检查更新的后台线程
 		Thread updateThread = new Thread(new Runnable() {
@@ -145,14 +148,11 @@ public class Main extends ListActivity {
 		updateThread.setPriority(Thread.MIN_PRIORITY);
 		updateThread.start();
 		setBackground();
-		/*
-		 * System.loadLibrary("utilities"); MyLogger.w(Consts.DEBUG_TAG,
-		 * doNothing());
-		 */
 		MyLogger.i(Consts.DEBUG_TAG, "versionCode:" + Main.sVersionCode
 				+ "\nversionName:" + mVersionName);
 		mIsFullRunning = true;
 	}
+
 
 	/**
 	 * 处理接收到的Intent
@@ -180,7 +180,6 @@ public class Main extends ListActivity {
 
 	}
 
-	// private native String doNothing();
 
 	/**
 	 * 一个脑残的功能=.=
@@ -1244,7 +1243,7 @@ public class Main extends ListActivity {
 	private MusicData generateMusicData(Cursor cursor) {
 		MusicData musicData = new MusicData();
 		musicData.setTitle(cursor.getString(0).trim());
-		musicData.setDuration(Utilities.convertDuration(cursor.getInt(1)));
+		musicData.setDuration(convertDuration(cursor.getInt(1)));
 		musicData.setArtist(cursor.getString(2).trim());
 		musicData.setPath(cursor.getString(3));
 		musicData.setAlbum(cursor.getString(4).trim());

@@ -2,7 +2,7 @@
     package="com.paperairplane.music.share"
     android:versionCode="0096"
 
-    android:versionName="1.0.8 Fix 01" >
+    android:versionName="1.0.8 Fix 1" >
 
     <uses-sdk
         android:minSdkVersion="8"

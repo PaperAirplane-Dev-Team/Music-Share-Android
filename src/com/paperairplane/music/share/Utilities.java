@@ -43,24 +43,7 @@ import com.paperairplane.music.share.MyLogger;
 
 public class Utilities {
 
-	/**
-	 * 将integer类型的时间长度格式化
-	 * 
-	 * @param duration
-	 *            int类型的时间长度（ms）
-	 * @return 格式化好的时长字符串
-	 */
-	public static String convertDuration(long duration) {
 
-		StringBuffer sb = new StringBuffer();
-		long m = duration / (60 * 1000);
-		sb.append(m < 10 ? "0" + m : m);
-		sb.append(":");
-		long s = (duration % (60 * 1000)) / 1000;
-		sb.append(s < 10 ? "0" + s : s);
-		return sb.toString();
-		// 嗯,直接用人家的方法了,嘿
-	}
 
 	/**
 	 * 通过豆瓣API获取音乐的信息
