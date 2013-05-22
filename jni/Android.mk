@@ -6,3 +6,5 @@ LOCAL_MODULE    := utilities
 LOCAL_SRC_FILES := utilities.c
 
 include $(BUILD_SHARED_LIBRARY)
+
+APP_ABI	:= armeabi x86
