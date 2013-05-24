@@ -21,6 +21,12 @@ import com.weibo.sdk.android.net.RequestListener;
 import com.paperairplane.music.share.Consts;
 import com.paperairplane.music.share.MyLogger;
 
+/**
+ * 所有微博相关
+ * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
+ * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
+ * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ */
 public class WeiboHelper {
 	private StatusesAPI mApi = null;
 	private Handler mHandler = null;
@@ -36,7 +42,7 @@ public class WeiboHelper {
 	 * @param handler
 	 *            用于控制UI线程的Handler
 	 * @param context
-	 *            用于暂存微博内容和其它信息的（Application）Context
+	 *            用于暂存微博内容和其它信息的(Application)Context
 	 */
 	// 那么请问……你的第二个Activity的Context要来做什么?似乎你没用到……
 	public WeiboHelper(Handler handler, Context context) {
@@ -67,7 +73,7 @@ public class WeiboHelper {
 	 *            要发送的微博内容
 	 * @param artworkUrl
 	 *            要发送的图片
-	 * @param fileName
+	 * @param fileName 本地图标文件路径
 	 * @param willFollow
 	 *            是否要关注
 	 */
@@ -126,7 +132,10 @@ public class WeiboHelper {
 		};
 	}
 
-	// 关注某人
+	/**
+	 * 关注特定微博用户
+	 * @param uid 用户的UID
+	 */
 	private void follow(int uid) {
 		WeiboParameters params = new WeiboParameters();
 		params.add("access_token", Main.sAccessToken.getToken());

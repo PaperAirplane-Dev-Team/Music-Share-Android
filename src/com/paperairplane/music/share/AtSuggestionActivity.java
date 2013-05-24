@@ -28,6 +28,12 @@ import android.widget.ListView;
 
 import com.paperairplane.music.share.MyLogger;
 
+/**
+ * 微博At自动补全
+ * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
+ * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
+ * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ */
 public class AtSuggestionActivity extends Activity {
 	private ListView mLvAtSuggestion;
 	private EditText mEtUserNick;
@@ -117,6 +123,9 @@ public class AtSuggestionActivity extends Activity {
 		});
 	}
 
+	/**
+	 * 从新浪微博查询可能要@的人
+	 */
 	private void lookForSuggestions() {
 		mThreadRefresh = new Thread(new Runnable() {
 			@Override

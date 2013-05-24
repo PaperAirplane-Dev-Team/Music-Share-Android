@@ -15,6 +15,12 @@ import android.widget.TextView;
 
 import com.paperairplane.music.share.R;
 
+/**
+ * 用于填充主界面ListView的Adapater
+ * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
+ * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
+ * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ */
 public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	private Context mContext;
 	private MusicData mMusicDatas[];
@@ -23,6 +29,11 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	private boolean mIsTextColorSet, mHasUnknownChar;
 	private int mTextColor;
 
+	/**
+	 * 构造方法
+	 * @param context App上下文
+	 * @param musicdatas 获取到的所有音乐信息
+	 */
 	public MusicListAdapter(Context context, MusicData musicdatas[]) {
 		mContext = context;
 		mMusicDatas = musicdatas;// 不要Cursor了……

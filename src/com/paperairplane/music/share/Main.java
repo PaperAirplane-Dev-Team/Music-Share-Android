@@ -53,8 +53,13 @@ import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.sso.SsoHandler;
 
+/**
+ * 主界面
+ * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
+ * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
+ * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ */
 public class Main extends ListActivity {
-	// 存储音乐信息
 	private MusicData[] mMusicDatas;// 保存音乐数据
 	private ListView mLvMain;// 列表对象
 	public static Oauth2AccessToken sAccessToken = null;
@@ -75,12 +80,17 @@ public class Main extends ListActivity {
 	private SharedPreferences mPreferencesTheme;
 	private Context mContext;
 
+	/**
+	 * 将数字表示的长度格式化为字符串
+	 * @param duration 歌曲长度(毫秒)
+	 * @return 格式化后的时间字符串
+	 */
 	private native String convertDuration(long duration);
     static {
         System.loadLibrary("utilities");
     }
+    
 	@Override
-	// 主体
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// 由于需要在AtSuggetstion中调用，必须先进行
@@ -156,10 +166,7 @@ public class Main extends ListActivity {
 
 	/**
 	 * 处理接收到的Intent
-	 * 
-	 * @author Xavier Yao
-	 * @param uri
-	 *            要处理的Intent
+	 * @param uri 要处理的Intent中包含的uri
 	 */
 	private void handleIntent(Uri uri) {
 		// setTheme(R.style.DialogTheme);
@@ -182,9 +189,8 @@ public class Main extends ListActivity {
 
 
 	/**
-	 * 一个脑残的功能=.=
+	 * 初始化摇动检测器
 	 */
-
 	private void initShakeDetector() {
 		try {
 			mShakeDetector = new ShakeDetector(mContext);
@@ -214,8 +220,7 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @author Xavier Yao 初始化主界面ListView相关属性，初始化文字遮罩
-	 * 
+	 * 初始化主界面ListView相关属性,设置Adapater
 	 */
 	private void initListView() {
 		/*
@@ -246,6 +251,9 @@ public class Main extends ListActivity {
 	}
 
 	@SuppressWarnings("deprecation")
+	/**
+	 * 设置列表的背景
+	 */
 	private void setBackground() {
 		mBackgroundPath = mPreferencesTheme.getString(
 				Consts.Preferences.BG_PATH, null);
@@ -264,7 +272,6 @@ public class Main extends ListActivity {
 
 	@Override
 	protected void onStop() {
-
 		// 关闭摇动检查
 		if (mCanDetectShake)
 			mShakeDetector.stop();
@@ -310,6 +317,9 @@ public class Main extends ListActivity {
 
 	@SuppressLint("NewApi")
 	@Override
+	/**
+	 * 对于菜单显示前内容的处理
+	 */
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		if (!mIsFullRunning) {
@@ -344,7 +354,9 @@ public class Main extends ListActivity {
 	}
 
 	@Override
-	// 菜单判断
+	/**
+	 * 对于菜单点击事件的处理
+	 */
 	public boolean onOptionsItemSelected(MenuItem menu) {
 		super.onOptionsItemSelected(menu);
 		switch (menu.getItemId()) {
@@ -353,7 +365,7 @@ public class Main extends ListActivity {
 			System.exit(0);
 			break;
 		case R.id.menu_about:
-			showAbout();
+			showCustomDialog(null, Consts.Dialogs.ABOUT);
 			break;
 		case R.id.menu_change_color:
 			// Solved
@@ -437,18 +449,16 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param View
-	 *            v
-	 * @return void 主界面显示为空时按钮点击处理
-	 * 
+	 * 主界面显示为空时按钮点击处理
+	 * @param v 触发该方法的控件
 	 */
 	public void btn_empty(View v) {
 		refreshMusicList();
 	}
 
 	/**
-	 * 
-	 * @return 检查AccessToken的存在及合法性
+	 * 检查AccessToken的存在及合法性
+	 * @return (布尔值)是否合法
 	 */
 	private boolean isAccessTokenExistAndValid() {
 		boolean flag = true;
@@ -460,10 +470,8 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param View
-	 *            v
-	 * @return void 搜索互联网按钮点击处理
-	 * 
+	 * 搜索互联网按钮点击处理
+	 * @param v 触发该方法的控件
 	 */
 	public void footer(View v) {
 		showCustomDialog(null, Consts.Dialogs.SEARCH);
@@ -472,12 +480,11 @@ public class Main extends ListActivity {
 	// 对话框处理
 
 	/**
-	 * @param music
-	 *            传入分享的音乐信息
-	 * @param whichDialog
-	 *            根据Consts.Dialog下面的编号判断是什么对话框
-	 * @author Harry Chen 显示程序的各种自定义对话框，包括dialogMain, mDialogAbout,
-	 *         mDialogSearch, mDialogThank, mDialogWelcome, mDialogChangeColor
+	 *  显示程序的各种自定义对话框，包括dialogMain, mDialogAbout,
+	 *  mDialogSearch, mDialogThank, mDialogWelcome, mDialogChangeColor
+	 * @param music 传入分享的音乐信息(可以为null)
+	 * @param whichDialog 判断对话框类型
+	 * @see Consts.Dialogs
 	 * 
 	 */
 	private void showCustomDialog(final MusicData music, int whichDialog) {
@@ -955,10 +962,9 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param int _id 传入音乐所在数组的位置id
-	 * @return View 用于初始化对话框的View
-	 * @author Harry Chen 用于dialogMain，显示音乐信息
-	 * 
+	 * 从音乐信息构建View
+	 * @param music 音乐信息
+	 * @return 音乐信息View
 	 */
 	private View getMusicInfoView(final MusicData music) {
 		View musicInfo = LayoutInflater.from(this).inflate(R.layout.music_info,
@@ -1020,8 +1026,7 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @author Xavier Yao 处理各种线程信息
-	 * 
+	 *  处理各种线程信息
 	 */
 	private Handler mHandler = new Handler() {
 		@Override
@@ -1189,8 +1194,7 @@ public class Main extends ListActivity {
 	};
 
 	/**
-	 * @author Xavier Yao 列表点击监听类
-	 * 
+	 *  列表点击监听类
 	 */
 	private class MusicListOnClickListener implements OnItemClickListener {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
@@ -1206,10 +1210,8 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param void
-	 * @return void
-	 * @author Xavier Yao 初始化用到的音乐信息数组，填充进主界面ListView
-	 * 
+	 *  初始化用到的音乐信息数组，填充进主界面ListView
+	 * @throws NullPointerException 当查询不到任何音乐信息时抛出
 	 */
 	private void generateMusicList() throws NullPointerException {
 		Cursor cursor = getContentResolver().query(
@@ -1234,9 +1236,8 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * 从cursor取值生成MusicData
-	 * 
-	 * @param cursor
+	 * 从给定的cursor取值生成MusicData
+	 * @param cursor 信息来源
 	 * @return 生成的MusicData
 	 */
 
@@ -1253,17 +1254,12 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param String
-	 *            title 音乐标题
-	 * @param String
-	 *            artist音乐艺术家
-	 * @param String
-	 *            album 音乐专辑名
-	 * @param long album_id 音乐专辑封面ID
-	 * @param int means 分享意图，源自Consts.ShareMeans
-	 * @return void
-	 * @author Xavier Yao 分享音乐的主调方法，将调用QueryAndShareMusicInfo类
-	 * 
+	 *  分享音乐的主调方法，将调用QueryAndShareMusicInfo类
+	 * @param title 音乐标题
+	 * @param artist 音乐艺术家
+	 * @param album 音乐专辑名
+	 * @param albumId 音乐专辑封面ID
+	 * @param means 分享意图,来自Consts.ShareMeans
 	 */
 	private void shareMusic(String title, String artist, String album,
 			long albumId) {
@@ -1275,10 +1271,8 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param int position 音乐在信息数组中的位置
-	 * @return void
-	 * @author Xavier Yao 播放音乐的主调方法
-	 * 
+	 *  播放音乐的主调方法
+	 * @param music 音乐信息
 	 */
 	private void playMusic(MusicData music) {
 		Intent musicIntent = new Intent();
@@ -1290,10 +1284,7 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @param void
-	 * @return void
-	 * @author Xavier Yao 刷新音乐列表
-	 * 
+	 *  刷新音乐列表
 	 */
 	private void refreshMusicList() {
 		try {
@@ -1314,26 +1305,13 @@ public class Main extends ListActivity {
 		}
 	}
 
-	/**
-	 * @param void
-	 * @return void
-	 * @author Harry Chen 显示关于窗口
-	 * 
-	 */
-	private void showAbout() {
-		showCustomDialog(null, Consts.Dialogs.ABOUT);
-	}
 
 	/**
-	 * @author Xavier Yao
-	 * @param String
-	 *            content 微博内容
-	 * @param boolean checked 是否关注开发者
-	 * @param String
-	 *            artworkUrl 微博图片地址
-	 * @param String
-	 *            fileName 图片文件名
-	 * @return void 保存微博以及发送状态，备用
+	 * 保存微博以及发送状态，备用
+	 * @param content 微博内容
+	 * @param checked 是否关注开发者
+	 * @param artworkUrl 微博图片地址
+	 * @param fileName 图片文件名
 	 */
 	private void saveSendStatus(String content, boolean checked,
 			String artworkUrl, String fileName) {
@@ -1348,10 +1326,8 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @author Harry Chen
-	 * @param MusicData
-	 *            whichMusic 待发送的音乐信息
-	 * @return void 发送音乐文件，通过其他App
+	 * 通过其他App发送音乐文件
+	 * @param whichMusic 待发送的音乐信息
 	 */
 	private void sendFile(MusicData whichMusic) {
 		Intent intent = new Intent();
@@ -1365,10 +1341,8 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @author Xavier Yao
-	 * @return void
-	 * @param String
-	 *            [] info传回的各种更新信息 通过返回的更新信息显示对话框让用户决定是否更新程序
+	 * 通过返回的更新信息显示对话框提示用户是否更新程序
+	 * @param info 传回的各种更新信息
 	 */
 	private void updateApp(final String[] info) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(Main.this)
@@ -1411,9 +1385,7 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 * @author Harry Chen
-	 * @param void
-	 * @return void 判断是否首次启动并显示欢迎对话框
+	 * 判断是否首次启动并显示欢迎对话框
 	 */
 	private void firstShow() {
 		SharedPreferences preferences = mContext.getSharedPreferences(

@@ -30,6 +30,12 @@ import android.widget.TextView;
 
 import com.paperairplane.music.share.MyLogger;
 
+/**
+ * 自行实现的ActivityChooser
+ * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
+ * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
+ * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ */
 public class IntentResolver {
 	private Context mCtx;
 	private PackageManager mPm;
@@ -38,12 +44,9 @@ public class IntentResolver {
 	/**
 	 * 重新处理Intent，在ResolveInfo中去除本应用，并加入内置分享器
 	 * 
-	 * @param ctx
-	 *            当前Context
-	 * @param i
-	 *            待处理的Intent
-	 * @param handler
-	 *            处理UI消息的Handler
+	 * @param ctx 当前Context
+	 * @param i 待处理的Intent
+	 * @param handler 处理UI消息的Handler
 	 */
 	public void handleIntent(Context ctx, Intent i, Handler handler) {
 		mCtx = ctx;
@@ -83,6 +86,9 @@ public class IntentResolver {
 		showDialog(info, i);
 	}
 
+	/**
+	 * 用于"分享到"窗口的ListView的Adapater
+	 */
 	private class IntentListAdapter extends BaseAdapter {
 
 		List<ResolveInfo> info;
@@ -153,9 +159,8 @@ public class IntentResolver {
 	/**
 	 * 显示ResolveInfo的List
 	 * 
-	 * @param info
-	 * @param view
-	 * @param i
+	 * @param info 外部App信息
+	 * @param i 所给出的Intent
 	 */
 	private void showDialog(final List<ResolveInfo> info, final Intent i) {
 		if (info.size() == 0) {
@@ -220,6 +225,12 @@ public class IntentResolver {
 		intentDialog.show();
 	}
 
+	/**
+	 * 根据ResolveInfo重新构建Intent
+	 * @param i 给出的Intent
+	 * @param ri 外部App信息
+	 * @return
+	 */
 	private Intent generateIntent(final Intent i, ResolveInfo ri) {
 		Intent intent = new Intent(i);
 		intent.setFlags(intent.getFlags()

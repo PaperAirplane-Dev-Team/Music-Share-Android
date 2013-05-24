@@ -3,6 +3,12 @@ package com.paperairplane.music.share;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+/**
+ * 程序中使用的常量
+ * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
+ * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
+ * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ */
 public class Consts {
 
 	public final static String[] MEDIA_INFO = new String[] {
@@ -24,6 +30,9 @@ public class Consts {
 	public final static int PICK_BACKGROUND_REQUEST_CODE = 234;
 	public final static char UNKNOWN_CHAR = 91;
 
+	/**
+	 * 网络功能所用的Url
+	 */
 	public final class Url {
 		public final static String API_SUGGESTION = "https://api.weibo.com/2/search/suggestions/at_users.json";
 		public final static String API_QUERY = "https://api.douban.com/v2/music/search?appkey=039b0d83358026730ad12889a0807359&count=1&q=";
@@ -35,6 +44,9 @@ public class Consts {
 		public final static String WEIBO_STATUSES_UPDATE = "https://api.weibo.com/2/statuses/update.json";
 	}
 
+	/**
+	 * 程序中操作返回的各种状态
+	 */
 	public final class Status {
 		public static final int INTERNET_ERROR = 0;
 		public static final int SEND_WEIBO = 1;
@@ -52,12 +64,18 @@ public class Consts {
 		public static final int MUSIC_INFO_FETCHED = 13;
 	}
 
+	/**
+	 * 我承认……用在"关注开发者"功能里面
+	 */
 	public final class WeiboUid {
 		public static final int HARRY_UID = 1689129907;
 		public static final int XAVIER_UID = 2121014783;
 		public static final int APP_UID = 1153267341;
 	}
 
+	/**
+	 * 传递信息所用的数组下标
+	 */
 	public final class ArraySubscript {
 		public static final int MUSIC = 0;
 		public static final int ARTWORK = 1;
@@ -69,6 +87,9 @@ public class Consts {
 		public static final int DOWNLOAD_URL = 1;
 	}
 
+	/**
+	 * 分享意图,以便于不同的反应
+	 */
 	public final class ShareMeans {
 		public static final int WEIBO = 0;
 		public static final int OTHERS = 1;
@@ -76,6 +97,10 @@ public class Consts {
 
 	}
 
+	/**
+	 * 显示对话框的类型
+	 * @see Main.showCustomDialog
+	 */
 	public final class Dialogs {
 		public static final int SHARE = 0;
 		public static final int ABOUT = 1;
@@ -85,6 +110,9 @@ public class Consts {
 		public static final int CHANGE_BACKGROUND = 5;
 	}
 
+	/**
+	 * 所储存的各种配置的键值名
+	 */
 	public final class Preferences {
 		public final static String WEIBO = "com_weibo_sdk_android";
 		public final static String SHARE = "ShareStatus";
@@ -96,18 +124,29 @@ public class Consts {
 		//public final static String OVERLAY = "overlay";
 	}
 
+	/**
+	 * 编码添加的菜单项目,用来判断
+	 * @see Main.onPrepareOptionsMenu()
+	 */
 	public final class MenuItem {
 		public final static int REFRESH = 3;
 		public final static int AUTH = 1;
 		public final static int UNAUTH = 2;
 	}
 
+	/**
+	 * 更改颜色用到的数组下标
+	 */
 	public final class Color {
 		public final static int RED = 0;
 		public final static int GREEN = 1;
 		public final static int BLUE = 2;
 		public final static int OPACITY = 3;
 	}
+	
+	/**
+	 * 反馈信息用到的数组下标
+	 */
 	public final class FeedbackContentsItem{
 		public final static int CONTENT = 0;
 		public final static int NAME = 1;

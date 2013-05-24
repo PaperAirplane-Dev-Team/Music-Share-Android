@@ -13,7 +13,7 @@ import android.util.FloatMath;
  * 用于检测手机摇晃
  * 
  * @author 郑智仁
- * @see http://blog.csdn.net/zhengzhiren
+ * @see <a href="http://blog.csdn.net/zhengzhiren">Blog</a>
  */
 // P.S.这个类写的真渣……这作者肯定不懂什么叫封装==
 //你自个儿实现啊啊啊

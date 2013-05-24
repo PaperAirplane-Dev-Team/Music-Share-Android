@@ -4,6 +4,12 @@ import java.util.Locale;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
 
+/**
+ * 存储的音乐信息
+ * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
+ * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
+ * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ */
 public class MusicData implements Comparable<MusicData> {
 	private String mTitle, mArtist, mDuration, mPath, mAlbum, mType;
 	private char mFirstChar;

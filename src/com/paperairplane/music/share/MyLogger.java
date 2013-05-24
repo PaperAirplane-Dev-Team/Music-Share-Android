@@ -2,6 +2,12 @@ package com.paperairplane.music.share;
 
 import android.util.Log;
 
+/**
+ * 自行实现的日志类,会判断是否在调试状态,与android.util.Log相同功能
+ * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
+ * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
+ * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ */
 public class MyLogger {
 
 	public static int d(String tag, String msg) {

@@ -11,6 +11,12 @@ import android.os.Message;
 
 import com.paperairplane.music.share.MyLogger;
 
+/**
+ * 查询并且分享音乐信息的线程
+ * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
+ * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
+ * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ */
 class QueryAndShareMusicInfo extends Thread {
 	private long mAlbumId;
 	private String mArtist, mTitle, mAlbum;
@@ -19,6 +25,10 @@ class QueryAndShareMusicInfo extends Thread {
 	private String mArtworkPath ;
 	
 
+	@Override
+	/**
+	 * 主调方法,查询信息并且返回给主线程
+	 */
 	public void run() {
 		String[] info = Utilities.getMusicAndArtworkUrl(mTitle, mArtist, mContext,
 				mHandler);
@@ -76,6 +86,11 @@ class QueryAndShareMusicInfo extends Thread {
 		m.sendToTarget();
 	}
 
+	/**
+	 * 生成分享文字内容
+	 * @param info 查询到的音乐信息
+	 * @return 分享的文字
+	 */
 	private String genContent(String[] info) {
 		boolean isSingle = ((info[Consts.ArraySubscript.VERSION] != null) && info[Consts.ArraySubscript.VERSION]
 				.equals(mContext.getString(R.string.single)));
@@ -99,6 +114,15 @@ class QueryAndShareMusicInfo extends Thread {
 		return content;
 	}
 
+	/**
+	 * 构造方法
+	 * @param title 音乐标题
+	 * @param artist 艺术家
+	 * @param album 专辑
+	 * @param albumId 专辑ID
+	 * @param context App上下文
+	 * @param handler 线程Handler
+	 */
 	public QueryAndShareMusicInfo(String title, String artist, String album,
 			long albumId,Context context, Handler handler) {
 		mAlbumId = albumId;

@@ -41,6 +41,12 @@ import android.util.DisplayMetrics;
 
 import com.paperairplane.music.share.MyLogger;
 
+/**
+ * 静态方法工具类
+ * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
+ * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
+ * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ */
 public class Utilities {
 
 
@@ -109,7 +115,7 @@ public class Utilities {
 		return info;
 	}
 
-	public static InputStream getImageStream(String artworkUrl)
+	private static InputStream getImageStream(String artworkUrl)
 			throws Exception {
 		URL url = new URL(artworkUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -121,6 +127,13 @@ public class Utilities {
 		return null;
 	}
 
+	/**
+	 * 将图标保存到本地
+	 * @param bitmap 图标
+	 * @param fileName 要保存的文件名
+	 * @param artworkPath 文件路径
+	 * @throws IOException 如果保存失败则抛出
+	 */
 	public static void saveFile(Bitmap bitmap, String fileName,
 			String artworkPath) throws IOException {
 		File dirFile = new File(artworkPath);
@@ -136,6 +149,14 @@ public class Utilities {
 
 	}
 
+	/**
+	 * 得到图片文件
+	 * @param artworkUrl 图标的URL
+	 * @param album 专辑
+	 * @param artist 艺术家
+	 * @param artwork_path 保存图片的路径
+	 * @return 图标文件的路径
+	 */
 	public static String getArtwork(String artworkUrl, String album,String artist,
 			String artwork_path) {
 		String fileName = album+"_"+artist + ".jpg";
@@ -184,6 +205,15 @@ public class Utilities {
 
 	}
 
+	/**
+	 * 发送反馈
+	 * @param contents 反馈内容
+	 * @param versionCode 版本号
+	 * @param feedbackMean 反馈意图
+	 * @param context App上下文
+	 * @param handler 主线程Handler
+	 * @return (boolean)是否反馈成功
+	 */
 	public static boolean sendFeedback(String[] contents, int versionCode,
 			int feedbackMean, Context context, Handler handler) {
 		StringBuilder device_info = new StringBuilder("\r" + "App Version:");
@@ -240,6 +270,14 @@ public class Utilities {
 		}
 	}
 
+	/**
+	 * 获取储存在本地MediaStore的音乐专辑封面
+	 * @param context App上下文
+	 * @param album_id 图片的专辑ID
+	 * @param w 图片宽度
+	 * @param h 图片高度
+	 * @return 获取到的BitMap实例
+	 */
 	public static Bitmap getLocalArtwork(Context context, long album_id, int w,
 			int h) {
 		// 从Music App直接拽出来
@@ -303,10 +341,20 @@ public class Utilities {
 		return null;
 	}
 
+	/**
+	 * 构造方法(不能使用)
+	 * @throws Exception 无论何时调用
+	 */
+	@Deprecated
 	public Utilities() throws Exception {
 		throw new Exception("What the hell?You cannot do that.");
 	}
 
+	/**
+	 * 获取应用显示的大小
+	 * @param activity Main Activity
+	 * @return 尺寸
+	 */
 	public static int getAdaptedSize(Activity activity) {
 		int size;
 		DisplayMetrics metrics = new DisplayMetrics();
@@ -315,6 +363,13 @@ public class Utilities {
 		return size;
 	}
 
+	/**
+	 * 检查更新
+	 * @param versionCode 当前版本号
+	 * @param handler 主线程Handler
+	 * @param context App上下文
+	 * @param currentLocale 当前区域
+	 */
 	public static void checkForUpdate(final int versionCode,
 			final Handler handler, final Context context, final Locale currentLocale) {
 		MyLogger.v(Consts.DEBUG_TAG, "方法checkForUpdate被调用");
