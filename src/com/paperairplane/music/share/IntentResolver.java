@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,21 +31,28 @@ import com.paperairplane.music.share.MyLogger;
 
 /**
  * 自行实现的ActivityChooser
+ * 
  * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
  * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
- * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ * @see <a
+ *      href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our
+ *      GitHub</a>
  */
 public class IntentResolver {
 	private Context mCtx;
 	private PackageManager mPm;
 	private Handler mHandler;
+	private AlertDialog intentDialog;
 
 	/**
 	 * 重新处理Intent，在ResolveInfo中去除本应用，并加入内置分享器
 	 * 
-	 * @param ctx 当前Context
-	 * @param i 待处理的Intent
-	 * @param handler 处理UI消息的Handler
+	 * @param ctx
+	 *            当前Context
+	 * @param i
+	 *            待处理的Intent
+	 * @param handler
+	 *            处理UI消息的Handler
 	 */
 	public void handleIntent(Context ctx, Intent i, Handler handler) {
 		mCtx = ctx;
@@ -57,20 +63,18 @@ public class IntentResolver {
 				PackageManager.MATCH_DEFAULT_ONLY);
 		MyLogger.d(Consts.DEBUG_TAG, "handleIntent");
 		// 去除分享选项
-		Iterator<ResolveInfo> it=info.listIterator();
-		String myPackageName=mCtx.getPackageName();
-		while(it.hasNext()){
-			ResolveInfo ri=it.next();
-			if(ri.activityInfo.packageName.equals(myPackageName)){
+		Iterator<ResolveInfo> it = info.listIterator();
+		String myPackageName = mCtx.getPackageName();
+		while (it.hasNext()) {
+			ResolveInfo ri = it.next();
+			if (ri.activityInfo.packageName.equals(myPackageName)) {
 				info.remove(ri);
 				break;
-				/* 我解释一下原因吧,一旦List有变,Iterator就不能再使用
-				 * 在我们这里没出错,就是因为我们都是中文,"音"一般排在最后了
-				 * 所以我压根就没想到也没有遇到这个问题
-				 * 但是老外那里"M"就不一定了
-				 * 所以一旦往下迭代立马完蛋
-				 * 我想及时break应该就没问题了
-				 * */
+				/*
+				 * 我解释一下原因吧,一旦List有变,Iterator就不能再使用
+				 * 在我们这里没出错,就是因为我们都是中文,"音"一般排在最后了 所以我压根就没想到也没有遇到这个问题
+				 * 但是老外那里"M"就不一定了 所以一旦往下迭代立马完蛋 我想及时break应该就没问题了
+				 */
 			}
 		}
 		if (isShare) {
@@ -131,7 +135,7 @@ public class IntentResolver {
 			if (ri.activityInfo.flags != Consts.ShareMeans.INTERNAL) {
 				// 外部应用通过PackageManager获取资源
 				icon = ri.activityInfo.loadIcon(mPm);
-				label = ri.activityInfo.loadLabel(mPm).toString();
+				label = ri.activityInfo.loadLabel(mPm).toString().trim();
 			} else {
 				// 内部编辑器直接从资源中获取
 				// 我没有仔细读代码,姑且认为它是我们App本身的资源
@@ -140,7 +144,8 @@ public class IntentResolver {
 					icon = mCtx.getResources().getDrawable(ri.icon);
 					label = mCtx.getString(ri.labelRes);
 				} catch (NotFoundException e) {
-					icon = mCtx.getResources().getDrawable(R.drawable.ic_launcher);
+					icon = mCtx.getResources().getDrawable(
+							R.drawable.ic_launcher);
 					label = mCtx.getString(R.string.app_name);
 				}
 			}
@@ -150,6 +155,9 @@ public class IntentResolver {
 			if (Build.VERSION.SDK_INT < 11) {
 				tvItemLabel.setTextColor(mCtx.getResources().getColor(
 						android.R.color.primary_text_light));
+			} else {
+				tvItemLabel.setTextColor(mCtx.getResources().getColor(
+						android.R.color.primary_text_dark));
 			}
 			return vwItem;
 		}
@@ -159,8 +167,10 @@ public class IntentResolver {
 	/**
 	 * 显示ResolveInfo的List
 	 * 
-	 * @param info 外部App信息
-	 * @param i 所给出的Intent
+	 * @param info
+	 *            外部App信息
+	 * @param i
+	 *            所给出的Intent
 	 */
 	private void showDialog(final List<ResolveInfo> info, final Intent i) {
 		if (info.size() == 0) {
@@ -179,9 +189,8 @@ public class IntentResolver {
 			mCtx.startActivity(intent);
 			return;
 		}
-		final Dialog intentDialog = new Dialog(mCtx);
-		OnItemClickListener listener = new OnItemClickListener() {
 
+		OnItemClickListener listener = new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
@@ -190,8 +199,10 @@ public class IntentResolver {
 				if (!isInternal) {
 					// 采用其它分享方式
 					Intent intent = generateIntent(i, ri);
-					if(ri.activityInfo.packageName.contains("mms")||ri.activityInfo.packageName.contains("sms")){
-						intent.putExtra("sms_body", intent.getStringExtra(Intent.EXTRA_TEXT));
+					if (ri.activityInfo.packageName.contains("mms")
+							|| ri.activityInfo.packageName.contains("sms")) {
+						intent.putExtra("sms_body",
+								intent.getStringExtra(Intent.EXTRA_TEXT));
 					}
 					mCtx.startActivity(intent);
 				} else {
@@ -207,7 +218,6 @@ public class IntentResolver {
 			}
 
 		};
-
 		ListView v = new ListView(mCtx);
 		v.setCacheColorHint(0);
 		if (Build.VERSION.SDK_INT < 11) {
@@ -217,18 +227,23 @@ public class IntentResolver {
 		}
 		v.setAdapter(new IntentListAdapter(info));
 		v.setOnItemClickListener(listener);
-		intentDialog.setContentView(v);
 		String title = (i.getAction().equals(Intent.ACTION_VIEW)) ? mCtx
 				.getString(R.string.how_to_play) : mCtx
 				.getString(R.string.how_to_share);
-		intentDialog.setTitle(title);
+		intentDialog = new AlertDialog.Builder(mCtx).setView(v).setTitle(title)
+				.create();
+		//文档不是说了不要直接用Dialog嘛,怪不得那么难看啊
+		//还有就是文字大小和原生的也不一样,这个算了
 		intentDialog.show();
 	}
 
 	/**
 	 * 根据ResolveInfo重新构建Intent
-	 * @param i 给出的Intent
-	 * @param ri 外部App信息
+	 * 
+	 * @param i
+	 *            给出的Intent
+	 * @param ri
+	 *            外部App信息
 	 * @return
 	 */
 	private Intent generateIntent(final Intent i, ResolveInfo ri) {

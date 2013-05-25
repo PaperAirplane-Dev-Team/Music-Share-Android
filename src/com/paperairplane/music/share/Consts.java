@@ -19,12 +19,12 @@ public class Consts {
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
-	public final static String RELEASE_DATE = "2013.5.19";
+	public final static String RELEASE_DATE = "2013.5.25";
 	public final static String ORIGIN_COLOR = "#FFFFFFFF";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
 	public final static int NULL = -1;
-	public final static boolean DEBUG_ON = true;
+	//是否Debug直接在Manifest里面改
 	public final static boolean ON_PLAY_STORE = false;
 	public final static int LOOK_FOR_SUGGESTION_REQUEST_CODE = 233;
 	public final static int PICK_BACKGROUND_REQUEST_CODE = 234;

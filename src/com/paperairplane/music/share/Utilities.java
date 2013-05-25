@@ -387,7 +387,7 @@ public class Utilities {
 		HttpResponse httpResponse;
 		try {
 			HttpGet httpGet;
-			if(!Consts.DEBUG_ON){
+			if(!BuildConfig.DEBUG){
 			httpGet = new HttpGet(Consts.Url.CHECK_UPDATE);
 			}else{
 				httpGet = new HttpGet(Consts.Url.CHECK_TEST_UPDATE);

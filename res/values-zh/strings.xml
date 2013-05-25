@@ -65,7 +65,7 @@
     <string name="thank_title">感谢你们！</string>
     <string name="welcome_title">欢迎使用纸飞机音乐分享！</string>
     <string name="welcome_content">Share Satisfying Music\nEnjoy Good Days\n\n</string>
-    <string name="whats_new">\n实现字母索引\n增加Intent Filter\n整合分享选项\n发送到短信修复\n</string>
+    <string name="whats_new">\n实现字母索引\n增加Intent Filter\n整合分享选项\n发送到短信修复\nResolver界面修改</string>
     <string name="welcome_button">希望您喜欢我们的App~</string>
     <string name="change_text_color">更改主界面文字颜色</string>
     <string name="red">红</string>
