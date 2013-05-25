@@ -557,9 +557,9 @@ public class Main extends ListActivity {
 										.matches("(?:\\w+)@(?:\\w+)(?:(\\.[a-zA-z]{2,4})+)$")) {
 									etEmail.setTextColor(Color.RED);
 								} else {
+									int color = (Build.VERSION.SDK_INT>10)? android.R.color.primary_text_dark:android.R.color.primary_text_light;
 									etEmail.setTextColor(getResources()
-											.getColor(
-													android.R.color.primary_text_light));
+											.getColor(color));
 								}
 							}
 						};

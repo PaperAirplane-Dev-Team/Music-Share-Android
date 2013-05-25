@@ -25,7 +25,7 @@ public class Consts {
 			.parse("content://media/external/audio/albumart");
 	public final static int NULL = -1;
 	//是否Debug直接在Manifest里面改
-	public final static boolean ON_PLAY_STORE = false;
+	public final static boolean ON_PLAY_STORE = true;
 	public final static int LOOK_FOR_SUGGESTION_REQUEST_CODE = 233;
 	public final static int PICK_BACKGROUND_REQUEST_CODE = 234;
 	public final static char UNKNOWN_CHAR = 91;
