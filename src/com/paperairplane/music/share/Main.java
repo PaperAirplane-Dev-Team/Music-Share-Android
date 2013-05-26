@@ -1,6 +1,7 @@
 package com.paperairplane.music.share;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
 import java.util.Locale;
 import java.util.Random;
 
@@ -55,9 +56,12 @@ import com.weibo.sdk.android.sso.SsoHandler;
 
 /**
  * 主界面
+ * 
  * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
  * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
- * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ * @see <a
+ *      href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our
+ *      GitHub</a>
  */
 public class Main extends ListActivity {
 	private MusicData[] mMusicDatas;// 保存音乐数据
@@ -80,16 +84,6 @@ public class Main extends ListActivity {
 	private SharedPreferences mPreferencesTheme;
 	private Context mContext;
 
-	/**
-	 * 将数字表示的长度格式化为字符串
-	 * @param duration 歌曲长度(毫秒)
-	 * @return 格式化后的时间字符串
-	 */
-	private native String convertDuration(long duration);
-    static {
-        System.loadLibrary("utilities");
-    }
-    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -163,10 +157,11 @@ public class Main extends ListActivity {
 		mIsFullRunning = true;
 	}
 
-
 	/**
 	 * 处理接收到的Intent
-	 * @param uri 要处理的Intent中包含的uri
+	 * 
+	 * @param uri
+	 *            要处理的Intent中包含的uri
 	 */
 	private void handleIntent(Uri uri) {
 		// setTheme(R.style.DialogTheme);
@@ -174,7 +169,7 @@ public class Main extends ListActivity {
 			Cursor cursor = getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 					Consts.MEDIA_INFO,
-					MediaStore.Audio.Media.DATA + "='" + uri.getPath() + "'",
+					MediaStore.Audio.Media.DATA + "=\"" + uri.getPath() + "\"",
 					null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 			cursor.moveToFirst();
 			MusicData data = generateMusicData(cursor);
@@ -186,7 +181,6 @@ public class Main extends ListActivity {
 		}
 
 	}
-
 
 	/**
 	 * 初始化摇动检测器
@@ -450,7 +444,9 @@ public class Main extends ListActivity {
 
 	/**
 	 * 主界面显示为空时按钮点击处理
-	 * @param v 触发该方法的控件
+	 * 
+	 * @param v
+	 *            触发该方法的控件
 	 */
 	public void btn_empty(View v) {
 		refreshMusicList();
@@ -458,6 +454,7 @@ public class Main extends ListActivity {
 
 	/**
 	 * 检查AccessToken的存在及合法性
+	 * 
 	 * @return (布尔值)是否合法
 	 */
 	private boolean isAccessTokenExistAndValid() {
@@ -471,7 +468,9 @@ public class Main extends ListActivity {
 
 	/**
 	 * 搜索互联网按钮点击处理
-	 * @param v 触发该方法的控件
+	 * 
+	 * @param v
+	 *            触发该方法的控件
 	 */
 	public void footer(View v) {
 		showCustomDialog(null, Consts.Dialogs.SEARCH);
@@ -480,10 +479,13 @@ public class Main extends ListActivity {
 	// 对话框处理
 
 	/**
-	 *  显示程序的各种自定义对话框，包括dialogMain, mDialogAbout,
-	 *  mDialogSearch, mDialogThank, mDialogWelcome, mDialogChangeColor
-	 * @param music 传入分享的音乐信息(可以为null)
-	 * @param whichDialog 判断对话框类型
+	 * 显示程序的各种自定义对话框，包括dialogMain, mDialogAbout, mDialogSearch, mDialogThank,
+	 * mDialogWelcome, mDialogChangeColor
+	 * 
+	 * @param music
+	 *            传入分享的音乐信息(可以为null)
+	 * @param whichDialog
+	 *            判断对话框类型
 	 * @see Consts.Dialogs
 	 * 
 	 */
@@ -557,7 +559,8 @@ public class Main extends ListActivity {
 										.matches("(?:\\w+)@(?:\\w+)(?:(\\.[a-zA-z]{2,4})+)$")) {
 									etEmail.setTextColor(Color.RED);
 								} else {
-									int color = (Build.VERSION.SDK_INT>10)? android.R.color.primary_text_dark:android.R.color.primary_text_light;
+									int color = (Build.VERSION.SDK_INT > 10) ? android.R.color.primary_text_dark
+											: android.R.color.primary_text_light;
 									etEmail.setTextColor(getResources()
 											.getColor(color));
 								}
@@ -654,7 +657,7 @@ public class Main extends ListActivity {
 				}
 			};
 			mDialogAbout = new AlertDialog.Builder(this)
-					.setIcon(R.drawable.ic_launcher)
+					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(getString(R.string.menu_about))
 					.setOnCancelListener(onCancelListener)
 					.setMessage(
@@ -963,7 +966,9 @@ public class Main extends ListActivity {
 
 	/**
 	 * 从音乐信息构建View
-	 * @param music 音乐信息
+	 * 
+	 * @param music
+	 *            音乐信息
 	 * @return 音乐信息View
 	 */
 	private View getMusicInfoView(final MusicData music) {
@@ -987,11 +992,14 @@ public class Main extends ListActivity {
 		textDuration.setText(getString(R.string.duration) + " : "
 				+ music.getDuration());
 		int size = Utilities.getAdaptedSize(Main.this);
-		Bitmap bmpAlbum = Utilities.getLocalArtwork(mContext,
-				music.getAlbumId(), size, size);
+		//Bitmap bmpAlbum = Utilities.getLocalArtwork(mContext,
+				//music.getAlbumId(), size, size);
+		SoftReference<Bitmap> bmpAlbum=new SoftReference<Bitmap>(Utilities.getLocalArtwork(mContext,
+				music.getAlbumId(), size, size));
+		//似乎可以省资源
 		try {
-			MyLogger.d(Consts.DEBUG_TAG, "width:" + bmpAlbum.getWidth());
-			albumArt.setImageBitmap(bmpAlbum);
+			MyLogger.d(Consts.DEBUG_TAG, "width:" + bmpAlbum.get().getWidth());
+			albumArt.setImageBitmap(bmpAlbum.get());
 			MyLogger.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
@@ -1022,11 +1030,12 @@ public class Main extends ListActivity {
 			btnSendFile.setVisibility(View.GONE);
 			btnShare.setVisibility(View.GONE);
 		}
+		bmpAlbum.clear();
 		return musicInfo;
 	}
 
 	/**
-	 *  处理各种线程信息
+	 * 处理各种线程信息
 	 */
 	private Handler mHandler = new Handler() {
 		@Override
@@ -1194,7 +1203,7 @@ public class Main extends ListActivity {
 	};
 
 	/**
-	 *  列表点击监听类
+	 * 列表点击监听类
 	 */
 	private class MusicListOnClickListener implements OnItemClickListener {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
@@ -1210,8 +1219,10 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 *  初始化用到的音乐信息数组，填充进主界面ListView
-	 * @throws NullPointerException 当查询不到任何音乐信息时抛出
+	 * 初始化用到的音乐信息数组，填充进主界面ListView
+	 * 
+	 * @throws NullPointerException
+	 *             当查询不到任何音乐信息时抛出
 	 */
 	private void generateMusicList() throws NullPointerException {
 		Cursor cursor = getContentResolver().query(
@@ -1225,10 +1236,14 @@ public class Main extends ListActivity {
 		if (cursor != null) {
 			cursor.moveToFirst();
 			mMusicDatas = new MusicData[cursor.getCount()];
+			long now = System.nanoTime();
 			for (int i = 0; i < cursor.getCount(); i++) {
 				mMusicDatas[i] = generateMusicData(cursor);
 				cursor.moveToNext();
 			}
+			MyLogger.d(Consts.DEBUG_TAG,
+					"generateMusicData used " + (System.nanoTime() - now)
+							+ " ns");
 			mLvMain.setAdapter(new MusicListAdapter(this, mMusicDatas));
 			cursor.close();
 		}
@@ -1237,14 +1252,16 @@ public class Main extends ListActivity {
 
 	/**
 	 * 从给定的cursor取值生成MusicData
-	 * @param cursor 信息来源
+	 * 
+	 * @param cursor
+	 *            信息来源
 	 * @return 生成的MusicData
 	 */
 
 	private MusicData generateMusicData(Cursor cursor) {
 		MusicData musicData = new MusicData();
 		musicData.setTitle(cursor.getString(0).trim());
-		musicData.setDuration(convertDuration(cursor.getInt(1)));
+		musicData.setDuration(Utilities.convertDuration(cursor.getInt(1)));
 		musicData.setArtist(cursor.getString(2).trim());
 		musicData.setPath(cursor.getString(3));
 		musicData.setAlbum(cursor.getString(4).trim());
@@ -1254,12 +1271,18 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 *  分享音乐的主调方法，将调用QueryAndShareMusicInfo类
-	 * @param title 音乐标题
-	 * @param artist 音乐艺术家
-	 * @param album 音乐专辑名
-	 * @param albumId 音乐专辑封面ID
-	 * @param means 分享意图,来自Consts.ShareMeans
+	 * 分享音乐的主调方法，将调用QueryAndShareMusicInfo类
+	 * 
+	 * @param title
+	 *            音乐标题
+	 * @param artist
+	 *            音乐艺术家
+	 * @param album
+	 *            音乐专辑名
+	 * @param albumId
+	 *            音乐专辑封面ID
+	 * @param means
+	 *            分享意图,来自Consts.ShareMeans
 	 */
 	private void shareMusic(String title, String artist, String album,
 			long albumId) {
@@ -1271,8 +1294,10 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 *  播放音乐的主调方法
-	 * @param music 音乐信息
+	 * 播放音乐的主调方法
+	 * 
+	 * @param music
+	 *            音乐信息
 	 */
 	private void playMusic(MusicData music) {
 		Intent musicIntent = new Intent();
@@ -1284,7 +1309,7 @@ public class Main extends ListActivity {
 	}
 
 	/**
-	 *  刷新音乐列表
+	 * 刷新音乐列表
 	 */
 	private void refreshMusicList() {
 		try {
@@ -1305,13 +1330,17 @@ public class Main extends ListActivity {
 		}
 	}
 
-
 	/**
 	 * 保存微博以及发送状态，备用
-	 * @param content 微博内容
-	 * @param checked 是否关注开发者
-	 * @param artworkUrl 微博图片地址
-	 * @param fileName 图片文件名
+	 * 
+	 * @param content
+	 *            微博内容
+	 * @param checked
+	 *            是否关注开发者
+	 * @param artworkUrl
+	 *            微博图片地址
+	 * @param fileName
+	 *            图片文件名
 	 */
 	private void saveSendStatus(String content, boolean checked,
 			String artworkUrl, String fileName) {
@@ -1327,7 +1356,9 @@ public class Main extends ListActivity {
 
 	/**
 	 * 通过其他App发送音乐文件
-	 * @param whichMusic 待发送的音乐信息
+	 * 
+	 * @param whichMusic
+	 *            待发送的音乐信息
 	 */
 	private void sendFile(MusicData whichMusic) {
 		Intent intent = new Intent();
@@ -1342,7 +1373,9 @@ public class Main extends ListActivity {
 
 	/**
 	 * 通过返回的更新信息显示对话框提示用户是否更新程序
-	 * @param info 传回的各种更新信息
+	 * 
+	 * @param info
+	 *            传回的各种更新信息
 	 */
 	private void updateApp(final String[] info) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(Main.this)

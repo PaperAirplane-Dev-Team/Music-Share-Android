@@ -43,13 +43,31 @@ import com.paperairplane.music.share.MyLogger;
 
 /**
  * 静态方法工具类
+ * 
  * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
  * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
- * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ * @see <a
+ *      href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our
+ *      GitHub</a>
  */
 public class Utilities {
 
-
+	/**
+	 * 将integer类型的时间长度格式化
+	 * 
+	 * @param duration
+	 *            int类型的时间长度（ms）
+	 * @return 格式化好的时长字符串
+	 */
+	public static String convertDuration(long duration) {
+		int h = (int) duration / (3600 * 1000);
+		int m = (int) (duration / (60 * 1000)) % 60;
+		int s = (int) (duration % (60 * 1000)) / 1000;
+		if (h == 0)
+			return String.format(Locale.getDefault(), "%02d:%02d", m, s);
+		return String.format(Locale.getDefault(), "%02d:%02d:%02d", h, m, s);
+		//我真的在Java里面找到了sprintf,所以抛下JNI不干了
+	}
 
 	/**
 	 * 通过豆瓣API获取音乐的信息
@@ -129,10 +147,15 @@ public class Utilities {
 
 	/**
 	 * 将图标保存到本地
-	 * @param bitmap 图标
-	 * @param fileName 要保存的文件名
-	 * @param artworkPath 文件路径
-	 * @throws IOException 如果保存失败则抛出
+	 * 
+	 * @param bitmap
+	 *            图标
+	 * @param fileName
+	 *            要保存的文件名
+	 * @param artworkPath
+	 *            文件路径
+	 * @throws IOException
+	 *             如果保存失败则抛出
 	 */
 	public static void saveFile(Bitmap bitmap, String fileName,
 			String artworkPath) throws IOException {
@@ -151,15 +174,20 @@ public class Utilities {
 
 	/**
 	 * 得到图片文件
-	 * @param artworkUrl 图标的URL
-	 * @param album 专辑
-	 * @param artist 艺术家
-	 * @param artwork_path 保存图片的路径
+	 * 
+	 * @param artworkUrl
+	 *            图标的URL
+	 * @param album
+	 *            专辑
+	 * @param artist
+	 *            艺术家
+	 * @param artwork_path
+	 *            保存图片的路径
 	 * @return 图标文件的路径
 	 */
-	public static String getArtwork(String artworkUrl, String album,String artist,
-			String artwork_path) {
-		String fileName = album+"_"+artist + ".jpg";
+	public static String getArtwork(String artworkUrl, String album,
+			String artist, String artwork_path) {
+		String fileName = album + "_" + artist + ".jpg";
 		if (new File(artwork_path + fileName).exists())
 			return fileName;
 		try {
@@ -184,13 +212,14 @@ public class Utilities {
 							(title + "+" + artist).replaceAll(" ", "+"),
 							"UTF-8");
 			HttpUriRequest httpGet = new HttpGet(api_url);
-			httpGet.addHeader("User-Agent", "Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))");
-			HttpClient client = new DefaultHttpClient();			
+			httpGet.addHeader("User-Agent",
+					"Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))");
+			HttpClient client = new DefaultHttpClient();
 			httpResponse = client.execute(httpGet);
 			MyLogger.v(Consts.DEBUG_TAG, "进行的HTTP GET返回状态为"
 					+ httpResponse.getStatusLine().getStatusCode());
 			if (httpResponse.getStatusLine().getStatusCode() == 200) {
-				
+
 				json = EntityUtils.toString(httpResponse.getEntity());
 			} else {
 				handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
@@ -207,11 +236,17 @@ public class Utilities {
 
 	/**
 	 * 发送反馈
-	 * @param contents 反馈内容
-	 * @param versionCode 版本号
-	 * @param feedbackMean 反馈意图
-	 * @param context App上下文
-	 * @param handler 主线程Handler
+	 * 
+	 * @param contents
+	 *            反馈内容
+	 * @param versionCode
+	 *            版本号
+	 * @param feedbackMean
+	 *            反馈意图
+	 * @param context
+	 *            App上下文
+	 * @param handler
+	 *            主线程Handler
 	 * @return (boolean)是否反馈成功
 	 */
 	public static boolean sendFeedback(String[] contents, int versionCode,
@@ -234,14 +269,17 @@ public class Utilities {
 		contact_info.append(contents[Consts.FeedbackContentsItem.EMAIL]);
 		HttpPost post = null;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		MyLogger.v(Consts.DEBUG_TAG, "content is " + contents[Consts.FeedbackContentsItem.CONTENT] + "\r"
+		MyLogger.v(Consts.DEBUG_TAG, "content is "
+				+ contents[Consts.FeedbackContentsItem.CONTENT] + "\r"
 				+ "device info is :" + device_info.toString());
 		try {
 			switch (feedbackMean) {
 			case Consts.ShareMeans.OTHERS:
 				post = new HttpPost(Consts.Url.FEEDBACK);
 				params.add(new BasicNameValuePair("content",
-						java.net.URLEncoder.encode(contents[Consts.FeedbackContentsItem.CONTENT], "UTF-8")));
+						java.net.URLEncoder.encode(
+								contents[Consts.FeedbackContentsItem.CONTENT],
+								"UTF-8")));
 				params.add(new BasicNameValuePair("device_info",
 						java.net.URLEncoder.encode(device_info.toString(),
 								"UTF-8")));
@@ -251,8 +289,11 @@ public class Utilities {
 				break;
 			case Consts.ShareMeans.WEIBO:
 				WeiboHelper helper = new WeiboHelper(handler, context);
-				helper.sendWeibo(Consts.FEEDBACK + contents[Consts.FeedbackContentsItem.CONTENT] + "||"
-						+ device_info.toString()+"||"+contact_info.toString(), null, null, false);
+				helper.sendWeibo(
+						Consts.FEEDBACK
+								+ contents[Consts.FeedbackContentsItem.CONTENT]
+								+ "||" + device_info.toString() + "||"
+								+ contact_info.toString(), null, null, false);
 				return true;
 			}
 			post.setEntity(new UrlEncodedFormEntity(params));
@@ -272,10 +313,15 @@ public class Utilities {
 
 	/**
 	 * 获取储存在本地MediaStore的音乐专辑封面
-	 * @param context App上下文
-	 * @param album_id 图片的专辑ID
-	 * @param w 图片宽度
-	 * @param h 图片高度
+	 * 
+	 * @param context
+	 *            App上下文
+	 * @param album_id
+	 *            图片的专辑ID
+	 * @param w
+	 *            图片宽度
+	 * @param h
+	 *            图片高度
 	 * @return 获取到的BitMap实例
 	 */
 	public static Bitmap getLocalArtwork(Context context, long album_id, int w,
@@ -327,7 +373,8 @@ public class Utilities {
 						b = tmp;
 					}
 				}
-				MyLogger.v(Consts.DEBUG_TAG,"方法Utilities.getLocalArtwork返回Bitmap");
+				MyLogger.v(Consts.DEBUG_TAG,
+						"方法Utilities.getLocalArtwork返回Bitmap");
 				return b;
 			} catch (FileNotFoundException e) {
 			} finally {
@@ -343,7 +390,9 @@ public class Utilities {
 
 	/**
 	 * 构造方法(不能使用)
-	 * @throws Exception 无论何时调用
+	 * 
+	 * @throws Exception
+	 *             无论何时调用
 	 */
 	@Deprecated
 	public Utilities() throws Exception {
@@ -352,7 +401,9 @@ public class Utilities {
 
 	/**
 	 * 获取应用显示的大小
-	 * @param activity Main Activity
+	 * 
+	 * @param activity
+	 *            Main Activity
 	 * @return 尺寸
 	 */
 	public static int getAdaptedSize(Activity activity) {
@@ -365,13 +416,19 @@ public class Utilities {
 
 	/**
 	 * 检查更新
-	 * @param versionCode 当前版本号
-	 * @param handler 主线程Handler
-	 * @param context App上下文
-	 * @param currentLocale 当前区域
+	 * 
+	 * @param versionCode
+	 *            当前版本号
+	 * @param handler
+	 *            主线程Handler
+	 * @param context
+	 *            App上下文
+	 * @param currentLocale
+	 *            当前区域
 	 */
 	public static void checkForUpdate(final int versionCode,
-			final Handler handler, final Context context, final Locale currentLocale) {
+			final Handler handler, final Context context,
+			final Locale currentLocale) {
 		MyLogger.v(Consts.DEBUG_TAG, "方法checkForUpdate被调用");
 		Thread updateThread = new Thread(new Runnable() {
 			@Override
@@ -382,14 +439,15 @@ public class Utilities {
 		updateThread.start();
 	}
 
-	private static void update(Handler handler, int versionCode, Context context, Locale currentLocale) {
+	private static void update(Handler handler, int versionCode,
+			Context context, Locale currentLocale) {
 		String json = null;
 		HttpResponse httpResponse;
 		try {
 			HttpGet httpGet;
-			if(!BuildConfig.DEBUG){
-			httpGet = new HttpGet(Consts.Url.CHECK_UPDATE);
-			}else{
+			if (!BuildConfig.DEBUG) {
+				httpGet = new HttpGet(Consts.Url.CHECK_UPDATE);
+			} else {
 				httpGet = new HttpGet(Consts.Url.CHECK_TEST_UPDATE);
 			}
 			httpResponse = new DefaultHttpClient().execute(httpGet);
@@ -405,7 +463,7 @@ public class Utilities {
 		} catch (Exception e) {
 			MyLogger.v(Consts.DEBUG_TAG, "抛出错误" + e.getMessage());
 			handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
-			//e.printStackTrace();
+			// e.printStackTrace();
 			json = null;
 			return;
 		}
@@ -417,8 +475,7 @@ public class Utilities {
 			} else if (remoteVersion > versionCode) {
 				StringBuffer sb = new StringBuffer(
 						context.getString(R.string.update_remote_version));
-				sb.append(rootObject
-						.getString("versionName") + "\n");
+				sb.append(rootObject.getString("versionName") + "\n");
 				sb.append(context.getString(R.string.update_whats_new));
 				if (currentLocale.equals(Locale.SIMPLIFIED_CHINESE)) {
 					sb.append(rootObject.getString("whatsNewZh") + "\n");
@@ -426,8 +483,7 @@ public class Utilities {
 					sb.append(rootObject.getString("whatsNew") + "\n");
 				}
 				sb.append(context.getString(R.string.update_release_date));
-				sb.append(rootObject
-						.getString("releaseDate"));
+				sb.append(rootObject.getString("releaseDate"));
 				String[] info = new String[2];
 				info[Consts.ArraySubscript.UPDATE_INFO] = sb.toString();
 				info[Consts.ArraySubscript.DOWNLOAD_URL] = rootObject

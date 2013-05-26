@@ -1,8 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.paperairplane.music.share"
-    android:versionCode="0099"
-
-    android:versionName="1.0.8u2" >
+    android:versionCode="0100"
+    android:versionName="1.0.8u3" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -34,6 +33,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="audio/*" />
@@ -42,7 +42,10 @@
                 <data android:mimeType="application/itunes" />
             </intent-filter>
         </activity>
-        <activity android:name=".AtSuggestionActivity" >
+        <activity
+            android:name=".AtSuggestionActivity"
+            android:noHistory="true"
+            android:parentActivityName=".Main" >
         </activity>
     </application>
 
