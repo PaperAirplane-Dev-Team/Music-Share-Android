@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,6 +42,9 @@ import android.util.DisplayMetrics;
 
 import com.paperairplane.music.share.MyLogger;
 
+import de.umass.lastfm.ImageSize;
+import de.umass.lastfm.Track;
+
 /**
  * 静态方法工具类
  * 
@@ -66,7 +70,7 @@ public class Utilities {
 		if (h == 0)
 			return String.format(Locale.getDefault(), "%02d:%02d", m, s);
 		return String.format(Locale.getDefault(), "%02d:%02d:%02d", h, m, s);
-		//我真的在Java里面找到了sprintf,所以抛下JNI不干了
+		// 我真的在Java里面找到了sprintf,所以抛下JNI不干了
 	}
 
 	/**
@@ -82,9 +86,10 @@ public class Utilities {
 	 *            用于控制UI线程的Handler
 	 * @return 包含音乐详情地址、歌手、专辑、单曲or专辑、专辑封面的字符串数组
 	 */
-	public static String[] getMusicAndArtworkUrl(String title, String artist,
-			Context context, Handler handler) {
-		String json = getJson(title, artist, handler);
+	public static String[] getMusicAndArtworkUrlFromDouban(String title,
+			String artist, Context context, Handler handler) {
+		MyLogger.d(Consts.DEBUG_TAG, "Querying from Douban");
+		String json = getJsonFromDouban(title, artist, handler);
 		String info[] = new String[5];
 		if (json == null) {
 			info[Consts.ArraySubscript.MUSIC] = context
@@ -130,6 +135,37 @@ public class Utilities {
 		// MyLogger.v(Consts.DEBUG_TAG, info[MUSIC]);
 		// MyLogger.v(Consts.DEBUG_TAG, info[ARTWORK]);
 		// 加Log的话如果上面那两个值有null就会崩溃……懒得catch
+		return info;
+	}
+
+	/**
+	 * 从Last.Fm查询音乐信息(测试)
+	 * @param title
+	 *            音乐标题
+	 * @param artist
+	 *            音乐作者
+	 * @param context
+	 *            用于获取资源的context
+	 * @return 包含音乐详情地址、歌手、专辑、单曲or专辑(不适用)、专辑封面的字符串数组
+	 */
+	public static String[] getMusicAndArtworkUrlFromLastfm(String title,
+			String artist, Context context) {
+		MyLogger.d(Consts.DEBUG_TAG, "Querying from Last.fm");
+		String info[] = new String[5];
+		Collection<Track> results = Track.search(artist, title, 1,
+				Consts.LASTFM_API_KEY);
+		if (results.size() == 0) {
+			info[Consts.ArraySubscript.MUSIC] = null;
+			return info;
+		}
+		Track track = results.iterator().next();
+		info[Consts.ArraySubscript.MUSIC] = track.getUrl();
+		info[Consts.ArraySubscript.ALBUM] = track.getAlbum();
+		info[Consts.ArraySubscript.ARTIST] = track.getArtist();
+		info[Consts.ArraySubscript.ARTWORK] = track.getImageURL();
+		//我修改了源码
+		info[Consts.ArraySubscript.VERSION] = null;
+		//FIXME Last.Fm没有这个……
 		return info;
 	}
 
@@ -203,7 +239,8 @@ public class Utilities {
 	}
 
 	// 通过豆瓣API获取音乐信息
-	private static String getJson(String title, String artist, Handler handler) {
+	private static String getJsonFromDouban(String title, String artist,
+			Handler handler) {
 		String json = null;
 		HttpResponse httpResponse;
 		try {

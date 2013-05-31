@@ -11,6 +11,8 @@ import android.os.Message;
 
 import com.paperairplane.music.share.MyLogger;
 
+import de.umass.lastfm.CallException;
+
 /**
  * 查询并且分享音乐信息的线程
  * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
@@ -30,8 +32,19 @@ class QueryAndShareMusicInfo extends Thread {
 	 * 主调方法,查询信息并且返回给主线程
 	 */
 	public void run() {
-		String[] info = Utilities.getMusicAndArtworkUrl(mTitle, mArtist, mContext,
-				mHandler);
+		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
+		String[] info;
+		try {
+			info = Utilities.getMusicAndArtworkUrlFromLastfm(mTitle, mArtist,
+					mContext);
+		} catch (CallException e) {
+			info = Utilities.getMusicAndArtworkUrlFromDouban(mTitle, mArtist, mContext,
+					mHandler);
+		}
+		if(info[Consts.ArraySubscript.MUSIC]==null){
+			info=Utilities.getMusicAndArtworkUrlFromDouban(mTitle, mArtist, mContext,
+					mHandler);
+		}
 		String content;
 		String fileName = null;
 		content = genContent(info);

@@ -87,6 +87,8 @@ public class Main extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
+		//空的……
 		// 由于需要在AtSuggetstion中调用，必须先进行
 		mContext = getApplicationContext();
 		mSsoHandler = new SsoHandler(Main.this, mWeibo);

@@ -5,9 +5,12 @@ import android.provider.MediaStore;
 
 /**
  * 程序中使用的常量
+ * 
  * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
  * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
- * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ * @see <a
+ *      href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our
+ *      GitHub</a>
  */
 public class Consts {
 
@@ -19,16 +22,17 @@ public class Consts {
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String APP_KEY = "1006183120";
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
-	public final static String RELEASE_DATE = "2013.5.25";
+	public final static String RELEASE_DATE = "2013.5.31";
 	public final static String ORIGIN_COLOR = "#FFFFFFFF";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
 	public final static int NULL = -1;
-	//是否Debug直接在Manifest里面改
+	// 是否Debug直接在Manifest里面改
 	public final static boolean ON_PLAY_STORE = true;
 	public final static int LOOK_FOR_SUGGESTION_REQUEST_CODE = 233;
 	public final static int PICK_BACKGROUND_REQUEST_CODE = 234;
 	public final static char UNKNOWN_CHAR = 91;
+	public final static String LASTFM_API_KEY = "263b7e634ce4560652c40b174addc1d4";
 
 	/**
 	 * 网络功能所用的Url
@@ -99,6 +103,7 @@ public class Consts {
 
 	/**
 	 * 显示对话框的类型
+	 * 
 	 * @see Main.showCustomDialog
 	 */
 	public final class Dialogs {
@@ -118,14 +123,15 @@ public class Consts {
 		public final static String SHARE = "ShareStatus";
 		public final static String FEEDBACK = "FeedbackStatus";
 		public final static String GENERAL = "General";
-		//public final static String BG_COLOR = "overlay_bg_color";
+		// public final static String BG_COLOR = "overlay_bg_color";
 		public final static String TEXT_COLOR = "text_color";
 		public final static String BG_PATH = "background_path";
-		//public final static String OVERLAY = "overlay";
+		// public final static String OVERLAY = "overlay";
 	}
 
 	/**
 	 * 编码添加的菜单项目,用来判断
+	 * 
 	 * @see Main.onPrepareOptionsMenu()
 	 */
 	public final class MenuItem {
@@ -143,11 +149,11 @@ public class Consts {
 		public final static int BLUE = 2;
 		public final static int OPACITY = 3;
 	}
-	
+
 	/**
 	 * 反馈信息用到的数组下标
 	 */
-	public final class FeedbackContentsItem{
+	public final class FeedbackContentsItem {
 		public final static int CONTENT = 0;
 		public final static int NAME = 1;
 		public final static int EMAIL = 2;
