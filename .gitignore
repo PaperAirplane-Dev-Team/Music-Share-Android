@@ -175,7 +175,8 @@ pip-log.txt
 
 # generated files
 bin/
-gen/
+gen/com/paperairplane/music
+gen/com/sina/sso
 
 # Local configuration file (sdk path, etc)
 local.properties
