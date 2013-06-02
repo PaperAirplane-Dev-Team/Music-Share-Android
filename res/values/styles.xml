@@ -1,6 +1,6 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppTheme" parent="android:Theme.Light" />
+    <style name="AppTheme" parent="Theme.Sherlock.Light" />
     <style name="DialogTheme" parent="android:Theme.Dialog" />
 
     <style name="ListItemStyle">
