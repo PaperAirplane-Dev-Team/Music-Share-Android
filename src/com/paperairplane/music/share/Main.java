@@ -7,7 +7,6 @@ import java.util.Random;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,10 +28,10 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SubMenu;
+import com.actionbarsherlock.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
@@ -48,6 +47,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.paperairplane.music.share.ShakeDetector.OnShakeListener;
 import com.paperairplane.music.share.MyLogger;
 import com.weibo.sdk.android.Oauth2AccessToken;
@@ -63,7 +63,7 @@ import com.weibo.sdk.android.sso.SsoHandler;
  *      href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our
  *      GitHub</a>
  */
-public class Main extends ListActivity {
+public class Main extends SherlockActivity {
 	private MusicData[] mMusicDatas;// 保存音乐数据
 	private ListView mLvMain;// 列表对象
 	public static Oauth2AccessToken sAccessToken = null;
@@ -311,7 +311,6 @@ public class Main extends ListActivity {
 		}
 	}
 
-	@SuppressLint("NewApi")
 	@Override
 	/**
 	 * 对于菜单显示前内容的处理
@@ -323,21 +322,15 @@ public class Main extends ListActivity {
 					android.R.drawable.ic_menu_delete);
 			return true;
 		}
-		getMenuInflater().inflate(R.menu.main, menu);
+		
+		getSupportMenuInflater().inflate(R.menu.main, menu);
 		SubMenu submenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3,
 				R.string.menu_customize).setIcon(
 				android.R.drawable.ic_menu_manage);
-		getMenuInflater().inflate(R.menu.customize, submenu);
-		if (Build.VERSION.SDK_INT >= 11) {
-			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
-					R.string.menu_refresh)
-					.setIcon(android.R.drawable.ic_popup_sync)
-					.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		} else {
-			menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
-					R.string.menu_refresh).setIcon(
-					android.R.drawable.ic_menu_recent_history);
-		}
+		getSupportMenuInflater().inflate(R.menu.customize, submenu);
+		menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1, R.string.menu_refresh)
+			.setIcon(android.R.drawable.ic_popup_sync)
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		if (!isAccessTokenExistAndValid()) {
 			menu.add(Menu.NONE, Consts.MenuItem.AUTH, 2, R.string.auth)
 					.setIcon(android.R.drawable.ic_menu_add);
@@ -346,6 +339,7 @@ public class Main extends ListActivity {
 					.setIcon(android.R.drawable.ic_menu_delete);
 		}
 		menu.removeItem(R.id.menu_change_color);
+		
 		return true;
 	}
 
