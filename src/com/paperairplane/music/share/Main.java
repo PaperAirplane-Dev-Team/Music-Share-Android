@@ -47,7 +47,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockListActivity;
 import com.paperairplane.music.share.ShakeDetector.OnShakeListener;
 import com.paperairplane.music.share.MyLogger;
 import com.weibo.sdk.android.Oauth2AccessToken;
@@ -63,7 +63,7 @@ import com.weibo.sdk.android.sso.SsoHandler;
  *      href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our
  *      GitHub</a>
  */
-public class Main extends SherlockActivity {
+public class Main extends SherlockListActivity {
 	private MusicData[] mMusicDatas;// 保存音乐数据
 	private ListView mLvMain;// 列表对象
 	public static Oauth2AccessToken sAccessToken = null;
@@ -1240,7 +1240,13 @@ public class Main extends SherlockActivity {
 			MyLogger.d(Consts.DEBUG_TAG,
 					"generateMusicData used " + (System.nanoTime() - now)
 							+ " ns");
-			mLvMain.setAdapter(new MusicListAdapter(this, mMusicDatas));
+			try {
+				mLvMain.setAdapter(new MusicListAdapter(this, mMusicDatas));
+			} catch (Exception e) {
+				MyLogger.e(Consts.DEBUG_TAG, "无音乐");
+				setContentView(R.layout.empty);
+				//XXX 先这样将就
+			}
 			cursor.close();
 		}
 		initShakeDetector();

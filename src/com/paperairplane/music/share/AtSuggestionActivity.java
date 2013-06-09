@@ -12,7 +12,6 @@ import com.weibo.sdk.android.WeiboParameters;
 import com.weibo.sdk.android.net.AsyncWeiboRunner;
 import com.weibo.sdk.android.net.RequestListener;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.paperairplane.music.share.MyLogger;
 
 /**
@@ -34,7 +34,7 @@ import com.paperairplane.music.share.MyLogger;
  * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
  * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
  */
-public class AtSuggestionActivity extends Activity {
+public class AtSuggestionActivity extends SherlockActivity {
 	private ListView mLvAtSuggestion;
 	private EditText mEtUserNick;
 	private List<String> mListSuggestion = new ArrayList<String>();

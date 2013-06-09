@@ -161,11 +161,16 @@ public class Utilities {
 		Track track = results.iterator().next();
 		info[Consts.ArraySubscript.MUSIC] = track.getUrl();
 		info[Consts.ArraySubscript.ALBUM] = track.getAlbum();
+		//FIXME 天啊Last.fm更查不到这个!
 		info[Consts.ArraySubscript.ARTIST] = track.getArtist();
 		info[Consts.ArraySubscript.ARTWORK] = track.getImageURL();
 		//我修改了源码
 		info[Consts.ArraySubscript.VERSION] = null;
 		//FIXME Last.Fm没有这个……
+		MyLogger.d(Consts.DEBUG_TAG, "Fetch from Last.fm成功!");
+		for (String s:info){
+			MyLogger.d("Array_Info", (s==null)?"NULL":s);
+		}
 		return info;
 	}
 

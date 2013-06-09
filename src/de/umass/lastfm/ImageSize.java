@@ -32,13 +32,13 @@ package de.umass.lastfm;
  */
 public enum ImageSize {
 
-	ORIGINAL,
+	HUGE,
+	MEGA,
+	EXTRALARGE,
 	LARGESQUARE,
+	ORIGINAL,
 	LARGE,
 	MEDIUM,
-	HUGE,
-	EXTRALARGE,
-	MEGA,
 	SMALL
 
 }

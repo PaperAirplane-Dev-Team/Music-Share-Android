@@ -233,7 +233,7 @@ public class Caller {
 				if (inputStream == null) {
 					this.lastResult = Result.createHttpErrorResult(urlConnection.getResponseCode(), urlConnection.getResponseMessage());
 					return lastResult;
-				} else {
+				} /*else {
 					if (cache != null) {
 						long expires = urlConnection.getHeaderFieldDate("Expires", -1);
 						if (expires == -1) {
@@ -246,7 +246,8 @@ public class Caller {
 								throw new CallException("Caching/Reloading failed");
 						}
 					}
-				}
+				} */
+				//木有Cache会不会好一点点
 			} catch (IOException e) {
 				throw new CallException(e);
 			}
@@ -256,9 +257,9 @@ public class Caller {
 			Result result = createResultFromInputStream(inputStream);
 			if (!result.isSuccessful()) {
 				log.warning(String.format("API call failed with result: %s%n", result));
-				if (cache != null) {
+				/*if (cache != null) {
 					cache.remove(cacheEntryName);
-				}
+				}*/
 			}
 			this.lastResult = result;
 			return result;
