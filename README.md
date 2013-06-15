@@ -1,5 +1,7 @@
-Music-Share
+纸飞机音乐分享 (Music Share Android)
 =============
+![纸飞机音乐分享Logo](https://raw.github.com/PaperAirplane-Dev-Team/Music-Share-Android/master/ic_launcher-web.png)
+
 本程序是一个Android下的音乐分享小工具, 由Xavier Yao( http://www.weibo.com/xavieryao )以及Harry Chen( http://www.weibo.com/yszzf )共同开发
 
 * 欢迎对本项目提出意见/喷/吐槽！
@@ -12,8 +14,12 @@ Github: `git clone git@github.com:PaperAirplane-Dev-Team/Music-Share-Android.git
 
 Gitcafe: `git clone git@gitcafe.com:PaperAirplane/Music-Share-Android.git`
 
-其他
-===========
-联系我们: 
+```java
+    System.out.println("Hello, World!");
+```
+
+
+#联系我们: 
 <li><a href="mailto:chenshengqi1@gmail.com">Harry Chen via Gmail</a><br/>
-<li><a href="mailto:xavieryao@me.com">Xavier Yao via iCloud</a>
+<li><a href="mailto:xavieryao@me.com">Xavier Yao via iCloud</a><br/>
+新浪微博在上方已经列出
