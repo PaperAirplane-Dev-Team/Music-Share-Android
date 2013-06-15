@@ -75,7 +75,8 @@ public class Main extends SherlockListActivity {
 			mDialogBackgroundChooser;
 	private SsoHandler mSsoHandler;
 	private WeiboHelper mWeiboHelper;
-	private static int sVersionCode, sCheckForUpdateCount = 0;
+	public static int sVersionCode;
+	private static int sCheckForUpdateCount = 0;
 	private String mVersionName;
 	private ImageView mIvFloatSearchButton;
 	private ShakeDetector mShakeDetector;
@@ -83,6 +84,7 @@ public class Main extends SherlockListActivity {
 	private String mBackgroundPath = null;
 	private SharedPreferences mPreferencesTheme;
 	private Context mContext;
+	private Handler mHttpQuestHandler;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,7 @@ public class Main extends SherlockListActivity {
 		//空的……
 		// 由于需要在AtSuggetstion中调用，必须先进行
 		mContext = getApplicationContext();
+		mHttpQuestHandler = HttpQuestHandler.getInstance(mHandler);
 		mSsoHandler = new SsoHandler(Main.this, mWeibo);
 		mWeiboHelper = new WeiboHelper(mHandler, mContext);
 		try {
@@ -113,17 +116,8 @@ public class Main extends SherlockListActivity {
 			return;
 		}
 		if (action.equals("android.intent.action.SEND")) {
-			// Toast.makeText(mContext, "抱歉,暂时不可用", Toast.LENGTH_LONG).show();
 			Bundle bundle = i.getExtras();
-			// if(bundle!=null)Log.d(Consts.DEBUG_TAG,
-			// "I HAVE DATA! "+bundle.size());
-			// Object keyset[]=bundle.keySet().toArray();
-			// Log.d(Consts.DEBUG_TAG, "KEY IS "+keyset[0]);
-			// finish();
 			Uri uri = (Uri) bundle.get(Intent.EXTRA_STREAM);
-			// Log.d(Consts.DEBUG_TAG, "Type is "+uri.getClass());
-			// Log.d(Consts.DEBUG_TAG, "path is "+uri.getPath());
-			// 我终于是试出来了啊
 			handleIntent(uri);
 			mIsFullRunning = false;
 			return;
@@ -135,24 +129,7 @@ public class Main extends SherlockListActivity {
 		generateMusicList();
 		firstShow();
 		// 启动用于检查更新的后台线程
-		Thread updateThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				mHandler.postDelayed(new Runnable() {
-
-					@Override
-					public void run() {
-						Utilities.checkForUpdate(Main.sVersionCode, mHandler,
-								mContext,
-								getResources().getConfiguration().locale);
-
-					}
-				}, 5000);
-				// 如果用Thread.sleep会让整个程序ANR..
-			}
-		});
-		updateThread.setPriority(Thread.MIN_PRIORITY);
-		updateThread.start();
+		mHttpQuestHandler.obtainMessage(Consts.NetAccessIntent.CHECK_FOR_UPDATE, Main.this).sendToTarget();
 		setBackground();
 		MyLogger.i(Consts.DEBUG_TAG, "versionCode:" + Main.sVersionCode
 				+ "\nversionName:" + mVersionName);
@@ -596,8 +573,12 @@ public class Main extends SherlockListActivity {
 
 						SharedPreferences pref = getSharedPreferences(
 								Consts.Preferences.FEEDBACK, MODE_PRIVATE);
-						String text = pref.getString("content", "");
-						etContent.setText(text);
+						String content = pref.getString("content", "");
+						etContent.setText(content);
+						String name = pref.getString("name", "");
+						etName.setText(name);
+						String email = pref.getString("email", "");
+						etEmail.setText(email);
 						pref.edit().clear().commit();
 						final AlertDialog.Builder builder = new AlertDialog.Builder(
 								Main.this);
@@ -620,19 +601,20 @@ public class Main extends SherlockListActivity {
 									contents[0] = strContent;
 									contents[1] = strName;
 									contents[2] = strEmail;
-									SendFeedback feedback = new SendFeedback(
-											contents, mHandler,
-											Main.sVersionCode, mContext);
+									FeedbackMessage feedback = new FeedbackMessage(
+											contents, Main.sVersionCode, mContext);
 									switch (whichButton) {
 									case DialogInterface.BUTTON_POSITIVE:
 										feedback.setMeans(Consts.ShareMeans.OTHERS);
-										feedback.start();
 										break;
 									case DialogInterface.BUTTON_NEGATIVE:
 										feedback.setMeans(Consts.ShareMeans.WEIBO);
-										feedback.start();
 										break;
 									}
+									MyLogger.d(Consts.DEBUG_TAG, "isFeedBackNull?->"+(feedback == null));
+									Message m = mHttpQuestHandler.obtainMessage(Consts.NetAccessIntent.SEND_FEEDBACK);
+									m.obj = feedback;
+									m.sendToTarget();
 								}
 							}
 						};
@@ -998,7 +980,7 @@ public class Main extends SherlockListActivity {
 			albumArt.setImageBitmap(bmpAlbum.get());
 			MyLogger.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			MyLogger.v(Consts.DEBUG_TAG,
 					"Oh shit, we got null again ...... Don't panic");
 		}
@@ -1167,8 +1149,10 @@ public class Main extends SherlockListActivity {
 						Toast.LENGTH_LONG).show();
 				SharedPreferences preferences = mContext.getSharedPreferences(
 						Consts.Preferences.FEEDBACK, Context.MODE_PRIVATE);
-				preferences.edit().putString("content", (String) msg.obj)
-						.commit();
+				String[] contents = (String[]) msg.obj;
+				preferences.edit().putString("content", contents[Consts.FeedbackContentsItem.CONTENT]).commit();
+				preferences.edit().putString("name", contents[Consts.FeedbackContentsItem.NAME]).commit();
+				preferences.edit().putString("email", contents[Consts.FeedbackContentsItem.EMAIL]).commit();
 				break;
 			case Consts.Status.NO_UPDATE:
 				Toast toast = Toast.makeText(mContext, R.string.no_update,
@@ -1290,7 +1274,7 @@ public class Main extends SherlockListActivity {
 			long albumId) {
 		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
 				artist, album, albumId, mContext, mHandler);
-		query.start();
+		mHttpQuestHandler.obtainMessage(Consts.NetAccessIntent.QUERY_AND_SHARE_MUSIC_INFO, query).sendToTarget();
 		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG)
 				.show();
 	}

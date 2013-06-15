@@ -19,7 +19,7 @@ import de.umass.lastfm.CallException;
  * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
  * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
  */
-class QueryAndShareMusicInfo extends Thread {
+class QueryAndShareMusicInfo implements Runnable {
 	private long mAlbumId;
 	private String mArtist, mTitle, mAlbum;
 	private Context mContext;
@@ -32,7 +32,7 @@ class QueryAndShareMusicInfo extends Thread {
 	 * 主调方法,查询信息并且返回给主线程
 	 */
 	public void run() {
-		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
+//		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
 		String[] info;
 		try {
 			info = Utilities.getMusicAndArtworkUrlFromLastfm(mTitle, mArtist,
