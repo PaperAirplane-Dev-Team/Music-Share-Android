@@ -30,9 +30,12 @@ import com.paperairplane.music.share.MyLogger;
 
 /**
  * 微博At自动补全
+ * 
  * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
  * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
- * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ * @see <a
+ *      href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our
+ *      GitHub</a>
  */
 public class AtSuggestionActivity extends SherlockActivity {
 	private ListView mLvAtSuggestion;
@@ -40,7 +43,6 @@ public class AtSuggestionActivity extends SherlockActivity {
 	private List<String> mListSuggestion = new ArrayList<String>();
 	private Handler mHandler;
 	private ArrayAdapter<String> mAdapterSugestion;
-	private Thread mThreadRefresh;
 	private Intent mIntent;
 	private Bundle mExtras;
 
@@ -48,11 +50,11 @@ public class AtSuggestionActivity extends SherlockActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.at_suggestion);
-		mIntent =new Intent(AtSuggestionActivity.this,Main.class);
+		mIntent = new Intent(AtSuggestionActivity.this, Main.class);
 		mExtras = new Bundle();
 		mExtras.putAll(getIntent().getExtras());
 		mIntent.putExtras(mExtras);
-		setResult(RESULT_CANCELED,mIntent);
+		setResult(RESULT_CANCELED, mIntent);
 		mHandler = new Handler() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -103,23 +105,26 @@ public class AtSuggestionActivity extends SherlockActivity {
 			}
 
 		});
-		mLvAtSuggestion.setOnItemClickListener(new OnItemClickListener(){
+		mLvAtSuggestion.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-					long arg3) {
-				int selection,start;
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int position, long arg3) {
+				int selection, start;
 				start = getIntent().getExtras().getInt("start");
-				StringBuffer result = new StringBuffer(getIntent().getExtras().getString(Intent.EXTRA_TEXT));
-				result.replace(start, start+1, mAdapterSugestion.getItem(position));
-				selection = start + mAdapterSugestion.getItem(position).length();
+				StringBuffer result = new StringBuffer(getIntent().getExtras()
+						.getString(Intent.EXTRA_TEXT));
+				result.replace(start, start + 1,
+						mAdapterSugestion.getItem(position));
+				selection = start
+						+ mAdapterSugestion.getItem(position).length();
 				mExtras.putString(Intent.EXTRA_TEXT, result.toString());
 				mExtras.putInt("selection", selection);
 				mIntent.putExtras(mExtras);
-				setResult(RESULT_OK,mIntent);
+				setResult(RESULT_OK, mIntent);
 				finish();
 			}
-			
+
 		});
 	}
 
@@ -127,58 +132,49 @@ public class AtSuggestionActivity extends SherlockActivity {
 	 * 从新浪微博查询可能要@的人
 	 */
 	private void lookForSuggestions() {
-		mThreadRefresh = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				WeiboParameters params = new WeiboParameters();
-				params.add("access_token", Main.sAccessToken.getToken());
-				params.add("q", mEtUserNick.getText().toString().replace("@", ""));
-				String url = Consts.Url.API_SUGGESTION;
-				final Message m = mHandler
-						.obtainMessage(Consts.Status.DATA_CHANGED);
-				try {
-					AsyncWeiboRunner.request(url, params, "GET",
-							new RequestListener() {
-								@Override
-								public void onComplete(String result) {
-									final List<String> fetched_data = new ArrayList<String>();
-									fetched_data.add(0, mEtUserNick.getText().toString());
-									try {
-										JSONArray array = new JSONArray(result);
-										for (int i = 0; i < array.length(); i++) {
-											String nickname = "@"
-													+ array.getJSONObject(i)
-															.getString(
-																	"nickname")+" ";
-											fetched_data.add(nickname);
-											MyLogger.v(Consts.DEBUG_TAG, "添加数据"
-													+ nickname);
-										}
-										m.obj = fetched_data;
-										m.sendToTarget();
-									} catch (JSONException e) {
-										e.printStackTrace();
-									}
-								}
 
-								@Override
-								public void onError(WeiboException e) {
-									e.printStackTrace();
-									MyLogger.e(Consts.DEBUG_TAG, "获取错误"+e.getStatusCode()+e.getMessage());
-								}
-
-								@Override
-								public void onIOException(IOException arg0) {
-								}
-							});
-				} catch (Exception e) {
-					e.printStackTrace();
+		WeiboParameters params = new WeiboParameters();
+		params.add("access_token", Main.sAccessToken.getToken());
+		params.add("q", mEtUserNick.getText().toString().replace("@", ""));
+		String url = Consts.Url.API_SUGGESTION;
+		final Message m = mHandler.obtainMessage(Consts.Status.DATA_CHANGED);
+		try {
+			AsyncWeiboRunner.request(url, params, "GET", new RequestListener() {
+				@Override
+				public void onComplete(String result) {
+					final List<String> fetched_data = new ArrayList<String>();
+					fetched_data.add(0, mEtUserNick.getText().toString());
+					try {
+						JSONArray array = new JSONArray(result);
+						for (int i = 0; i < array.length(); i++) {
+							String nickname = "@"
+									+ array.getJSONObject(i).getString(
+											"nickname") + " ";
+							fetched_data.add(nickname);
+							MyLogger.v(Consts.DEBUG_TAG, "添加数据" + nickname);
+						}
+						m.obj = fetched_data;
+						m.sendToTarget();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
 
-			}
-		});
-		mThreadRefresh.start();
-	}
+				@Override
+				public void onError(WeiboException e) {
+					e.printStackTrace();
+					MyLogger.e(Consts.DEBUG_TAG,
+							"获取错误" + e.getStatusCode() + e.getMessage());
+				}
 
+				@Override
+				public void onIOException(IOException arg0) {
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 
 }

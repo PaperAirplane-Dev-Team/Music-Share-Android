@@ -49,7 +49,7 @@ public class Consts {
 	}
 
 	/**
-	 * 程序中操作返回的各种状态
+	 * 程序中操作UI线程的Message ID
 	 */
 	public final class Status {
 		public static final int INTERNET_ERROR = 0;
@@ -157,6 +157,17 @@ public class Consts {
 		public final static int CONTENT = 0;
 		public final static int NAME = 1;
 		public final static int EMAIL = 2;
+	}
+	
+	/**
+	 * 操作联网线程的Message ID
+	 * @author Xavier
+	 *
+	 */
+	public final class NetAccessIntent{
+		public final static int SEND_FEEDBACK = 0;
+		public final static int CHECK_FOR_UPDATE = 1;
+		public final static int QUERY_AND_SHARE_MUSIC_INFO = 2;
 	}
 
 }
