@@ -96,6 +96,18 @@ public class HttpQuestHandler extends Handler{
 		return mHttpQuestHandler;
 	}
 	
+	public static HttpQuestHandler getInstance(){
+		if(mHandlerUi == null){
+			throw new IllegalStateException("UI Handler Is Not Defined!");
+		}else{
+			return mHttpQuestHandler;
+		}
+	}
+	
+	public boolean stop(){
+		return mHandlerThread.quit();
+	}
+	
 	
 
 }
