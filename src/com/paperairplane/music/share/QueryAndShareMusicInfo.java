@@ -9,7 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import com.paperairplane.music.share.MyLogger;
+import com.paperairplane.music.share.utils.MyLogger;
+import com.paperairplane.music.share.utils.Utilities;
 
 import de.umass.lastfm.CallException;
 

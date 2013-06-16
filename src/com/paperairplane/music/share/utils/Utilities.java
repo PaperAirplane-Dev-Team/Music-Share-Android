@@ -1,4 +1,4 @@
-package com.paperairplane.music.share;
+package com.paperairplane.music.share.utils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -40,9 +40,12 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
 
-import com.paperairplane.music.share.MyLogger;
+import com.paperairplane.music.share.BuildConfig;
+import com.paperairplane.music.share.Consts;
+import com.paperairplane.music.share.R;
+import com.paperairplane.music.share.WeiboHelper;
+import com.paperairplane.music.share.utils.MyLogger;
 
-import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.Track;
 
 /**
