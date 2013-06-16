@@ -15,7 +15,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -25,6 +24,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -47,7 +47,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.paperairplane.music.share.ShakeDetector.OnShakeListener;
 import com.paperairplane.music.share.MyLogger;
 import com.weibo.sdk.android.Oauth2AccessToken;
@@ -63,16 +63,15 @@ import com.weibo.sdk.android.sso.SsoHandler;
  *      href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our
  *      GitHub</a>
  */
-public class Main extends SherlockListActivity {
+public class Main extends SherlockFragmentActivity {
 	private MusicData[] mMusicDatas;// 保存音乐数据
 	private ListView mLvMain;// 列表对象
 	public static Oauth2AccessToken sAccessToken = null;
 	private Weibo mWeibo = Weibo.getInstance(Consts.APP_KEY,
 			Consts.Url.AUTH_REDIRECT);
 	private Receiver mReceiver;
-	private AlertDialog mDialogMain, mDialogAbout, mDialogSearch, mDialogThank,
-			mDialogWelcome, mDialogChangeColor, mDialogSendWeibo,
-			mDialogBackgroundChooser;
+	private AlertDialog mDialogMain, mDialogSearch, mDialogWelcome,
+			mDialogChangeColor, mDialogSendWeibo, mDialogBackgroundChooser;
 	private SsoHandler mSsoHandler;
 	private WeiboHelper mWeiboHelper;
 	public static int sVersionCode;
@@ -84,13 +83,13 @@ public class Main extends SherlockListActivity {
 	private String mBackgroundPath = null;
 	private SharedPreferences mPreferencesTheme;
 	private Context mContext;
-	private Handler mHttpQuestHandler;
+	public Handler mHttpQuestHandler;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
-		//空的……
+		// 空的……
 		// 由于需要在AtSuggetstion中调用，必须先进行
 		mContext = getApplicationContext();
 		mHttpQuestHandler = HttpQuestHandler.getInstance(mHandler);
@@ -129,7 +128,9 @@ public class Main extends SherlockListActivity {
 		generateMusicList();
 		firstShow();
 		// 启动用于检查更新的后台线程
-		mHttpQuestHandler.obtainMessage(Consts.NetAccessIntent.CHECK_FOR_UPDATE, Main.this).sendToTarget();
+		mHttpQuestHandler.obtainMessage(
+				Consts.NetAccessIntent.CHECK_FOR_UPDATE, Main.this)
+				.sendToTarget();
 		setBackground();
 		MyLogger.i(Consts.DEBUG_TAG, "versionCode:" + Main.sVersionCode
 				+ "\nversionName:" + mVersionName);
@@ -299,15 +300,15 @@ public class Main extends SherlockListActivity {
 					android.R.drawable.ic_menu_delete);
 			return true;
 		}
-		
+
 		getSupportMenuInflater().inflate(R.menu.main, menu);
 		SubMenu submenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3,
 				R.string.menu_customize).setIcon(
 				android.R.drawable.ic_menu_manage);
 		getSupportMenuInflater().inflate(R.menu.customize, submenu);
 		menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1, R.string.menu_refresh)
-			.setIcon(android.R.drawable.ic_popup_sync)
-			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+				.setIcon(android.R.drawable.ic_popup_sync)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		if (!isAccessTokenExistAndValid()) {
 			menu.add(Menu.NONE, Consts.MenuItem.AUTH, 2, R.string.auth)
 					.setIcon(android.R.drawable.ic_menu_add);
@@ -316,7 +317,7 @@ public class Main extends SherlockListActivity {
 					.setIcon(android.R.drawable.ic_menu_delete);
 		}
 		menu.removeItem(R.id.menu_change_color);
-		
+
 		return true;
 	}
 
@@ -478,178 +479,13 @@ public class Main extends SherlockListActivity {
 		};
 		switch (whichDialog) {
 		case Consts.Dialogs.ABOUT:
-			DialogInterface.OnClickListener listenerAbout = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int whichButton) {
-					switch (whichButton) {
-					case DialogInterface.BUTTON_POSITIVE:
-						mDialogThank = new AlertDialog.Builder(Main.this)
-								.setOnCancelListener(onCancelListener)
-								.setTitle(R.string.thank_title)
-								.setIcon(android.R.drawable.ic_dialog_info)
-								.setMessage(R.string.thank_content)
-								.setPositiveButton(android.R.string.ok,
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int whichButton) {
-												mDialogThank.cancel();
-												mDialogAbout.show();
-											}
-										}).create();
-						mDialogThank.show();
-						break;
-					case DialogInterface.BUTTON_NEGATIVE:
-						Uri uri = Uri.parse(getString(R.string.url));
-						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-						startActivity(intent);
-						break;
-					case DialogInterface.BUTTON_NEUTRAL:
-						View feedback = LayoutInflater.from(Main.this).inflate(
-								R.layout.feedback, null);
-						final EditText etContent = (EditText) feedback
-								.findViewById(R.id.et_feedback);
-						final EditText etName = (EditText) feedback
-								.findViewById(R.id.et_name);
-						final EditText etEmail = (EditText) feedback
-								.findViewById(R.id.et_email);
-						TextWatcher twEmail = new TextWatcher() {
-							@Override
-							public void onTextChanged(CharSequence s,
-									int start, int before, int count) {
-							}
-
-							@Override
-							public void beforeTextChanged(CharSequence s,
-									int start, int count, int after) {
-							}
-
-							@Override
-							public void afterTextChanged(Editable s) {
-								String address = s.toString();
-								if (!address
-										.matches("(?:\\w+)@(?:\\w+)(?:(\\.[a-zA-z]{2,4})+)$")) {
-									etEmail.setTextColor(Color.RED);
-								} else {
-									int color = (Build.VERSION.SDK_INT > 10) ? android.R.color.primary_text_dark
-											: android.R.color.primary_text_light;
-									etEmail.setTextColor(getResources()
-											.getColor(color));
-								}
-							}
-						};
-						etEmail.addTextChangedListener(twEmail);
-						final ImageView[] ivClearButtons = new ImageView[3];
-
-						ivClearButtons[0] = (ImageView) feedback
-								.findViewById(R.id.btn_clear_content);
-						ivClearButtons[1] = (ImageView) feedback
-								.findViewById(R.id.btn_clear_name);
-						ivClearButtons[2] = (ImageView) feedback
-								.findViewById(R.id.btn_clear_email);
-
-						OnClickListener listenerClear = new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								int id = v.getId();
-								switch (id) {
-								case R.id.btn_clear_content:
-									etContent.setText("");
-									break;
-								case R.id.btn_clear_name:
-									etName.setText("");
-									break;
-								case R.id.btn_clear_email:
-									etEmail.setText("");
-									break;
-								}
-
-							}
-						};
-						for (ImageView iv : ivClearButtons) {
-							iv.setOnClickListener(listenerClear);
-						}
-
-						SharedPreferences pref = getSharedPreferences(
-								Consts.Preferences.FEEDBACK, MODE_PRIVATE);
-						String content = pref.getString("content", "");
-						etContent.setText(content);
-						String name = pref.getString("name", "");
-						etName.setText(name);
-						String email = pref.getString("email", "");
-						etEmail.setText(email);
-						pref.edit().clear().commit();
-						final AlertDialog.Builder builder = new AlertDialog.Builder(
-								Main.this);
-						DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
-
-								String strContent = etContent.getText()
-										.toString().trim();
-								String strName = etName.getText().toString()
-										.trim();
-								String strEmail = etEmail.getText().toString()
-										.trim();
-								if (strContent.equals("")
-										|| strEmail.equals("")) {
-									showCustomDialog(null, Consts.Dialogs.EMPTY);
-								} else {
-									String[] contents = new String[3];
-									contents[0] = strContent;
-									contents[1] = strName;
-									contents[2] = strEmail;
-									FeedbackMessage feedback = new FeedbackMessage(
-											contents, Main.sVersionCode, mContext);
-									switch (whichButton) {
-									case DialogInterface.BUTTON_POSITIVE:
-										feedback.setMeans(Consts.ShareMeans.OTHERS);
-										break;
-									case DialogInterface.BUTTON_NEGATIVE:
-										feedback.setMeans(Consts.ShareMeans.WEIBO);
-										break;
-									}
-									MyLogger.d(Consts.DEBUG_TAG, "isFeedBackNull?->"+(feedback == null));
-									Message m = mHttpQuestHandler.obtainMessage(Consts.NetAccessIntent.SEND_FEEDBACK);
-									m.obj = feedback;
-									m.sendToTarget();
-								}
-							}
-						};
-
-						builder.setView(feedback)
-								.setPositiveButton(R.string.send_feedback,
-										listener)
-								.setTitle(R.string.thank_for_feedback)
-								.setIcon(android.R.drawable.ic_dialog_info)
-								.setOnCancelListener(onCancelListener);
-						if (isAccessTokenExistAndValid()) {
-							builder.setNegativeButton(R.string.feedback_weibo,
-									listener);
-						}
-						builder.show();
-						break;
-					}
-				}
-			};
-			mDialogAbout = new AlertDialog.Builder(this)
-					.setIcon(android.R.drawable.ic_dialog_info)
-					.setTitle(getString(R.string.menu_about))
-					.setOnCancelListener(onCancelListener)
-					.setMessage(
-							getString(R.string.about_content) + "\n\n"
-									+ Consts.RELEASE_DATE + "\nVer "
-									+ mVersionName + " / " + sVersionCode
-									+ "\n"
-									+ getString(R.string.update_whats_new)
-									+ getString(R.string.whats_new))
-					.setPositiveButton(R.string.thank_list, listenerAbout)
-					.setNegativeButton(R.string.about_contact, listenerAbout)
-					.setNeutralButton(R.string.send_feedback, listenerAbout)
-					.create();
-			mDialogAbout.show();
+			DialogFragment dialogAbout = new AboutDialogFragment();
+			Bundle args = new Bundle();
+			args.putString("versionName", mVersionName);
+			args.putInt("versionCode", sVersionCode);
+			args.putBoolean("tokenValid", isAccessTokenExistAndValid());
+			dialogAbout.setArguments(args);
+			dialogAbout.show(getSupportFragmentManager(), "aboutDialog");
 			break;
 		case Consts.Dialogs.SHARE:
 			View musicInfoView = getMusicInfoView(music);
@@ -706,236 +542,31 @@ public class Main extends SherlockListActivity {
 			mDialogSearch.show();
 			break;
 		case Consts.Dialogs.EMPTY:
-			new AlertDialog.Builder(Main.this)
-					.setMessage(getString(R.string.empty))
-					.setPositiveButton(getString(android.R.string.ok),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-								}
-							}).show();
+			new EmptyDialogFragment().show(getSupportFragmentManager(), "emptyDialog");
 			break;
 
 		case Consts.Dialogs.CHANGE_COLOR:
-			View changeColor = View.inflate(mContext, R.layout.color_chooser,
-					null);
-			final SeekBar seekColor[] = new SeekBar[3];
-			final TextView textColor[] = new TextView[3];
-			final TextView textColorCode = (TextView) changeColor
-					.findViewById(R.id.text_color);
-			final TextView textShowColor = (TextView) changeColor
-					.findViewById(R.id.text_show_color);
-			seekColor[Consts.Color.RED] = (SeekBar) changeColor
-					.findViewById(R.id.seek_red);
-			seekColor[Consts.Color.GREEN] = (SeekBar) changeColor
-					.findViewById(R.id.seek_green);
-			seekColor[Consts.Color.BLUE] = (SeekBar) changeColor
-					.findViewById(R.id.seek_blue);
-			textColor[Consts.Color.RED] = (TextView) changeColor
-					.findViewById(R.id.text_red);
-			textColor[Consts.Color.GREEN] = (TextView) changeColor
-					.findViewById(R.id.text_green);
-			textColor[Consts.Color.BLUE] = (TextView) changeColor
-					.findViewById(R.id.text_blue);
-			// 实际测试,不透明度是必须的
-			// 我昨天也发现了……
-
-			OnSeekBarChangeListener seekListener = new OnSeekBarChangeListener() {
-
+			ChangeColorDialogFragment ccdf = new ChangeColorDialogFragment();
+			ccdf.setOnColorChangedListener(new ChangeColorDialogFragment.OnColorChangedListener() {
 				@Override
-				public void onStopTrackingTouch(SeekBar seekBar) {
+				public void onColorChanged() {
+					mLvMain.setAdapter(new MusicListAdapter(mContext,
+							mMusicDatas));
 				}
-
-				@Override
-				public void onStartTrackingTouch(SeekBar seekBar) {
-				}
-
-				@Override
-				public void onProgressChanged(SeekBar seekBar, int progress,
-						boolean fromUser) {
-					switch (seekBar.getId()) {
-					case R.id.seek_red:
-						textColor[Consts.Color.RED]
-								.setText(getString(R.string.red) + ":"
-										+ progress);
-						break;
-					case R.id.seek_green:
-						textColor[Consts.Color.GREEN]
-								.setText(getString(R.string.green) + ":"
-										+ progress);
-						break;
-					case R.id.seek_blue:
-						textColor[Consts.Color.BLUE]
-								.setText(getString(R.string.blue) + ":"
-										+ progress);
-						break;
-					}
-					changeColor();
-
-				}
-
-				private void changeColor() {
-					String color[] = new String[4];
-					color[Consts.Color.RED] = Integer
-							.toHexString(seekColor[Consts.Color.RED]
-									.getProgress());
-					color[Consts.Color.GREEN] = Integer
-							.toHexString(seekColor[Consts.Color.GREEN]
-									.getProgress());
-					color[Consts.Color.BLUE] = Integer
-							.toHexString(seekColor[Consts.Color.BLUE]
-									.getProgress());
-					color[Consts.Color.OPACITY] = "FF";
-					for (int i = 0; i < 4; i++) {
-						if (color[i].length() == 1)
-							color[i] = "0" + color[i];
-					}
-					String hexColor = ("#" + color[Consts.Color.OPACITY]
-							+ color[Consts.Color.RED]
-							+ color[Consts.Color.GREEN] + color[Consts.Color.BLUE])
-							.toUpperCase(Locale.getDefault());
-					// MyLogger.d(Consts.DEBUG_TAG, "Color: "+hexColor);
-					textColorCode.setText(hexColor);
-					textShowColor.setBackgroundColor(android.graphics.Color
-							.parseColor(hexColor));
-				}
-			};
-			for (int i = 0; i < 3; i++) {
-				seekColor[i].setOnSeekBarChangeListener(seekListener);
-			}
-			String nowColor;
-			if (mPreferencesTheme.contains(Consts.Preferences.TEXT_COLOR)) {
-				nowColor = mPreferencesTheme.getString(
-						Consts.Preferences.TEXT_COLOR, "");
-			} else {
-				nowColor = Consts.ORIGIN_COLOR;
-			}
-			int colorInt[] = new int[3];
-			colorInt[Consts.Color.RED] = Integer.valueOf(
-					nowColor.substring(3, 5), 16);
-			colorInt[Consts.Color.GREEN] = Integer.valueOf(
-					nowColor.substring(5, 7), 16);
-			colorInt[Consts.Color.BLUE] = Integer.valueOf(
-					nowColor.substring(7, 9), 16);
-			MyLogger.i(Consts.DEBUG_TAG, "Integers are: " + colorInt[0] + " "
-					+ colorInt[1] + " " + colorInt[2]);
-			for (int i = 0; i < 3; i++) {
-				seekColor[i].setProgress(colorInt[i]);
-			}
-
-			DialogInterface.OnClickListener listenerColor = new DialogInterface.OnClickListener() {
-
-				@Override
-				public void onClick(DialogInterface dialog, int whichButton) {
-					switch (whichButton) {
-					case DialogInterface.BUTTON_POSITIVE:
-						String color = textColorCode.getText().toString();
-						if (color.contains("#")) {
-							mPreferencesTheme
-									.edit()
-									.putString(Consts.Preferences.TEXT_COLOR,
-											color).commit();
-							mLvMain.setAdapter(new MusicListAdapter(mContext,
-									mMusicDatas));
-							MyLogger.d(Consts.DEBUG_TAG, "自定义颜色:" + color);
-						}
-						break;
-					case DialogInterface.BUTTON_NEGATIVE:
-						mDialogChangeColor.cancel();
-						break;
-					case DialogInterface.BUTTON_NEUTRAL:
-						if (mPreferencesTheme
-								.contains(Consts.Preferences.TEXT_COLOR))
-							mPreferencesTheme.edit()
-									.remove(Consts.Preferences.TEXT_COLOR)
-									.commit();
-						mLvMain.setAdapter(new MusicListAdapter(mContext,
-								mMusicDatas));
-						break;
-					}
-				}
-			};
-			mDialogChangeColor = new AlertDialog.Builder(Main.this)
-					.setOnCancelListener(onCancelListener).setView(changeColor)
-					.setIcon(android.R.drawable.ic_dialog_info)
-					.setTitle(R.string.change_text_color)
-					.setPositiveButton(android.R.string.ok, listenerColor)
-					.setNegativeButton(android.R.string.cancel, listenerColor)
-					.setNeutralButton(R.string.reset, listenerColor).create();
-			mDialogChangeColor.show();
+			});
+			ccdf.show(getSupportFragmentManager(), "changeColorDialog");
 			break;
 		case Consts.Dialogs.CHANGE_BACKGROUND:
-			View v = View.inflate(mContext, R.layout.background_chooser, null);
-			final ImageView iv_background = (ImageView) v
-					.findViewById(R.id.imageView_background);
-			if (mBackgroundPath != null) {
-				Drawable background = Drawable.createFromPath(mBackgroundPath);
-				BitmapDrawable bd = (BitmapDrawable) background;
-				Bitmap bm = bd.getBitmap();
-				iv_background.setImageBitmap(bm);
-			}
-			DialogInterface.OnClickListener listenerBackground = new DialogInterface.OnClickListener() {
+			BackgroundChooserDialogFragment bcdf = new BackgroundChooserDialogFragment();
+			bcdf.setOnBackgroundChangedListener(new BackgroundChooserDialogFragment.OnBackgroundChangedListener(){
 
 				@Override
-				public void onClick(DialogInterface dialog, int whichButton) {
-					switch (whichButton) {
-					case DialogInterface.BUTTON_POSITIVE:
-						if (mBackgroundPath != null) {
-							mPreferencesTheme
-									.edit()
-									.putString(Consts.Preferences.BG_PATH,
-											mBackgroundPath).commit();
-						}
-						setBackground();
-						DialogInterface.OnClickListener listenerNotice = new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
-								if (whichButton == DialogInterface.BUTTON_POSITIVE)
-									showCustomDialog(null,
-											Consts.Dialogs.CHANGE_COLOR);
-							}
-						};
-						new AlertDialog.Builder(Main.this)
-								.setIcon(android.R.drawable.ic_dialog_info)
-								.setTitle(android.R.string.dialog_alert_title)
-								.setMessage(R.string.if_change_text_color)
-								.setPositiveButton(android.R.string.yes,
-										listenerNotice)
-								.setNegativeButton(android.R.string.no,
-										listenerNotice).show();
-						break;
-					case DialogInterface.BUTTON_NEGATIVE:
-						Intent i = new Intent(
-								Intent.ACTION_PICK,
-								android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-						startActivityForResult(i,
-								Consts.PICK_BACKGROUND_REQUEST_CODE);
-						break;
-					case DialogInterface.BUTTON_NEUTRAL:
-						mBackgroundPath = null;
-						iv_background
-								.setImageResource(R.drawable.background_holo_dark);
-						mPreferencesTheme.edit()
-								.remove(Consts.Preferences.BG_PATH).commit();
-						setBackground();
-						break;
-					}
-
+				public void onBackgroundChanged(String path) {
+					mBackgroundPath = path;
+					setBackground();
 				}
-			};
-			mDialogBackgroundChooser = new AlertDialog.Builder(Main.this)
-					.setOnCancelListener(onCancelListener)
-					.setView(v)
-					.setIcon(android.R.drawable.ic_dialog_info)
-					.setTitle(R.string.menu_change_background)
-					.setPositiveButton(android.R.string.ok, listenerBackground)
-					.setNegativeButton(R.string.choose_picture,
-							listenerBackground)
-					.setNeutralButton(R.string.choose_default,
-							listenerBackground).create();
-			mDialogBackgroundChooser.show();
+				
+			});
 			break;
 		default:
 			throw new RuntimeException("What the hell are you doing?");
@@ -970,17 +601,18 @@ public class Main extends SherlockListActivity {
 		textDuration.setText(getString(R.string.duration) + " : "
 				+ music.getDuration());
 		int size = Utilities.getAdaptedSize(Main.this);
-		//Bitmap bmpAlbum = Utilities.getLocalArtwork(mContext,
-				//music.getAlbumId(), size, size);
-		SoftReference<Bitmap> bmpAlbum=new SoftReference<Bitmap>(Utilities.getLocalArtwork(mContext,
-				music.getAlbumId(), size, size));
-		//似乎可以省资源
+		// Bitmap bmpAlbum = Utilities.getLocalArtwork(mContext,
+		// music.getAlbumId(), size, size);
+		SoftReference<Bitmap> bmpAlbum = new SoftReference<Bitmap>(
+				Utilities.getLocalArtwork(mContext, music.getAlbumId(), size,
+						size));
+		// 似乎可以省资源
 		try {
 			MyLogger.d(Consts.DEBUG_TAG, "width:" + bmpAlbum.get().getWidth());
 			albumArt.setImageBitmap(bmpAlbum.get());
 			MyLogger.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
-//			e.printStackTrace();
+			// e.printStackTrace();
 			MyLogger.v(Consts.DEBUG_TAG,
 					"Oh shit, we got null again ...... Don't panic");
 		}
@@ -1150,9 +782,21 @@ public class Main extends SherlockListActivity {
 				SharedPreferences preferences = mContext.getSharedPreferences(
 						Consts.Preferences.FEEDBACK, Context.MODE_PRIVATE);
 				String[] contents = (String[]) msg.obj;
-				preferences.edit().putString("content", contents[Consts.FeedbackContentsItem.CONTENT]).commit();
-				preferences.edit().putString("name", contents[Consts.FeedbackContentsItem.NAME]).commit();
-				preferences.edit().putString("email", contents[Consts.FeedbackContentsItem.EMAIL]).commit();
+				preferences
+						.edit()
+						.putString("content",
+								contents[Consts.FeedbackContentsItem.CONTENT])
+						.commit();
+				preferences
+						.edit()
+						.putString("name",
+								contents[Consts.FeedbackContentsItem.NAME])
+						.commit();
+				preferences
+						.edit()
+						.putString("email",
+								contents[Consts.FeedbackContentsItem.EMAIL])
+						.commit();
 				break;
 			case Consts.Status.NO_UPDATE:
 				Toast toast = Toast.makeText(mContext, R.string.no_update,
@@ -1229,7 +873,7 @@ public class Main extends SherlockListActivity {
 			} catch (Exception e) {
 				MyLogger.e(Consts.DEBUG_TAG, "无音乐");
 				setContentView(R.layout.empty);
-				//XXX 先这样将就
+				// XXX 先这样将就
 			}
 			cursor.close();
 		}
@@ -1274,7 +918,9 @@ public class Main extends SherlockListActivity {
 			long albumId) {
 		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
 				artist, album, albumId, mContext, mHandler);
-		mHttpQuestHandler.obtainMessage(Consts.NetAccessIntent.QUERY_AND_SHARE_MUSIC_INFO, query).sendToTarget();
+		mHttpQuestHandler.obtainMessage(
+				Consts.NetAccessIntent.QUERY_AND_SHARE_MUSIC_INFO, query)
+				.sendToTarget();
 		Toast.makeText(this, getString(R.string.querying), Toast.LENGTH_LONG)
 				.show();
 	}

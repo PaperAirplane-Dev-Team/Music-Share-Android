@@ -24,7 +24,6 @@
     <string name="error_internet">请检查您的网络连接</string>
     <string name="querying">查询中………请稍候</string>
     <string name="too_long">超出字数限制</string>
-    <string name="url">http://t.cn/zYyzZOK</string>
     <string name="send_succeed">分享成功</string>
     <string name="not_authorized_error">请先授权</string>
     <string name="send_error">分享失败，错误：</string>
