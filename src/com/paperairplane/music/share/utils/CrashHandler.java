@@ -1,6 +1,8 @@
-package com.paperairplane.music.share;
+package com.paperairplane.music.share.utils;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+
+import com.paperairplane.music.share.Consts;
 
 
 public class CrashHandler implements UncaughtExceptionHandler {

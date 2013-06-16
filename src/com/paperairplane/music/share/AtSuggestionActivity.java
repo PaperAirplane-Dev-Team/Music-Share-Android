@@ -26,7 +26,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockActivity;
-import com.paperairplane.music.share.MyLogger;
+import com.paperairplane.music.share.utils.MyLogger;
 
 /**
  * 微博At自动补全

@@ -19,7 +19,7 @@ import com.weibo.sdk.android.net.AsyncWeiboRunner;
 import com.weibo.sdk.android.net.RequestListener;
 
 import com.paperairplane.music.share.Consts;
-import com.paperairplane.music.share.MyLogger;
+import com.paperairplane.music.share.utils.MyLogger;
 
 /**
  * 所有微博相关

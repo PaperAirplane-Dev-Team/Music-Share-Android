@@ -1,6 +1,10 @@
-package com.paperairplane.music.share;
+package com.paperairplane.music.share.dialogs;
 
 import java.util.Locale;
+
+import com.paperairplane.music.share.Consts;
+import com.paperairplane.music.share.R;
+import com.paperairplane.music.share.utils.MyLogger;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
