@@ -1,4 +1,10 @@
-package com.paperairplane.music.share;
+package com.paperairplane.music.share.dialogs;
+
+import com.paperairplane.music.share.Consts;
+import com.paperairplane.music.share.FeedbackMessage;
+import com.paperairplane.music.share.Main;
+import com.paperairplane.music.share.R;
+import com.paperairplane.music.share.utils.HttpQuestHandler;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -145,4 +151,5 @@ public class FeedbackDialogFragment extends AbsDialogFragment {
 		}
 		return builder.create();
 }
+	
 }

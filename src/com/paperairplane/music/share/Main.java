@@ -24,29 +24,35 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import android.view.MotionEvent;
 import com.actionbarsherlock.view.SubMenu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.paperairplane.music.share.ShakeDetector.OnShakeListener;
-import com.paperairplane.music.share.MyLogger;
+import com.paperairplane.music.share.dialogs.AboutDialogFragment;
+import com.paperairplane.music.share.dialogs.BackgroundChooserDialogFragment;
+import com.paperairplane.music.share.dialogs.ChangeColorDialogFragment;
+import com.paperairplane.music.share.dialogs.EmptyDialogFragment;
+import com.paperairplane.music.share.dialogs.SearchDialogFragment;
+import com.paperairplane.music.share.dialogs.SendWeiboDialogFragment;
+import com.paperairplane.music.share.utils.CrashHandler;
+import com.paperairplane.music.share.utils.HttpQuestHandler;
+import com.paperairplane.music.share.utils.IntentResolver;
+import com.paperairplane.music.share.utils.MyLogger;
+import com.paperairplane.music.share.utils.ShakeDetector;
+import com.paperairplane.music.share.utils.Utilities;
+import com.paperairplane.music.share.utils.ShakeDetector.OnShakeListener;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.sso.SsoHandler;
@@ -67,8 +73,7 @@ public class Main extends SherlockFragmentActivity {
 	private Weibo mWeibo = Weibo.getInstance(Consts.APP_KEY,
 			Consts.Url.AUTH_REDIRECT);
 	private Receiver mReceiver;
-	private AlertDialog mDialogMain, mDialogWelcome,
-			mDialogSendWeibo;
+	private AlertDialog mDialogMain, mDialogWelcome;
 	private SsoHandler mSsoHandler;
 	private WeiboHelper mWeiboHelper;
 	public static int sVersionCode;
@@ -76,7 +81,7 @@ public class Main extends SherlockFragmentActivity {
 	private String mVersionName;
 	private ImageView mIvFloatSearchButton;
 	private ShakeDetector mShakeDetector;
-	private boolean  mIsFullRunning; // 区分菜单项目
+	private boolean mIsFullRunning; // 区分菜单项目
 	private String mBackgroundPath = null;
 	private SharedPreferences mPreferencesTheme;
 	private Context mContext;
@@ -266,7 +271,8 @@ public class Main extends SherlockFragmentActivity {
 		// 还有可爱的背景
 		if (requestCode == Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE) {
 			// 这里根据bundle的数据重启dialogSendWeibo
-			mDialogSendWeibo.dismiss();
+//			mDialogSendWeibo.dismiss();
+//			TODO 待解决
 			Message m = mHandler.obtainMessage(Consts.Status.SEND_WEIBO);
 			m.obj = data.getExtras();
 			m.sendToTarget();
@@ -513,12 +519,12 @@ public class Main extends SherlockFragmentActivity {
 		case Consts.Dialogs.SEARCH:
 
 			SearchDialogFragment.OnShareMusicListener listenerSearch = new SearchDialogFragment.OnShareMusicListener() {
-				
+
 				@Override
-				public void onShareMusic(String title, String artist, String album,
-						long albumId) {
-					shareMusic(title,artist,album,albumId);
-//					烂代码典范啊……
+				public void onShareMusic(String title, String artist,
+						String album, long albumId) {
+					shareMusic(title, artist, album, albumId);
+					// 烂代码典范啊……
 				}
 			};
 			SearchDialogFragment sdf = new SearchDialogFragment();
@@ -526,8 +532,7 @@ public class Main extends SherlockFragmentActivity {
 			sdf.show(mFragmentManager, "searchDialog");
 			break;
 		case Consts.Dialogs.EMPTY:
-			new EmptyDialogFragment().show(mFragmentManager,
-					"emptyDialog");
+			new EmptyDialogFragment().show(mFragmentManager, "emptyDialog");
 			break;
 
 		case Consts.Dialogs.CHANGE_COLOR:
@@ -643,95 +648,27 @@ public class Main extends SherlockFragmentActivity {
 			case Consts.Status.SEND_WEIBO:// 发送微博
 				if (ShakeDetector.sCanDetact)
 					mShakeDetector.stop();
-				View sendweibo = LayoutInflater.from(mContext).inflate(
-						R.layout.sendweibo, null);
-				final EditText et = (EditText) sendweibo.getRootView()
-						.findViewById(R.id.et_content);
-				final CheckBox cb = (CheckBox) sendweibo
-						.findViewById(R.id.cb_follow);
-				final ImageView iv_clear = (ImageView) sendweibo
-						.findViewById(R.id.clear_button);
-				iv_clear.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						et.setText("");
-					}
-				});
 				final Bundle bundle = (Bundle) msg.obj;
-				String _content = bundle.getString(Intent.EXTRA_TEXT);
-				final String artworkUrl = bundle.getString("artworkUrl");
-				final String fileName = bundle.getString("fileName");
-				int selection = bundle.getInt("selection", _content.length());
-				// MyLogger.v(Consts.DEBUG_TAG, artworkUrl);
-				cb.setChecked(bundle.getBoolean("isChecked", true));
-				et.setText(_content);
-				et.setSelection(selection);
-				et.addTextChangedListener(new TextWatcher() {
+				SendWeiboDialogFragment.OnShareToWeiboListener listener = new SendWeiboDialogFragment.OnShareToWeiboListener() {
+					
 					@Override
-					public void afterTextChanged(Editable arg0) {
+					public void onShareToWeibo(String content, String artworkUrl,
+							String fileName, boolean willFollow) {
+						if (!isAccessTokenExistAndValid()) {// 检测之前是否授权过
+							mHandler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
+							saveSendStatus(content, willFollow, artworkUrl,
+									fileName);
+							mSsoHandler.authorize(mWeiboHelper.getListener());// 授权
+						} else {
+							mWeiboHelper.sendWeibo(content, artworkUrl, fileName,
+									willFollow);
+						}	
 					}
-
-					@Override
-					public void beforeTextChanged(CharSequence s, int start,
-							int count, int after) {
-					}
-
-					@Override
-					public void onTextChanged(CharSequence s, int start,
-							int before, int count) {
-						try {
-							if (s.toString().charAt(start) == '@') {
-								MyLogger.i(Consts.DEBUG_TAG, "@ CAUGHT!"); // @提醒
-								// 我有错，我悔过
-								Intent i = new Intent(mContext,
-										AtSuggestionActivity.class);
-								bundle.putString(Intent.EXTRA_TEXT,
-										s.toString());
-								bundle.putBoolean("isChecked", cb.isChecked());
-								bundle.putInt("start", start);
-								i.putExtras(bundle);
-								startActivityForResult(i,
-										Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE);
-							}
-						} catch (Exception e) {
-
-						}
-					}
-				});
-				mDialogSendWeibo = new AlertDialog.Builder(Main.this)
-						.setView(sendweibo)
-						.setOnCancelListener(
-								new DialogInterface.OnCancelListener() {
-									@Override
-									public void onCancel(DialogInterface dialog) {
-										if (ShakeDetector.sCanDetact)
-											mShakeDetector.start();
-									}
-								})
-						.setPositiveButton(getString(R.string.share),
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										String content = et.getText()
-												.toString();
-
-										if (!isAccessTokenExistAndValid()) {// 检测之前是否授权过
-											mHandler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
-											saveSendStatus(content,
-													cb.isChecked(), artworkUrl,
-													fileName);
-											mSsoHandler.authorize(mWeiboHelper
-													.getListener());// 授权
-										} else {
-											mWeiboHelper.sendWeibo(content,
-													artworkUrl, fileName,
-													cb.isChecked());
-										}
-
-									}
-
-								}).show();
+				};
+				SendWeiboDialogFragment swdf = new SendWeiboDialogFragment();
+				swdf.setArguments(bundle);
+				swdf.setOnShareToWeiboListener(listener);
+				swdf.show(mFragmentManager,"sendWeiboDialog");
 				break;
 			case Consts.Status.SEND_SUCCEED:// 发送成功
 				Toast.makeText(mContext, R.string.send_succeed,

@@ -1,6 +1,8 @@
-package com.paperairplane.music.share;
+package com.paperairplane.music.share.dialogs;
 
 
+import com.paperairplane.music.share.Consts;
+import com.paperairplane.music.share.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;

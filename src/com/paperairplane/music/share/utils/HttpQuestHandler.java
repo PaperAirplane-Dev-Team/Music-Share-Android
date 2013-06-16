@@ -1,5 +1,8 @@
-package com.paperairplane.music.share;
+package com.paperairplane.music.share.utils;
 
+import com.paperairplane.music.share.Consts;
+import com.paperairplane.music.share.FeedbackMessage;
+import com.paperairplane.music.share.Main;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
