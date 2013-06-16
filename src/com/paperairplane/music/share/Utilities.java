@@ -140,6 +140,7 @@ public class Utilities {
 
 	/**
 	 * 从Last.Fm查询音乐信息(测试)
+	 * 
 	 * @param title
 	 *            音乐标题
 	 * @param artist
@@ -161,15 +162,15 @@ public class Utilities {
 		Track track = results.iterator().next();
 		info[Consts.ArraySubscript.MUSIC] = track.getUrl();
 		info[Consts.ArraySubscript.ALBUM] = track.getAlbum();
-		//FIXME 天啊Last.fm更查不到这个!
+		// FIXME 天啊Last.fm更查不到这个!
 		info[Consts.ArraySubscript.ARTIST] = track.getArtist();
 		info[Consts.ArraySubscript.ARTWORK] = track.getImageURL();
-		//我修改了源码
+		// 我修改了源码
 		info[Consts.ArraySubscript.VERSION] = null;
-		//FIXME Last.Fm没有这个……
+		// FIXME Last.Fm没有这个……
 		MyLogger.d(Consts.DEBUG_TAG, "Fetch from Last.fm成功!");
-		for (String s:info){
-			MyLogger.d("Array_Info", (s==null)?"NULL":s);
+		for (String s : info) {
+			MyLogger.d("Array_Info", (s == null) ? "NULL" : s);
 		}
 		return info;
 	}
@@ -472,13 +473,8 @@ public class Utilities {
 			final Handler handler, final Context context,
 			final Locale currentLocale) {
 		MyLogger.v(Consts.DEBUG_TAG, "方法checkForUpdate被调用");
-		Thread updateThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				update(handler, versionCode, context, currentLocale);
-			}
-		});
-		updateThread.start();
+		update(handler, versionCode, context, currentLocale);
+
 	}
 
 	private static void update(Handler handler, int versionCode,
