@@ -18,6 +18,10 @@ import android.hardware.SensorManager;
 //你自个儿实现啊啊啊
 public class ShakeDetector implements SensorEventListener {
 	/**
+	 * 单例模式百试不爽……
+	 */
+	private static ShakeDetector INSTANCE;
+	/**
 	 * 检测的时间间隔
 	 */
 	private static final int UPDATE_INTERVAL = 100;
@@ -37,8 +41,16 @@ public class ShakeDetector implements SensorEventListener {
 	public int mShakeThreshold = 5000;
 	// 这是我写的……
 	private int mSensorChangeCount = 0;
+	public static boolean sCanDetact;
 
-	public ShakeDetector(Context context) {
+	public static ShakeDetector getInstance(Context context){
+		if(INSTANCE == null){
+			INSTANCE = new ShakeDetector(context);
+		}
+		return INSTANCE;
+	}
+	
+	private ShakeDetector(Context context) {
 		mSensorManager = (SensorManager) context
 				.getSystemService(Context.SENSOR_SERVICE);
 		mListeners = new ArrayList<OnShakeListener>();
