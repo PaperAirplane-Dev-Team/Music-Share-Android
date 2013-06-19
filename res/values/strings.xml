@@ -34,6 +34,7 @@
     <string name="auth_succeed">Succeeded</string>
     <string name="unauthed">Unauthorized</string>
     <string name="share2weibo">Share to Weibo</string>
+    <string name="share2renren">Share to Renren</string>
     <string name="followauthor">Follow Author</string>
     <string name="search">Search the Internet</string>
     <string name="title">Title</string>
@@ -88,5 +89,7 @@
     <string name="shake_random">I\'m feeling good~</string>
     <string name="delete_file_count">Delete file count:</string>
     <string name="if_change_text_color">You have changed the backgroud. Do you want to change the text color now?</string>
+    <string name="account_manager">Account Manager</string>
+    <string name="expires_time">Expires in:</string>
 
 </resources>

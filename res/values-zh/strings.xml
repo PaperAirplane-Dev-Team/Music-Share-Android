@@ -28,11 +28,12 @@
     <string name="not_authorized_error">请先授权</string>
     <string name="send_error">分享失败，错误：</string>
     <string name="auth_error">授权失败，错误：</string>
-    <string name="auth">微博授权</string>
+    <string name="auth">戳我授权</string>
     <string name="unauth">取消授权</string>
     <string name="auth_succeed">授权成功</string>
     <string name="unauthed">已取消授权</string>
     <string name="share2weibo">分享到微博</string>
+    <string name="share2renren">分享到人人网</string>
     <string name="followauthor">关注开发者</string>
     <string name="search">搜索互联网</string>
     <string name="title">标题</string>
@@ -84,5 +85,7 @@
     <string name="shake_random">主人主人不要晃我~好头晕啊~</string>
     <string name="delete_file_count">删除的文件个数:</string>
     <string name="if_change_text_color">您更换了背景,要同时更换文字颜色吗?</string>
+    <string name="account_manager">账号管理</string>
+    <string name="expires_time">授权过期时间:</string>
 
 </resources>
