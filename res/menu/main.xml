@@ -1,5 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
+        <item
+        android:id="@+id/menu_accounts"
+        android:icon="@android:drawable/ic_menu_view"
+        android:orderInCategory="3"
+        android:title="@string/account_manager"
+        >
+    </item>
     <item
         android:id="@+id/menu_update"
         android:icon="@android:drawable/ic_menu_view"

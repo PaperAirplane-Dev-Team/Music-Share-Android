@@ -93,7 +93,7 @@ public class IntentResolver {
 	}
 
 	/**
-	 * 用于"分享到"窗口的ListView的Adapater
+	 * 用于"分享到"窗口的ListView的Adapter
 	 */
 	private class IntentListAdapter extends BaseAdapter {
 
@@ -136,8 +136,10 @@ public class IntentResolver {
 			ResolveInfo ri = info.get(position);
 			if (ri.activityInfo.flags != Consts.ShareMeans.INTERNAL) {
 				// 外部应用通过PackageManager获取资源
+
 				icon = ri.activityInfo.loadIcon(mPm);
 				label = ri.activityInfo.loadLabel(mPm).toString().trim();
+
 			} else {
 				// 内部编辑器直接从资源中获取
 				// 我没有仔细读代码,姑且认为它是我们App本身的资源

@@ -1,15 +1,14 @@
 package com.paperairplane.music.share.dialogs;
 
-import com.paperairplane.music.share.utils.ShakeDetector;
-
-import android.content.DialogInterface;
 import android.support.v4.app.DialogFragment;
+
 
 public class AbsDialogFragment extends DialogFragment {
 //	TODO 待审阅
+	/*
 	@Override
 	public void onDismiss(DialogInterface dialog) {
-		if (getActivity().getClass().getName().equals("Main")) {
+		if (getActivity().getClass().getName().equals("Main")) {  这行NullPointer
 			try {
 				if (ShakeDetector.sCanDetact)
 					ShakeDetector.getInstance(getActivity()).start();
@@ -17,4 +16,5 @@ public class AbsDialogFragment extends DialogFragment {
 			}
 		}
 	}
+	*/
 }
