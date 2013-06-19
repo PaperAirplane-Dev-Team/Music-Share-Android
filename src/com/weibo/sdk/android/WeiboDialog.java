@@ -87,6 +87,7 @@ public class WeiboDialog extends Dialog {
 
 		addContentView(mContent, new LayoutParams(LayoutParams.FILL_PARENT,
 				LayoutParams.FILL_PARENT));
+		Log.d(TAG, "OnCreate");
 	}
 
 	protected void onBack() {
@@ -108,6 +109,8 @@ public class WeiboDialog extends Dialog {
 		mWebView.setHorizontalScrollBarEnabled(false);
 		mWebView.getSettings().setJavaScriptEnabled(true);
 		mWebView.setWebViewClient(new WeiboDialog.WeiboWebViewClient());
+		Log.d("Weibo auth",mUrl);
+		mUrl = mUrl.replace("html+","html");
 		mWebView.loadUrl(mUrl);
 		mWebView.setLayoutParams(FILL);
 		mWebView.setVisibility(View.INVISIBLE);
@@ -199,8 +202,8 @@ public class WeiboDialog extends Dialog {
 
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
-			Log.d(TAG, "onPageStarted URL: " + url);
-			if (url.startsWith(mAuthUrl)) {
+			Log.d(TAG, "onPageStarted URL: "+url );
+			if (url.substring(0, 10).equals(mAuthUrl.substring(0,10))) {
 				handleRedirectUrl(view, url);
 				view.stopLoading();
 				WeiboDialog.this.dismiss();
@@ -235,7 +238,6 @@ public class WeiboDialog extends Dialog {
 		if (error == null && error_code == null) {
 			mListener.onComplete(values);
 		} else if (error.equals("access_denied")) {
-			// �ㄦ��������″��������版�璁块����
 			mListener.onCancel();  
 		} else {
 			if(error_code==null){

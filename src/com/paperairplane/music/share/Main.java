@@ -4,7 +4,6 @@ import java.io.File;
 import java.lang.ref.SoftReference;
 import java.util.Random;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -16,7 +15,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -42,6 +40,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.paperairplane.music.share.Consts.SNS;
 import com.paperairplane.music.share.dialogs.AboutDialogFragment;
+import com.paperairplane.music.share.dialogs.AuthManagerDialogFragment;
 import com.paperairplane.music.share.dialogs.BackgroundChooserDialogFragment;
 import com.paperairplane.music.share.dialogs.ChangeColorDialogFragment;
 import com.paperairplane.music.share.dialogs.EmptyDialogFragment;
@@ -54,7 +53,6 @@ import com.paperairplane.music.share.utils.MyLogger;
 import com.paperairplane.music.share.utils.ShakeDetector;
 import com.paperairplane.music.share.utils.Utilities;
 import com.paperairplane.music.share.utils.ShakeDetector.OnShakeListener;
-import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.sso.SsoHandler;
 
@@ -312,16 +310,6 @@ public class Main extends SherlockFragmentActivity {
 		menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1, R.string.menu_refresh)
 				.setIcon(android.R.drawable.ic_popup_sync)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-//		TODO 修好用户层的授权管理
-		/*
-		if (!isAccessTokenExistAndValid()) {
-			menu.add(Menu.NONE, Consts.MenuItem.AUTH, 2, R.string.auth)
-					.setIcon(android.R.drawable.ic_menu_add);
-		} else {
-			menu.add(Menu.NONE, Consts.MenuItem.UNAUTH, 2, R.string.unauth)
-					.setIcon(android.R.drawable.ic_menu_delete);
-		}
-		*/
 //		XXX 下面这句是啥？！
 //		menu.removeItem(R.id.menu_change_color);
 
@@ -367,6 +355,7 @@ public class Main extends SherlockFragmentActivity {
 					+ getString(R.string.delete_file_count) + fileCount;
 			Toast.makeText(mContext, toastText, Toast.LENGTH_LONG).show();
 			break;
+			/*
 		case Consts.MenuItem.UNAUTH:
 			try {
 				new AlertDialog.Builder(this)
@@ -379,11 +368,10 @@ public class Main extends SherlockFragmentActivity {
 									@Override
 									public void onClick(DialogInterface arg0,
 											int arg1) {
-//										TODO　修好这个
-										/*
+										
 										Main.sAccessToken = null;
 										mWeiboHelper.clear();
-										*/
+										
 										if (Build.VERSION.SDK_INT > 10) {
 											invalidateOptionsMenu();
 										}
@@ -406,13 +394,14 @@ public class Main extends SherlockFragmentActivity {
 			break;
 		case Consts.MenuItem.AUTH:
 			
-//TODO 修好这里
 //			try {
 //				mSsoHandler.authorize(mWeiboHelper.getListener());
 //			} catch (Exception e) {
 //				e.printStackTrace();
 //			}
 			break;
+		
+			*/
 		case Consts.MenuItem.REFRESH:
 			refreshMusicList();
 			break;
@@ -423,6 +412,10 @@ public class Main extends SherlockFragmentActivity {
 			break;
 		case R.id.menu_change_background:
 			showCustomDialog(null, Consts.Dialogs.CHANGE_BACKGROUND);
+			break;
+		case R.id.menu_accounts:
+			DialogFragment df = new AuthManagerDialogFragment();
+			df.show(mFragmentManager, "authManagerDialog");
 			break;
 		}
 		return true;

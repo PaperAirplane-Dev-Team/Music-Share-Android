@@ -16,9 +16,9 @@ import android.webkit.CookieSyncManager;
 public class Weibo {
 
 
-	public static String app_key = "";//第三方应用的appkey
-	public static String redirecturl = "";// 重定向url
-	public static String oauthUrl = "";
+	public  String app_key = "";//第三方应用的appkey
+	public  String redirecturl = "";// 重定向url
+	public  String oauthUrl = "";
 
 	public Oauth2AccessToken accessToken = null;//AccessToken实例
 
@@ -82,6 +82,7 @@ public class Weibo {
 			@Override
 			public void onComplete(Bundle values) {
 				// ensure any cookies set by the dialog are saved
+				Log.d("Weibo-authorize","onComplete");
 				CookieSyncManager.getInstance().sync();
 				if (null == accessToken) {
 					accessToken = new Oauth2AccessToken();
@@ -132,11 +133,12 @@ public class Weibo {
 			parameters.add(KEY_TOKEN, accessToken.getToken());
 		}
 		String url = oauthUrl + "?" + Utility.encodeUrl(parameters);
+		url= url.replaceAll("html+", "html");
 		if (context.checkCallingOrSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
 			Utility.showAlert(context, "Error",
 					"Application requires permission to access the Internet");
 		} else {
-			new WeiboDialog(context, url, listener,oauthUrl).show();
+			new WeiboDialog(context, url, listener,redirecturl).show();
 		}
 	}
 

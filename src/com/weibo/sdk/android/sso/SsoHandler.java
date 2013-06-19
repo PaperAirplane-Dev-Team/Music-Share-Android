@@ -70,7 +70,7 @@ public class SsoHandler {
                     ssoPackageName = remoteSSOservice.getPackageName();
                     ssoActivityName = remoteSSOservice.getActivityName();
                     boolean singleSignOnStarted = startSingleSignOn(
-                            mAuthActivity, Weibo.app_key, new String[]{},
+                            mAuthActivity, mWeibo.app_key, new String[]{},
                             mAuthActivityCode);
                     if (!singleSignOnStarted) {
 //                        startDialogAuth(mAuthActivity, new String[]{});
@@ -127,7 +127,7 @@ public class SsoHandler {
         Intent intent = new Intent();
         intent.setClassName(ssoPackageName, ssoActivityName);
         intent.putExtra("appKey", applicationId);// applicationId //"2745207810"
-        intent.putExtra("redirectUri", Weibo.redirecturl);
+        intent.putExtra("redirectUri", mWeibo.redirecturl);
 
         if (permissions.length > 0) {
             intent.putExtra("scope", TextUtils.join(",", permissions));

@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -20,6 +24,7 @@ import com.weibo.sdk.android.WeiboParameters;
 import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.net.AsyncWeiboRunner;
 import com.weibo.sdk.android.net.RequestListener;
+import com.weibo.sdk.android.sso.SsoHandler;
 
 import com.paperairplane.music.share.Consts;
 import com.paperairplane.music.share.Consts.SNS;
@@ -96,7 +101,7 @@ public class SnsHelper {
 		weibo.accessToken = readAccessToken(SNS.WEIBO);
 		mSns.put(SNS.WEIBO, weibo);
 		Weibo renren = new Weibo(Consts.RENREN_APP_KEY,
-				Consts.Url.AUTH_REDIRECT, Consts.Url.RENREN_AUTH_URL);
+				Consts.Url.RENREN_REDIRECT_URI, Consts.Url.RENREN_AUTH_URL);
 		renren.accessToken = readAccessToken(SNS.RENREN);
 		mSns.put(SNS.RENREN, renren);
 	}
@@ -162,6 +167,7 @@ public class SnsHelper {
 				mApi.update(content, null, null, mRequestListener);
 				break;
 			case RENREN:
+//				TODO
 				break;
 			}
 		} else if (fileName != null) {
@@ -171,6 +177,7 @@ public class SnsHelper {
 				mApi.upload(content, fileName, null, null, mRequestListener);
 				break;
 			case RENREN:
+//				TODO
 				break;
 			}
 		} else {
@@ -185,6 +192,14 @@ public class SnsHelper {
 				AsyncWeiboRunner.request(url, params, "POST", mRequestListener);
 				break;
 			case RENREN:
+				WeiboParameters  rrparams = new WeiboParameters();
+				rrparams.add("access_token", mSns.get(type).accessToken.getToken());
+				rrparams.add("v", "1.0");
+				rrparams.add("method", "share.share ");
+				rrparams.add("id",2);
+				rrparams.add("url", artworkUrl);
+				rrparams.add("comment",content);
+				AsyncWeiboRunner.request(Consts.Url.RENREN_API, rrparams, "POST", mRequestListener);
 				break;
 			}
 			
@@ -234,9 +249,8 @@ public class SnsHelper {
 		WeiboParameters params = new WeiboParameters();
 		params.add("access_token", mSns.get(SNS.WEIBO).accessToken.getToken());
 		params.add("uid", uid);
-		String url = "https://mApi.weibo.com/2/friendships/create.json";
 		try {
-			AsyncWeiboRunner.request(url, params, "POST",
+			AsyncWeiboRunner.request(Consts.Url.WEIBO_FOLLOW_API, params, "POST",
 					new RequestListener() {
 						@Override
 						public void onComplete(String response) {
@@ -255,6 +269,94 @@ public class SnsHelper {
 		} catch (Exception e) {
 		}
 		// 既然关注就悄悄地进行不报错了
+	}
+	
+	private void getAndSaveUid(final SNS type){
+		WeiboParameters params = new WeiboParameters();
+		params.add("access_token",mSns.get(type).accessToken.getToken() );
+		String url = null;
+		String method = null;
+		MyLogger.d(Consts.DEBUG_TAG,"SnsHelper::getAndSaveUid  被调用 ");
+		RequestListener listener = new RequestListener(){
+			@Override
+			public void onComplete(String response) {
+				try {
+					MyLogger.d(Consts.DEBUG_TAG,"SnsHelper::getAndSaveUid  response == "+response);
+					JSONObject jobj = new JSONObject(response);
+					String uid = jobj.getString("uid");
+					mEditor.putString(type.name()+"uid", uid);
+					mEditor.commit();
+					getNickname(type);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			@Override
+			public void onIOException(IOException e) {
+				e.printStackTrace();
+			}
+			@Override
+			public void onError(WeiboException e) {		
+				e.printStackTrace();
+			}		
+		};
+		switch(type){
+		case WEIBO:
+			url = Consts.Url.WEIBO_ACCOUNT_GET_UID_API;
+			method = "GET";
+			break;
+		case RENREN:
+			url = Consts.Url.RENREN_API;
+			params.add("v", "1.0");
+			params.add("format", "JSON");
+			params.add("method", "users.getLoggedInUser");
+			method = "POST";
+			break;
+		}
+		AsyncWeiboRunner.request(url, params,method , listener);
+	}
+	
+	private void getNickname(final SNS type) {
+		String uid = mPreferences.getString(type.name()+"uid", "");
+		WeiboParameters params = new WeiboParameters();
+		params.add("access_token",mSns.get(type).accessToken.getToken() );
+		params.add("uid", uid);
+		String url = null;
+		String method = null;
+		RequestListener listener = new RequestListener(){
+			@Override
+			public void onComplete(String response) {
+				try {
+					JSONObject jobj = new JSONObject(response);
+					String name = jobj.getString("name");
+					mEditor.putString(type.name()+"name", name);
+					mEditor.commit();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			@Override
+			public void onIOException(IOException e) {
+		
+			}
+			@Override
+			public void onError(WeiboException e) {				
+			}		
+		};
+		switch(type){
+		case WEIBO:
+			url = Consts.Url.WEIBO_USERS_SHOW_API;
+			method = "GET";
+			break;
+		case RENREN:
+			url = Consts.Url.RENREN_API;
+			params.add("v", "1.0");
+			params.add("format", "JSON");
+			params.add("method", "users.getProfileInfo");
+			method = "POST";
+			break;
+		}
+		AsyncWeiboRunner.request(url, params,method , listener);
 	}
 
 	private class AuthDialogListener implements WeiboAuthListener {
@@ -276,6 +378,7 @@ public class SnsHelper {
 			MyLogger.v(Consts.DEBUG_TAG, "授权成功，\n AccessToken:" + token);
 			SharedPreferences preferences = mContext.getSharedPreferences(
 					"ShareStatus", Context.MODE_PRIVATE);
+			getAndSaveUid(type);
 			if (preferences.getBoolean("read", false)) {
 				String content = preferences.getString("content", null);
 				String artworkUrl = preferences.getString("artworkUrl", null);
@@ -286,6 +389,9 @@ public class SnsHelper {
 				preferences.edit().putBoolean("read", false).commit();
 			}
 		}
+
+
+		
 
 		@Override
 		public void onCancel() {
@@ -328,5 +434,25 @@ public class SnsHelper {
 				0));
 		return token;
 	}
+
+	public void authorize(Activity activity,SNS type) {
+		switch(type){
+		case WEIBO:
+			SsoHandler handler = new SsoHandler(activity,mSns.get(SNS.WEIBO) );
+			handler.authorize(getListener(SNS.WEIBO));
+			break;
+		case RENREN:
+			mSns.get(SNS.RENREN).authorize(activity, getListener(SNS.RENREN));
+			break;
+		}
+		
+	}
+
+	public void unauthorize(SNS weibo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 
 }

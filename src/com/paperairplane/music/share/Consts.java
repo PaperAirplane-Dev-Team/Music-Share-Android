@@ -49,11 +49,17 @@ public class Consts {
 		public final static String WEIBO_AUTH_URL = "https://open.weibo.cn/oauth2/authorize";
 		public final static String RENREN_AUTH_URL = "https://graph.renren.com/oauth/authorize";
 		public final static String WEIBO_STATUSES_UPDATE = "https://api.weibo.com/2/statuses/update.json";
+		public final static String WEIBO_FOLLOW_API = "https://api.weibo.com/2/friendships/create.json";
+		public final static String WEIBO_ACCOUNT_GET_UID_API = "https://api.weibo.com/2/account/get_uid.json";
+		public final static String RENREN_API = "https://api.renren.com/restserver.do";
+		public final static String RENREN_REDIRECT_URI = "http://graph.renren.com/oauth/login_success.html ";
+		public final static String WEIBO_USERS_SHOW_API = "https://api.weibo.com/2/users/show.json";
 	}
 	
 	public static enum SNS{
 		WEIBO,RENREN;
 	}
+	
 
 	/**
 	 * 程序中操作UI线程的Message ID
