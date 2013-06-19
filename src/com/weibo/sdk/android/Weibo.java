@@ -14,33 +14,38 @@ import android.webkit.CookieSyncManager;
  * @author luopeng (luopeng@staff.sina.com.cn)
  */
 public class Weibo {
-	public static String URL_OAUTH2_ACCESS_AUTHORIZE = "https://open.weibo.cn/oauth2/authorize";
 
-	private static Weibo mWeiboInstance = null;
 
 	public static String app_key = "";//第三方应用的appkey
 	public static String redirecturl = "";// 重定向url
+	public static String oauthUrl = "";
 
 	public Oauth2AccessToken accessToken = null;//AccessToken实例
 
+	public String tag = "";
+	
 	public static final String KEY_TOKEN = "access_token";
 	public static final String KEY_EXPIRES = "expires_in";
 	public static final String KEY_REFRESHTOKEN = "refresh_token";
 	public static boolean isWifi=false;//当前是否为wifi
+	
+	
+
+	
 	/**
-	 * 
-	 * @param appKey 第三方应用的appkey
-	 * @param redirectUrl 第三方应用的回调页
-	 * @return Weibo的实例
+	 * Weibo类构造函数
+	 * @param appKey 应用的App Key
+	 * @param redirectUrl 应用的Redirect Url
+	 * @param authUrl 应用所在平台的授权页
+	 * @author Xavier
 	 */
-	public synchronized static Weibo getInstance(String appKey, String redirectUrl) {
-		if (mWeiboInstance == null) {
-			mWeiboInstance = new Weibo();
-		}
+	public Weibo(String appKey,String redirectUrl,String authUrl){
 		app_key = appKey;
-		Weibo.redirecturl = redirectUrl;
-		return mWeiboInstance;
+		redirecturl = redirectUrl;
+		oauthUrl = authUrl;
 	}
+
+	
 	/**
 	 * 设定第三方使用者的appkey和重定向url
 	 * @param appKey 第三方应用的appkey
@@ -50,6 +55,15 @@ public class Weibo {
 		app_key = appKey;
 		redirecturl = redirectUrl;
 	}
+	/**
+	 * 为Weibo对象设置Oauth2AccessToken
+	 * @param token
+	 * @author Xavier
+	 */
+	public void setupAccessToken(Oauth2AccessToken token){
+		this.accessToken = token;
+	}
+	
 	/**
 	 * 
 	 * 进行微博认证
@@ -117,12 +131,12 @@ public class Weibo {
 		if (accessToken != null && accessToken.isSessionValid()) {
 			parameters.add(KEY_TOKEN, accessToken.getToken());
 		}
-		String url = URL_OAUTH2_ACCESS_AUTHORIZE + "?" + Utility.encodeUrl(parameters);
+		String url = oauthUrl + "?" + Utility.encodeUrl(parameters);
 		if (context.checkCallingOrSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
 			Utility.showAlert(context, "Error",
 					"Application requires permission to access the Internet");
 		} else {
-			new WeiboDialog(context, url, listener).show();
+			new WeiboDialog(context, url, listener,oauthUrl).show();
 		}
 	}
 

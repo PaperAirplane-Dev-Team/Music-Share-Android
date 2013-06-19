@@ -20,7 +20,8 @@ public class Consts {
 			MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
 			MediaStore.Audio.Media.MIME_TYPE };
 	public final static String DEBUG_TAG = "Music Share DEBUG";
-	public final static String APP_KEY = "1006183120";
+	public final static String WEIBO_APP_KEY = "1006183120";
+	public final static String RENREN_APP_KEY = "57593d1b7858483ca66ae1a304f8296e" ;
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
 	public final static String RELEASE_DATE = "2013.6.9";
 	public final static String ORIGIN_COLOR = "#FFFFFFFF";
@@ -45,7 +46,13 @@ public class Consts {
 		public final static String CHECK_UPDATE = "http://paperairplane.sinaapp.com/music-share/update.php";
 		public final static String CHECK_TEST_UPDATE = "http://paperairplane.sinaapp.com/music-share/test_version_update.php";
 		public final static String AUTH_REDIRECT = "https://api.weibo.com/oauth2/default.html";
+		public final static String WEIBO_AUTH_URL = "https://open.weibo.cn/oauth2/authorize";
+		public final static String RENREN_AUTH_URL = "https://graph.renren.com/oauth/authorize";
 		public final static String WEIBO_STATUSES_UPDATE = "https://api.weibo.com/2/statuses/update.json";
+	}
+	
+	public static enum SNS{
+		WEIBO,RENREN;
 	}
 
 	/**

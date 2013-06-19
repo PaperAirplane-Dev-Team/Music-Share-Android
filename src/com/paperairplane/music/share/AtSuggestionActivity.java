@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.paperairplane.music.share.Consts.SNS;
 import com.paperairplane.music.share.utils.MyLogger;
 
 /**
@@ -45,6 +46,7 @@ public class AtSuggestionActivity extends SherlockActivity {
 	private ArrayAdapter<String> mAdapterSugestion;
 	private Intent mIntent;
 	private Bundle mExtras;
+	private SnsHelper helper = SnsHelper.getInstance();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +136,7 @@ public class AtSuggestionActivity extends SherlockActivity {
 	private void lookForSuggestions() {
 
 		WeiboParameters params = new WeiboParameters();
-		params.add("access_token", Main.sAccessToken.getToken());
+		params.add("access_token",helper.getWeibo(SNS.WEIBO).accessToken.getToken());
 		params.add("q", mEtUserNick.getText().toString().replace("@", ""));
 		String url = Consts.Url.API_SUGGESTION;
 		final Message m = mHandler.obtainMessage(Consts.Status.DATA_CHANGED);

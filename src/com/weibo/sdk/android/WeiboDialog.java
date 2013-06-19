@@ -42,12 +42,14 @@ public class WeiboDialog extends Dialog {
     
 	static  FrameLayout.LayoutParams FILL = new FrameLayout.LayoutParams(
 			ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
-	private String mUrl;
+	private String mUrl,mAuthUrl;
 	private WeiboAuthListener mListener;
 	private ProgressDialog mSpinner;
 	private WebView mWebView;
 	private RelativeLayout webViewContainer;
 	private RelativeLayout mContent;
+	
+	
 
 	private final static String TAG = "Weibo-WebView";
 	
@@ -56,11 +58,11 @@ public class WeiboDialog extends Dialog {
     private  static int top_margin=0;
     private  static int right_margin=0;
     private  static int bottom_margin=0;
-	public WeiboDialog(Context context, String url, WeiboAuthListener listener) {
+	public WeiboDialog(Context context, String url, WeiboAuthListener listener,String authUrl) {
 		super(context,theme);
 		mUrl = url;
 		mListener = listener;
-		
+		mAuthUrl = authUrl;
 	}
 
 	@Override
@@ -198,7 +200,7 @@ public class WeiboDialog extends Dialog {
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			Log.d(TAG, "onPageStarted URL: " + url);
-			if (url.startsWith(Weibo.redirecturl)) {
+			if (url.startsWith(mAuthUrl)) {
 				handleRedirectUrl(view, url);
 				view.stopLoading();
 				WeiboDialog.this.dismiss();

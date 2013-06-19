@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.paperairplane.music.share.Consts.SNS;
 import com.paperairplane.music.share.dialogs.AboutDialogFragment;
 import com.paperairplane.music.share.dialogs.BackgroundChooserDialogFragment;
 import com.paperairplane.music.share.dialogs.ChangeColorDialogFragment;
@@ -69,13 +70,12 @@ import com.weibo.sdk.android.sso.SsoHandler;
 public class Main extends SherlockFragmentActivity {
 	private MusicData[] mMusicDatas;// 保存音乐数据
 	private ListView mLvMain;// 列表对象
-	public static Oauth2AccessToken sAccessToken = null;
-	private Weibo mWeibo = Weibo.getInstance(Consts.APP_KEY,
-			Consts.Url.AUTH_REDIRECT);
+	private Weibo mWeibo = new Weibo(Consts.WEIBO_APP_KEY,
+			Consts.Url.AUTH_REDIRECT, Consts.Url.WEIBO_AUTH_URL);
 	private Receiver mReceiver;
 	private AlertDialog mDialogMain, mDialogWelcome;
 	private SsoHandler mSsoHandler;
-	private WeiboHelper mWeiboHelper;
+	private SnsHelper mWeiboHelper;
 	public static int sVersionCode;
 	private static int sCheckForUpdateCount = 0;
 	private String mVersionName;
@@ -98,7 +98,7 @@ public class Main extends SherlockFragmentActivity {
 		mHttpQuestHandler = HttpQuestHandler.getInstance(mHandler);
 		mFragmentManager = getSupportFragmentManager();
 		mSsoHandler = new SsoHandler(Main.this, mWeibo);
-		mWeiboHelper = new WeiboHelper(mHandler, mContext);
+		mWeiboHelper = SnsHelper.getInstance(mHandler, mContext);
 		try {
 			Main.sVersionCode = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionCode;
@@ -107,8 +107,6 @@ public class Main extends SherlockFragmentActivity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// 读取已存储的授权信息
-		Main.sAccessToken = mWeiboHelper.readAccessToken();
 		// 此处判断是否接收到其它App发来的Intent，并判断Intent携带的Uri是否为null。符合则处理。
 		Intent i = getIntent();
 		String action = i.getAction();
@@ -271,8 +269,8 @@ public class Main extends SherlockFragmentActivity {
 		// 还有可爱的背景
 		if (requestCode == Consts.LOOK_FOR_SUGGESTION_REQUEST_CODE) {
 			// 这里根据bundle的数据重启dialogSendWeibo
-//			mDialogSendWeibo.dismiss();
-//			TODO 待解决
+			// mDialogSendWeibo.dismiss();
+			// TODO 待解决
 			Message m = mHandler.obtainMessage(Consts.Status.SEND_WEIBO);
 			m.obj = data.getExtras();
 			m.sendToTarget();
@@ -314,6 +312,8 @@ public class Main extends SherlockFragmentActivity {
 		menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1, R.string.menu_refresh)
 				.setIcon(android.R.drawable.ic_popup_sync)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+//		TODO 修好用户层的授权管理
+		/*
 		if (!isAccessTokenExistAndValid()) {
 			menu.add(Menu.NONE, Consts.MenuItem.AUTH, 2, R.string.auth)
 					.setIcon(android.R.drawable.ic_menu_add);
@@ -321,7 +321,9 @@ public class Main extends SherlockFragmentActivity {
 			menu.add(Menu.NONE, Consts.MenuItem.UNAUTH, 2, R.string.unauth)
 					.setIcon(android.R.drawable.ic_menu_delete);
 		}
-		menu.removeItem(R.id.menu_change_color);
+		*/
+//		XXX 下面这句是啥？！
+//		menu.removeItem(R.id.menu_change_color);
 
 		return true;
 	}
@@ -377,8 +379,11 @@ public class Main extends SherlockFragmentActivity {
 									@Override
 									public void onClick(DialogInterface arg0,
 											int arg1) {
+//										TODO　修好这个
+										/*
 										Main.sAccessToken = null;
 										mWeiboHelper.clear();
+										*/
 										if (Build.VERSION.SDK_INT > 10) {
 											invalidateOptionsMenu();
 										}
@@ -400,11 +405,13 @@ public class Main extends SherlockFragmentActivity {
 			}
 			break;
 		case Consts.MenuItem.AUTH:
-			try {
-				mSsoHandler.authorize(mWeiboHelper.getListener());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			
+//TODO 修好这里
+//			try {
+//				mSsoHandler.authorize(mWeiboHelper.getListener());
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
 			break;
 		case Consts.MenuItem.REFRESH:
 			refreshMusicList();
@@ -429,20 +436,6 @@ public class Main extends SherlockFragmentActivity {
 	 */
 	public void btn_empty(View v) {
 		refreshMusicList();
-	}
-
-	/**
-	 * 检查AccessToken的存在及合法性
-	 * 
-	 * @return (布尔值)是否合法
-	 */
-	private boolean isAccessTokenExistAndValid() {
-		boolean flag = true;
-		if (Main.sAccessToken == null
-				|| Main.sAccessToken.isSessionValid() == false) {
-			flag = false;
-		}
-		return flag;
 	}
 
 	/**
@@ -488,7 +481,7 @@ public class Main extends SherlockFragmentActivity {
 			Bundle args = new Bundle();
 			args.putString("versionName", mVersionName);
 			args.putInt("versionCode", sVersionCode);
-			args.putBoolean("tokenValid", isAccessTokenExistAndValid());
+			args.putBoolean("tokenValid",mWeiboHelper.isAccessTokenExistAndValid(SNS.WEIBO));
 			dialogAbout.setArguments(args);
 			dialogAbout.show(mFragmentManager, "aboutDialog");
 			break;
@@ -650,25 +643,26 @@ public class Main extends SherlockFragmentActivity {
 					mShakeDetector.stop();
 				final Bundle bundle = (Bundle) msg.obj;
 				SendWeiboDialogFragment.OnShareToWeiboListener listener = new SendWeiboDialogFragment.OnShareToWeiboListener() {
-					
+
 					@Override
-					public void onShareToWeibo(String content, String artworkUrl,
-							String fileName, boolean willFollow) {
-						if (!isAccessTokenExistAndValid()) {// 检测之前是否授权过
+					public void onShareToWeibo(String content,
+							String artworkUrl, String fileName,
+							boolean willFollow) {
+						if (!mWeiboHelper.isAccessTokenExistAndValid(SNS.WEIBO)) {// 检测之前是否授权过
 							mHandler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
 							saveSendStatus(content, willFollow, artworkUrl,
 									fileName);
-							mSsoHandler.authorize(mWeiboHelper.getListener());// 授权
+							mSsoHandler.authorize(mWeiboHelper.getListener(SNS.WEIBO));// 授权
 						} else {
-							mWeiboHelper.sendWeibo(content, artworkUrl, fileName,
-									willFollow);
-						}	
+							mWeiboHelper.sendWeibo(content, artworkUrl,
+									fileName, willFollow,SNS.WEIBO);
+						}
 					}
 				};
 				SendWeiboDialogFragment swdf = new SendWeiboDialogFragment();
 				swdf.setArguments(bundle);
 				swdf.setOnShareToWeiboListener(listener);
-				swdf.show(mFragmentManager,"sendWeiboDialog");
+				swdf.show(mFragmentManager, "sendWeiboDialog");
 				break;
 			case Consts.Status.SEND_SUCCEED:// 发送成功
 				Toast.makeText(mContext, R.string.send_succeed,

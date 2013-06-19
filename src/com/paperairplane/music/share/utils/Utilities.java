@@ -42,8 +42,9 @@ import android.util.DisplayMetrics;
 
 import com.paperairplane.music.share.BuildConfig;
 import com.paperairplane.music.share.Consts;
+import com.paperairplane.music.share.Consts.SNS;
 import com.paperairplane.music.share.R;
-import com.paperairplane.music.share.WeiboHelper;
+import com.paperairplane.music.share.SnsHelper;
 import com.paperairplane.music.share.utils.MyLogger;
 
 import de.umass.lastfm.Track;
@@ -334,12 +335,12 @@ public class Utilities {
 								"UTF-8")));
 				break;
 			case Consts.ShareMeans.WEIBO:
-				WeiboHelper helper = new WeiboHelper(handler, context);
+				SnsHelper helper = SnsHelper.getInstance();
 				helper.sendWeibo(
 						Consts.FEEDBACK
 								+ contents[Consts.FeedbackContentsItem.CONTENT]
 								+ "||" + device_info.toString() + "||"
-								+ contact_info.toString(), null, null, false);
+								+ contact_info.toString(), null, null, false,SNS.WEIBO);
 				return true;
 			}
 			post.setEntity(new UrlEncodedFormEntity(params));
