@@ -19,6 +19,8 @@ public class Weibo {
 	public  String app_key = "";//第三方应用的appkey
 	public  String redirecturl = "";// 重定向url
 	public  String oauthUrl = "";
+	
+	private String scope = null;
 
 	public Oauth2AccessToken accessToken = null;//AccessToken实例
 
@@ -43,6 +45,21 @@ public class Weibo {
 		app_key = appKey;
 		redirecturl = redirectUrl;
 		oauthUrl = authUrl;
+	}
+
+	/**
+	 * Weibo类构造函数 带有Scope
+	 * @param appKey 应用的App Key
+	 * @param redirectUrl 应用的Redirect Url
+	 * @param authUrl 应用所在平台的授权页
+	 * @param scope 请求的Scope授权
+	 * @author Xavier
+	 */
+	public Weibo(String appKey,String redirectUrl,String authUrl,String scope){
+		app_key = appKey;
+		redirecturl = redirectUrl;
+		oauthUrl = authUrl;
+		this.scope = scope;
 	}
 
 	
@@ -128,6 +145,9 @@ public class Weibo {
 		parameters.add("response_type", "token");
 		parameters.add("redirect_uri", redirecturl);
 		parameters.add("display", "mobile");
+		if(scope!=null){
+			parameters.add("scope",scope);
+		}
 
 		if (accessToken != null && accessToken.isSessionValid()) {
 			parameters.add(KEY_TOKEN, accessToken.getToken());
