@@ -19,6 +19,7 @@ public class Consts {
 			MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.DATA,
 			MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
 			MediaStore.Audio.Media.MIME_TYPE };
+	public final static String RENREN_SCOPE = "publish_feed publish_share";
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String WEIBO_APP_KEY = "1006183120";
 	public final static String RENREN_APP_KEY = "57593d1b7858483ca66ae1a304f8296e" ;

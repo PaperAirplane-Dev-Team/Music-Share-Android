@@ -46,7 +46,6 @@ import com.paperairplane.music.share.dialogs.ChangeColorDialogFragment;
 import com.paperairplane.music.share.dialogs.EmptyDialogFragment;
 import com.paperairplane.music.share.dialogs.SearchDialogFragment;
 import com.paperairplane.music.share.dialogs.SendWeiboDialogFragment;
-import com.paperairplane.music.share.utils.CrashHandler;
 import com.paperairplane.music.share.utils.HttpQuestHandler;
 import com.paperairplane.music.share.utils.IntentResolver;
 import com.paperairplane.music.share.utils.MyLogger;
@@ -89,7 +88,7 @@ public class Main extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
+//		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
 		// 空的……
 		// 由于需要在AtSuggetstion中调用，必须先进行
 		mContext = getApplicationContext();
@@ -310,8 +309,8 @@ public class Main extends SherlockFragmentActivity {
 		menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1, R.string.menu_refresh)
 				.setIcon(android.R.drawable.ic_popup_sync)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-//		XXX 下面这句是啥？！
-//		menu.removeItem(R.id.menu_change_color);
+		// XXX 下面这句是啥？！
+		// menu.removeItem(R.id.menu_change_color);
 
 		return true;
 	}
@@ -355,53 +354,34 @@ public class Main extends SherlockFragmentActivity {
 					+ getString(R.string.delete_file_count) + fileCount;
 			Toast.makeText(mContext, toastText, Toast.LENGTH_LONG).show();
 			break;
-			/*
-		case Consts.MenuItem.UNAUTH:
-			try {
-				new AlertDialog.Builder(this)
-						.setIcon(android.R.drawable.ic_dialog_alert)
-						.setMessage(R.string.unauth_confirm)
-						.setTitle(R.string.unauth)
-						.setPositiveButton(android.R.string.ok,
-								new DialogInterface.OnClickListener() {
-									@SuppressLint("NewApi")
-									@Override
-									public void onClick(DialogInterface arg0,
-											int arg1) {
-										
-										Main.sAccessToken = null;
-										mWeiboHelper.clear();
-										
-										if (Build.VERSION.SDK_INT > 10) {
-											invalidateOptionsMenu();
-										}
-										Toast.makeText(mContext,
-												getString(R.string.unauthed),
-												Toast.LENGTH_SHORT).show();
-									}
-								})
-						.setNegativeButton(android.R.string.cancel,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface arg0,
-											int arg1) {
-									}
-								}).show();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			break;
-		case Consts.MenuItem.AUTH:
-			
-//			try {
-//				mSsoHandler.authorize(mWeiboHelper.getListener());
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-			break;
-		
-			*/
+		/*
+		 * case Consts.MenuItem.UNAUTH: try { new AlertDialog.Builder(this)
+		 * .setIcon(android.R.drawable.ic_dialog_alert)
+		 * .setMessage(R.string.unauth_confirm) .setTitle(R.string.unauth)
+		 * .setPositiveButton(android.R.string.ok, new
+		 * DialogInterface.OnClickListener() {
+		 * 
+		 * @SuppressLint("NewApi")
+		 * 
+		 * @Override public void onClick(DialogInterface arg0, int arg1) {
+		 * 
+		 * Main.sAccessToken = null; mWeiboHelper.clear();
+		 * 
+		 * if (Build.VERSION.SDK_INT > 10) { invalidateOptionsMenu(); }
+		 * Toast.makeText(mContext, getString(R.string.unauthed),
+		 * Toast.LENGTH_SHORT).show(); } })
+		 * .setNegativeButton(android.R.string.cancel, new
+		 * DialogInterface.OnClickListener() {
+		 * 
+		 * @Override public void onClick(DialogInterface arg0, int arg1) { }
+		 * }).show();
+		 * 
+		 * } catch (Exception e) { e.printStackTrace(); } break; case
+		 * Consts.MenuItem.AUTH:
+		 * 
+		 * // try { // mSsoHandler.authorize(mWeiboHelper.getListener()); // }
+		 * catch (Exception e) { // e.printStackTrace(); // } break;
+		 */
 		case Consts.MenuItem.REFRESH:
 			refreshMusicList();
 			break;
@@ -474,7 +454,8 @@ public class Main extends SherlockFragmentActivity {
 			Bundle args = new Bundle();
 			args.putString("versionName", mVersionName);
 			args.putInt("versionCode", sVersionCode);
-			args.putBoolean("tokenValid",mWeiboHelper.isAccessTokenExistAndValid(SNS.WEIBO));
+			args.putBoolean("tokenValid",
+					mWeiboHelper.isAccessTokenExistAndValid(SNS.WEIBO));
 			dialogAbout.setArguments(args);
 			dialogAbout.show(mFragmentManager, "aboutDialog");
 			break;
@@ -485,8 +466,7 @@ public class Main extends SherlockFragmentActivity {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					switch (whichButton) {
 					case DialogInterface.BUTTON_NEGATIVE:
-						shareMusic(music.getTitle(), music.getArtist(),
-								music.getAlbum(), music.getAlbumId());
+						shareMusic(music);
 						break;
 					case DialogInterface.BUTTON_NEUTRAL:
 						sendFile(music);
@@ -507,9 +487,8 @@ public class Main extends SherlockFragmentActivity {
 			SearchDialogFragment.OnShareMusicListener listenerSearch = new SearchDialogFragment.OnShareMusicListener() {
 
 				@Override
-				public void onShareMusic(String title, String artist,
-						String album, long albumId) {
-					shareMusic(title, artist, album, albumId);
+				public void onShareMusic(MusicData music) {
+					shareMusic(music);
 					// 烂代码典范啊……
 				}
 			};
@@ -600,8 +579,7 @@ public class Main extends SherlockFragmentActivity {
 					playMusic(music);
 					break;
 				case R.id.btn_share:
-					shareMusic(music.getTitle(), music.getArtist(),
-							music.getAlbum(), music.getAlbumId());
+					shareMusic(music);
 					break;
 				case R.id.btn_send_file:
 					sendFile(music);
@@ -640,15 +618,17 @@ public class Main extends SherlockFragmentActivity {
 					@Override
 					public void onShareToWeibo(String content,
 							String artworkUrl, String fileName,
-							boolean willFollow) {
+							String annotation, boolean willFollow) {
 						if (!mWeiboHelper.isAccessTokenExistAndValid(SNS.WEIBO)) {// 检测之前是否授权过
 							mHandler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
 							saveSendStatus(content, willFollow, artworkUrl,
-									fileName);
-							mSsoHandler.authorize(mWeiboHelper.getListener(SNS.WEIBO));// 授权
+									fileName,annotation);
+							mSsoHandler.authorize(mWeiboHelper
+									.getListener(SNS.WEIBO));// 授权
 						} else {
-							mWeiboHelper.sendWeibo(content, artworkUrl,
-									fileName, willFollow,SNS.WEIBO);
+							mWeiboHelper
+									.sendWeibo(content, artworkUrl, fileName,
+											annotation, willFollow, SNS.WEIBO);
 						}
 					}
 				};
@@ -763,8 +743,8 @@ public class Main extends SherlockFragmentActivity {
 				Consts.MEDIA_INFO,
 				MediaStore.Audio.Media.DURATION + ">='" + 30000 + "' AND "
 						+ MediaStore.Audio.Media.MIME_TYPE + "<>'audio/amr'",
-				// 妈妈再也不用担心我的录音!
 				null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+		// 妈妈再也不用担心我的录音!
 		// 过滤小于30s的音乐
 		if (cursor != null) {
 			cursor.moveToFirst();
@@ -774,9 +754,9 @@ public class Main extends SherlockFragmentActivity {
 				mMusicDatas[i] = generateMusicData(cursor);
 				cursor.moveToNext();
 			}
-			MyLogger.d(Consts.DEBUG_TAG,
+			MyLogger.i(Consts.DEBUG_TAG,
 					"generateMusicData used " + (System.nanoTime() - now)
-							+ " ns");
+							/ 1000000 + " ms");
 			try {
 				mLvMain.setAdapter(new MusicListAdapter(this, mMusicDatas));
 			} catch (Exception e) {
@@ -812,21 +792,11 @@ public class Main extends SherlockFragmentActivity {
 	/**
 	 * 分享音乐的主调方法，将调用QueryAndShareMusicInfo类
 	 * 
-	 * @param title
-	 *            音乐标题
-	 * @param artist
-	 *            音乐艺术家
-	 * @param album
-	 *            音乐专辑名
-	 * @param albumId
-	 *            音乐专辑封面ID
-	 * @param means
-	 *            分享意图,来自Consts.ShareMeans
+	 * @param music
+	 * 				要分享的音乐
 	 */
-	private void shareMusic(String title, String artist, String album,
-			long albumId) {
-		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(title,
-				artist, album, albumId, mContext, mHandler);
+	private void shareMusic(MusicData music) {
+		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(music, mContext, mHandler);
 		mHttpQuestHandler.obtainMessage(
 				Consts.NetAccessIntent.QUERY_AND_SHARE_MUSIC_INFO, query)
 				.sendToTarget();
@@ -884,15 +854,16 @@ public class Main extends SherlockFragmentActivity {
 	 *            图片文件名
 	 */
 	private void saveSendStatus(String content, boolean checked,
-			String artworkUrl, String fileName) {
-		SharedPreferences preferences = mContext.getSharedPreferences(
-				Consts.Preferences.SHARE, Context.MODE_PRIVATE);
-		preferences.edit().putBoolean("read", true).commit();
-		preferences.edit().putString("content", content).commit();
-		preferences.edit().putBoolean("willFollow", checked).commit();
-		preferences.edit().putString("artworkUrl", artworkUrl).commit();
-		preferences.edit().putString("fileName", fileName);
-
+			String artworkUrl, String fileName,String annotation) {
+		SharedPreferences.Editor editor = mContext.getSharedPreferences(
+				Consts.Preferences.SHARE, Context.MODE_PRIVATE).edit();
+		editor.putBoolean("read", true);
+		editor.putString("content", content);
+		editor.putBoolean("willFollow", checked);
+		editor.putString("artworkUrl", artworkUrl);
+		editor.putString("fileName", fileName);
+		editor.putString("annotation", annotation);
+		editor.commit();
 	}
 
 	/**
