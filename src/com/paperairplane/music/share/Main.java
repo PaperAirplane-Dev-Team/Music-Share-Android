@@ -522,6 +522,7 @@ public class Main extends SherlockFragmentActivity {
 				}
 
 			});
+			bcdf.show(mFragmentManager, "backgroundChooserDialog");
 			break;
 		default:
 			throw new RuntimeException("What the hell are you doing?");
