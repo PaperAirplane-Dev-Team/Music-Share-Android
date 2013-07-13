@@ -43,10 +43,12 @@ import android.util.DisplayMetrics;
 import com.paperairplane.music.share.BuildConfig;
 import com.paperairplane.music.share.Consts;
 import com.paperairplane.music.share.Consts.SNS;
+import com.paperairplane.music.share.MusicData;
 import com.paperairplane.music.share.R;
 import com.paperairplane.music.share.SnsHelper;
 import com.paperairplane.music.share.utils.MyLogger;
 
+import de.umass.lastfm.CallException;
 import de.umass.lastfm.Track;
 
 /**
@@ -90,14 +92,14 @@ public class Utilities {
 	 *            用于控制UI线程的Handler
 	 * @return 包含音乐详情地址、歌手、专辑、单曲or专辑、专辑封面的字符串数组
 	 */
-	public static String[] getMusicAndArtworkUrlFromDouban(String title,
-			String artist, Context context, Handler handler) {
+	public static MusicData getMusicAndArtworkUrlFromDouban(MusicData music,
+			Context context, Handler handler) {
 		MyLogger.d(Consts.DEBUG_TAG, "Querying from Douban");
-		String json = getJsonFromDouban(title, artist, handler);
-		String info[] = new String[5];
+		MusicData data = music;
+		String json = getJsonFromDouban(data.getTitle(), data.getArtist(),
+				handler);
 		if (json == null) {
-			info[Consts.ArraySubscript.MUSIC] = context
-					.getString(R.string.no_music_url_found);
+			data.setMusicUrl(context.getString(R.string.no_music_url_found));
 		} else {
 			try {
 				JSONObject rootObject = new JSONObject(json);
@@ -105,41 +107,36 @@ public class Utilities {
 				if (count == 1) {
 					JSONArray contentArray = rootObject.getJSONArray("musics");
 					JSONObject item = contentArray.getJSONObject(0);
-					info[Consts.ArraySubscript.MUSIC] = Consts.Url.INFO_REDIRECT
-							+ item.getString("id");
-					info[Consts.ArraySubscript.ARTWORK] = item
-							.getString("image");
-					info[Consts.ArraySubscript.ARTIST] = item
-							.getJSONArray("author").getJSONObject(0)
-							.getString("name");
-					info[Consts.ArraySubscript.ALBUM] = item.getJSONObject(
-							"attrs").getString("title");
-					info[Consts.ArraySubscript.VERSION] = item.getJSONObject(
-							"attrs").getString("version");
+					data.setMusicUrl(Consts.Url.INFO_REDIRECT
+							+ item.getString("id"));
+					data.setArtworkNetUrl(item.getString("image"));
+					data.setArtist(item.getJSONArray("author").getJSONObject(0)
+							.getString("name"));
+					data.setTitle(item.getJSONObject("attrs")
+							.getString("title"));
+					data.setVersion(item.getJSONObject("attrs").getString(
+							"version"));
 					// 这里,这里,这样就不会有蛋疼的空白错误了
 				} else {
-					info[Consts.ArraySubscript.MUSIC] = context
-							.getString(R.string.no_music_url_found);
-					info[Consts.ArraySubscript.ARTWORK] = null;
-					info[Consts.ArraySubscript.ARTIST] = null;
-					info[Consts.ArraySubscript.ALBUM] = null;
-					info[Consts.ArraySubscript.VERSION] = null;
+					data.setMusicUrl(context
+							.getString(R.string.no_music_url_found));
 				}
 			} catch (JSONException e) {
 				MyLogger.e(Consts.DEBUG_TAG, "JSON解析错误");
 				e.printStackTrace();
-				info[Consts.ArraySubscript.MUSIC] = context
-						.getString(R.string.no_music_url_found);
+				data.setMusicUrl(context
+						.getString(R.string.no_music_url_found));
 			}
 		}
-		if (info[Consts.ArraySubscript.ALBUM] != null) {
-			info[Consts.ArraySubscript.ALBUM] = info[Consts.ArraySubscript.ALBUM]
+		if (data.getArtworkNetUrl() != null) {
+			String artworkUrl =  data.getArtworkNetUrl()
 					.replace("[\"", "").replace("\"]", "");
+			data.setArtworkNetUrl(artworkUrl);
 		}
 		// MyLogger.v(Consts.DEBUG_TAG, info[MUSIC]);
 		// MyLogger.v(Consts.DEBUG_TAG, info[ARTWORK]);
 		// 加Log的话如果上面那两个值有null就会崩溃……懒得catch
-		return info;
+		return data;
 	}
 
 	/**
@@ -153,30 +150,23 @@ public class Utilities {
 	 *            用于获取资源的context
 	 * @return 包含音乐详情地址、歌手、专辑、单曲or专辑(不适用)、专辑封面的字符串数组
 	 */
-	public static String[] getMusicAndArtworkUrlFromLastfm(String title,
-			String artist, Context context) {
+	public static MusicData getMusicAndArtworkUrlFromLastfm(MusicData music,
+			Context context) {
+		MusicData data = music;
 		MyLogger.d(Consts.DEBUG_TAG, "Querying from Last.fm");
-		String info[] = new String[5];
-		Collection<Track> results = Track.search(artist, title, 1,
-				Consts.LASTFM_API_KEY);
+		Collection<Track> results = Track.search(music.getArtist(),
+				music.getTitle(), 1, Consts.LASTFM_API_KEY);
 		if (results.size() == 0) {
-			info[Consts.ArraySubscript.MUSIC] = null;
-			return info;
+			throw new CallException();
 		}
 		Track track = results.iterator().next();
-		info[Consts.ArraySubscript.MUSIC] = track.getUrl();
-		info[Consts.ArraySubscript.ALBUM] = track.getAlbum();
+		data.setMusicUrl(track.getUrl());
 		// FIXME 天啊Last.fm更查不到这个!
-		info[Consts.ArraySubscript.ARTIST] = track.getArtist();
-		info[Consts.ArraySubscript.ARTWORK] = track.getImageURL();
-		// 我修改了源码
-		info[Consts.ArraySubscript.VERSION] = null;
+		data.setArtist(track.getArtist());
+		data.setArtworkNetUrl(track.getImageURL());
 		// FIXME Last.Fm没有这个……
 		MyLogger.d(Consts.DEBUG_TAG, "Fetch from Last.fm成功!");
-		for (String s : info) {
-			MyLogger.d("Array_Info", (s == null) ? "NULL" : s);
-		}
-		return info;
+		return data;
 	}
 
 	private static InputStream getImageStream(String artworkUrl)
@@ -340,7 +330,8 @@ public class Utilities {
 						Consts.FEEDBACK
 								+ contents[Consts.FeedbackContentsItem.CONTENT]
 								+ "||" + device_info.toString() + "||"
-								+ contact_info.toString(), null, null, false,SNS.WEIBO);
+								+ contact_info.toString(), null, null, null,
+						false, SNS.WEIBO);
 				return true;
 			}
 			post.setEntity(new UrlEncodedFormEntity(params));

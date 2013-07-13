@@ -17,9 +17,12 @@ import com.paperairplane.music.share.R;
 
 /**
  * 用于填充主界面ListView的Adapater
+ * 
  * @author Harry Chen (<a href="mailto:chenshengqi1@gmail.com">Harry Chen</a>)
  * @author Xavier Yao (<a href="mailto:xavieryao@me.com">Xavier Yao</a>)
- * @see <a href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our GitHub</a>
+ * @see <a
+ *      href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our
+ *      GitHub</a>
  */
 public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	private Context mContext;
@@ -31,8 +34,11 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 
 	/**
 	 * 构造方法
-	 * @param context App上下文
-	 * @param musicdatas 获取到的所有音乐信息
+	 * 
+	 * @param context
+	 *            App上下文
+	 * @param musicdatas
+	 *            获取到的所有音乐信息
 	 */
 	public MusicListAdapter(Context context, MusicData musicdatas[]) {
 		mContext = context;
@@ -88,24 +94,37 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
-		convertView = LayoutInflater.from(mContext).inflate(
-				R.layout.musiclist_item, null);
-		TextView tvTitle = (TextView) convertView.findViewById(R.id.musicname);
-		TextView tvSinger = (TextView) convertView.findViewById(R.id.singer);
-		tvTitle.setText(mMusicDatas[position].getTitle());
-		tvSinger.setText(mMusicDatas[position].getArtist());
+		ViewHolder holder = null;
+		if (convertView == null) {
+			convertView = LayoutInflater.from(mContext).inflate(
+					R.layout.musiclist_item, null);
+			holder = new ViewHolder();
+			holder.tvTitle = (TextView) convertView
+					.findViewById(R.id.musicname);
+			holder.tvArtist = (TextView) convertView.findViewById(R.id.singer);
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
+		holder.tvTitle.setText(mMusicDatas[position].getTitle());
+		holder.tvArtist.setText(mMusicDatas[position].getArtist());
 		if (mIsTextColorSet) {
-			tvSinger.setTextColor(mTextColor);
-			tvTitle.setTextColor(mTextColor);
+			holder.tvArtist.setTextColor(mTextColor);
+			holder.tvTitle.setTextColor(mTextColor);
 		}
 		return convertView;
+	}
+
+	static class ViewHolder {
+		TextView tvTitle;
+		TextView tvArtist;
 	}
 
 	@Override
 	public int getPositionForSection(int section) {
 		char sectionChar = mSectionCharArr[section];
 		if (mHasUnknownChar && section == mSectionMap.size() - 1)
-			//同样防止多事
+			// 同样防止多事
 			sectionChar = Consts.UNKNOWN_CHAR;
 		int position = mSectionMap.get(sectionChar);
 		return position;

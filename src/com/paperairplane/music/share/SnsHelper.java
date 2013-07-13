@@ -101,7 +101,8 @@ public class SnsHelper {
 		weibo.accessToken = readAccessToken(SNS.WEIBO);
 		mSns.put(SNS.WEIBO, weibo);
 		Weibo renren = new Weibo(Consts.RENREN_APP_KEY,
-				Consts.Url.RENREN_REDIRECT_URI, Consts.Url.RENREN_AUTH_URL);
+				Consts.Url.RENREN_REDIRECT_URI, Consts.Url.RENREN_AUTH_URL,
+				Consts.RENREN_SCOPE);
 		renren.accessToken = readAccessToken(SNS.RENREN);
 		mSns.put(SNS.RENREN, renren);
 	}
@@ -155,54 +156,60 @@ public class SnsHelper {
 	 */
 
 	public void sendWeibo(String content, String artworkUrl, String fileName,
-			boolean willFollow, SNS type) {
-		if(type.equals(SNS.WEIBO)){
-			 mApi = new StatusesAPI(mSns.get(SNS.WEIBO).accessToken);
+			String annotation, boolean willFollow, SNS type) {
+		if (type.equals(SNS.WEIBO)) {
+			mApi = new StatusesAPI(mSns.get(SNS.WEIBO).accessToken);
 		}
-		initRequestListener();
+		if (mRequestListener == null) {
+			initRequestListener();
+		}
 		if (artworkUrl == null) {
 			MyLogger.v(Consts.DEBUG_TAG, "发送无图微博");
-			switch(type){
+			switch (type) {
 			case WEIBO:
-				mApi.update(content, null, null, mRequestListener);
+				mApi.update(content, null, null, annotation, mRequestListener);
 				break;
 			case RENREN:
-//				TODO
+				// TODO
 				break;
 			}
 		} else if (fileName != null) {
 			MyLogger.v(Consts.DEBUG_TAG, "发布带本地封面的微博");
-			switch(type){
+			switch (type) {
 			case WEIBO:
-				mApi.upload(content, fileName, null, null, mRequestListener);
+				mApi.upload(content, fileName, null, null,annotation, mRequestListener);
 				break;
 			case RENREN:
-//				TODO
+				// TODO
 				break;
 			}
 		} else {
-			switch(type){
+			switch (type) {
 			case WEIBO:
 				MyLogger.v(Consts.DEBUG_TAG, "发送带图微博，url=" + artworkUrl);
 				String url = "https://mApi.weibo.com/2/statuses/upload_url_text.json";
 				WeiboParameters params = new WeiboParameters();
-				params.add("access_token", mSns.get(type).accessToken.getToken());
+				params.add("access_token",
+						mSns.get(type).accessToken.getToken());
 				params.add("status", content);
 				params.add("url", artworkUrl);
+				params.add("annotations",annotation);
 				AsyncWeiboRunner.request(url, params, "POST", mRequestListener);
 				break;
 			case RENREN:
-				WeiboParameters  rrparams = new WeiboParameters();
-				rrparams.add("access_token", mSns.get(type).accessToken.getToken());
+				WeiboParameters rrparams = new WeiboParameters();
+				rrparams.add("access_token",
+						mSns.get(type).accessToken.getToken());
 				rrparams.add("v", "1.0");
 				rrparams.add("method", "share.share ");
-				rrparams.add("id",2);
+				rrparams.add("id", 2);
 				rrparams.add("url", artworkUrl);
-				rrparams.add("comment",content);
-				AsyncWeiboRunner.request(Consts.Url.RENREN_API, rrparams, "POST", mRequestListener);
+				rrparams.add("comment", content);
+				AsyncWeiboRunner.request(Consts.Url.RENREN_API, rrparams,
+						"POST", mRequestListener);
 				break;
 			}
-			
+
 		}
 		if (willFollow == true) {// 判断是否要关注开发者
 			follow(Consts.WeiboUid.HARRY_UID);// 关注Harry Chen
@@ -250,8 +257,8 @@ public class SnsHelper {
 		params.add("access_token", mSns.get(SNS.WEIBO).accessToken.getToken());
 		params.add("uid", uid);
 		try {
-			AsyncWeiboRunner.request(Consts.Url.WEIBO_FOLLOW_API, params, "POST",
-					new RequestListener() {
+			AsyncWeiboRunner.request(Consts.Url.WEIBO_FOLLOW_API, params,
+					"POST", new RequestListener() {
 						@Override
 						public void onComplete(String response) {
 						}
@@ -270,37 +277,40 @@ public class SnsHelper {
 		}
 		// 既然关注就悄悄地进行不报错了
 	}
-	
-	private void getAndSaveUid(final SNS type){
+
+	private void getAndSaveUid(final SNS type) {
 		WeiboParameters params = new WeiboParameters();
-		params.add("access_token",mSns.get(type).accessToken.getToken() );
+		params.add("access_token", mSns.get(type).accessToken.getToken());
 		String url = null;
 		String method = null;
-		MyLogger.d(Consts.DEBUG_TAG,"SnsHelper::getAndSaveUid  被调用 ");
-		RequestListener listener = new RequestListener(){
+		MyLogger.d(Consts.DEBUG_TAG, "SnsHelper::getAndSaveUid  被调用 ");
+		RequestListener listener = new RequestListener() {
 			@Override
 			public void onComplete(String response) {
 				try {
-					MyLogger.d(Consts.DEBUG_TAG,"SnsHelper::getAndSaveUid  response == "+response);
+					MyLogger.d(Consts.DEBUG_TAG,
+							"SnsHelper::getAndSaveUid  response == " + response);
 					JSONObject jobj = new JSONObject(response);
 					String uid = jobj.getString("uid");
-					mEditor.putString(type.name()+"uid", uid);
+					mEditor.putString(type.name() + "uid", uid);
 					mEditor.commit();
 					getNickname(type);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}
+
 			@Override
 			public void onIOException(IOException e) {
 				e.printStackTrace();
 			}
+
 			@Override
-			public void onError(WeiboException e) {		
+			public void onError(WeiboException e) {
 				e.printStackTrace();
-			}		
+			}
 		};
-		switch(type){
+		switch (type) {
 		case WEIBO:
 			url = Consts.Url.WEIBO_ACCOUNT_GET_UID_API;
 			method = "GET";
@@ -313,37 +323,39 @@ public class SnsHelper {
 			method = "POST";
 			break;
 		}
-		AsyncWeiboRunner.request(url, params,method , listener);
+		AsyncWeiboRunner.request(url, params, method, listener);
 	}
-	
+
 	private void getNickname(final SNS type) {
-		String uid = mPreferences.getString(type.name()+"uid", "");
+		String uid = mPreferences.getString(type.name() + "uid", "");
 		WeiboParameters params = new WeiboParameters();
-		params.add("access_token",mSns.get(type).accessToken.getToken() );
+		params.add("access_token", mSns.get(type).accessToken.getToken());
 		params.add("uid", uid);
 		String url = null;
 		String method = null;
-		RequestListener listener = new RequestListener(){
+		RequestListener listener = new RequestListener() {
 			@Override
 			public void onComplete(String response) {
 				try {
 					JSONObject jobj = new JSONObject(response);
 					String name = jobj.getString("name");
-					mEditor.putString(type.name()+"name", name);
+					mEditor.putString(type.name() + "name", name);
 					mEditor.commit();
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}
+
 			@Override
 			public void onIOException(IOException e) {
-		
+
 			}
+
 			@Override
-			public void onError(WeiboException e) {				
-			}		
+			public void onError(WeiboException e) {
+			}
 		};
-		switch(type){
+		switch (type) {
 		case WEIBO:
 			url = Consts.Url.WEIBO_USERS_SHOW_API;
 			method = "GET";
@@ -356,7 +368,7 @@ public class SnsHelper {
 			method = "POST";
 			break;
 		}
-		AsyncWeiboRunner.request(url, params,method , listener);
+		AsyncWeiboRunner.request(url, params, method, listener);
 	}
 
 	private class AuthDialogListener implements WeiboAuthListener {
@@ -383,15 +395,14 @@ public class SnsHelper {
 				String content = preferences.getString("content", null);
 				String artworkUrl = preferences.getString("artworkUrl", null);
 				String fileName = preferences.getString("fileName", null);
+				String annotation = preferences.getString("annotation", null);
 				boolean willFollow = preferences
 						.getBoolean("willFollow", false);
-				sendWeibo(content, artworkUrl, fileName, willFollow, type);
+				sendWeibo(content, artworkUrl, fileName, annotation,
+						willFollow, type);
 				preferences.edit().putBoolean("read", false).commit();
 			}
 		}
-
-
-		
 
 		@Override
 		public void onCancel() {
@@ -435,24 +446,22 @@ public class SnsHelper {
 		return token;
 	}
 
-	public void authorize(Activity activity,SNS type) {
-		switch(type){
+	public void authorize(Activity activity, SNS type) {
+		switch (type) {
 		case WEIBO:
-			SsoHandler handler = new SsoHandler(activity,mSns.get(SNS.WEIBO) );
+			SsoHandler handler = new SsoHandler(activity, mSns.get(SNS.WEIBO));
 			handler.authorize(getListener(SNS.WEIBO));
 			break;
 		case RENREN:
 			mSns.get(SNS.RENREN).authorize(activity, getListener(SNS.RENREN));
 			break;
 		}
-		
+
 	}
 
 	public void unauthorize(SNS weibo) {
 		// TODO Auto-generated method stub
-		
+
 	}
-
-
 
 }
