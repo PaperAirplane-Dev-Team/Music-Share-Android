@@ -66,16 +66,16 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 		if (mMusicDatas[mMusicDatas.length - 1].getFirstChar() == Consts.UNKNOWN_CHAR) {
 			mHasUnknownChar = true;
 		}
-		getSections();
-		// TODO 文本颜色选择
 		mIsTextColorSet = false;
 		SharedPreferences preference = mContext.getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
-		if (preference.contains(Consts.Preferences.TEXT_COLOR)) {
-			mTextColor = android.graphics.Color.parseColor(preference
-					.getString(Consts.Preferences.TEXT_COLOR, ""));
+		String color=preference
+				.getString(Consts.Preferences.TEXT_COLOR, "");
+		if (!color.equals("")) {
+			mTextColor = android.graphics.Color.parseColor(color);
 			mIsTextColorSet = true;
 		}
+		
 	}
 
 	public int getCount() {
@@ -94,7 +94,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
-		ViewHolder holder = null;
+		ViewHolder holder = null;//我只能说我太渣渣了这个都不知道唉
 		if (convertView == null) {
 			convertView = LayoutInflater.from(mContext).inflate(
 					R.layout.musiclist_item, null);
@@ -115,7 +115,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 		return convertView;
 	}
 
-	static class ViewHolder {
+	private static class ViewHolder {
 		TextView tvTitle;
 		TextView tvArtist;
 	}
