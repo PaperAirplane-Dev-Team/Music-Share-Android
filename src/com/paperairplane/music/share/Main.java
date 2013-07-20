@@ -307,7 +307,7 @@ public class Main extends SherlockFragmentActivity {
 				android.R.drawable.ic_menu_manage);
 		getSupportMenuInflater().inflate(R.menu.customize, submenu);
 		menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1, R.string.menu_refresh)
-				.setIcon(android.R.drawable.ic_popup_sync)
+				.setIcon(R.drawable.ic_menu_refresh)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		// XXX 下面这句是啥？！
 		// menu.removeItem(R.id.menu_change_color);
@@ -513,6 +513,7 @@ public class Main extends SherlockFragmentActivity {
 			break;
 		case Consts.Dialogs.CHANGE_BACKGROUND:
 			BackgroundChooserDialogFragment bcdf = new BackgroundChooserDialogFragment();
+			final Bundle bundle = new Bundle();
 			bcdf.setOnBackgroundChangedListener(new BackgroundChooserDialogFragment.OnBackgroundChangedListener() {
 
 				@Override
@@ -522,6 +523,8 @@ public class Main extends SherlockFragmentActivity {
 				}
 
 			});
+			bundle.putString("backgroundPath", mBackgroundPath);
+			bcdf.setArguments(bundle);
 			bcdf.show(mFragmentManager, "backgroundChooserDialog");
 			break;
 		default:

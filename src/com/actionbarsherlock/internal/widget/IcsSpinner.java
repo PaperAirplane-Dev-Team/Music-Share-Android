@@ -18,7 +18,7 @@ package com.actionbarsherlock.internal.widget;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import com.actionbarsherlock.R;
+import com.paperairplane.music.share.R;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
