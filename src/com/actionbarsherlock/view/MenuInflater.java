@@ -32,7 +32,7 @@ import android.util.Xml;
 import android.view.InflateException;
 import android.view.View;
 
-import com.actionbarsherlock.R;
+import com.paperairplane.music.share.R;
 import com.actionbarsherlock.internal.view.menu.MenuItemImpl;
 
 /**

@@ -9,7 +9,7 @@ import android.os.Build.VERSION_CODES;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.R;
+import com.paperairplane.music.share.R;
 
 public class IcsToast extends Toast {
     public static final int LENGTH_LONG = Toast.LENGTH_LONG;
