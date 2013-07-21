@@ -42,7 +42,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.paperairplane.music.share.R;
+import com.actionbarsherlock.R;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

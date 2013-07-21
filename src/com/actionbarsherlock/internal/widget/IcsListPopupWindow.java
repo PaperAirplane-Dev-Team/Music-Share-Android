@@ -1,6 +1,6 @@
 package com.actionbarsherlock.internal.widget;
 
-import com.paperairplane.music.share.R;
+import com.actionbarsherlock.R;
 
 import android.content.Context;
 import android.content.res.Resources;

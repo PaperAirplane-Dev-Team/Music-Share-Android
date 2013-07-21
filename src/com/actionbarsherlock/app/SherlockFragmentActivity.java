@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import com.actionbarsherlock.ActionBarSherlock;
-import com.paperairplane.music.share.BuildConfig;
+import com.actionbarsherlock.BuildConfig;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;

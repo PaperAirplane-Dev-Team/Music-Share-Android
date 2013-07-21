@@ -65,7 +65,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import com.paperairplane.music.share.R;
+import com.actionbarsherlock.R;
 import com.actionbarsherlock.view.CollapsibleActionView;
 
 import java.lang.reflect.Method;
