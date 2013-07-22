@@ -149,6 +149,7 @@ public class Consts {
 	 * @see Main.onPrepareOptionsMenu()
 	 */
 	public final class MenuItem {
+		public final static int SEARCH = 4; 
 		public final static int REFRESH = 3;
 		public final static int AUTH = 1;
 		public final static int UNAUTH = 2;
