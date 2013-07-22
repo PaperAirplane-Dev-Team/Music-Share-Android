@@ -10,10 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.paperairplane.music.share.R;
+import com.paperairplane.music.share.cache.ImageLoader;
 
 /**
  * 用于填充主界面ListView的Adapater
@@ -31,7 +33,8 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	private Character[] mSectionCharArr;
 	private boolean mIsTextColorSet, mHasUnknownChar;
 	private int mTextColor;
-
+	private ImageLoader mImageLoader;
+	
 	/**
 	 * 构造方法
 	 * 
@@ -43,6 +46,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	public MusicListAdapter(Context context, MusicData musicdatas[]) {
 		mContext = context;
 		mMusicDatas = musicdatas;// 不要Cursor了……
+		mImageLoader = new ImageLoader(mContext, mMusicDatas);
 		Arrays.sort(mMusicDatas, new Comparator<MusicData>() {
 			@Override
 			public int compare(MusicData lhs, MusicData rhs) {
@@ -75,9 +79,8 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 			mTextColor = android.graphics.Color.parseColor(color);
 			mIsTextColorSet = true;
 		}
-		
 	}
-
+	
 	public int getCount() {
 		// if (mMusicDatas != null) {
 		return mMusicDatas.length;
@@ -102,12 +105,21 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 			holder.tvTitle = (TextView) convertView
 					.findViewById(R.id.musicname);
 			holder.tvArtist = (TextView) convertView.findViewById(R.id.singer);
+			holder.ivArtwork = (ImageView) convertView.findViewById(R.id.imageView1);
+			
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		holder.tvTitle.setText(mMusicDatas[position].getTitle());
 		holder.tvArtist.setText(mMusicDatas[position].getArtist());
+		holder.ivArtwork.setImageResource(R.drawable.albumart_mp_unknown_list);
+		
+		mImageLoader.DisplayImage(
+				"" + mMusicDatas[position].getAlbumId(),
+				holder.ivArtwork,
+				false);
+		
 		if (mIsTextColorSet) {
 			holder.tvArtist.setTextColor(mTextColor);
 			holder.tvTitle.setTextColor(mTextColor);
@@ -118,6 +130,7 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 	private static class ViewHolder {
 		TextView tvTitle;
 		TextView tvArtist;
+		ImageView ivArtwork;
 	}
 
 	@Override
