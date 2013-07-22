@@ -12,6 +12,7 @@
     <string name="album_art">专辑封面</string>
     <string name="before_url">,详见：</string>
     <string name="menu_refresh">刷新音乐列表</string>
+    <string name="menu_search">在网络上搜索音乐</string>
     <string name="refresh_success">刷新音乐列表成功</string>
     <string name="play">点击专辑封面播放音乐</string>
     <string name="share">分享</string>
