@@ -21,16 +21,4 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/float_search_button"
-        android:layout_width="50dip"
-        android:layout_height="50dip"
-        android:layout_gravity="right|bottom"
-        android:layout_margin="5dip"
-        android:contentDescription="@string/search"
-        android:onClick="footer"
-        android:padding="5dip"
-        android:src="@drawable/search_button_normal" >
-    </ImageView>
-
 </FrameLayout>

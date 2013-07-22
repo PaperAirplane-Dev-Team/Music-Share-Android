@@ -25,10 +25,8 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import android.view.MotionEvent;
 import com.actionbarsherlock.view.SubMenu;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -76,7 +74,6 @@ public class Main extends SherlockFragmentActivity {
 	public static int sVersionCode;
 	private static int sCheckForUpdateCount = 0;
 	private String mVersionName;
-	private ImageView mIvFloatSearchButton;
 	private ShakeDetector mShakeDetector;
 	private boolean mIsFullRunning; // 区分菜单项目
 	private String mBackgroundPath = null;
@@ -199,20 +196,6 @@ public class Main extends SherlockFragmentActivity {
 		/*
 		 * 设置按钮按下时的效果
 		 */
-		mIvFloatSearchButton = (ImageView) findViewById(R.id.float_search_button);
-		mIvFloatSearchButton.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View arg0, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					mIvFloatSearchButton
-							.setImageResource(R.drawable.search_button_pressed);
-				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					mIvFloatSearchButton
-							.setImageResource(R.drawable.search_button_normal);
-				}
-				return false;
-			}
-		});
 		/*
 		 * 初始化ListView
 		 */
@@ -309,6 +292,9 @@ public class Main extends SherlockFragmentActivity {
 		menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1, R.string.menu_refresh)
 				.setIcon(R.drawable.ic_menu_refresh)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		menu.add(Menu.NONE, Consts.MenuItem.SEARCH, 2, R.string.menu_search)
+				.setIcon(R.drawable.ic_menu_search)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		// XXX 下面这句是啥？！
 		// menu.removeItem(R.id.menu_change_color);
 
@@ -385,6 +371,9 @@ public class Main extends SherlockFragmentActivity {
 		case Consts.MenuItem.REFRESH:
 			refreshMusicList();
 			break;
+		case Consts.MenuItem.SEARCH:
+			showCustomDialog(null, Consts.Dialogs.SEARCH);
+			break;
 		case R.id.menu_update:
 			Main.sCheckForUpdateCount++;
 			Utilities.checkForUpdate(Main.sVersionCode, mHandler, mContext,
@@ -409,16 +398,6 @@ public class Main extends SherlockFragmentActivity {
 	 */
 	public void btn_empty(View v) {
 		refreshMusicList();
-	}
-
-	/**
-	 * 搜索互联网按钮点击处理
-	 * 
-	 * @param v
-	 *            触发该方法的控件
-	 */
-	public void footer(View v) {
-		showCustomDialog(null, Consts.Dialogs.SEARCH);
 	}
 
 	// 对话框处理

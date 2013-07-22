@@ -11,6 +11,7 @@
     <string name="music_album">from the album</string>
     <string name="before_url"> , check the link for more details:</string>
     <string name="menu_refresh">Refresh Music List</string>
+    <string name="menu_search">Search Music on Internet</string>
     <string name="refresh_success">Successfully Refreshed Music List</string>
     <string name="play">Tap the Album Artwork to Play!</string>
     <string name="share">Share</string>
