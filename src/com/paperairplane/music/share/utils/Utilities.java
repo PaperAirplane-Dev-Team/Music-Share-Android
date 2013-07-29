@@ -47,9 +47,7 @@ import com.paperairplane.music.share.MusicData;
 import com.paperairplane.music.share.R;
 import com.paperairplane.music.share.SnsHelper;
 import com.paperairplane.music.share.utils.MyLogger;
-
-import de.umass.lastfm.CallException;
-import de.umass.lastfm.Track;
+import com.paperairplane.music.share.utils.lastfm.Track;
 
 /**
  * 静态方法工具类
@@ -124,13 +122,12 @@ public class Utilities {
 			} catch (JSONException e) {
 				MyLogger.e(Consts.DEBUG_TAG, "JSON解析错误");
 				e.printStackTrace();
-				data.setMusicUrl(context
-						.getString(R.string.no_music_url_found));
+				data.setMusicUrl(context.getString(R.string.no_music_url_found));
 			}
 		}
 		if (data.getArtworkNetUrl() != null) {
-			String artworkUrl =  data.getArtworkNetUrl()
-					.replace("[\"", "").replace("\"]", "");
+			String artworkUrl = data.getArtworkNetUrl().replace("[\"", "")
+					.replace("\"]", "");
 			data.setArtworkNetUrl(artworkUrl);
 		}
 		// MyLogger.v(Consts.DEBUG_TAG, info[MUSIC]);
@@ -155,9 +152,9 @@ public class Utilities {
 		MusicData data = music;
 		MyLogger.d(Consts.DEBUG_TAG, "Querying from Last.fm");
 		Collection<Track> results = Track.search(music.getArtist(),
-				music.getTitle(), 1, Consts.LASTFM_API_KEY);
+				music.getTitle(), 1, Consts.LASTFM_API_KEY, context);
 		if (results.size() == 0) {
-			throw new CallException();
+			return null;
 		}
 		Track track = results.iterator().next();
 		data.setMusicUrl(track.getUrl());
@@ -488,6 +485,7 @@ public class Utilities {
 					+ httpResponse.getStatusLine().getStatusCode());
 			if (httpResponse.getStatusLine().getStatusCode() == 200) {
 				json = EntityUtils.toString(httpResponse.getEntity());
+				MyLogger.v("update", "返回的JSON是:" + json);
 			} else {
 				json = null;
 				handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);

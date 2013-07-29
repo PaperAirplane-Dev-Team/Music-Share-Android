@@ -22,10 +22,12 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -35,7 +37,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.paperairplane.music.share.Consts.SNS;
 import com.paperairplane.music.share.dialogs.AboutDialogFragment;
 import com.paperairplane.music.share.dialogs.AuthManagerDialogFragment;
@@ -62,7 +63,8 @@ import com.weibo.sdk.android.sso.SsoHandler;
  *      href="http://www.github.com/PaperAirPlane-Dev-Team/Music-Share-Android">Our
  *      GitHub</a>
  */
-public class Main extends SherlockFragmentActivity {
+public class Main extends ActionBarActivity {
+	//FIXME HttpQuest存在严重问题，空指针频繁
 	private MusicData[] mMusicDatas;// 保存音乐数据
 	private ListView mLvMain;// 列表对象
 	private Weibo mWeibo = new Weibo(Consts.WEIBO_APP_KEY,
@@ -81,11 +83,12 @@ public class Main extends SherlockFragmentActivity {
 	private Context mContext;
 	private Handler mHttpQuestHandler;
 	private FragmentManager mFragmentManager;
+	private static final String TAG = "Main";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
+		// Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
 		// 空的……
 		// 由于需要在AtSuggetstion中调用，必须先进行
 		mContext = getApplicationContext();
@@ -128,7 +131,7 @@ public class Main extends SherlockFragmentActivity {
 				Consts.NetAccessIntent.CHECK_FOR_UPDATE, Main.this)
 				.sendToTarget();
 		setBackground();
-		MyLogger.i(Consts.DEBUG_TAG, "versionCode:" + Main.sVersionCode
+		MyLogger.i(TAG, "versionCode:" + Main.sVersionCode
 				+ "\nversionName:" + mVersionName);
 		mIsFullRunning = true;
 	}
@@ -168,12 +171,12 @@ public class Main extends SherlockFragmentActivity {
 			mShakeDetector.registerOnShakeListener(new OnShakeListener() {
 				@Override
 				public void onShake() {
-					MyLogger.d(Consts.DEBUG_TAG, "检测到摇动");
+					MyLogger.d(TAG, "检测到摇动");
 					int position = 0;
 					if (!mLvMain.getAdapter().isEmpty()) {
 						Random r = new Random();
 						position = r.nextInt(mLvMain.getAdapter().getCount());
-						MyLogger.d(Consts.DEBUG_TAG, "生成随机数" + position);
+						MyLogger.d(TAG, "生成随机数" + position);
 						Toast.makeText(mContext, R.string.shake_random,
 								Toast.LENGTH_LONG).show();
 						showCustomDialog(mMusicDatas[position],
@@ -184,7 +187,7 @@ public class Main extends SherlockFragmentActivity {
 			mShakeDetector.start();
 			ShakeDetector.sCanDetact = true; // 你难道不知道不赋值的boolean就是false么……
 		} catch (Exception e) {
-			MyLogger.e(Consts.DEBUG_TAG, "ShakeDetector初始化失败，禁用");
+			MyLogger.e(TAG, "ShakeDetector初始化失败，禁用");
 			ShakeDetector.sCanDetact = false;
 		}
 	}
@@ -284,17 +287,19 @@ public class Main extends SherlockFragmentActivity {
 			return true;
 		}
 
-		getSupportMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.main, menu);
 		SubMenu submenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3,
 				R.string.menu_customize).setIcon(
 				android.R.drawable.ic_menu_manage);
-		getSupportMenuInflater().inflate(R.menu.customize, submenu);
-		menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1, R.string.menu_refresh)
-				.setIcon(R.drawable.ic_menu_refresh)
-				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		menu.add(Menu.NONE, Consts.MenuItem.SEARCH, 2, R.string.menu_search)
-				.setIcon(R.drawable.ic_menu_search)
-				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		getMenuInflater().inflate(R.menu.customize, submenu);
+		MenuItem menuRefresh = menu.add(Menu.NONE, Consts.MenuItem.REFRESH, 1,
+				R.string.menu_refresh).setIcon(R.drawable.ic_menu_refresh);
+		MenuItem menuSearch = menu.add(Menu.NONE, Consts.MenuItem.SEARCH, 2,
+				R.string.menu_search).setIcon(R.drawable.ic_menu_search);
+		MenuItemCompat.setShowAsAction(menuRefresh,
+				MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+		MenuItemCompat.setShowAsAction(menuSearch,
+				MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
 		// XXX 下面这句是啥？！
 		// menu.removeItem(R.id.menu_change_color);
 
@@ -333,7 +338,7 @@ public class Main extends SherlockFragmentActivity {
 				}
 			} catch (Exception e) {
 				// e.printStackTrace();
-				MyLogger.e(Consts.DEBUG_TAG, "Exception: NO FILE deleted.");
+				MyLogger.e(TAG, "Exception: NO FILE deleted.");
 				// 仁慈一点，红色。不报错，不报错，不报错
 			}
 			String toastText = getString(R.string.clean_cache_done) + "\n"
@@ -546,12 +551,12 @@ public class Main extends SherlockFragmentActivity {
 						size));
 		// 似乎可以省资源
 		try {
-			MyLogger.d(Consts.DEBUG_TAG, "width:" + bmpAlbum.get().getWidth());
+			MyLogger.d(TAG, "width:" + bmpAlbum.get().getWidth());
 			albumArt.setImageBitmap(bmpAlbum.get());
-			MyLogger.d(Consts.DEBUG_TAG, "Oh Oh Oh Yeah!!");
+			MyLogger.d(TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
 			// e.printStackTrace();
-			MyLogger.v(Consts.DEBUG_TAG,
+			MyLogger.v(TAG,
 					"Oh shit, we got null again ...... Don't panic");
 		}
 		View.OnClickListener listener = new View.OnClickListener() {
@@ -605,7 +610,7 @@ public class Main extends SherlockFragmentActivity {
 						if (!mWeiboHelper.isAccessTokenExistAndValid(SNS.WEIBO)) {// 检测之前是否授权过
 							mHandler.sendEmptyMessage(Consts.Status.NOT_AUTHORIZED_ERROR);
 							saveSendStatus(content, willFollow, artworkUrl,
-									fileName,annotation);
+									fileName, annotation);
 							mSsoHandler.authorize(mWeiboHelper
 									.getListener(SNS.WEIBO));// 授权
 						} else {
@@ -632,13 +637,13 @@ public class Main extends SherlockFragmentActivity {
 				Toast.makeText(mContext,
 						R.string.auth_error + (String) msg.obj,
 						Toast.LENGTH_LONG).show();
-				MyLogger.e(Consts.DEBUG_TAG, "授权错误" + (String) msg.obj);
+				MyLogger.e(TAG, "授权错误" + (String) msg.obj);
 				break;
 			case Consts.Status.SEND_ERROR:// 发送错误
 				Toast.makeText(mContext,
 						R.string.send_error + (String) msg.obj,
 						Toast.LENGTH_LONG).show();
-				MyLogger.e(Consts.DEBUG_TAG, "发送错误" + (String) msg.obj);
+				MyLogger.e(TAG, "发送错误" + (String) msg.obj);
 				break;
 			case Consts.Status.AUTH_SUCCEED:// 授权成功
 				Toast.makeText(mContext, R.string.auth_succeed,
@@ -737,13 +742,13 @@ public class Main extends SherlockFragmentActivity {
 				mMusicDatas[i] = generateMusicData(cursor);
 				cursor.moveToNext();
 			}
-			MyLogger.i(Consts.DEBUG_TAG,
+			MyLogger.i(TAG,
 					"generateMusicData used " + (System.nanoTime() - now)
 							/ 1000000 + " ms");
 			try {
 				mLvMain.setAdapter(new MusicListAdapter(this, mMusicDatas));
 			} catch (Exception e) {
-				MyLogger.e(Consts.DEBUG_TAG, "无音乐");
+				MyLogger.e(TAG, "无音乐");
 				setContentView(R.layout.empty);
 				// XXX 先这样将就
 			}
@@ -776,10 +781,11 @@ public class Main extends SherlockFragmentActivity {
 	 * 分享音乐的主调方法，将调用QueryAndShareMusicInfo类
 	 * 
 	 * @param music
-	 * 				要分享的音乐
+	 *            要分享的音乐
 	 */
 	private void shareMusic(MusicData music) {
-		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(music, mContext, mHandler);
+		QueryAndShareMusicInfo query = new QueryAndShareMusicInfo(music,
+				mContext, mHandler);
 		mHttpQuestHandler.obtainMessage(
 				Consts.NetAccessIntent.QUERY_AND_SHARE_MUSIC_INFO, query)
 				.sendToTarget();
@@ -837,7 +843,7 @@ public class Main extends SherlockFragmentActivity {
 	 *            图片文件名
 	 */
 	private void saveSendStatus(String content, boolean checked,
-			String artworkUrl, String fileName,String annotation) {
+			String artworkUrl, String fileName, String annotation) {
 		SharedPreferences.Editor editor = mContext.getSharedPreferences(
 				Consts.Preferences.SHARE, Context.MODE_PRIVATE).edit();
 		editor.putBoolean("read", true);
@@ -919,7 +925,7 @@ public class Main extends SherlockFragmentActivity {
 		SharedPreferences preferences = mContext.getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
 		if (!preferences.getBoolean("hasFirstStarted", false)) {
-			MyLogger.d(Consts.DEBUG_TAG, "首次启动");
+			MyLogger.d(TAG, "首次启动");
 			mDialogWelcome = new AlertDialog.Builder(Main.this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.welcome_title)

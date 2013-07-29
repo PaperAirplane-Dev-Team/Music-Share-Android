@@ -12,7 +12,6 @@ import android.os.Message;
 import com.paperairplane.music.share.utils.MyLogger;
 import com.paperairplane.music.share.utils.Utilities;
 
-import de.umass.lastfm.CallException;
 
 /**
  * 查询并且分享音乐信息的线程
@@ -34,14 +33,8 @@ class QueryAndShareMusicInfo implements Runnable {
 	 * 主调方法,查询信息并且返回给主线程
 	 */
 	public void run() {
-		try {
-			mMusic = Utilities
-					.getMusicAndArtworkUrlFromLastfm(mMusic, mContext);
-		} catch (CallException e) {
-			mMusic = Utilities.getMusicAndArtworkUrlFromDouban(mMusic,
-					mContext, mHandler);
-		}
-		if (mMusic.getMusicUrl() == null) {
+		mMusic = Utilities.getMusicAndArtworkUrlFromLastfm(mMusic, mContext);
+		if (mMusic == null || mMusic.getMusicUrl() == null) {
 			mMusic = Utilities.getMusicAndArtworkUrlFromDouban(mMusic,
 					mContext, mHandler);
 		}
