@@ -98,11 +98,8 @@ public class ShakeDetector implements SensorEventListener {
 		if (sensor == null) {
 			throw new UnsupportedOperationException();
 		}
-		boolean success = mSensorManager.registerListener(this, sensor,
+		mSensorManager.registerListener(this, sensor,
 				SensorManager.SENSOR_DELAY_GAME);
-		if (!success) {
-			throw new UnsupportedOperationException();
-		}
 	}
 
 	/**
