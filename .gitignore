@@ -186,3 +186,9 @@ local.properties
 
 #Harry-Chen
 push.bat
+
+# Gentoo
+.directory
+
+# PeterCxy
+build/
