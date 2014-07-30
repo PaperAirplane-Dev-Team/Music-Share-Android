@@ -6,7 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import net.sourceforge.pinyin4j.PinyinHelper;
+import com.paperairplane.music.share.utils.HanziToPinyin;
 
 /**
  * 存储的音乐信息
@@ -45,9 +45,8 @@ public class MusicData implements Comparable<MusicData> {
 			// 我只有英文歌……
 		} else {
 			try {
-				mFirstChar = (char) (PinyinHelper
-						.toHanyuPinyinStringArray(title.charAt(0))[0]
-						.toUpperCase(Locale.getDefault()).charAt(0));
+				mFirstChar = (char) (HanziToPinyin.convert(String.valueOf(title.charAt(0)))
+												.toUpperCase(Locale.getDefault()).charAt(0));
 			} catch (Exception e) {
 				mFirstChar = Consts.UNKNOWN_CHAR;// 这个字符的编码在字母的后面……
 			}

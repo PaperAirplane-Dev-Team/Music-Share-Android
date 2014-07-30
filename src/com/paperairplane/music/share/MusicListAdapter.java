@@ -168,15 +168,19 @@ public class MusicListAdapter extends BaseAdapter implements SectionIndexer {
 		// char[] s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
 		int arraySize = mSectionMap.size();
 		mSectionCharArr = new Character[arraySize];
-		char nowChar = 'A';
-		for (int i = 0, j = 0; i < 26; i++, nowChar++) {
-			if (mSectionMap.containsKey(Character.valueOf(nowChar))) {
-				mSectionCharArr[j] = Character.valueOf(nowChar);
-				j++;
+		mSectionCharArr = mSectionMap.keySet().toArray(mSectionCharArr);
+		
+		// Sort
+		for (int i = 0; i < arraySize; i++) {
+			for (int j = 0; j < arraySize; j++) {
+				if (mSectionCharArr[i].charValue() < mSectionCharArr[j].charValue()) {
+					Character c = mSectionCharArr[i];
+					mSectionCharArr[i] = mSectionCharArr[j];
+					mSectionCharArr[j] = c;
+				}
 			}
 		}
-		if (mHasUnknownChar)
-			mSectionCharArr[arraySize - 1] = '#';
+
 		/*
 		 * 这样的话应该可以防止莫名其妙的ArrayIndexOutOfBound了吧 但是回过头来说, 你给我看的异常里面下标是-1,
 		 * 也就是arraySize是0 这是怎样一种节奏啊,难道……没有音乐?

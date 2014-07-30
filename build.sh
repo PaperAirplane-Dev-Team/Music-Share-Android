@@ -52,7 +52,7 @@ mkdir build/bin/classes
 res="-S res -S libs/appcompat/res" # Resources
 ext_pkg='android.support.v7.appcompat' # Package that needs resources
 src='src build/gen' # Sources
-jar="$ANDROID_JAR:libs/android-support-v4.jar:libs/android-support-v7-appcompat.jar:libs/pinyin4j-2.5.0.jar" # JARs
+jar="$ANDROID_JAR:libs/android-support-v4.jar:libs/android-support-v7-appcompat.jar" # JARs
 manifest='AndroidManifest.xml' # Manifest
 assets='assets' # Assets
 pkgs='com.paperairplane.music.share' # Packages that needs to generate BuildConfig
