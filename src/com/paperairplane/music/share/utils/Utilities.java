@@ -465,7 +465,12 @@ public class Utilities {
 			final Handler handler, final Context context,
 			final Locale currentLocale) {
 		MyLogger.v(Consts.DEBUG_TAG, "方法checkForUpdate被调用");
-		update(handler, versionCode, context, currentLocale);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				update(handler, versionCode, context, currentLocale);
+			}
+		}).start();
 
 	}
 
@@ -492,7 +497,7 @@ public class Utilities {
 				return;
 			}
 		} catch (Exception e) {
-			MyLogger.v(Consts.DEBUG_TAG, "抛出错误" + e.getMessage());
+			MyLogger.v(Consts.DEBUG_TAG, "抛出错误" + e.getClass() + ":" + e.getMessage());
 			handler.sendEmptyMessage(Consts.Status.INTERNET_ERROR);
 			// e.printStackTrace();
 			json = null;
