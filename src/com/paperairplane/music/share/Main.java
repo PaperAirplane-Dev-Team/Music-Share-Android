@@ -64,7 +64,6 @@ import com.weibo.sdk.android.sso.SsoHandler;
  *      GitHub</a>
  */
 public class Main extends ActionBarActivity {
-	//FIXME HttpQuest存在严重问题，空指针频繁
 	private MusicData[] mMusicDatas;// 保存音乐数据
 	private ListView mLvMain;// 列表对象
 	private Weibo mWeibo = new Weibo(Consts.WEIBO_APP_KEY,

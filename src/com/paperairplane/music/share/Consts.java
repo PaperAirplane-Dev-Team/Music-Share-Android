@@ -24,7 +24,7 @@ public class Consts {
 	public final static String WEIBO_APP_KEY = "1006183120";
 	public final static String RENREN_APP_KEY = "57593d1b7858483ca66ae1a304f8296e" ;
 	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
-	public final static String RELEASE_DATE = "2013.7.29";
+	public final static String RELEASE_DATE = "2014.8.21";
 	public final static String ORIGIN_COLOR = "#FFFFFFFF";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");

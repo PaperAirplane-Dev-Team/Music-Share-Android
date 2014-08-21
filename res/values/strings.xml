@@ -19,7 +19,7 @@
     <string name="refresh_on_process">Refresh On Process</string>
     <string name="menu_about">About</string>
     <string name="about_contact">Contact Us</string>
-    <string name="about_content">Paper Airplane Dev Team\n添乱：@author @HarryChen-SIGKILL-\nhttp://weibo.com/yszzf\n添乱：@author @姚沛然\nhttp://weibo.com/xavieryao\n美工：@author @七只小鸡1997\nhttp://weibo.com/u/1579617160</string>
+    <string name="about_content">Paper Airplane Dev Team\n@HarryChen-SIGKILL-\nhttp://weibo.com/yszzf\n@姚沛然\nhttp://weibo.com/xavieryao\n@七只小鸡1997\nhttp://weibo.com/u/1579617160\n@喝雪碧的虾PeterCxy\nhttp://weibo.com/u/1789004515</string>
     <string name="about_download_info">Download Here:</string>
     <string name="url">http://papdt.info</string>
     <string name="no_music_url_found">No Url Found</string>
@@ -71,7 +71,7 @@
     <string name="welcome_title">Welcome To Our App</string>
     <string name="welcome_content">Share Satisfying Music\nEnjoy Good Days \n\n</string>
     <string name="welcome_button">Let\'s enjoy this app~</string>
-    <string name="whats_new">Implemented Alphabet Indexer\nAdded Intent Filter\nCombined Share Options\Share to SMS flaw fixed\nFixed BUG when setting background </string>
+    <string name="whats_new">Fix carshes of ShakeDetector and network operations.</string>
     <string name="change_text_color">Change the color of the text</string>
     <string name="red">Red</string>
     <string name="green">Green</string>
