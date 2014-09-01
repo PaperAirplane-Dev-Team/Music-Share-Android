@@ -257,12 +257,17 @@ public class Main extends ActionBarActivity {
 		/*
 		 * 这里判断SharedPreferences里读到的背景是否存在并设置，不存在则使用默认壁纸
 		 */
-		if (mBackgroundPath == null || !new File(mBackgroundPath).exists()) {
-			// 原来可以不用catch...
-			main_layout.setBackgroundResource(R.drawable.background_holo_dark);
-		} else {
-			main_layout.setBackgroundDrawable(Drawable
-					.createFromPath(mBackgroundPath));
+		try {
+			if (mBackgroundPath == null || !new File(mBackgroundPath).exists()) {
+				// 原来可以不用catch...
+				main_layout
+						.setBackgroundResource(R.drawable.background_holo_dark);
+			} else {
+				main_layout.setBackgroundDrawable(Drawable
+						.createFromPath(mBackgroundPath));
+			}
+		} catch (Exception e) {
+			//FIXME Line 264 NPE
 		}
 	}
 
