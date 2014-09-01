@@ -50,7 +50,7 @@
     <string name="name_hint">请留下尊姓大名</string>
     <string name="feedback_hint">请提供尽可能详细关于问题的信息或者您的宝贵建议。别忘了留下您的联系方式(Email/微博/QQ/手机等)。我们真的很感谢您的帮助！</string>
     <string name="feedback_succeed">反馈成功，十分感谢！</string>
-    <string name="feedback_failed">抱歉，反馈失败，我们会重新尝试的~仍然感谢！</string>
+    <string name="feedback_failed">抱歉，反馈失败，下次打开程序时会提醒你重试。您也可以重新打开反馈对话框手动尝试。别担心，内容没有丢失。仍然感谢！</string>
     <string name="send_file">发送音乐</string>
     <string name="menu_update">检查更新</string>
     <string name="send_feedback">发送反馈</string>
@@ -66,7 +66,7 @@
     <string name="thank_title">感谢你们！</string>
     <string name="welcome_title">欢迎使用纸飞机音乐分享！</string>
     <string name="welcome_content">Share Satisfying Music\nEnjoy Good Days\n\n</string>
-    <string name="whats_new">\n一年以后好不容易弄出来的新版本~\n修复摇动功能的崩溃\n修复网络错误</string>
+    <string name="whats_new">\n增加崩溃自动重启和自动错误报告\n增加反馈重试</string>
     <string name="welcome_button">希望您喜欢我们的App~</string>
     <string name="change_text_color">更改主界面文字颜色</string>
     <string name="red">红</string>
@@ -88,5 +88,10 @@
     <string name="if_change_text_color">您更换了背景,要同时更换文字颜色吗?</string>
     <string name="account_manager">账号管理</string>
     <string name="expires_time">授权过期时间:</string>
+    <string name="notice">提示</string>
+    <string name="crash">抱歉，我们的程序出现了一些问题将会被关闭。点击"确定"来自动给我们发送反馈，或者"取消"来让系统处理。</string>
+    <string name="fail_re_report">看起来您上次的反馈没有成功……想再试一次吗？</string>
+    <string name="next_time">下次再说</string>
+    <string name="no_more">不再提醒</string>
 
 </resources>

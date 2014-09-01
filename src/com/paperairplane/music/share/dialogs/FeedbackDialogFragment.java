@@ -25,24 +25,23 @@ import android.widget.ImageView;
 
 public class FeedbackDialogFragment extends AbsDialogFragment {
 	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState){
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		View feedback = LayoutInflater.from(getActivity()).inflate(
 				R.layout.feedback, null);
 		final EditText etContent = (EditText) feedback
 				.findViewById(R.id.et_feedback);
-		final EditText etName = (EditText) feedback
-				.findViewById(R.id.et_name);
+		final EditText etName = (EditText) feedback.findViewById(R.id.et_name);
 		final EditText etEmail = (EditText) feedback
 				.findViewById(R.id.et_email);
 		TextWatcher twEmail = new TextWatcher() {
 			@Override
-			public void onTextChanged(CharSequence s,
-					int start, int before, int count) {
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s,
-					int start, int count, int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
 			}
 
 			@Override
@@ -54,8 +53,7 @@ public class FeedbackDialogFragment extends AbsDialogFragment {
 				} else {
 					int color = (Build.VERSION.SDK_INT > 10) ? android.R.color.primary_text_dark
 							: android.R.color.primary_text_light;
-					etEmail.setTextColor(getResources()
-							.getColor(color));
+					etEmail.setTextColor(getResources().getColor(color));
 				}
 			}
 		};
@@ -91,9 +89,9 @@ public class FeedbackDialogFragment extends AbsDialogFragment {
 			iv.setOnClickListener(listenerClear);
 		}
 
-		getActivity();
-		SharedPreferences pref = getActivity().getApplicationContext().getSharedPreferences(
-				Consts.Preferences.FEEDBACK, FragmentActivity.MODE_PRIVATE);
+		SharedPreferences pref = getActivity().getApplicationContext()
+				.getSharedPreferences(Consts.Preferences.FEEDBACK,
+						FragmentActivity.MODE_PRIVATE);
 		String content = pref.getString("content", "");
 		etContent.setText(content);
 		String name = pref.getString("name", "");
@@ -105,25 +103,21 @@ public class FeedbackDialogFragment extends AbsDialogFragment {
 				getActivity());
 		DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 			@Override
-			public void onClick(DialogInterface dialog,
-					int whichButton) {
+			public void onClick(DialogInterface dialog, int whichButton) {
 
-				String strContent = etContent.getText()
-						.toString().trim();
-				String strName = etName.getText().toString()
-						.trim();
-				String strEmail = etEmail.getText().toString()
-						.trim();
-				if (strContent.equals("")
-						|| strEmail.equals("")) {
-					new EmptyDialogFragment().show(getFragmentManager(), "emptyDialog");
+				String strContent = etContent.getText().toString().trim();
+				String strName = etName.getText().toString().trim();
+				String strEmail = etEmail.getText().toString().trim();
+				if (strContent.equals("") || strEmail.equals("")) {
+					new EmptyDialogFragment().show(getFragmentManager(),
+							"emptyDialog");
 				} else {
 					String[] contents = new String[3];
 					contents[0] = strContent;
 					contents[1] = strName;
 					contents[2] = strEmail;
-					FeedbackMessage feedback = new FeedbackMessage(
-							contents, Main.sVersionCode, getActivity());
+					FeedbackMessage feedback = new FeedbackMessage(contents,
+							Main.sVersionCode, getActivity());
 					switch (whichButton) {
 					case DialogInterface.BUTTON_POSITIVE:
 						feedback.setMeans(Consts.ShareMeans.OTHERS);
@@ -132,8 +126,9 @@ public class FeedbackDialogFragment extends AbsDialogFragment {
 						feedback.setMeans(Consts.ShareMeans.WEIBO);
 						break;
 					}
-					
-					Message m = HttpQuestHandler.getInstance().obtainMessage(Consts.NetAccessIntent.SEND_FEEDBACK);
+
+					Message m = HttpQuestHandler.getInstance().obtainMessage(
+							Consts.NetAccessIntent.SEND_FEEDBACK);
 					m.obj = feedback;
 					m.sendToTarget();
 				}
@@ -141,15 +136,13 @@ public class FeedbackDialogFragment extends AbsDialogFragment {
 		};
 
 		builder.setView(feedback)
-				.setPositiveButton(R.string.send_feedback,
-						listener)
+				.setPositiveButton(R.string.send_feedback, listener)
 				.setTitle(R.string.thank_for_feedback)
 				.setIcon(android.R.drawable.ic_dialog_info);
-		if (getArguments().getBoolean("tokenValid")) {
-			builder.setNegativeButton(R.string.feedback_weibo,
-					listener);
+		if (getArguments() != null && getArguments().getBoolean("tokenValid")) {
+			builder.setNegativeButton(R.string.feedback_weibo, listener);
 		}
 		return builder.create();
-}
-	
+	}
+
 }

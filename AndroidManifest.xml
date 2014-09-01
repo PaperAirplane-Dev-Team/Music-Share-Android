@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.paperairplane.music.share"
-    android:versionCode="115"
-    android:versionName="1.0.8u7" >
+    android:versionCode="116"
+    android:versionName="1.0.9" >
 
     <uses-sdk
         android:minSdkVersion="8"

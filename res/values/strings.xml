@@ -53,7 +53,7 @@
     <string name="email_hint">Please leave your e-mail address here.</string>
     <string name="name_hint">How do we entitle you?</string>
     <string name="feedback_succeed">Feedback successfully reported, thank you!</string>
-    <string name="feedback_failed">Sorry but we met some problem while reporting your feedback. Don\'t worry, we\'ll try again. Still thank you!</string>
+    <string name="feedback_failed">Sorry but we met some problem while reporting your feedback. Don\'t worry, we\'ll try again next time you open this App or you can just try it again. Still thank you!</string>
     <string name="send_file">Send File</string>
     <string name="menu_update">Check For Update</string>
     <string name="send_feedback">Send Feedback</string>
@@ -67,11 +67,11 @@
     <string name="update_no_market_found">No Market Found</string>
     <string name="thank_list">Thank List</string>
     <string name="thank_title">Thank You!</string>
-    <string name="thank_content">技术指导:\n@但丁不淡定\n================\n众测试以及Bug Hunter:\n@七只小鸡1997 @Sudo- @Frank-vomit @无良风筝Fly @伪清醒的Maple\n================\n特别感谢:\n@风抚过了-南河之南（小白鼠你好） @-captain湉- @-假想敌- @落洛-红蓝独角兽巴萨是信仰（女神泥嚎）等众妹子支持~</string>
+    <string name="thank_content">感谢我们所有用户的支持</string>
     <string name="welcome_title">Welcome To Our App</string>
     <string name="welcome_content">Share Satisfying Music\nEnjoy Good Days \n\n</string>
     <string name="welcome_button">Let\'s enjoy this app~</string>
-    <string name="whats_new">Fix carshes of ShakeDetector and network operations.</string>
+    <string name="whats_new">Add an handler in order not to crash the App when errors occur\nAutomatically retry when feedback fails</string>
     <string name="change_text_color">Change the color of the text</string>
     <string name="red">Red</string>
     <string name="green">Green</string>
@@ -92,5 +92,10 @@
     <string name="if_change_text_color">You have changed the backgroud. Do you want to change the text color now?</string>
     <string name="account_manager">Account Manager</string>
     <string name="expires_time">Expires in:</string>
+    <string name="notice">Notice</string>
+    <string name="crash">Sorry but the App has met a serious problem and will be closed. Click \'OK\' to automatically send us feedback, \'Cancel\' to let the system handle the crash.</string>
+    <string name="fail_re_report">It seems you tried to feedback but failed last time. Do you want to try again?</string>
+    <string name="next_time">Next time</string>
+    <string name="no_more">No more</string>
 
 </resources>

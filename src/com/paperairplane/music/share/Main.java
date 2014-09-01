@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -43,8 +44,10 @@ import com.paperairplane.music.share.dialogs.AuthManagerDialogFragment;
 import com.paperairplane.music.share.dialogs.BackgroundChooserDialogFragment;
 import com.paperairplane.music.share.dialogs.ChangeColorDialogFragment;
 import com.paperairplane.music.share.dialogs.EmptyDialogFragment;
+import com.paperairplane.music.share.dialogs.FeedbackDialogFragment;
 import com.paperairplane.music.share.dialogs.SearchDialogFragment;
 import com.paperairplane.music.share.dialogs.SendWeiboDialogFragment;
+import com.paperairplane.music.share.utils.CrashHandler;
 import com.paperairplane.music.share.utils.HttpQuestHandler;
 import com.paperairplane.music.share.utils.IntentResolver;
 import com.paperairplane.music.share.utils.MyLogger;
@@ -87,9 +90,7 @@ public class Main extends ActionBarActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
-		// 空的……
-		// 由于需要在AtSuggetstion中调用，必须先进行
+		CrashHandler.getInstance().init(this);
 		mContext = getApplicationContext();
 		mHttpQuestHandler = HttpQuestHandler.getInstance(mHandler);
 		mFragmentManager = getSupportFragmentManager();
@@ -121,6 +122,7 @@ public class Main extends ActionBarActivity {
 		}
 		setContentView(R.layout.main);
 		initListView();
+		checkFailFeedback();
 		mPreferencesTheme = mContext.getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
 		generateMusicList();
@@ -130,9 +132,45 @@ public class Main extends ActionBarActivity {
 				Consts.NetAccessIntent.CHECK_FOR_UPDATE, Main.this)
 				.sendToTarget();
 		setBackground();
-		MyLogger.i(TAG, "versionCode:" + Main.sVersionCode
-				+ "\nversionName:" + mVersionName);
+		MyLogger.i(TAG, "versionCode:" + Main.sVersionCode + "\nversionName:"
+				+ mVersionName);
 		mIsFullRunning = true;
+	}
+
+	private void checkFailFeedback() {
+		if (mContext.getSharedPreferences(Consts.Preferences.FEEDBACK,
+				Context.MODE_PRIVATE).getBoolean("failed", false)) {
+			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which) {
+					case DialogInterface.BUTTON_POSITIVE:
+						new FeedbackDialogFragment().show(mFragmentManager,
+								"Feedback");
+						break;
+					case DialogInterface.BUTTON_NEGATIVE:
+						mContext.getSharedPreferences(
+								Consts.Preferences.FEEDBACK,
+								Context.MODE_PRIVATE).edit()
+								.putBoolean("failed", false).commit();
+						break;
+					case DialogInterface.BUTTON_NEUTRAL:
+						dialog.cancel();
+						break;
+					}
+
+				}
+			};
+
+			new AlertDialog.Builder(this).setTitle(R.string.notice)
+					.setCancelable(false).setMessage(R.string.fail_re_report)
+					.setPositiveButton(android.R.string.ok, listener)
+					.setNegativeButton(R.string.no_more, listener)
+					.setNeutralButton(R.string.next_time, listener).create()
+					.show();
+		}
+
 	}
 
 	/**
@@ -555,8 +593,7 @@ public class Main extends ActionBarActivity {
 			MyLogger.d(TAG, "Oh Oh Oh Yeah!!");
 		} catch (NullPointerException e) {
 			// e.printStackTrace();
-			MyLogger.v(TAG,
-					"Oh shit, we got null again ...... Don't panic");
+			MyLogger.v(TAG, "Oh shit, we got null again ...... Don't panic");
 		}
 		View.OnClickListener listener = new View.OnClickListener() {
 			@Override
@@ -651,6 +688,9 @@ public class Main extends ActionBarActivity {
 			case Consts.Status.FEEDBACK_SUCCEED:
 				Toast.makeText(mContext, R.string.feedback_succeed,
 						Toast.LENGTH_LONG).show();
+				mContext.getSharedPreferences(Consts.Preferences.FEEDBACK,
+						Context.MODE_PRIVATE).edit()
+						.putBoolean("failed", false).commit();
 				break;
 			case Consts.Status.FEEDBACK_FAIL:
 				Toast.makeText(mContext, R.string.feedback_failed,
@@ -658,21 +698,15 @@ public class Main extends ActionBarActivity {
 				SharedPreferences preferences = mContext.getSharedPreferences(
 						Consts.Preferences.FEEDBACK, Context.MODE_PRIVATE);
 				String[] contents = (String[]) msg.obj;
-				preferences
-						.edit()
-						.putString("content",
-								contents[Consts.FeedbackContentsItem.CONTENT])
-						.commit();
-				preferences
-						.edit()
-						.putString("name",
-								contents[Consts.FeedbackContentsItem.NAME])
-						.commit();
-				preferences
-						.edit()
-						.putString("email",
-								contents[Consts.FeedbackContentsItem.EMAIL])
-						.commit();
+				Editor editor = preferences.edit();
+				editor.putBoolean("failed", true);
+				editor.putString("content",
+						contents[Consts.FeedbackContentsItem.CONTENT]);
+				editor.putString("name",
+						contents[Consts.FeedbackContentsItem.NAME]);
+				editor.putString("email",
+						contents[Consts.FeedbackContentsItem.EMAIL]);
+				editor.commit();
 				break;
 			case Consts.Status.NO_UPDATE:
 				Toast toast = Toast.makeText(mContext, R.string.no_update,
@@ -741,9 +775,8 @@ public class Main extends ActionBarActivity {
 				mMusicDatas[i] = generateMusicData(cursor);
 				cursor.moveToNext();
 			}
-			MyLogger.i(TAG,
-					"generateMusicData used " + (System.nanoTime() - now)
-							/ 1000000 + " ms");
+			MyLogger.i(TAG, "generateMusicData used "
+					+ (System.nanoTime() - now) / 1000000 + " ms");
 			try {
 				mLvMain.setAdapter(new MusicListAdapter(this, mMusicDatas));
 			} catch (Exception e) {
@@ -923,8 +956,9 @@ public class Main extends ActionBarActivity {
 	private void firstShow() {
 		SharedPreferences preferences = mContext.getSharedPreferences(
 				Consts.Preferences.GENERAL, Context.MODE_PRIVATE);
-		if (!preferences.getBoolean("hasFirstStarted", false)) {
-			MyLogger.d(TAG, "首次启动");
+		int oldVersion = preferences.getInt("versionCode", 0);
+		if (oldVersion < Main.sVersionCode) {
+			MyLogger.d(TAG, "版本号更新");
 			mDialogWelcome = new AlertDialog.Builder(Main.this)
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setTitle(R.string.welcome_title)
@@ -941,7 +975,8 @@ public class Main extends ActionBarActivity {
 								}
 							}).create();
 			mDialogWelcome.show();
-			preferences.edit().putBoolean("hasFirstStarted", true).commit();
+			preferences.edit().putInt("versionCode", Main.sVersionCode)
+					.commit();
 		}
 
 	}

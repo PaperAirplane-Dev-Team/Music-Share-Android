@@ -23,8 +23,8 @@ public class Consts {
 	public final static String DEBUG_TAG = "Music Share DEBUG";
 	public final static String WEIBO_APP_KEY = "1006183120";
 	public final static String RENREN_APP_KEY = "57593d1b7858483ca66ae1a304f8296e" ;
-	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @姚沛然 @HarryChen-SIGKILL- ";
-	public final static String RELEASE_DATE = "2014.8.21";
+	public final static String FEEDBACK = "#纸飞机音乐分享反馈# @一抔学渣 @HarryChen-SIGKILL- ";
+	public final static String RELEASE_DATE = "2014.9.1";
 	public final static String ORIGIN_COLOR = "#FFFFFFFF";
 	public final static Uri ARTWORK_URI = Uri
 			.parse("content://media/external/audio/albumart");
@@ -42,10 +42,10 @@ public class Consts {
 	public final class Url {
 		public final static String API_SUGGESTION = "https://api.weibo.com/2/search/suggestions/at_users.json";
 		public final static String API_QUERY = "https://api.douban.com/v2/music/search?appkey=039b0d83358026730ad12889a0807359&count=1&q=";
-		public final static String INFO_REDIRECT = "http://paperairplane.sinaapp.com/redirect.php?id=";
-		public final static String FEEDBACK = "http://paperairplane.sinaapp.com/feedback.php";
-		public final static String CHECK_UPDATE = "http://paperairplane.sinaapp.com/music-share/update.php";
-		public final static String CHECK_TEST_UPDATE = "http://paperairplane.sinaapp.com/music-share/test_version_update.php";
+		public final static String INFO_REDIRECT = "http://papdt.info/music-share/redirect.php?id=";
+		public final static String FEEDBACK = "http://papdt.info/music-share/feedback.php";
+		public final static String CHECK_UPDATE = "http://papdt.info/music-share/update.php";
+		public final static String CHECK_TEST_UPDATE = CHECK_UPDATE;
 		public final static String AUTH_REDIRECT = "https://api.weibo.com/oauth2/default.html";
 		public final static String WEIBO_AUTH_URL = "https://open.weibo.cn/oauth2/authorize";
 		public final static String RENREN_AUTH_URL = "https://graph.renren.com/oauth/authorize";
